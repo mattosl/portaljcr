@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value=""/>
+    	<ui:param name="activeMenu" value="nfse"/>
+			
+		<f:metadata>
+			<f:viewAction action="#{consultarNFSEController.iniciarProcesso()}" />
+		</f:metadata>
+    	<ui:define name="pageTitle"><i class="fa fa-home fa-1x cor-padrao"></i> NFS-e</ui:define>
+    	<ui:define name="pageDescription">Consultar</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="nfseForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Consultar NFS-e</h3>
+		            		</div>
+							<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<label for="dtEmissaoInicio" class="col-sm-2 control-label">Data de Emiss�o:</label>
+										<div class="row">
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtEmissaoInicio" value="#{consultarNFSEController.filtro.dtInicial}" readonlyInput="true" locale="pt_BR"/>
+								                </div>
+							                </div>
+							                <label for="dtEmissaoFinal" class="col-sm-1 col-md-1 col-lg-1 control-label" style="text-align:center;">at�</label>
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtEmissaoFinal" value="#{consultarNFSEController.filtro.dtFinal}" readonlyInput="true" locale="pt_BR"/>
+								                </div>
+							                </div>
+							            </div>
+									</div>
+									<div class="form-group">
+										<label for="empresa" class="col-sm-2 control-label">Empresa:</label>
+	
+										<div class="col-sm-10">
+									        <h:selectOneMenu id="empresa" styleClass="form-control" value="#{consultarNFSEController.filtro.coligada}">
+									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{consultarNFSEController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
+									        </h:selectOneMenu>
+										</div>
+									</div>
+	<!-- 								<div class="form-group"> -->
+	<!-- 									<label for="municipio" class="col-sm-2 control-label">Munic�pio:</label> -->
+	
+	<!-- 									<div class="col-sm-10"> -->
+	<!-- 								        <h:selectOneMenu id="municipio" styleClass="form-control" value="#{consultarNFSEController.filtro.municipio}"> -->
+	<!-- 								        	<f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="false" /> -->
+	<!-- 								        	<f:selectItems value="#{consultarNFSEController.listaMunicipio}" var="municipio" itemLabel="#{municipio.municipio}" itemValue="#{municipio}" /> -->
+	<!-- 								        </h:selectOneMenu> -->
+	<!-- 									</div> -->
+	<!-- 								</div> -->
+									<div class="form-group">
+										<label for="numNota" class="col-sm-2 control-label">N�mero da Nota:</label>
+	
+										<div class="col-sm-10 col-md-2">
+									         <h:inputText value="#{consultarNFSEController.filtro.numeroNota}" styleClass="form-control" id="numNota" onkeyup="filterNumberOnly(this);" maxlength="8" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="situacao" class="col-sm-2 col-md-2 control-label">Situa��o:</label>
+										<div class="col-sm-10 col-md-10">
+											<p:selectOneRadio id="situacao" value="#{consultarNFSEController.filtro.situacao}" styleClass="radio" layout="responsive" columns="8">
+											    <f:selectItem itemLabel="Pendente" itemValue="0"  />
+											    <f:selectItem itemLabel="Exportada" itemValue="1" />
+											    <f:selectItem itemLabel="Removida" itemValue="2" />
+											    <f:selectItem itemLabel="Todas" itemValue="3" />
+											</p:selectOneRadio>
+										</div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-search"
+											value="Pesquisar"
+											id="btn_pesquisar"
+											process="@form"
+											action="#{consultarNFSEController.pesquisar()}"
+											update="@form, :gridForm"
+											ajax="true" />
+									</div>
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-plus"
+											value="Incluir"
+											action="#{consultarNFSEController.iniciarIncluir()}"
+											immediate="true"
+											id="btn_incluir"
+											ajax="false" />
+									</div>
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-refresh"
+											value="Atualizar"
+											action="#{consultarNFSEController.atualizar()}"
+											id="btn_atualizar"
+											immediate="true"
+											ajax="true" />
+									</div>
+								</div>
+							</div>
+						</p:panel>
+					</f:validateBean>
+				</h:form>
+				
+				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:dataTable var="nfs" id="tableNfs"
+						value="#{consultarNFSEController.dataModel}" 
+						tableStyle="table-layout: auto; word-break: keep-all;" 
+						selection="#{consultarNFSEController.notasSelecionadas}" 
+						rowKey="#{nfs.id}" 
+						rendered="#{consultarNFSEController.exibirResultado}"
+						binding="#{dataTableUtil.lazyDataTable}"
+						disabledSelection="#{nfs.status eq 'REMOVIDO' or nfs.status eq 'EXPORTADO'}" >
+						
+						<p:column selectionMode="multiple" style="text-align: center;" />
+					    <p:column headerText="Situa��o" style="text-align:center;">
+					    	<span class="label label-#{nfs.status eq 'PENDENTE' ? 'warning' : nfs.status eq 'EXPORTADO' ? 'success' : 'danger' }">#{nfs.status.descricao}</span>
+					    </p:column>
+					 
+					    <p:column headerText="Data de Emiss�o" style="text-align:center;font-size:12px;" >
+					        <h:outputText value="#{nfs.dtEmissao}" >
+					        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+					        </h:outputText>
+					    </p:column>
+					 
+					    <p:column headerText="N�" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{nfs.numeroNota}" />
+					    </p:column>
+					 
+					    <p:column headerText="Valor (R$)" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{nfs.valor}">
+					        	<f:convertNumber minFractionDigits="2" currencyCode="R$"/>
+					        </h:outputText>
+					    </p:column>
+					    
+					    <p:column headerText="Munic�pio" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{nfs.municipio.toUpperCase()}" />
+					    </p:column>
+					    
+					    <p:column headerText="Prestador" style="text-align:center;font-size:12px;">
+					        <h:outputText id="prestador" value="#{nfs.prestador}" />
+					        <p:tooltip value="CNPJ: #{nfs.cnpjPrestadorFormatado}" for="prestador" />
+					    </p:column>
+					    
+					    <p:column headerText="Tomador" style="text-align:center;font-size:12px;">
+					        <h:outputText id="tomador" value="#{nfs.tomador}" />
+					        <p:tooltip value="CNPJ: #{nfs.cnpjTomadorFormatado}" for="tomador" />
+					    </p:column>
+					    
+					    <p:column headerText="Detalhes" style="text-align: center;">
+							<p:commandLink ajax="true" process="@this" action="#{consultarNFSEController.detalhar()}" oncomplete="PF('modalNota').show();" update="@form:modalNota" >
+								<h:outputText value="" title="Detalhes" styleClass="fa fa-file-text" />
+								<f:setPropertyActionListener value="#{nfs}" target="#{consultarNFSEController.notaFiscal}" />
+							</p:commandLink>
+						</p:column>
+						
+						<p:column headerText="Download" style="text-align: center;">
+							<p:commandLink ajax="false" process="@this" onclick="PrimeFaces.monitorDownload(start, stop);">
+								<h:outputText value="" title="Download" styleClass="fa fa-download" />
+								<p:fileDownload value="#{consultarNFSEController.download(nfs)}" />
+							</p:commandLink>
+						</p:column>
+						
+						<p:column headerText="Excluir" style="text-align: center;">
+							<p:commandLink ajax="true" process="@this" rendered="#{nfs.status ne 'REMOVIDO'}">
+								<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+					<p:panel toggleable="false" id="panelExportar" styleClass="box" rendered="#{consultarNFSEController.exibirResultado}">
+						<div class="box-body">
+							<div class="col-sm-4 col-md-4">
+								<p:commandButton
+									styleClass="btn btn-default pull-right"
+									icon="fa fa-mail-reply"
+									value="Exportar para RM"
+									id="btn_exportar_rm"
+									process="@this, @form:tableNfs"
+									action="#{consultarNFSEController.exportarRM()}"
+									update="@form"
+									ajax="true" />
+							</div>
+						</div>
+					</p:panel>
+					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+						id="modalNota"
+						widgetVar="modalNota" 
+						header="NFS-e #{consultarNFSEController.notaFiscalDTO.municipio} - N� #{consultarNFSEController.notaFiscalDTO.numeroNota}" 
+						resizable="false" 
+						responsive="true"
+						height="500"
+						width="80%"
+						draggable="false"
+						modal="true">
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<label for="dtEmissaoModal" class="col-sm-2">Data da Emiss�o:</label>
+							        <h:outputLabel id="dtEmissaoModal" value="#{consultarNFSEController.notaFiscalDTO.dtEmissao}" styleClass="col-sm-5 font-normal" />
+							        <label class="col-sm-2">C�digo de Verifica��o:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.codigoVerificacao}" styleClass="col-sm-3 font-normal" />
+								</div>
+							</div>
+							<div class="box-header with-border">
+	          					<h3 class="box-title with-border">Prestador de Servi�os</h3>
+	         				</div>
+							<div class="box-body">
+								<div class="form-group">
+									<label class="col-sm-2">Raz�o Social:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.razaoSocialPrestador}" styleClass="col-sm-10 font-normal" />
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2">CPF/CNPJ:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.cnpjPrestador}" styleClass="col-sm-5 font-normal" />
+							        <label class="col-sm-2">Inscri��o Municipal:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.inscricaoMunicipalPrestador}" styleClass="col-sm-3 font-normal" />
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2">Endere�o:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.enderecoPrestador}" styleClass="col-sm-10 font-normal" />
+								</div>
+							</div>
+							<div class="box-header with-border">
+			          					<h3 class="box-title with-border">Tomador de Servi�os</h3>
+			         				</div>
+			         				<div class="box-body">
+								<div class="form-group">
+									<label class="col-sm-2">Raz�o Social:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.razaoSocialTomador}" styleClass="col-sm-10 font-normal" />
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2">CPF/CNPJ:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.cnpjTomador}" styleClass="col-sm-5 font-normal" />
+							        <label class="col-sm-2">Inscri��o Municipal:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.inscricaoMunicipalTomador}" styleClass="col-sm-3 font-normal" />
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2">Endere�o:</label>
+							        <h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.enderecoTomador}" styleClass="col-sm-10 font-normal" />
+								</div>
+							</div>
+							<div class="box-header with-border">
+			          					<h3 class="box-title with-border">Discrimina��o dos Servi�os</h3>
+			         				</div>
+			         				<div class="box-body">
+								<div class="form-group">
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.discriminacao}" styleClass="col-sm-12 font-normal" />
+								</div>
+							</div>
+							<div class="box-header with-border">
+								<h3 class="box-title with-border">Valores</h3>
+							</div>
+							<div class="box-body">
+								<div class="form-group">
+									<label class="col-sm-4">Valor Total das Dedu��es (R$):</label> 
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.valorDeducoes}" styleClass="col-sm-3 font-normal" />
+									<label class="col-sm-2">PIS (R$):</label> 
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.valorDeducoes}" styleClass="col-sm-3 font-normal" />
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4">Base de C�lculo (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.baseCalculo}" styleClass="col-sm-3 font-normal" />
+									<label class="col-sm-2">COFINS (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.baseCalculo}" styleClass="col-sm-3 font-normal" />
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4">Al�quota (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.aliquota}" styleClass="col-sm-3 font-normal" />
+									<label class="col-sm-2">INSS (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.aliquota}" styleClass="col-sm-3 font-normal" />  
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4">Valor do ISS (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.valorISS}" styleClass="col-sm-3 font-normal" />
+									<label class="col-sm-2">IR (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.credAbatimentoIPTU}" styleClass="col-sm-3 font-normal" /> 
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4">Cr�dito p/ Abatimento do IPTU (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.credAbatimentoIPTU}" styleClass="col-sm-3 font-normal" />
+									<label class="col-sm-2">CSLL (R$):</label>
+									<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.credAbatimentoIPTU}" styleClass="col-sm-3 font-normal" />  
+								</div>
+							</div>
+							<hr />
+							<div class="form-group" style="font-size:16px;">
+								<label class="col-sm-4">VALOR TOTAL DA NOTA:</label>
+								<h:outputLabel value="#{consultarNFSEController.notaFiscalDTO.valorTotal}" styleClass="col-sm-8" />
+							</div>
+							
+						</div>
+					</p:dialog> 
+				</h:form>
+				<script type="text/javascript">
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Portal JCR</title>
+	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/jcr-logo.png"/>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+	<h:outputStylesheet library="css" name="bootstrap.min.css"/>
+	<h:outputStylesheet library="css" name="ionicons.min.css"/>
+	<h:outputStylesheet library="css" name="portaljcr.min.css"/>
+	<h:outputStylesheet library="css" name="skin-red-light.min.css"/>
+	<h:outputStylesheet library="css" name="custom.css"/>
+	<ui:insert name="head" />
+</h:head>
+<h:body styleClass="hold-transition skin-red-light sidebar-collapse  sidebar-mini">
+	<div class="wrapper">
+		<ui:include src="/pages/templates/header.xhtml" />
+		<aside class="main-sidebar"> 
+			<section class="sidebar"><ui:include src="/pages/templates/menu.xhtml" /> </section>
+		</aside>
+		<div class="content-wrapper">
+			<section class="content-header">
+			<h1>
+				<ui:insert name="pageTitle" />
+				<small><ui:insert name="pageDescription" /></small>
+			</h1>
+			</section>
+			<section class="content">
+			<div class="row" jsf:id="divMessage">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<p:messages id="messages" showDetail="true" closable="true" >
+						<p:autoUpdate />
+					</p:messages>
+<!-- 					 <p:growl autoUpdate="true" showDetail="false" id="g_mensagens" /> -->
+					<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+						closable="false" resizable="false" showHeader="false">
+							<h:graphicImage name="/images/ajax_loader_red.gif" />
+					</p:dialog>
+					<p:ajaxStatus onstart="PF('statusDialog').show()"
+						onsuccess="PF('statusDialog').hide()" />
+				</div>
+			</div>
+			<ui:insert name="body" /> </section>
+		</div>
+		<footer class="main-footer"> <h:form>
+			<ui:include src="/pages/templates/footer.xhtml" />
+		</h:form> </footer>
+	</div>
+	<ui:insert name="popups" />
+	<h:outputScript library="scripts" name="bootstrap.min.js" />
+	<h:outputScript library="scripts" name="locale-primefaces.js" />
+	<h:outputScript library="scripts" name="portaljcr.min.js" />
+	<h:outputScript library="scripts" name="custom.js" />
+</h:body>
+</html>
