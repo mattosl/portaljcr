@@ -25,7 +25,7 @@ public class MonitoramentoXML implements Job {
 			log.info("Executando Monitoramento XML...");
 			
 			InitialContext initialContext = new InitialContext();
-			MonitoramentoBusiness business = (MonitoramentoBusiness) initialContext.lookup("java:global/nfsejcr/MonitoramentoBusiness");
+			MonitoramentoBusiness business = (MonitoramentoBusiness) initialContext.lookup("java:global/portaljcr/MonitoramentoBusiness");
 			
 			business.lerXML();
 			log.info("Finalizado Monitoramento XML...");

@@ -97,6 +97,8 @@ public class LoginController implements Serializable {
 					usuario.setAtivo(1);
 					
 					loginBusiness.criarUsuario(usuario);
+					FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioLogado", usuario.getNome());
+					FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuario", usuario);
 					
 					logado = true;
 					return navegacaoController.redirectToWelcome();

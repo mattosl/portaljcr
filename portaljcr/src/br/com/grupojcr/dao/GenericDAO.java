@@ -24,7 +24,7 @@ public class GenericDAO<T>  {
 	private final static String KEY_ERRO = "ERRO:";
 	private final static String KEY_MENSAGEM_PADRAO = "message.default";
 	
-	@PersistenceContext(unitName = "nfsejcr")
+	@PersistenceContext(unitName = "portal")
 	protected EntityManager manager;
 	
 	/**
