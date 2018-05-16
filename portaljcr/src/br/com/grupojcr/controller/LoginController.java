@@ -103,8 +103,11 @@ public class LoginController implements Serializable {
 				}
     		} else {
     			Usuario user = loginBusiness.obterUsuario(login);
-    			user.setAtivo(0);
-    			loginBusiness.alterarUsuario(user);
+    			
+    			if(Util.isNotNull(user)) {
+    				user.setAtivo(0);
+    				loginBusiness.alterarUsuario(user);
+    			}
     			logado = false;
     		}
 			
