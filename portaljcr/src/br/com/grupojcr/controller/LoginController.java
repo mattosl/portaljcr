@@ -13,6 +13,8 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
+import br.com.grupojcr.ad.ActiveDirectory;
+import br.com.grupojcr.ad.UsuarioLDAP;
 import br.com.grupojcr.business.LoginBusiness;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.util.Util;
@@ -59,21 +61,53 @@ public class LoginController implements Serializable {
 //        }
     	
     	try {
-			Usuario user = loginBusiness.obterUsuarioPorLoginSenha(login, senha);
-			
-			if(Util.isNotNull(user)) {
-				user.setDtUltimoLogin(Calendar.getInstance().getTime());
-				loginBusiness.alterarUsuario(user);
-				FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioLogado", user.getNome());
-				FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuario", user);
+    		UsuarioLDAP usuarioAD = ActiveDirectory.login(login, senha);
+    		
+    		if(Util.isNotNull(usuarioAD)) {
+    		
+				Usuario user = loginBusiness.obterUsuario(login);
+				
+				if(Util.isNotNull(user)) {
+					user.setDtUltimoLogin(Calendar.getInstance().getTime());
 
-				logado = true;
-				return navegacaoController.redirectToWelcome();
-			} else {
-				logado = false;
-			}
+					if(user.getAtivo().equals(0)) {
+						user.setAtivo(1);
+					}
+					
+					if(!user.getNome().equals(usuarioAD.getNomeCompleto())) {
+						user.setNome(usuarioAD.getNomeCompleto());
+					}
+					
+					if(!user.getEmail().equals(usuarioAD.getEmail())) {
+						user.setEmail(usuarioAD.getEmail());
+					}
+					
+					loginBusiness.alterarUsuario(user);
+					FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioLogado", user.getNome());
+					FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuario", user);
+	
+					logado = true;
+					return navegacaoController.redirectToWelcome();
+				} else {
+					Usuario usuario = new Usuario();
+					usuario.setDtUltimoLogin(Calendar.getInstance().getTime());
+					usuario.setNome(usuarioAD.getNomeCompleto());
+					usuario.setUsuario(usuarioAD.getUsuario());
+					usuario.setEmail(usuarioAD.getEmail());
+					usuario.setAtivo(1);
+					
+					loginBusiness.criarUsuario(usuario);
+					
+					logado = true;
+					return navegacaoController.redirectToWelcome();
+				}
+    		} else {
+    			Usuario user = loginBusiness.obterUsuario(login);
+    			user.setAtivo(0);
+    			loginBusiness.alterarUsuario(user);
+    			logado = false;
+    		}
 			
-         
 	        showMessage();
 	         
     	} catch (Exception e) {

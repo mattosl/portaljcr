@@ -21,14 +21,14 @@ public class LoginBusiness {
 	@EJB
 	private UsuarioDAO daoUsuario;
 
-	public Usuario obterUsuarioPorLoginSenha(String usuario, String senha) throws ApplicationException {
+	public Usuario obterUsuario(String usuario) throws ApplicationException {
 		try {
-			return daoUsuario.obterUsuarioPorLoginSenha(usuario, senha);
+			return daoUsuario.obterUsuario(usuario);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterUsuarioPorLoginSenha" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterUsuario" }, e);
 		}
 	}
 
@@ -37,6 +37,30 @@ public class LoginBusiness {
 	public void alterarUsuario(Usuario usuario) throws ApplicationException {
 		try {
 			daoUsuario.alterar(usuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public void criarUsuario(Usuario usuario) throws ApplicationException {
+		try {
+			daoUsuario.incluir(usuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public void excluirUsuario(Usuario usuario) throws ApplicationException {
+		try {
+			daoUsuario.excluir(usuario);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 		} catch (Exception e) {
