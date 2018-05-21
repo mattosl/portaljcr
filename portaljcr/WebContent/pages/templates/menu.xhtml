@@ -36,21 +36,22 @@
 
 
 
-<!-- 			<li class="treeview #{activeMenu eq 'compras' ? 'active' : ''}"> -->
-<!-- 				<a href="#">  -->
-<!-- 					<i class="fa fa-shopping-cart"></i> <span>Compras</span> -->
-<!-- 					 <span class="pull-right-container"> -->
-<!-- 	                 	<i class="fa fa-angle-left pull-right"></i> -->
-<!-- 	                 </span> -->
-<!-- 				</a> -->
-<!-- 				<ul class="treeview-menu"> -->
-<!-- 					<li class="#{activeSubmenu eq 'solicitacaoCompra' ? 'active' : ''}"> -->
-<!-- 						<p:link href="/pages/compras/solicitacao_compra.jsf" ajax="false"> -->
-<!-- 							<span>Solicitação de Compra</span> -->
-<!-- 						</p:link> -->
-<!-- 					</li> -->
-<!-- 				</ul> -->
-<!-- 			</li> -->
+			<li class="treeview #{activeMenu eq 'administrador' ? 'active' : ''}">
+				<a href="#"> 
+					<i class="fa fa-gears"></i> <span>Configurações</span>
+					 <span class="pull-right-container">
+	                 	<i class="fa fa-angle-left pull-right"></i>
+	                 </span>
+				</a>
+				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'usuarios' ? 'active' : ''}">
+						<p:link href="/pages/administrador/usuario/listar_usuario.xhtml" ajax="false">
+							<i class="fa fa-users"></i>
+							<span>Usuários</span>
+						</p:link>
+					</li>
+				</ul>
+			</li>
 			
 			
 			<!-- 		####### FIM MENU ######  -->

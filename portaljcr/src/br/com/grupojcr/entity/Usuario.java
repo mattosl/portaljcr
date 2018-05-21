@@ -5,12 +5,16 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.grupojcr.enumerator.SituacaoUsuario;
 
 @Entity
 @Table(name = "TB_USUARIO")
@@ -32,8 +36,9 @@ public class Usuario implements Serializable {
 	@Column(name = "EMAIL", length = 100, nullable = false)
 	private String email;
 	
+	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "ATIVO", nullable = false)
-	private Integer ativo;
+	private SituacaoUsuario situacao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_ULTIMO_LOGIN")
@@ -79,23 +84,23 @@ public class Usuario implements Serializable {
 		this.email = email;
 	}
 
-	public Integer getAtivo() {
-		return ativo;
+	public SituacaoUsuario getSituacao() {
+		return situacao;
 	}
 
-	public void setAtivo(Integer ativo) {
-		this.ativo = ativo;
+	public void setSituacao(SituacaoUsuario situacao) {
+		this.situacao = situacao;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((ativo == null) ? 0 : ativo.hashCode());
 		result = prime * result + ((dtUltimoLogin == null) ? 0 : dtUltimoLogin.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((situacao == null) ? 0 : situacao.hashCode());
 		result = prime * result + ((usuario == null) ? 0 : usuario.hashCode());
 		return result;
 	}
@@ -109,11 +114,6 @@ public class Usuario implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		if (ativo == null) {
-			if (other.ativo != null)
-				return false;
-		} else if (!ativo.equals(other.ativo))
-			return false;
 		if (dtUltimoLogin == null) {
 			if (other.dtUltimoLogin != null)
 				return false;
@@ -134,6 +134,8 @@ public class Usuario implements Serializable {
 				return false;
 		} else if (!nome.equals(other.nome))
 			return false;
+		if (situacao != other.situacao)
+			return false;
 		if (usuario == null) {
 			if (other.usuario != null)
 				return false;
@@ -141,5 +143,6 @@ public class Usuario implements Serializable {
 			return false;
 		return true;
 	}
+
 
 }

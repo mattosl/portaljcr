@@ -1,5 +1,7 @@
 package br.com.grupojcr.dao;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -8,7 +10,10 @@ import javax.persistence.TypedQuery;
 
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.dto.FiltroUsuario;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.enumerator.SituacaoUsuario;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -51,5 +56,95 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			throw new ApplicationException("message.default.erro", new String[] { "obterAdministrador" }, e);
 		}
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Integer obterQtdUsuario(FiltroUsuario filtro) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
+			sb.append("WHERE usuario.nome != null ");
+			
+			if(Util.isNotNull(filtro.getNome())) {
+				sb.append("AND usuario.nome like :nome ");
+			}
+			
+			if(Util.isNotNull(filtro.getUsuario())) {
+				sb.append("AND usuario.usuario = :usuario ");
+			}
+			
+			if(!filtro.getAtivo().equals(3)) {
+				sb.append("AND usuario.situacao = :ativo ");
+			}
+			
+			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
+			
+			if(Util.isNotNull(filtro.getNome())) {
+				query.setParameter("nome", "%" + filtro.getNome().trim() + "%");
+			}
+			
+			if(Util.isNotNull(filtro.getUsuario())) {
+				query.setParameter("usuario", filtro.getUsuario());
+			}
+			
+			if(!filtro.getAtivo().equals(3)) {
+				query.setParameter("ativo", SituacaoUsuario.obterPorCodigo(filtro.getAtivo()));
+			}
+			
+			return query.getResultList().size();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterQtdUsuario" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public List<Usuario> listarUsuarioPaginado(int first, int pageSize, FiltroUsuario filtro) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
+			sb.append("WHERE usuario.nome != null ");
+			
+			if(Util.isNotNull(filtro.getNome())) {
+				sb.append("AND usuario.nome like :nome ");
+			}
+			
+			if(Util.isNotNull(filtro.getUsuario())) {
+				sb.append("AND usuario.usuario = :usuario ");
+			}
+			
+			if(!filtro.getAtivo().equals(3)) {
+				sb.append("AND usuario.situacao = :ativo ");
+			}
+			
+			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
+			
+			if(Util.isNotNull(filtro.getNome())) {
+				query.setParameter("nome", "%" + filtro.getNome().trim() + "%");
+			}
+			
+			if(Util.isNotNull(filtro.getUsuario())) {
+				query.setParameter("usuario", filtro.getUsuario());
+			}
+			
+			if(!filtro.getAtivo().equals(3)) {
+				query.setParameter("ativo", SituacaoUsuario.obterPorCodigo(filtro.getAtivo()));
+			}
+			
+			if(Util.isNotNull(first) && Util.isNotNull(pageSize)){
+				query.setFirstResult(first);
+				query.setMaxResults(pageSize);
+			}
+			
+			return query.getResultList();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "listarUsuarioPaginado" }, e);
+		}
+	}
+	
 
 }
