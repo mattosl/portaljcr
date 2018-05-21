@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.com.grupojcr.util.Util;
+
 @Entity
 @Table(name = "TB_COLIGADA")
 public class Coligada implements BaseEntity, Serializable {
@@ -59,6 +61,17 @@ public class Coligada implements BaseEntity, Serializable {
 
 	public void setAtivo(Integer ativo) {
 		this.ativo = ativo;
+	}
+	
+	public String getCnpjFormatado() {
+		if(cnpj != null) {
+			if(cnpj.length() > 11) {
+				return Util.formatarCNPJ(cnpj);
+			} else {
+				return Util.formatarCPF(cnpj);
+			}
+		}
+		return "";
 	}
 
 	@Override
