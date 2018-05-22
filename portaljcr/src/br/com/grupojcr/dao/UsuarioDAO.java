@@ -86,7 +86,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			}
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
-				query.setParameter("situacao", filtro.getSituacao() ? 1 : 0);
+				query.setParameter("situacao", filtro.getSituacao());
 			}
 			
 			return query.getResultList().size();
@@ -128,7 +128,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			}
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
-				query.setParameter("situacao", filtro.getSituacao() ? 1 : 0);
+				query.setParameter("situacao", filtro.getSituacao());
 			}
 			
 			if(Util.isNotNull(first) && Util.isNotNull(pageSize)){
