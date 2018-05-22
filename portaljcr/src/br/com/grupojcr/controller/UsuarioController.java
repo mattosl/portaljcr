@@ -45,7 +45,6 @@ public class UsuarioController implements Serializable {
 	public void iniciarProcesso() throws ApplicationException {
 		try {
 			setFiltro(new FiltroUsuario());
-			getFiltro().setAtivo(3);
 //		} catch (ApplicationException e) {
 //			LOG.info(e.getMessage(), e);
 //			throw e;

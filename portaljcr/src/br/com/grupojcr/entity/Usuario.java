@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.grupojcr.enumerator.SituacaoUsuario;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "TB_USUARIO")
@@ -36,9 +34,9 @@ public class Usuario implements Serializable {
 	@Column(name = "EMAIL", length = 100, nullable = false)
 	private String email;
 	
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "ATIVO", nullable = false)
-	private SituacaoUsuario situacao;
+	@Column(name = "SITUACAO", nullable = false, columnDefinition = "TINYINT")
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	private Boolean situacao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_ULTIMO_LOGIN")
@@ -84,11 +82,11 @@ public class Usuario implements Serializable {
 		this.email = email;
 	}
 
-	public SituacaoUsuario getSituacao() {
+	public Boolean getSituacao() {
 		return situacao;
 	}
 
-	public void setSituacao(SituacaoUsuario situacao) {
+	public void setSituacao(Boolean situacao) {
 		this.situacao = situacao;
 	}
 
@@ -134,7 +132,10 @@ public class Usuario implements Serializable {
 				return false;
 		} else if (!nome.equals(other.nome))
 			return false;
-		if (situacao != other.situacao)
+		if (situacao == null) {
+			if (other.situacao != null)
+				return false;
+		} else if (!situacao.equals(other.situacao))
 			return false;
 		if (usuario == null) {
 			if (other.usuario != null)

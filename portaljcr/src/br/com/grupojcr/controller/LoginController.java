@@ -17,7 +17,6 @@ import br.com.grupojcr.ad.ActiveDirectory;
 import br.com.grupojcr.ad.UsuarioLDAP;
 import br.com.grupojcr.business.LoginBusiness;
 import br.com.grupojcr.entity.Usuario;
-import br.com.grupojcr.enumerator.SituacaoUsuario;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -71,8 +70,8 @@ public class LoginController implements Serializable {
 				if(Util.isNotNull(user)) {
 					user.setDtUltimoLogin(Calendar.getInstance().getTime());
 
-					if(user.getSituacao().equals(SituacaoUsuario.INATIVO)) {
-						user.setSituacao(SituacaoUsuario.ATIVO);
+					if(user.getSituacao()) {
+						user.setSituacao(Boolean.TRUE);
 					}
 					
 					if(!user.getNome().equals(usuarioAD.getNomeCompleto())) {
@@ -95,7 +94,7 @@ public class LoginController implements Serializable {
 					usuario.setNome(usuarioAD.getNomeCompleto());
 					usuario.setUsuario(usuarioAD.getUsuario());
 					usuario.setEmail(usuarioAD.getEmail());
-					usuario.setSituacao(SituacaoUsuario.ATIVO);
+					usuario.setSituacao(Boolean.TRUE);
 					
 					loginBusiness.criarUsuario(usuario);
 					FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioLogado", usuario.getNome());
@@ -108,7 +107,7 @@ public class LoginController implements Serializable {
     			Usuario user = loginBusiness.obterUsuario(login);
     			
     			if(Util.isNotNull(user)) {
-    				user.setSituacao(SituacaoUsuario.INATIVO);
+    				user.setSituacao(Boolean.FALSE);
     				loginBusiness.alterarUsuario(user);
     			}
     			logado = false;

@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import br.com.grupojcr.util.Util;
 
 @Entity
@@ -28,8 +30,9 @@ public class Coligada implements BaseEntity, Serializable {
 	@Column(name = "RAZAO_SOCIAL", length = 100, nullable = false)
 	private String razaoSocial;
 	
-	@Column(name = "ATIVO", nullable = false)
-	private Integer ativo;
+	@Column(name = "SITUACAO", nullable = false, columnDefinition = "TINYINT")
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	private Boolean situacao;
 
 	public Long getId() {
 		return id;
@@ -55,12 +58,12 @@ public class Coligada implements BaseEntity, Serializable {
 		this.razaoSocial = razaoSocial;
 	}
 
-	public Integer getAtivo() {
-		return ativo;
+	public Boolean getSituacao() {
+		return situacao;
 	}
 
-	public void setAtivo(Integer ativo) {
-		this.ativo = ativo;
+	public void setSituacao(Boolean situacao) {
+		this.situacao = situacao;
 	}
 	
 	public String getCnpjFormatado() {
@@ -78,10 +81,10 @@ public class Coligada implements BaseEntity, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((ativo == null) ? 0 : ativo.hashCode());
 		result = prime * result + ((cnpj == null) ? 0 : cnpj.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((razaoSocial == null) ? 0 : razaoSocial.hashCode());
+		result = prime * result + ((situacao == null) ? 0 : situacao.hashCode());
 		return result;
 	}
 
@@ -94,11 +97,6 @@ public class Coligada implements BaseEntity, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Coligada other = (Coligada) obj;
-		if (ativo == null) {
-			if (other.ativo != null)
-				return false;
-		} else if (!ativo.equals(other.ativo))
-			return false;
 		if (cnpj == null) {
 			if (other.cnpj != null)
 				return false;
@@ -113,6 +111,11 @@ public class Coligada implements BaseEntity, Serializable {
 			if (other.razaoSocial != null)
 				return false;
 		} else if (!razaoSocial.equals(other.razaoSocial))
+			return false;
+		if (situacao == null) {
+			if (other.situacao != null)
+				return false;
+		} else if (!situacao.equals(other.situacao))
 			return false;
 		return true;
 	}

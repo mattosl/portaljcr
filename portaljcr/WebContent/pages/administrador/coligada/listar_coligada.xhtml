@@ -28,12 +28,18 @@
 					        <h:outputText value="#{coligada.id}" />
 					    </p:column>
 						
-					    <p:column headerText="Nome" styleClass="col-md-8" style="text-align:center;">
+					    <p:column headerText="Nome" styleClass="col-md-7" style="text-align:center;">
 					        <h:outputText value="#{coligada.razaoSocial}" />
 					    </p:column>
 					 
 					    <p:column headerText="CNPJ" style="text-align:center;">
 					        <h:outputText value="#{coligada.cnpjFormatado}" />
+					    </p:column>
+					    
+					    <p:column headerText="CNPJ" style="text-align:center;">
+					        <p:inputSwitch value="#{coligada.situacao}" onLabel="ATIVO" offLabel="INATIVO">
+           						<p:ajax listener="#{coligadaController.ativarInativar(coligada)}" />
+					        </p:inputSwitch>
 					    </p:column>
 					    
 					</p:dataTable>

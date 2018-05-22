@@ -38,5 +38,45 @@ public class ColigadaBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarColigadas" }, e);
 		}
 	}
+	
+	/**
+	 * Método responsavel por ativar coligada
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 22/05/2018
+	 * @param coligada : Coligada
+	 * @throws ApplicationException
+	 */
+	public void ativar(Coligada coligada) throws ApplicationException {
+		try {
+			coligada.setSituacao(Boolean.TRUE);
+			daoColigada.alterar(coligada);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ativar" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por inativar coligada
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 22/05/2018
+	 * @param coligada : Coligada
+	 * @throws ApplicationException
+	 */
+	public void inativar(Coligada coligada) throws ApplicationException {
+		try {
+			coligada.setSituacao(Boolean.FALSE);
+			daoColigada.alterar(coligada);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "inativar" }, e);
+		}
+	}
 
 }

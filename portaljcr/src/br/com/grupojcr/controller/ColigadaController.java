@@ -13,6 +13,7 @@ import br.com.grupojcr.business.ColigadaBusiness;
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewScoped
@@ -46,8 +47,32 @@ public class ColigadaController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarProcesso" }, e);
 		}
 	}
-
-
+	
+	/**
+	 * Método responsavel por ativar/inativar
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 22/05/2018
+	 * @param coligada : Coligada
+	 * @throws ApplicationException
+	 */
+	public void ativarInativar(Coligada coligada) throws ApplicationException {
+		try {
+			if(coligada.getSituacao()) {
+				coligadaBusiness.ativar(coligada);
+				Message.setMessage("coligada.ativar");
+			} else {
+				coligadaBusiness.inativar(coligada);
+				Message.setMessage("coligada.inativar");
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ativarInativar" }, e);
+		}
+	}
+	
 	public List<Coligada> getListaColigada() {
 		return listaColigada;
 	}

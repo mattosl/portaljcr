@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dto.FiltroUsuario;
 import br.com.grupojcr.entity.Usuario;
-import br.com.grupojcr.enumerator.SituacaoUsuario;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -72,8 +71,8 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 				sb.append("AND usuario.usuario = :usuario ");
 			}
 			
-			if(!filtro.getAtivo().equals(3)) {
-				sb.append("AND usuario.situacao = :ativo ");
+			if(Util.isNotNull(filtro.getSituacao())) {
+				sb.append("AND usuario.situacao = :situacao ");
 			}
 			
 			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
@@ -86,8 +85,8 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 				query.setParameter("usuario", filtro.getUsuario());
 			}
 			
-			if(!filtro.getAtivo().equals(3)) {
-				query.setParameter("ativo", SituacaoUsuario.obterPorCodigo(filtro.getAtivo()));
+			if(Util.isNotNull(filtro.getSituacao())) {
+				query.setParameter("situacao", filtro.getSituacao() ? 1 : 0);
 			}
 			
 			return query.getResultList().size();
@@ -114,8 +113,8 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 				sb.append("AND usuario.usuario = :usuario ");
 			}
 			
-			if(!filtro.getAtivo().equals(3)) {
-				sb.append("AND usuario.situacao = :ativo ");
+			if(Util.isNotNull(filtro.getSituacao())) {
+				sb.append("AND usuario.situacao = :situacao ");
 			}
 			
 			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
@@ -128,8 +127,8 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 				query.setParameter("usuario", filtro.getUsuario());
 			}
 			
-			if(!filtro.getAtivo().equals(3)) {
-				query.setParameter("ativo", SituacaoUsuario.obterPorCodigo(filtro.getAtivo()));
+			if(Util.isNotNull(filtro.getSituacao())) {
+				query.setParameter("situacao", filtro.getSituacao() ? 1 : 0);
 			}
 			
 			if(Util.isNotNull(first) && Util.isNotNull(pageSize)){

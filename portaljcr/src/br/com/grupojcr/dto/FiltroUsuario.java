@@ -4,7 +4,7 @@ public class FiltroUsuario {
 	
 	private String nome;
 	private String usuario;
-	private Integer ativo;
+	private Boolean situacao;
 	
 	public String getNome() {
 		return nome;
@@ -18,12 +18,11 @@ public class FiltroUsuario {
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	public Integer getAtivo() {
-		return ativo;
+	public Boolean getSituacao() {
+		return situacao;
 	}
-	public void setAtivo(Integer ativo) {
-		this.ativo = ativo;
+	public void setSituacao(Boolean situacao) {
+		this.situacao = situacao;
 	}
-	
 
 }
