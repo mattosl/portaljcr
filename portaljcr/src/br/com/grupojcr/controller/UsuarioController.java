@@ -9,12 +9,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
+import br.com.grupojcr.business.LoginBusiness;
 import br.com.grupojcr.business.UsuarioBusiness;
 import br.com.grupojcr.dto.FiltroUsuario;
 import br.com.grupojcr.entity.datamodel.UsuarioDataModel;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewScoped
@@ -31,6 +34,9 @@ public class UsuarioController implements Serializable {
 	
 	@EJB
 	private UsuarioBusiness usuarioBusiness;
+	
+	@EJB
+	private LoginBusiness loginBusiness;
 	
 	@Inject
 	private UsuarioDataModel dataModel;
@@ -62,6 +68,8 @@ public class UsuarioController implements Serializable {
 	 */
 	public void pesquisar() throws ApplicationException {
 		try {
+			PrimeFaces.current().executeScript("PF('widgetTabelaUsuario').getPaginator().setPage(0);");
+			PrimeFaces.current().executeScript("PF('widgetTabelaUsuario').clearFilters();");
 			
 			if(usuarioBusiness.obterQtdUsuario(getFiltro()) == 0) {
 				setExibirResultado(Boolean.FALSE);
@@ -76,6 +84,25 @@ public class UsuarioController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "pesquisar" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por sincronizar com AD os usuários
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 05/04/2018
+	 * @throws ApplicationException
+	 */
+	public void sincronizar() throws ApplicationException {
+		try {
+			loginBusiness.sincronizarUsuarios();
+			Message.setMessage("usuario.sincronizado");
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "sincronizar" }, e);
 		}
 	}
 	

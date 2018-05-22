@@ -37,7 +37,7 @@
 					    </p:column>
 					    
 					    <p:column headerText="Ativar/Inativar" style="text-align:center;">
-					        <p:inputSwitch value="#{coligada.situacao}" onLabel="ATIVO" offLabel="INATIVO">
+					        <p:inputSwitch value="#{coligada.situacao}" onLabel="ATIVO" offLabel="INATIVO" style="font-size: 12px;">
            						<p:ajax listener="#{coligadaController.ativarInativar(coligada)}" />
 					        </p:inputSwitch>
 					    </p:column>

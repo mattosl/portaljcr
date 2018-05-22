@@ -1,15 +1,21 @@
 package br.com.grupojcr.business;
 
+import java.util.List;
+
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.ad.ActiveDirectory;
+import br.com.grupojcr.ad.UsuarioLDAP;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -61,6 +67,41 @@ public class LoginBusiness {
 	public void excluirUsuario(Usuario usuario) throws ApplicationException {
 		try {
 			daoUsuario.excluir(usuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public void sincronizarUsuarios() throws ApplicationException {
+		try {
+			List<UsuarioLDAP> usuarios = ActiveDirectory.listarUsuarios();
+			
+			if(CollectionUtils.isNotEmpty(usuarios)) {
+				for(UsuarioLDAP user : usuarios) {
+					Usuario usuarioSistema = daoUsuario.obterUsuario(user.getUsuario());
+					
+					if(Util.isNotNull(usuarioSistema)) {
+						usuarioSistema.setEmail(user.getEmail());
+						usuarioSistema.setUsuario(user.getUsuario());
+						usuarioSistema.setNome(user.getNomeCompleto());
+						usuarioSistema.setSituacao(Boolean.TRUE);
+						
+						daoUsuario.alterar(usuarioSistema);
+					} else {
+						usuarioSistema = new Usuario();
+						usuarioSistema.setEmail(user.getEmail());
+						usuarioSistema.setUsuario(user.getUsuario());
+						usuarioSistema.setNome(user.getNomeCompleto());
+						usuarioSistema.setSituacao(Boolean.TRUE);
+						
+						daoUsuario.incluir(usuarioSistema);
+					}
+				}
+			}
+				
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 		} catch (Exception e) {

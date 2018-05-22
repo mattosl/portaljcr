@@ -26,7 +26,7 @@ public class AgendarQuartzServlet extends HttpServlet {
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			
-			agendarMonitoramentoXML(scheduler);
+//			agendarMonitoramentoXML(scheduler);
 
 		} catch (Exception e) {
 			log.error(KEY_ERRO, e);

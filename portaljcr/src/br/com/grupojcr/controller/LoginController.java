@@ -2,6 +2,7 @@ package br.com.grupojcr.controller;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -10,12 +11,14 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
 import br.com.grupojcr.ad.ActiveDirectory;
 import br.com.grupojcr.ad.UsuarioLDAP;
 import br.com.grupojcr.business.LoginBusiness;
+import br.com.grupojcr.entity.Grupo;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
@@ -70,7 +73,7 @@ public class LoginController implements Serializable {
 				if(Util.isNotNull(user)) {
 					user.setDtUltimoLogin(Calendar.getInstance().getTime());
 
-					if(user.getSituacao()) {
+					if(!user.getSituacao()) {
 						user.setSituacao(Boolean.TRUE);
 					}
 					
@@ -125,6 +128,35 @@ public class LoginController implements Serializable {
     	return navegacaoController.toLogin();
          
     }
+    
+    /**
+     * Login operation.
+     * @return
+	 * @throws ApplicationException 
+     */
+    public Boolean hasGroup(List<String> grupos) throws ApplicationException {
+    	try {
+    		Usuario user = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+    		if(Util.isNotNull(user)) {
+    			if(CollectionUtils.isNotEmpty(user.getGrupos())) {
+    				for(Grupo grupo : user.getGrupos()) {
+    					if(grupos.contains(grupo.getNome())) {
+    						return Boolean.TRUE;
+    					}
+    				}
+    			}
+    		}
+    	} catch (Exception e) {
+    		LOG.error(e.getMessage(), e);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ops!", "Sistema indisponível, contacte o administrador.");
+        
+			PrimeFaces.current().dialog().showMessageDynamic(message);
+    	}
+    	return Boolean.FALSE;
+         
+    }
+    
+    
      
     /**
      * Logout operation.

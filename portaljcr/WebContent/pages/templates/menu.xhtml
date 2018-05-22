@@ -17,12 +17,12 @@
 			
 <!-- 		####### CONFIGURAÇÃO DO MENU ###### -->
 
-			<li class="#{activeMenu eq 'nfse' ? 'active' : ''}">
-				<p:link href="/pages/nfse/listar_nfse.xhtml" ajax="false" title="Solicitação de Compra">
-					<i class="fa fa-shopping-cart" title="Solicitação de Compra"></i> 
-					<span>Solicitação de Compra</span>
-				</p:link>
-			</li>
+<!-- 			<li class="#{activeMenu eq 'nfse' ? 'active' : ''}"> -->
+<!-- 				<p:link href="/pages/nfse/listar_nfse.xhtml" ajax="false" title="Solicitação de Compra"> -->
+<!-- 					<i class="fa fa-shopping-cart" title="Solicitação de Compra"></i>  -->
+<!-- 					<span>Solicitação de Compra</span> -->
+<!-- 				</p:link> -->
+<!-- 			</li> -->
 
 
 
@@ -36,7 +36,7 @@
 
 
 
-			<li class="treeview #{activeMenu eq 'administrador' ? 'active' : ''}">
+			<li class="treeview #{activeMenu eq 'administrador' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
 				<a href="#"> 
 					<i class="fa fa-gears"></i> <span>Configurações</span>
 					 <span class="pull-right-container">

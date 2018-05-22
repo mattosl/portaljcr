@@ -61,17 +61,17 @@
 											id="btn_pesquisar"
 											process="@form"
 											action="#{usuarioController.pesquisar()}"
-											update="@form, :gridForm"
+											update=":gridForm"
 											ajax="true" />
 									</div>
 									<div class="col-sm-4 col-md-4">
 										<p:commandButton
 											styleClass="btn btn-default"
-											icon="fa fa-refresh"
-											value="Atualizar Usuários"
-											action="#{usuarioController.atualizar()}"
+											icon="fa fa-download"
+											value="Sincronizar com Active Directory"
+											action="#{usuarioController.sincronizar()}"
 											id="btn_atualizar"
-											immediate="true"
+											update="@form, :gridForm"
 											ajax="true" />
 									</div>
 								</div>
@@ -81,7 +81,7 @@
 				</h:form>
 				
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<p:dataTable var="usuario" id="tableUsuario"
+					<p:dataTable var="usuario" id="tableUsuario" widgetVar="widgetTabelaUsuario"
 						value="#{usuarioController.dataModel}" 
 						tableStyle="table-layout: auto; word-break: keep-all;" 
 						rendered="#{usuarioController.exibirResultado}"
@@ -93,7 +93,7 @@
 							</p:commandLink>
 						</p:column>
 						
-					    <p:column headerText="Nome" styleClass="col-md-6" style="text-align:center;">
+					    <p:column headerText="Nome" styleClass="col-md-5">
 					        <h:outputText value="#{usuario.nome}" />
 					    </p:column>
 					 
@@ -101,6 +101,10 @@
 					        <h:outputText value="#{usuario.usuario}">
 					        	<f:convertNumber minFractionDigits="2" currencyCode="R$"/>
 					        </h:outputText>
+					    </p:column>
+					    
+					     <p:column headerText="E-mail" style="text-align:center;">
+					        <h:outputText value="#{usuario.email}" />
 					    </p:column>
 					    
 					    
@@ -111,7 +115,7 @@
 					    </p:column>
 					    
 					    <p:column headerText="Situação" style="text-align:center;">
-					        <span class="label label-#{usuario.situacao ? 'success' : 'danger' }">#{usuario.situacao ? 'Ativo' : 'Inativo'}</span>
+					        <span class="label label-#{usuario.situacao ? 'success' : 'danger' }">#{usuario.situacao ? 'ATIVO' : 'INATIVO'}</span>
 					    </p:column>
 					    
 					</p:dataTable>

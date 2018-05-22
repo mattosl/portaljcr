@@ -1,6 +1,8 @@
 package br.com.grupojcr.ad;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -66,6 +68,44 @@ public class ActiveDirectory {
         } catch (Exception e) {           
             return null;
         }
+    }
+    
+    @SuppressWarnings("rawtypes")
+	public static List<UsuarioLDAP> listarUsuarios() {
+    	List<UsuarioLDAP> usuarios = new ArrayList<UsuarioLDAP>();
+    	try {
+            DirContext ctx = getContext("administrator", "mnzxlkas*10");
+
+            if(ctx != null) {
+            	SearchControls constraints = new SearchControls();
+	            constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
+	            String[] attrIDs = { "sAMAccountName",
+	                    "mail",
+	                    "displayName"};
+	            constraints.setReturningAttributes(attrIDs);
+	            //First input parameter is search bas, it can be "CN=Users,DC=YourDomain,DC=com"
+	            //Second Attribute can be uid=username
+	            NamingEnumeration answer = ctx.search("ou=GrupoJCR,DC=grupojcr,DC=local", "(&(objectClass=user)(objectCategory=person))", constraints);
+	            while  (answer.hasMoreElements()) {
+	                Attributes attrs = ((SearchResult) answer.next()).getAttributes();
+	                try {
+		                UsuarioLDAP usuarioLdap = new UsuarioLDAP();
+		                usuarioLdap.setNomeCompleto((String) attrs.get("displayName").get());
+		                usuarioLdap.setUsuario((String) attrs.get("sAMAccountName").get());
+	                	usuarioLdap.setEmail((String) attrs.get("mail").get());
+	                
+	                	usuarios.add(usuarioLdap);
+	                } catch (NullPointerException e) {
+	                	continue;
+	                }
+	            }
+	            ctx.close();
+            }
+
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+    	return usuarios;
     }
     
 }

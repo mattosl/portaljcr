@@ -2,12 +2,17 @@ package br.com.grupojcr.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,6 +46,18 @@ public class Usuario implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_ULTIMO_LOGIN")
 	private Date dtUltimoLogin;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "TB_GRUPO_USUARIO", joinColumns = {
+			@JoinColumn(name = "ID_USUARIO") }, inverseJoinColumns = {
+			@JoinColumn(name = "ID_GRUPO") })
+	private Set<Grupo> grupos;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "TB_COLIGADA_USUARIO", joinColumns = {
+			@JoinColumn(name = "ID_USUARIO") }, inverseJoinColumns = {
+			@JoinColumn(name = "ID_COLIGADA") })
+	private Set<Coligada> coligadas;
 
 	public Long getId() {
 		return id;
@@ -90,6 +107,14 @@ public class Usuario implements Serializable {
 		this.situacao = situacao;
 	}
 
+	public Set<Grupo> getGrupos() {
+		return grupos;
+	}
+	
+	public void setGrupos(Set<Grupo> grupos) {
+		this.grupos = grupos;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -144,6 +169,7 @@ public class Usuario implements Serializable {
 			return false;
 		return true;
 	}
+
 
 
 }
