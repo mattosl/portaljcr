@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.model.LazyDataModel;
@@ -18,8 +16,6 @@ import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.Message;
 
-@Named
-@ViewScoped
 public class UsuarioDataModel extends LazyDataModel<Usuario> {
 
 	private static Logger log = Logger.getLogger(UsuarioDataModel.class);

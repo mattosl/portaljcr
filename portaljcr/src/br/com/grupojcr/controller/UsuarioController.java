@@ -4,23 +4,25 @@ import java.io.Serializable;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.view.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.grupojcr.business.LoginBusiness;
 import br.com.grupojcr.business.UsuarioBusiness;
 import br.com.grupojcr.dto.FiltroUsuario;
+import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.datamodel.UsuarioDataModel;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
 import br.com.grupojcr.util.exception.Message;
 
 @Named
-@ViewScoped
+@ViewAccessScoped
 @ControllerExceptionHandler
 public class UsuarioController implements Serializable {
 
@@ -31,6 +33,8 @@ public class UsuarioController implements Serializable {
 	private FiltroUsuario filtro;
 	
 	private Boolean exibirResultado;
+	
+	private Usuario usuario;
 	
 	@EJB
 	private UsuarioBusiness usuarioBusiness;
@@ -51,9 +55,6 @@ public class UsuarioController implements Serializable {
 	public void iniciarProcesso() throws ApplicationException {
 		try {
 			setFiltro(new FiltroUsuario());
-//		} catch (ApplicationException e) {
-//			LOG.info(e.getMessage(), e);
-//			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarProcesso" }, e);
@@ -68,14 +69,14 @@ public class UsuarioController implements Serializable {
 	 */
 	public void pesquisar() throws ApplicationException {
 		try {
-			PrimeFaces.current().executeScript("PF('widgetTabelaUsuario').getPaginator().setPage(0);");
-			PrimeFaces.current().executeScript("PF('widgetTabelaUsuario').clearFilters();");
 			
 			if(usuarioBusiness.obterQtdUsuario(getFiltro()) == 0) {
 				setExibirResultado(Boolean.FALSE);
 				throw new ApplicationException("message.datatable.noRecords", FacesMessage.SEVERITY_WARN);
 			}
 			
+			DataTable dt = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("gridForm:tableUsuario");
+			dt.setFirst(0);
 			dataModel.setFiltro(getFiltro());
 			setExibirResultado(Boolean.TRUE);
 		} catch (ApplicationException e) {
@@ -103,6 +104,21 @@ public class UsuarioController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "sincronizar" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por carregar tela de edição
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 23/05/2018
+	 * @throws ApplicationException
+	 */
+	public String iniciarEditar() throws ApplicationException {
+		try {
+			return "/pages/administrador/usuario/editar_usuario.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarEditar" }, e);
 		}
 	}
 	
@@ -137,6 +153,14 @@ public class UsuarioController implements Serializable {
 
 	public void setDataModel(UsuarioDataModel dataModel) {
 		this.dataModel = dataModel;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

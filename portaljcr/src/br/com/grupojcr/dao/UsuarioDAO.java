@@ -63,8 +63,6 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 		try {
 			
 			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
-			sb.append("LEFT JOIN FETCH usuario.grupos ");
-			sb.append("LEFT JOIN FETCH usuario.coligadas ");
 			sb.append("WHERE usuario.nome != null ");
 			
 			if(Util.isNotNull(filtro.getNome())) {
@@ -107,6 +105,8 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 		try {
 			
 			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
+			sb.append("LEFT JOIN FETCH usuario.grupos ");
+			sb.append("LEFT JOIN FETCH usuario.coligadas ");
 			sb.append("WHERE usuario.nome != null ");
 			
 			if(Util.isNotNull(filtro.getNome())) {
