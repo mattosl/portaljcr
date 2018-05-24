@@ -25,10 +25,138 @@
 							<div class="form-horizontal">
 								<div class="box-body">
 									<div class="form-group">
-										<label for="nome" class="col-sm-2 col-md-2 control-label">Nome:</label>
+										<div class="col-sm-2 col-md-2">
+											<label for="nome">Nome:</label>
+										</div>
 	
 										<div class="col-sm-10 col-md-10">
-											<p:outputLabel id="nome" value="#{usuarioController.usuario.nome}"></p:outputLabel>
+											<p:outputLabel id="nome" value="#{usuarioController.usuario.nome}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="usuario">Usuário:</label>
+										</div>
+	
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="usuario" value="#{usuarioController.usuario.usuario}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="email">E-mail:</label>
+										</div>
+	
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="email" value="#{usuarioController.usuario.email}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="situacao">Situação:</label>
+										</div>
+	
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="situacao" value="#{usuarioController.usuario.situacao ? 'ATIVO' : 'INATIVO'}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12 col-md-12">
+											<p:panel toggleable="false" id="painelGrupos">
+												<div class="box-header with-border">
+							             			<h3 class="box-title">Grupos do Usuário</h3>
+							            		</div>
+												<div class="form-horizontal">
+													<div class="box-body">
+														<div class="form-group">
+															<label for="selectGrupo" class="col-sm-2 control-label">Grupos: *</label>
+	
+															<div class="col-sm-9 col-md-9">
+																<h:selectOneMenu id="selectGrupo" styleClass="form-control" value="#{usuarioController.grupo}">
+														        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+														        	<f:selectItems value="#{usuarioController.listaGrupo}" var="grupo" itemLabel="#{grupo.nome}" itemValue="#{grupo}" />
+														        </h:selectOneMenu>
+															</div>
+															<div class="col-sm-1 col-md-1">
+																<p:commandButton
+																	styleClass="btn btn-default"
+																	icon="fa fa-plus"
+																	process="@this, @form:selectGrupo"
+																	update="@form:painelGrupos"
+																	action="#{usuarioController.adicionarGrupo()}"
+																	id="btn_adicionarGrupo"
+																	ajax="true" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<p:dataTable var="grupo" 
+													value="#{usuarioController.usuario.grupos}" 
+													tableStyle="table-layout: auto; word-break: keep-all;"
+													emptyMessage="Nenhum grupo cadastrado.">
+													
+												 
+												    <p:column headerText="Descrição" style="font-size:12px;" >
+												    	<h:outputText value="#{grupo.nome}" />
+												    </p:column>
+													
+													<p:column headerText="Excluir" style="text-align: center;" styleClass="col-sm-1 col-md-1">
+														<p:commandLink ajax="true" process="@this" action="#{usuarioController.removerGrupo(grupo)}" update="@form:painelGrupos">
+															<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
+														</p:commandLink>
+													</p:column>
+												</p:dataTable>
+											</p:panel>
+											<br />
+											<p:panel toggleable="false" id="painelColigada">
+												<div class="box-header with-border">
+							             			<h3 class="box-title">Coligadas do Usuário</h3>
+							            		</div>
+												<div class="form-horizontal">
+													<div class="box-body">
+														<div class="form-group">
+															<label for="selectColigada" class="col-sm-2 control-label">Coligadas: *</label>
+	
+															<div class="col-sm-9 col-md-9">
+																<h:selectOneMenu id="selectColigada" styleClass="form-control" value="#{usuarioController.coligada}">
+														        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+														        	<f:selectItems value="#{usuarioController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
+														        </h:selectOneMenu>
+															</div>
+															<div class="col-sm-1 col-md-1">
+																<p:commandButton
+																	styleClass="btn btn-default"
+																	icon="fa fa-plus"
+																	process="@this, @form:selectColigada"
+																	update="@form:painelColigada"
+																	action="#{usuarioController.adicionarColigada()}"
+																	id="btn_adicionarColigada"
+																	ajax="true" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<p:dataTable var="coligada" 
+													value="#{usuarioController.usuario.coligadas}" 
+													tableStyle="table-layout: auto; word-break: keep-all;"
+													emptyMessage="Nenhuma coligada cadastrada.">
+													
+												 
+												    <p:column headerText="Razão Social" style="font-size:12px;" >
+												    	<h:outputText value="#{coligada.razaoSocial}" />
+												    </p:column>
+												    
+												    <p:column headerText="CNPJ" style="font-size:12px;text-align:center;" styleClass="col-sm-2 col-md-2" >
+												    	<h:outputText value="#{coligada.cnpjFormatado}" />
+												    </p:column>
+													
+													<p:column headerText="Excluir" style="text-align: center;" styleClass="col-sm-1 col-md-1">
+														<p:commandLink ajax="true" process="@this" action="#{usuarioController.removerColigada(coligada)}" update="@form:painelColigada">
+															<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
+														</p:commandLink>
+													</p:column>
+												</p:dataTable>
+											</p:panel>
 										</div>
 									</div>
 								</div>
@@ -36,22 +164,21 @@
 									<div class="col-sm-4 col-md-4">
 										<p:commandButton
 											styleClass="btn btn-default"
-											icon="fa fa-search"
-											value="Pesquisar"
-											id="btn_pesquisar"
-											process="@form"
-											action="#{usuarioController.pesquisar()}"
-											update=""
-											ajax="true" />
+											icon="fa fa-arrow-left"
+											value="Voltar"
+											action="#{usuarioController.voltar()}"
+											id="btn_voltar"
+											immediate="true"
+											ajax="false" />
 									</div>
 									<div class="col-sm-4 col-md-4">
 										<p:commandButton
 											styleClass="btn btn-default"
-											icon="fa fa-download"
-											value="Sincronizar com Active Directory"
-											action="#{usuarioController.sincronizar()}"
-											id="btn_atualizar"
-											update="@form"
+											icon="fa fa-check"
+											value="Salvar"
+											id="btn_salvar"
+											process="@form"
+											action="#{usuarioController.salvar()}"
 											ajax="true" />
 									</div>
 								</div>

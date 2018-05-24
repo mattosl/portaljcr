@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
 
@@ -59,6 +61,26 @@ public class UsuarioBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUsuarioPaginado" }, e);
+		}
+	}
+
+	/**
+	 * Método responsavel por alterar usuário
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 21/05/2018
+	 * @param usuario : Usuario
+	 * @throws ApplicationException
+	 */
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public void alterar(Usuario usuario) throws ApplicationException {
+		try {
+			daoUsuario.alterar(usuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "alterar" }, e);
 		}
 	}
 

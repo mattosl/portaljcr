@@ -42,6 +42,26 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Usuario obterUsuarioPorId(Long idUsuario) throws ApplicationException {
+		try{
+			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
+			sb.append("LEFT JOIN FETCH usuario.grupos ");
+			sb.append("LEFT JOIN FETCH usuario.coligadas ");
+			sb.append("WHERE usuario.id = :idUsuario ");
+			
+			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
+			query.setParameter("idUsuario", idUsuario);
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterUsuarioPorId" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Usuario obterAdministrador() throws ApplicationException {
 		try{
 			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
