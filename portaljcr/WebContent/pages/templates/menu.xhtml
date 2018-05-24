@@ -54,7 +54,7 @@
 							<span>Minhas Solicitações</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}">
+					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacao.xhtml" ajax="false">
 							<i class="fa fa-pencil-square-o"></i>
 							<span>Cotações</span>
