@@ -34,6 +34,35 @@
 <!-- 				</p:link> -->
 <!-- 			</li> -->
 
+			<li class="treeview #{activeMenu eq 'solicitacaoCompra' ? 'active' : ''}">
+				<a href="#"> 
+					<i class="fa fa-shopping-cart"></i> <span>Solicitação de Compra</span>
+					 <span class="pull-right-container">
+	                 	<i class="fa fa-angle-left pull-right"></i>
+	                 </span>
+				</a>
+				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'novaSolicitacao' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/solicitacao/editar_solicitacao.xhtml" ajax="false">
+							<i class="fa fa-cart-plus"></i>
+							<span>Nova Solicitação</span>
+						</p:link>
+					</li>
+					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/solicitacao/listar_solicitacao.xhtml" ajax="false">
+							<i class="fa fa-list-alt"></i>
+							<span>Minhas Solicitações</span>
+						</p:link>
+					</li>
+					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacao.xhtml" ajax="false">
+							<i class="fa fa-pencil-square-o"></i>
+							<span>Cotações</span>
+						</p:link>
+					</li>
+				</ul>
+			</li>
+
 
 
 			<li class="treeview #{activeMenu eq 'administrador' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
@@ -56,6 +85,13 @@
 							<span>Coligadas</span>
 						</p:link>
 					</li>
+					<li class="#{activeSubmenu eq 'grupoCotacao' ? 'active' : ''}">
+						<p:link href="/pages/administrador/grupoCotacao/listar_grupoCotacao.xhtml" ajax="false">
+							<i class="fa fa-group"></i>
+							<span>Grupos de Cotação</span>
+						</p:link>
+					</li>
+					
 				</ul>
 			</li>
 			
