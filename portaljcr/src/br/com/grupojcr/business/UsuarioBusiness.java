@@ -6,12 +6,14 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.faces.application.FacesMessage;
 
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.FiltroUsuario;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -63,6 +65,31 @@ public class UsuarioBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUsuarioPaginado" }, e);
 		}
 	}
+	
+	/**
+	 * Método responsavel por listar usuários por nome
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 21/05/2018
+	 * @param nome : String
+	 * @return List<Usuario>
+	 * @throws ApplicationException
+	 */
+	public List<Usuario> listarUsuarioPorNome(String nome) throws ApplicationException {
+		try {
+			if(TreatString.isNotBlank(nome)) {
+				return daoUsuario.listarUsuarioPorNome(nome);
+			} else {
+				throw new ApplicationException("message.empty", new String [] {"Nome é obrigatório"}, FacesMessage.SEVERITY_WARN);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUsuarioPorNome" }, e);
+		}
+	}
+
 
 	/**
 	 * Método responsavel por alterar usuário

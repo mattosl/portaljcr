@@ -1,7 +1,6 @@
 package br.com.grupojcr.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,16 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "TB_USUARIO")
-public class Usuario implements BaseEntity, Serializable {
+@Table(name = "TB_GRUPO_COTACAO")
+public class GrupoCotacao implements BaseEntity, Serializable {
 	
-	private static final long serialVersionUID = 3249712048111102804L;
+	private static final long serialVersionUID = -3441389530184828343L;
 
 	@Id
 	@Column(name = "ID", nullable = false)
@@ -34,31 +31,15 @@ public class Usuario implements BaseEntity, Serializable {
 	@Column(name = "NOME", length = 100, nullable = false)
 	private String nome;
 	
-	@Column(name = "USUARIO", length = 50, nullable = false)
-	private String usuario;
-	
-	@Column(name = "EMAIL", length = 100, nullable = false)
-	private String email;
-	
 	@Column(name = "SITUACAO", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean situacao;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DT_ULTIMO_LOGIN")
-	private Date dtUltimoLogin;
-	
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-	@JoinTable(name = "TB_COLIGADA_USUARIO", joinColumns = {
-			@JoinColumn(name = "ID_USUARIO", referencedColumnName = "id") }, inverseJoinColumns = {
-			@JoinColumn(name = "ID_COLIGADA", referencedColumnName = "id") })
-	private Set<Coligada> coligadas;
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "TB_GRUPO_USUARIO", joinColumns = {
-			@JoinColumn(name = "ID_USUARIO", referencedColumnName = "id") }, inverseJoinColumns = {
-			@JoinColumn(name = "ID_GRUPO", referencedColumnName = "id") })
-	private Set<Grupo> grupos;
+	@JoinTable(name = "TB_GRUPO_COTACAO_USUARIO", joinColumns = {
+			@JoinColumn(name = "ID_GRUPO_COTACAO", referencedColumnName = "id") }, inverseJoinColumns = {
+			@JoinColumn(name = "ID_USUARIO", referencedColumnName = "id") })
+	private Set<Usuario> usuarios;
 
 	public Long getId() {
 		return id;
@@ -76,30 +57,6 @@ public class Usuario implements BaseEntity, Serializable {
 		this.nome = nome;
 	}
 
-	public String getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
-	public Date getDtUltimoLogin() {
-		return dtUltimoLogin;
-	}
-
-	public void setDtUltimoLogin(Date dtUltimoLogin) {
-		this.dtUltimoLogin = dtUltimoLogin;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public Boolean getSituacao() {
 		return situacao;
 	}
@@ -108,20 +65,12 @@ public class Usuario implements BaseEntity, Serializable {
 		this.situacao = situacao;
 	}
 
-	public Set<Grupo> getGrupos() {
-		return grupos;
+	public Set<Usuario> getUsuarios() {
+		return usuarios;
 	}
-	
-	public void setGrupos(Set<Grupo> grupos) {
-		this.grupos = grupos;
-	}
-	
-	public Set<Coligada> getColigadas() {
-		return coligadas;
-	}
-	
-	public void setColigadas(Set<Coligada> coligadas) {
-		this.coligadas = coligadas;
+
+	public void setUsuarios(Set<Usuario> usuarios) {
+		this.usuarios = usuarios;
 	}
 
 	@Override
@@ -140,7 +89,7 @@ public class Usuario implements BaseEntity, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Usuario other = (Usuario) obj;
+		GrupoCotacao other = (GrupoCotacao) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

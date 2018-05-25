@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dto.FiltroUsuario;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -166,6 +167,31 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ApplicationException("message.default.erro", new String[] { "listarUsuarioPaginado" }, e);
+		}
+	}
+
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public List<Usuario> listarUsuarioPorNome(String nome) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
+			
+			if(TreatString.isNotBlank(nome)) {
+				sb.append("WHERE usuario.nome like :nome ");
+			}
+			
+			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
+			
+			if(TreatString.isNotBlank(nome)) {
+				query.setParameter("nome", "%" + nome.trim() + "%");
+			}
+			
+			return query.getResultList();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "listarUsuarioPorNome" }, e);
 		}
 	}
 	
