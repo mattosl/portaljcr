@@ -42,6 +42,17 @@ public class GrupoCotacaoBusiness {
 		}
 	}
 	
+	public List<GrupoCotacao> listarGruposAtivos() throws ApplicationException {
+		try {
+			return daoGrupoCotacao.listarGrupoCotacaoAtivos();
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarGruposAtivos" }, e);
+		}
+	}
+	
 	public void salvar(GrupoCotacao gc) throws ApplicationException {
 		try {
 			if(TreatString.isBlank(gc.getNome())) {
@@ -50,7 +61,7 @@ public class GrupoCotacaoBusiness {
 			if(CollectionUtils.isEmpty(gc.getUsuarios())) {
 				throw new ApplicationException("grupo.cotacao.usuario.vazio", FacesMessage.SEVERITY_WARN);
 			}
-			if(daoGrupoCotacao.verificarGrupoCotacaoExiste(gc.getNome())) {
+			if(daoGrupoCotacao.verificarGrupoCotacaoExiste(gc.getNome(), gc.getId())) {
 				throw new ApplicationException("grupo.cotacao.existente", FacesMessage.SEVERITY_WARN);
 			}
 			
@@ -74,6 +85,46 @@ public class GrupoCotacaoBusiness {
 			throw e;
 		} catch (Exception e) {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por ativar grupo de cotação
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 22/05/2018
+	 * @param coligada : Coligada
+	 * @throws ApplicationException
+	 */
+	public void ativar(GrupoCotacao gc) throws ApplicationException {
+		try {
+			gc.setSituacao(Boolean.TRUE);
+			daoGrupoCotacao.alterar(gc);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ativar" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por inativar grupo de cotação
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 22/05/2018
+	 * @param coligada : Coligada
+	 * @throws ApplicationException
+	 */
+	public void inativar(GrupoCotacao gc) throws ApplicationException {
+		try {
+			gc.setSituacao(Boolean.FALSE);
+			daoGrupoCotacao.alterar(gc);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "inativar" }, e);
 		}
 	}
 }

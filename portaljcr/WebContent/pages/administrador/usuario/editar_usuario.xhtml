@@ -12,7 +12,7 @@
 		<ui:param name="activeSubmenu" value="usuarios"/>
     	<ui:param name="activeMenu" value="administrador"/>
 			
-    	<ui:define name="pageTitle"><i class="fa fa-home fa-1x cor-padrao"></i> Usuários</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-users fa-1x cor-padrao"></i> Usuários</ui:define>
     	<ui:define name="pageDescription">Editar</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -25,7 +25,7 @@
 							<div class="form-horizontal">
 								<div class="box-body">
 									<div class="form-group">
-										<div class="col-sm-2 col-md-2">
+										<div class="col-sm-2 col-md-2 control-label">
 											<label for="nome">Nome:</label>
 										</div>
 	
@@ -34,7 +34,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="col-sm-2 col-md-2">
+										<div class="col-sm-2 col-md-2 control-label">
 											<label for="usuario">Usuário:</label>
 										</div>
 	
@@ -43,7 +43,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="col-sm-2 col-md-2">
+										<div class="col-sm-2 col-md-2 control-label">
 											<label for="email">E-mail:</label>
 										</div>
 	
@@ -52,7 +52,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="col-sm-2 col-md-2">
+										<div class="col-sm-2 col-md-2 control-label">
 											<label for="situacao">Situação:</label>
 										</div>
 	
@@ -62,7 +62,7 @@
 									</div>
 									<div class="form-group">
 										<div class="col-sm-12 col-md-12">
-											<p:panel toggleable="false" id="painelGrupos">
+											<p:panel toggleable="false" styleClass="box box-danger" id="painelGrupos">
 												<div class="box-header with-border">
 							             			<h3 class="box-title">Grupos do Usuário</h3>
 							            		</div>
@@ -108,7 +108,7 @@
 												</p:dataTable>
 											</p:panel>
 											<br />
-											<p:panel toggleable="false" id="painelColigada">
+											<p:panel toggleable="false" styleClass="box box-danger" id="painelColigada">
 												<div class="box-header with-border">
 							             			<h3 class="box-title">Coligadas do Usuário</h3>
 							            		</div>

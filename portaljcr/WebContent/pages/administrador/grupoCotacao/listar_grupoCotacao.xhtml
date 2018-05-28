@@ -15,7 +15,7 @@
 		<f:metadata>
 			<f:viewAction action="#{grupoCotacaoController.iniciarProcesso()}" />
 		</f:metadata>
-    	<ui:define name="pageTitle"><i class="fa fa-home fa-1x cor-padrao"></i> Grupos de Cotação</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-pencil-square fa-1x cor-padrao"></i> Grupos de Cotação</ui:define>
     	<ui:define name="pageDescription">Consultar</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -56,8 +56,10 @@
 							        <h:outputText value="#{grupoCotacao.usuarios.size()}" />
 							    </p:column>
 							 
-							    <p:column headerText="Situação" styleClass="col-md-2" style="text-align:center;">
-							        <span class="label label-#{grupoCotacao.situacao ? 'success' : 'danger' }">#{grupoCotacao.situacao ? 'ATIVO' : 'INATIVO'}</span>
+							    <p:column headerText="Ativar/Inativar" style="text-align:center;">
+							        <p:inputSwitch value="#{grupoCotacao.situacao}" onLabel="ATIVO" offLabel="INATIVO" style="font-size: 12px;">
+		           						<p:ajax listener="#{grupoCotacaoController.ativarInativar(grupoCotacao)}" />
+							        </p:inputSwitch>
 							    </p:column>
 							</p:dataTable>
 						</div>

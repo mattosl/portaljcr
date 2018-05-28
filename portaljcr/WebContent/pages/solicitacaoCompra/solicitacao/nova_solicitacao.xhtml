@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="novaSolicitacao"/>
+    	<ui:param name="activeMenu" value="solicitacaoCompra"/>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Nova Solicitação</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelCadastro" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Solicitação de Compra</h3>
+		            		</div>
+							<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="centroCusto">Centro de Custo: *</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:selectOneMenu id="centroCusto" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
+									        </h:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="naturezaOrcamentaria">Natureza Orçamentária: *</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:selectOneMenu id="naturezaOrcamentaria" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
+									        </h:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="modalidade">Modalidade: *</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:selectOneMenu id="modalidade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
+									        </h:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="prioridade">Prioridade: *</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:selectOneMenu id="prioridade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
+									        </h:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="motivoCompra">Motivo da Compra: *</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:selectOneMenu id="motivoCompra" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
+									        </h:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:inputText id="sugestaoFornecedor"  styleClass="form-control" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="localEntrega">Local de Entrega: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:inputText id="localEntrega"  styleClass="form-control" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="valorAproximado">Valor Aproximado: </label>
+										</div>
+	
+										<div class="col-sm-2 col-md-2">
+											<div class="input-group">
+									            <span class="input-group-addon">R$</span>
+            									<h:inputText id="valorAproximado"  styleClass="form-control" />
+            									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
+									        </div>
+										</div>
+									</div>
+								</div>
+								<p:panel toggleable="false" id="painelItens" styleClass="box box-danger">
+									<div class="box-header with-border">
+				             			<h3 class="box-title">Itens</h3>
+				            		</div>
+				            		<div class="form-horizontal">
+										<div class="box-body">
+											<div class="form-group">
+												<div class="col-sm-3 col-md-3">
+													<label for="teste">Valor Aproximado: </label>
+												</div>
+			
+												<div class="col-sm-2 col-md-2">
+													<div class="input-group">
+											            <span class="input-group-addon">R$</span>
+		            									<h:inputText id="teste"  styleClass="form-control" />
+		            									<p:watermark value="0,00" for="teste"></p:watermark>
+											        </div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</p:panel>
+								<div class="box-footer">
+									<div class="col-sm-3 col-md-3">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-arrow-left"
+											value="Anterior"
+											id="btn_anterior"
+											process="@form"
+											action="#{usuarioController.salvar()}"
+											ajax="true" />
+									</div>
+									<div class="col-sm-3 col-md-3 pull-right" >
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-check"
+											value="Salvar"
+											id="btn_salvar"
+											process="@form"
+											action="#{usuarioController.salvar()}"
+											ajax="true" />
+									</div>
+								</div>
+							</div>
+						</p:panel>
+					</f:validateBean>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

@@ -43,7 +43,7 @@
 				</a>
 				<ul class="treeview-menu">
 					<li class="#{activeSubmenu eq 'novaSolicitacao' ? 'active' : ''}">
-						<p:link href="/pages/solicitacaoCompra/solicitacao/editar_solicitacao.xhtml" ajax="false">
+						<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml" ajax="false">
 							<i class="fa fa-cart-plus"></i>
 							<span>Nova Solicitação</span>
 						</p:link>
@@ -54,10 +54,27 @@
 							<span>Minhas Solicitações</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
-						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacao.xhtml" ajax="false">
-							<i class="fa fa-pencil-square-o"></i>
-							<span>Cotações</span>
+				</ul>
+			</li>
+			
+			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
+				<a href="#"> 
+					<i class="fa fa-pencil-square-o"></i> <span>Cotação</span>
+					 <span class="pull-right-container">
+	                 	<i class="fa fa-angle-left pull-right"></i>
+	                 </span>
+				</a>
+				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'novaSolicitacao' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/solicitacao/editar_solicitacao.xhtml" ajax="false">
+							<i class="fa fa-files-o"></i>
+							<span>Minhas Cotações</span>
+						</p:link>
+					</li>
+					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/solicitacao/listar_solicitacao.xhtml" ajax="false">
+							<i class="fa fa-calculator"></i>
+							<span>Cotações Pendentes</span>
 						</p:link>
 					</li>
 				</ul>

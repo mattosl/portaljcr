@@ -71,9 +71,16 @@ public class GrupoCotacaoController implements Serializable {
 			FacesContext fc = FacesContext.getCurrentInstance();
 			fc.getExternalContext().getFlash().setKeepMessages(true);
 			
+			Boolean novo = Util.isNull(getGrupoCotacao().getId());
+			
 			grupoCotacaoBusiness.salvar(getGrupoCotacao());
 			
-			Message.setMessage("grupo.cotacao.salvar");
+			if(novo) {
+				Message.setMessage("grupo.cotacao.salvar.incluir");
+			} else {
+				Message.setMessage("grupo.cotacao.salvar.alterar");
+			}
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -163,6 +170,46 @@ public class GrupoCotacaoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluirUsuario" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por iniciar a edição do grupo de cotação
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 23/05/2018
+	 * @throws ApplicationException
+	 */
+	public String iniciarEditar() throws ApplicationException {
+		try {
+			return "/pages/administrador/grupoCotacao/editar_grupoCotacao.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarEditar" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por ativar/inativar
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 22/05/2018
+	 * @param coligada : Coligada
+	 * @throws ApplicationException
+	 */
+	public void ativarInativar(GrupoCotacao grupoCotacao) throws ApplicationException {
+		try {
+			if(grupoCotacao.getSituacao()) {
+				grupoCotacaoBusiness.ativar(grupoCotacao);
+				Message.setMessage("grupo.cotacao.ativar");
+			} else {
+				grupoCotacaoBusiness.inativar(grupoCotacao);
+				Message.setMessage("grupo.cotacao.inativar");
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ativarInativar" }, e);
 		}
 	}
 	

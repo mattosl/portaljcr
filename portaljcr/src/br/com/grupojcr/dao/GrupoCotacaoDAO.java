@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.entity.GrupoCotacao;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -38,13 +39,39 @@ public class GrupoCotacaoDAO extends GenericDAO<GrupoCotacao> {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public Boolean verificarGrupoCotacaoExiste(String nome) throws ApplicationException {
+	public List<GrupoCotacao> listarGrupoCotacaoAtivos() throws ApplicationException {
+		try{
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT gc FROM GrupoCotacao gc ");
+			sb.append("WHERE gc.situacao IS TRUE ");
+			sb.append("ORDER BY gc.nome ASC ");
+			
+			TypedQuery<GrupoCotacao> query = manager.createQuery(sb.toString(), GrupoCotacao.class);
+			
+			return query.getResultList();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException("message.default.erro", new String[] { "listarGrupoCotacaoAtivos" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Boolean verificarGrupoCotacaoExiste(String nome, Long idGrupoCotacao) throws ApplicationException {
 		try{
 			StringBuilder sb = new StringBuilder("SELECT DISTINCT gc FROM GrupoCotacao gc ");
 			sb.append("WHERE upper(gc.nome) like :nome ");
 			
+			if(Util.isNotNull(idGrupoCotacao)) {
+				sb.append("AND gc.id != :idGrupo ");
+			}
+			
 			TypedQuery<GrupoCotacao> query = manager.createQuery(sb.toString(), GrupoCotacao.class);
 			query.setParameter("nome", nome.toUpperCase().trim());
+			
+			if(Util.isNotNull(idGrupoCotacao)) {
+				query.setParameter("idGrupo", idGrupoCotacao);
+			}
 			
 			if(query.getResultList().size() > 0) {
 				return Boolean.TRUE;
