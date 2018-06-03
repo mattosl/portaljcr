@@ -27,13 +27,30 @@
 		            		</div>
 							<div class="form-horizontal">
 								<div class="box-body">
+									
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="selectPrioridade">Prioridade: *</label>
+										</div>
+	
+										<div class="col-sm-3 col-md-3">
+											<h:selectOneMenu id="selectPrioridade" styleClass="form-control" value="#{chamadoController.chamadoDTO.prioridade}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{chamadoController.listaPrioridade}" var="prioridade" itemLabel="#{prioridade.descricao}" itemValue="#{prioridade}" />
+									        </h:selectOneMenu>
+										</div>
+										<!--  <div class="col-sm-1 col-md-1">
+               								<p:outputLabel id="fade"><span class="fa fa-info-circle" style="margin-top:8px;" /></p:outputLabel> 
+               								<p:tooltip id="toolTipFade" for="fade" value="Prioridade:&lt;br/b&gt;Alta: Até 8h&lt;br/b&gt;Média: até 24h&lt;br/b&gt;Baixa: Até 48h&lt;br/b&gt;" position="top" escape="false" />
+										</div> -->
+									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
 											<label for="selectCategoria">Categoria: *</label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="selectCategoria" styleClass="form-control">
+											<h:selectOneMenu id="selectCategoria" styleClass="form-control" value="#{chamadoController.chamadoDTO.subcategoria}" >
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{chamadoController.listaCategoria}" />
 									        </h:selectOneMenu>
@@ -41,127 +58,72 @@
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="prioridade">Prioridade: *</label>
-										</div>
-	
-										<div class="col-sm-3 col-md-3">
-											<h:selectOneMenu id="prioridade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItem itemLabel="Alta" itemValue="Alta" />
-									        	<f:selectItem itemLabel="Média" itemValue="Média" />
-									        	<f:selectItem itemLabel="Baixa" itemValue="Baixa" />
-									        </h:selectOneMenu>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="modalidade">Modalidade: *</label>
+											<label for="titulo">Título: *</label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="modalidade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
+											<h:inputText id="titulo" styleClass="form-control" value="#{chamadoController.chamadoDTO.titulo}" />
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="prioridade">Prioridade: *</label>
+											<label for="descricao">Descrição: *</label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="prioridade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="motivoCompra">Motivo da Compra: *</label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="motivoCompra" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<h:inputText id="sugestaoFornecedor"  styleClass="form-control" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="localEntrega">Local de Entrega: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<h:inputText id="localEntrega"  styleClass="form-control" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="valorAproximado">Valor Aproximado: </label>
-										</div>
-	
-										<div class="col-sm-2 col-md-2">
-											<div class="input-group">
-									            <span class="input-group-addon">R$</span>
-            									<h:inputText id="valorAproximado"  styleClass="form-control" />
-            									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
-									        </div>
+											<h:inputTextarea id="descricao" value="#{chamadoController.chamadoDTO.descricao}" styleClass="form-control" rows="5" />
 										</div>
 									</div>
 								</div>
-								<p:panel toggleable="false" id="painelItens" styleClass="box box-danger">
+								<p:panel toggleable="false" id="painelAnexos" styleClass="box box-danger">
 									<div class="box-header with-border">
-				             			<h3 class="box-title">Itens</h3>
+				             			<h3 class="box-title">Anexos</h3>
 				            		</div>
 				            		<div class="form-horizontal">
-										<div class="box-body">
+			                       		<div class="box-body">
 											<div class="form-group">
-												<div class="col-sm-3 col-md-3">
-													<label for="teste">Valor Aproximado: </label>
-												</div>
-			
-												<div class="col-sm-2 col-md-2">
-													<div class="input-group">
-											            <span class="input-group-addon">R$</span>
-		            									<h:inputText id="teste"  styleClass="form-control" />
-		            									<p:watermark value="0,00" for="teste"></p:watermark>
-											        </div>
-												</div>
+										    	<p:fileUpload 
+										    		label="Adicionar" 
+										    		skinSimple="true"
+										    		cancelLabel="Cancelar" 
+										    		uploadLabel="Upload"
+										    		auto="true" 
+										    		fileUploadListener="#{chamadoController.doUpload}" 
+										    		update="@form:painelAnexos"
+										    		dragDropSupport="true"
+						                       		allowTypes="/(\.|\/)(jpg|JPG|gif|GIF|png|PNG|pdf|PDF|doc|docx|xls|xlsx)$/" 
+						                       		sizeLimit="2000000"
+						                       		invalidFileMessage="Arquivo inválido! (Formatos Aceitos: JPG, PNG, GIF, PDF, DOC, XLS)" 
+						                       		invalidSizeMessage="Tamanho do arquivo não permitido! (Máximo 2MB)"
+						                       		 />
 											</div>
 										</div>
 									</div>
+									<p:dataTable var="anexo" 
+										value="#{chamadoController.chamadoDTO.anexos}" 
+										tableStyle="table-layout: auto; word-break: keep-all;"
+										emptyMessage="Nenhum anexo cadastrado neste chamado." >
+										
+									    <p:column headerText="Nome do Arquivo">
+									        <h:outputText value="#{anexo.nome}" />
+									    </p:column>
+									    
+										<p:column headerText="Excluir" style="text-align: center;" width="8%">
+											<p:commandLink ajax="true" process="@this" action="#{chamadoController.excluirAnexo(anexo)}" update="@form:painelAnexos">
+												<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
+											</p:commandLink>
+										</p:column>
+									</p:dataTable>
 								</p:panel>
 								<div class="box-footer">
-									<div class="col-sm-3 col-md-3">
-										<p:commandButton
-											styleClass="btn btn-default"
-											icon="fa fa-arrow-left"
-											value="Anterior"
-											id="btn_anterior"
-											process="@form"
-											action="#{usuarioController.salvar()}"
-											ajax="true" />
-									</div>
-									<div class="col-sm-3 col-md-3 pull-right" >
+									<div class="col-sm-3 col-md-3" >
 										<p:commandButton
 											styleClass="btn btn-default"
 											icon="fa fa-check"
 											value="Salvar"
 											id="btn_salvar"
 											process="@form"
-											action="#{usuarioController.salvar()}"
+											action="#{chamadoController.salvar()}"
 											ajax="true" />
 									</div>
 								</div>

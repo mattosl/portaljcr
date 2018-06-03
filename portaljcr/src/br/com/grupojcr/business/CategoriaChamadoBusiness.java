@@ -58,7 +58,7 @@ public class CategoriaChamadoBusiness {
 				throw new ApplicationException("categoria.chamado.subcategoria.vazio", FacesMessage.SEVERITY_WARN);
 			}
 			if(daoCategoriaChamado.verificarCategoriaExiste(cc.getNome(), cc.getId())) {
-				throw new ApplicationException("grupo.cotacao.existente", FacesMessage.SEVERITY_WARN);
+				throw new ApplicationException("categoria.chamado.existente", FacesMessage.SEVERITY_WARN);
 			}
 			
 			if(Util.isNotNull(cc.getId())) {

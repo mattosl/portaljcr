@@ -123,9 +123,9 @@ public class CategoriaChamadoController implements Serializable {
 			categoriaChamadoBusiness.salvar(getCategoriaChamado());
 			
 			if(novo) {
-				Message.setMessage("grupo.cotacao.salvar.incluir");
+				Message.setMessage("categoria.chamado.salvar.incluir");
 			} else {
-				Message.setMessage("grupo.cotacao.salvar.alterar");
+				Message.setMessage("categoria.chamado.salvar.alterar");
 			}
 			
 		} catch (ApplicationException e) {

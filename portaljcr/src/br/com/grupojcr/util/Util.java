@@ -2,6 +2,7 @@ package br.com.grupojcr.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -22,7 +23,6 @@ import java.util.Stack;
 import javax.swing.text.MaskFormatter;
 
 import org.apache.commons.lang.StringUtils;
-
 
 public class Util {
 	
@@ -64,6 +64,15 @@ public class Util {
 			return string.trim().isEmpty();
 		}
 		return true;
+	}
+	
+	public static String converterEncoding(String string, String encondingAtual, String novoEncoding) 
+			throws UnsupportedEncodingException {
+		if (Util.isBlank(string) || Util.isBlank(encondingAtual) || Util.isBlank(novoEncoding)) {
+			return "";
+		}
+		
+		return new String(string.getBytes(encondingAtual), novoEncoding);
 	}
 	
 	/**
