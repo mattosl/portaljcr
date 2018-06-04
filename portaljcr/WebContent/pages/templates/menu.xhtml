@@ -88,14 +88,14 @@
 	                 </span>
 				</a>
 				<ul class="treeview-menu">
-					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}">
-						<p:link href="/pages/solicitacaoCompra/solicitacao/listar_solicitacao.xhtml" ajax="false">
+					<li class="#{activeSubmenu eq 'painelChamado' ? 'active' : ''}">
+						<p:link href="/pages/suporte/painel_chamado.xhtml" ajax="false">
 							<i class="fa fa-reorder"></i>
 							<span>Painel de Chamados</span>
 						</p:link>
 					</li>
 					<li class="#{activeSubmenu eq 'novaSolicitacao' ? 'active' : ''}">
-						<p:link href="/pages/solicitacaoCompra/solicitacao/editar_solicitacao.xhtml" ajax="false">
+						<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
 							<i class="fa fa-plus-square"></i>
 							<span>Novo Chamado</span>
 						</p:link>
@@ -142,6 +142,22 @@
 							<i class="fa fa-pencil-square"></i>
 							<span>Grupos de Cotação</span>
 						</p:link>
+					</li>
+					<li class="treeview #{activeSubmenu eq 'suporte' ? 'active' : ''}">
+						<a href="#"> 
+							<i class="fa fa-wrench"></i> <span>Chamados</span>
+							 <span class="pull-right-container">
+			                 	<i class="fa fa-angle-left pull-right"></i>
+			                 </span>
+						</a>
+						<ul class="treeview-menu">
+							<li class="#{activeSubmenu eq 'categoriaChamado' ? 'active' : ''}">
+								<p:link href="/pages/administrador/suporte/categoriaChamado/listar_categoriaChamado.xhtml" ajax="false">
+									<i class="fa fa-list-ol"></i>
+									<span>Categorias de Chamado</span>
+								</p:link>
+							</li>
+						</ul>
 					</li>
 					
 				</ul>

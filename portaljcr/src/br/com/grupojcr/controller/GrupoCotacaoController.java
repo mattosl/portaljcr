@@ -161,7 +161,7 @@ public class GrupoCotacaoController implements Serializable {
 	 */
 	public void excluirUsuario(Usuario usuario) throws ApplicationException {
 		try {
-			if(Util.isNull(getUsuario())) {
+			if(Util.isNotNull(usuario)) {
 				getGrupoCotacao().getUsuarios().remove(usuario);
 			}
 			

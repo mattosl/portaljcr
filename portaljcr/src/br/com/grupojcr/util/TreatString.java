@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 
+@SuppressWarnings("deprecation")
 public class TreatString {
 
 	public static final String escape(String string) {

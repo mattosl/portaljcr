@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="suporte"/>
+    	<ui:param name="activeMenu" value="administrador"/>
+			
+		<f:metadata>
+			<f:viewAction action="#{categoriaChamadoController.iniciarProcesso()}" />
+		</f:metadata>
+    	<ui:define name="pageTitle"><i class="fa fa-list-ol fa-1x cor-padrao"></i> Categoria de Chamado</ui:define>
+    	<ui:define name="pageDescription">Consultar</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+						<div class="row">
+							<div class="col-sm-2 col-md-2">
+								<p:commandButton
+									styleClass="btn btn-default"
+									icon="fa fa-plus"
+									value="Nova"
+									id="btn_nova_categoria_chamado"
+									action="#{categoriaChamadoController.novo()}"
+									immediate="true"
+									ajax="false">
+									</p:commandButton>
+							</div>
+						</div>
+						<br />
+						<div class="row">
+							<p:dataTable var="categoriaChamado" id="tableCategoriaChamado"
+								value="#{categoriaChamadoController.listaCategoria}" 
+								tableStyle="table-layout: auto; word-break: keep-all;"
+								binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhuma categoria cadastrada.">
+								
+								<p:column headerText="Editar" styleClass="col-md-2" style="text-align: center;">
+									<p:commandLink ajax="true" process="@this" action="#{categoriaChamadoController.iniciarEditar()}" >
+										<h:outputText value="" title="Editar" styleClass="fa fa-pencil" />
+										<f:setPropertyActionListener value="#{categoriaChamado}" target="#{categoriaChamadoController.categoriaChamado}" />
+									</p:commandLink>
+								</p:column>
+								
+								<p:column headerText="Nome" styleClass="col-md-6" style="text-align:center;">
+							        <h:outputText value="#{categoriaChamado.nome}" />
+							    </p:column>
+								
+							</p:dataTable>
+						</div>
+					</p:panel>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

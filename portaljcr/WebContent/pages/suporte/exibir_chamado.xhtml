@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="exibirChamado"/>
+    	<ui:param name="activeMenu" value="suporte"/>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-plus-square fa-1x cor-padrao"></i> Chamado Nº #{chamadoController.chamado.id}</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="chamadoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelChamado" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Informações do Chamado</h3>
+		            		</div>
+							<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="solicitante">Solicitante:</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="solicitante" value="#{chamadoController.chamado.usuarioSolicitante.nome}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="situacao">Situação:</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="situacao" value="#{chamadoController.chamado.situacao.descricao}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="prioridade">Prioridade:</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="prioridade" value="#{chamadoController.chamado.prioridade.descricao}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="categoria">Categoria:</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="categoria" value="#{chamadoController.chamado.categoria} / #{chamadoController.chamado.subcategoria}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="titulo">Título:</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="titulo" value="#{chamadoController.chamado.titulo}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="descricao">Descrição:</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<h:inputTextarea id="descricao" value="#{chamadoController.chamado.descricao}" styleClass="form-control" rows="5" readonly="true"/>
+										</div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-3 col-md-3" >
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-arrow-circle-down"
+											value="Atribuir para mim"
+											id="btn_atribuir"
+											process="@form"
+											action="#{chamadoController.salvar()}"
+											ajax="true" />
+									</div>
+								</div>
+							</div>
+						</p:panel>
+						<p:panel toggleable="false" id="painelChat" styleClass="box box-danger">
+							<div class="box-header">
+								<i class="fa fa-comments-o"></i>
+								<h3 class="box-title">Acompanhamento</h3>
+							</div>
+							<br />
+							<div class="form-horizontal">
+								<div class="box-body direct-chat-danger" style="background-color: #f9f9f9;border-radius: 5px;">
+									 <div class="direct-chat-messages">
+									 	<div class="direct-chat-msg">
+									 		<div class="direct-chat-info clearfix">
+									 			<span class="direct-chat-name pull-left">Leonan Yglecias Mattos</span>
+												<span class="direct-chat-timestamp pull-right">23/05/2018 12:49</span>
+									 		</div>
+									 		<div class="direct-chat-text">
+												Is this template really for free? That's unbelievable!
+										  	</div>
+									 	</div>
+									 	<div class="direct-chat-msg">
+									 		<div class="direct-chat-info clearfix">
+									 			<span class="direct-chat-name pull-left">Leonan Yglecias Mattos</span>
+												<span class="direct-chat-timestamp pull-right">23/05/2018 12:49</span>
+									 		</div>
+									 		<div class="direct-chat-text">
+												I know
+										  	</div>
+									 	</div>
+									 	<div class="direct-chat-msg right">
+									 		<div class="direct-chat-info clearfix">
+									 			<span class="direct-chat-name pull-right">Leonardo Fukuda</span>
+												<span class="direct-chat-timestamp pull-left">23/05/2018 12:49</span>
+									 		</div>
+									 		<div class="direct-chat-text">
+												Is this template really for free? That's unbelievable!
+										  	</div>
+									 	</div>
+									 	<div class="direct-chat-msg right">
+									 		<div class="direct-chat-info clearfix">
+									 			<span class="direct-chat-name pull-right">Leonardo Fukuda</span>
+												<span class="direct-chat-timestamp pull-left">23/05/2018 12:49</span>
+									 		</div>
+									 		<div class="direct-chat-text">
+												Is this template really for free? That's unbelievable!
+										  	</div>
+									 	</div>
+									 	<div class="direct-chat-msg right">
+									 		<div class="direct-chat-info clearfix">
+									 			<span class="direct-chat-name pull-right">Leonardo Fukuda</span>
+												<span class="direct-chat-timestamp pull-left">23/05/2018 12:49</span>
+									 		</div>
+									 		<div class="direct-chat-text">
+												Is this template really for free? That's unbelievable!
+										  	</div>
+									 	</div>
+									 	<div class="direct-chat-msg right">
+									 		<div class="direct-chat-info clearfix">
+									 			<span class="direct-chat-name pull-right">Leonardo Fukuda</span>
+												<span class="direct-chat-timestamp pull-left">23/05/2018 12:49</span>
+									 		</div>
+									 		<div class="direct-chat-text">
+												Is this template really for free? That's unbelievable!
+										  	</div>
+									 	</div>
+									 	
+									 </div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-10 col-md-10">
+										<h:inputText id="nome" value="#{grupoCotacaoController.grupoCotacao.nome}" styleClass="form-control" />
+										<p:watermark value="Escreva uma mensagem..." for="nome" />
+									</div>
+									<div class="col-sm-2 col-md-2">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-arrow-right"
+											value="Enviar"
+											id="btn_enviar"
+											process="@form"
+											action="#{chamadoController.salvar()}"
+											ajax="true" />
+									</div>
+								</div>
+							</div>
+						</p:panel>
+					</f:validateBean>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>
