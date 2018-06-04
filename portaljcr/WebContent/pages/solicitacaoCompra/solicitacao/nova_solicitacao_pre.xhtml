@@ -33,7 +33,7 @@
 										</div>
 	
 										<div class="col-sm-12 col-md-10">
-											<h:selectOneMenu id="selectColigada" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+											<h:selectOneMenu id="selectColigada" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
 									        </h:selectOneMenu>
@@ -45,7 +45,7 @@
 										</div>
 	
 										<div class="col-sm-12 col-md-10">
-											<p:selectOneRadio id="quemIraCotar" value="#{solicitacaoCompraController.solicitacaoCompra.possuiGrupoCotacao}" styleClass="radio" layout="responsive" columns="2">
+											<p:selectOneRadio id="quemIraCotar" value="#{solicitacaoCompraController.solicitacaoCompraDTO.possuiGrupoCotacao}" styleClass="radio" layout="responsive" columns="2">
 											    <f:selectItem itemLabel="Grupo de Cotação" itemValue="true" />
 											    <f:selectItem itemLabel="Próprio Solicitante" itemValue="false" />
 											    <p:ajax event="change" update="@form:painelComboGrupoCotacao" global="false" />
@@ -55,11 +55,11 @@
 									<p:outputPanel id="painelComboGrupoCotacao">
 										<div class="form-group">
 											<div class="col-sm-12 col-md-12">
-												<label for="selectGrupoCotacao" jsf:rendered="#{solicitacaoCompraController.solicitacaoCompra.possuiGrupoCotacao}">Selecione um Grupo de Cotação:</label>
+												<label for="selectGrupoCotacao" jsf:rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.possuiGrupoCotacao}">Selecione um Grupo de Cotação:</label>
 											</div>
 		
 											<div class="col-sm-12 col-md-10">
-												<h:selectOneMenu id="selectGrupoCotacao" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.grupoCotacao}" rendered="#{solicitacaoCompraController.solicitacaoCompra.possuiGrupoCotacao}">
+												<h:selectOneMenu id="selectGrupoCotacao" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.grupoCotacao}" rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.possuiGrupoCotacao}">
 										        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 										        	<f:selectItems value="#{solicitacaoCompraController.listaGrupoCotacao}" var="gc" itemLabel="#{gc.nome}" itemValue="#{gc}" />
 										        </h:selectOneMenu>

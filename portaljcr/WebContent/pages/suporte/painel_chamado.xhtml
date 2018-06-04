@@ -40,7 +40,7 @@
 									    </p:column>
 										
 									    <p:column headerText="Situação" style="text-align:center;font-size:12px;">
-									    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : 'danger' }">#{chamado.situacao.descricao}</span>
+									    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : 'danger' }">#{chamado.situacao.descricao.toUpperCase()}</span>
 									    </p:column>
 									    
 									    <p:column headerText="Data de Abertura" style="text-align:center;font-size:12px;" >

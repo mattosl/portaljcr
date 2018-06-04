@@ -29,10 +29,10 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="centroCusto" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+											<p:selectOneMenu id="centroCusto"  value="#{solicitacaoCompraController.solicitacaoCompraDTO.centroCusto}" filter="true" filterMatchMode="contains">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
+									        	<f:selectItems value="#{solicitacaoCompraController.listaCentroCusto}" var="cc" itemLabel="#{cc.codigoCentroCusto} - #{cc.centroCusto.toUpperCase()}" itemValue="#{cc}" />
+									        </p:selectOneMenu>
 										</div>
 									</div>
 									<div class="form-group">
@@ -41,7 +41,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="naturezaOrcamentaria" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+											<h:selectOneMenu id="naturezaOrcamentaria" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
 									        </h:selectOneMenu>
@@ -53,7 +53,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="modalidade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+											<h:selectOneMenu id="modalidade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
 									        </h:selectOneMenu>
@@ -65,7 +65,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="prioridade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+											<h:selectOneMenu id="prioridade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
 									        </h:selectOneMenu>
@@ -77,7 +77,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="motivoCompra" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompra.coligada}">
+											<h:selectOneMenu id="motivoCompra" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
 									        </h:selectOneMenu>
