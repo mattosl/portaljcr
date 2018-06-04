@@ -45,3 +45,26 @@
 .font-normal {
 	font-weight: normal;
 }
+
+.chamadoPrioridadeBaixa {
+	background-color: #ffe6e6;
+}
+
+.chamadoPrioridadeMedia {
+	background-color: #ffbcbc;
+}
+
+.chamadoPrioridadeAlta {
+	background-color: #e03232;
+	color: #fff;
+}
+
+.chamadoLink {
+	font-size: 16px;
+	font-weight: bold;
+	color: #41a7ce;
+}
+
+.chamadoLink:hover {
+	text-decoration: underline;
+}

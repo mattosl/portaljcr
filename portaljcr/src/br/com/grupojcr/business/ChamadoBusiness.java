@@ -2,6 +2,7 @@ package br.com.grupojcr.business;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -104,6 +105,18 @@ public class ChamadoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
+		}
+	}
+	
+	public List<Chamado> listarChamadosPendentes() throws ApplicationException {
+		try {
+			return daoChamado.listarChamadosPendentes();
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarChamadosPendentes" }, e);
 		}
 	}
 

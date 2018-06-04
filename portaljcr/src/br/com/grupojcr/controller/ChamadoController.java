@@ -22,6 +22,7 @@ import br.com.grupojcr.business.ChamadoBusiness;
 import br.com.grupojcr.dto.ArquivoDTO;
 import br.com.grupojcr.dto.ChamadoDTO;
 import br.com.grupojcr.entity.CategoriaChamado;
+import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
@@ -45,6 +46,9 @@ public class ChamadoController implements Serializable {
 	
 	private ChamadoDTO chamadoDTO;
 	private ArquivoDTO arquivoDTO;
+	private Chamado chamado;
+	
+	private String origem;
 	
 	@EJB
 	private CategoriaChamadoBusiness categoriaChamadoBusiness;
@@ -152,6 +156,15 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
+	public String exibir() throws ApplicationException {
+		try {
+			return "/pages/suporte/exibir_chamado.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
+		}
+	}
+	
 	public List<SelectItem> getListaCategoria() {
 		return listaCategoria;
 	}
@@ -182,6 +195,22 @@ public class ChamadoController implements Serializable {
 
 	public void setArquivoDTO(ArquivoDTO arquivoDTO) {
 		this.arquivoDTO = arquivoDTO;
+	}
+
+	public Chamado getChamado() {
+		return chamado;
+	}
+
+	public void setChamado(Chamado chamado) {
+		this.chamado = chamado;
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
 	}
 
 }
