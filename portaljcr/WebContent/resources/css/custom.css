@@ -86,9 +86,6 @@
     border-color: #ccc !important;
     /* border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); */
 }
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-	border-radius: 0px !important
-}
 
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
 	border-color: #d2d6de !important;
@@ -96,6 +93,10 @@
 
 .ui-fluid .ui-selectonemenu {
     min-width: 0px !important;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter {
+    width: 87% !important;
 }
 
 .ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
