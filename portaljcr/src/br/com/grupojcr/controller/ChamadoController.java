@@ -1,8 +1,11 @@
 package br.com.grupojcr.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -21,12 +24,14 @@ import br.com.grupojcr.business.CategoriaChamadoBusiness;
 import br.com.grupojcr.business.ChamadoBusiness;
 import br.com.grupojcr.dto.ArquivoDTO;
 import br.com.grupojcr.dto.ChamadoDTO;
+import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.CategoriaChamado;
 import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.util.Dominios;
+import br.com.grupojcr.util.TreatFile;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -147,9 +152,25 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
-	public StreamedContent download(ArquivoDTO dto) throws ApplicationException {
+	public void atribuir() throws ApplicationException {
 		try {
-			return new DefaultStreamedContent(dto.getData(), null, dto.getNome());
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			chamadoBusiness.atribuir(getChamado(), usuario);
+			
+			Message.setMessage("chamado.atribuido");
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
+		}
+	}
+	
+	public StreamedContent download(AnexoChamado anexo) throws ApplicationException {
+		try {
+			return new DefaultStreamedContent(new ByteArrayInputStream(TreatFile.fileToByte(new File(anexo.getCaminho() + File.separator + anexo.getNome()))), null, anexo.getNome());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "download" }, e);
@@ -158,10 +179,20 @@ public class ChamadoController implements Serializable {
 	
 	public String exibir() throws ApplicationException {
 		try {
+			getChamado().setAnexos(new HashSet<AnexoChamado>(chamadoBusiness.listarAnexoPorChamado(getChamado().getId())));
 			return "/pages/suporte/exibir_chamado.xhtml?faces-redirect=true";
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
+		}
+	}
+	
+	public String voltar() throws ApplicationException {
+		try {
+			return "/pages/suporte/painel_chamado.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "voltar" }, e);
 		}
 	}
 	

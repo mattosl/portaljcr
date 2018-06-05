@@ -119,5 +119,31 @@ public class ChamadoBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarChamadosPendentes" }, e);
 		}
 	}
+	
+	public List<AnexoChamado> listarAnexoPorChamado(Long idChamado) throws ApplicationException {
+		try {
+			return daoAnexoChamado.listarAnexoPorChamado(idChamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarAnexoPorChamado" }, e);
+		}
+	}
+	
+	public void atribuir(Chamado chamado, Usuario usuario) throws ApplicationException {
+		try {
+			chamado.setUsuarioResponsavel(usuario);
+			chamado.setSituacao(SituacaoChamado.EM_ANDAMENTO);
+			daoChamado.alterar(chamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
+		}
+	}
 
 }

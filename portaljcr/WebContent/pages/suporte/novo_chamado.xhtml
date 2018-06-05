@@ -34,10 +34,10 @@
 										</div>
 	
 										<div class="col-sm-3 col-md-3">
-											<h:selectOneMenu id="selectPrioridade" styleClass="form-control" value="#{chamadoController.chamadoDTO.prioridade}">
+											<p:selectOneMenu id="selectPrioridade" value="#{chamadoController.chamadoDTO.prioridade}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{chamadoController.listaPrioridade}" var="prioridade" itemLabel="#{prioridade.descricao}" itemValue="#{prioridade}" />
-									        </h:selectOneMenu>
+									        </p:selectOneMenu>
 										</div>
 										<!--  <div class="col-sm-1 col-md-1">
                								<p:outputLabel id="fade"><span class="fa fa-info-circle" style="margin-top:8px;" /></p:outputLabel> 
@@ -50,10 +50,10 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="selectCategoria" styleClass="form-control" value="#{chamadoController.chamadoDTO.subcategoria}" >
+											<p:selectOneMenu id="selectCategoria" value="#{chamadoController.chamadoDTO.subcategoria}" >
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{chamadoController.listaCategoria}" />
-									        </h:selectOneMenu>
+									        </p:selectOneMenu>
 										</div>
 									</div>
 									<div class="form-group">

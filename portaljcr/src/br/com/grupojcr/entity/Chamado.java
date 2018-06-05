@@ -2,6 +2,7 @@ package br.com.grupojcr.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.grupojcr.enumerator.CausaChamado;
@@ -73,6 +75,9 @@ public class Chamado implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_USR_RESPONSAVEL")
 	private Usuario usuarioResponsavel;
+	
+	@OneToMany(mappedBy = "chamado", fetch = FetchType.LAZY)
+	private Set<AnexoChamado> anexos;
 
 	public Long getId() {
 		return id;
@@ -209,6 +214,14 @@ public class Chamado implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Set<AnexoChamado> getAnexos() {
+		return anexos;
+	}
+
+	public void setAnexos(Set<AnexoChamado> anexos) {
+		this.anexos = anexos;
 	}
 
 }
