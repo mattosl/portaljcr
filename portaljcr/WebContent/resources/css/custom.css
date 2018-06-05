@@ -102,3 +102,7 @@
 .ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
     display: none !important;
 }
+
+.alinharRadio {
+	margin-top: -10px !important;
+}

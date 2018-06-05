@@ -20,9 +20,23 @@
 						<p:panel toggleable="false" id="painelCadastro" styleClass="box box-danger">
 							<div class="box-header with-border">
 		             			<h3 class="box-title">Solicitação de Compra</h3>
+		             			<span class="users-list-date pull-right">(*) Campos Obrigatórios.</span>
 		            		</div>
 							<div class="form-horizontal">
 								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="prioridade"> Prioridade: *  <p:outputLabel id="info" style="color: #de4b39">&nbsp;<i style="color: #9f9f9f" class="fa fa-question-circle"></i>&nbsp;</p:outputLabel></label>
+											<p:tooltip for="info" value="Alta: Até 3 dias para cotação.&lt;br/&gt;Média: Até 7 dias para cotação.&lt;br/&gt;Baixa: Até 10 dias para cotação." escape="false" position="top" />
+										</div>
+										
+										<div class="col-sm-3 col-md-3">
+											<p:selectOneMenu id="prioridade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.prioridade}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaPrioridade}" var="prioridade" itemLabel="#{prioridade.descricao}" itemValue="#{prioridade}" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
 											<label for="centroCusto">Centro de Custo: *</label>
@@ -41,10 +55,10 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="naturezaOrcamentaria" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
+											<p:selectOneMenu id="naturezaOrcamentaria" value="#{solicitacaoCompraController.solicitacaoCompraDTO.naturezaOrcamentaria}" filter="true" filterMatchMode="contains">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
+									        	<f:selectItems value="#{solicitacaoCompraController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.codigoNaturezaOrcamentaria} - #{natureza.naturezaOrcamentaria}" itemValue="#{natureza}" />
+									        </p:selectOneMenu>
 										</div>
 									</div>
 									<div class="form-group">
@@ -53,22 +67,9 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="modalidade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="prioridade">Prioridade: *</label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="prioridade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
+											<p:selectOneRadio id="modalidade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.modalidade}" styleClass="radio alinharRadio" layout="responsive" columns="3">
+											   <f:selectItems value="#{solicitacaoCompraController.listaModalidade}" var="modalidade" itemLabel="#{modalidade.descricao}" itemValue="#{modalidade}" />
+											</p:selectOneRadio>
 										</div>
 									</div>
 									<div class="form-group">
@@ -77,10 +78,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:selectOneMenu id="motivoCompra" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.coligada}">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial} - (#{coligada.cnpjFormatado})" itemValue="#{coligada}" />
-									        </h:selectOneMenu>
+											<h:inputTextarea id="motivoCompra" value="#{solicitacaoCompraController.solicitacaoCompraDTO.motivoCompra}" styleClass="form-control" rows="5" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -89,7 +87,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:inputText id="sugestaoFornecedor"  styleClass="form-control" />
+											<h:inputText id="sugestaoFornecedor" value="#{solicitacaoCompraController.solicitacaoCompraDTO.sugestaoFornecedor}" maxlength="100" styleClass="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -98,7 +96,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:inputText id="localEntrega"  styleClass="form-control" />
+											<h:inputText id="localEntrega" value="#{solicitacaoCompraController.solicitacaoCompraDTO.localEntrega}" maxlength="100" styleClass="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -106,10 +104,10 @@
 											<label for="valorAproximado">Valor Aproximado: </label>
 										</div>
 	
-										<div class="col-sm-2 col-md-2">
+										<div class="col-sm-3 col-md-3">
 											<div class="input-group">
 									            <span class="input-group-addon">R$</span>
-            									<h:inputText id="valorAproximado"  styleClass="form-control" />
+            									<p:inputNumber id="valorAproximado" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," />
             									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
 									        </div>
 										</div>
@@ -138,7 +136,7 @@
 									</div>
 								</p:panel>
 								<div class="box-footer">
-									<div class="col-sm-3 col-md-3">
+									<div class="col-sm-3 col-md-3 pull-left">
 										<p:commandButton
 											styleClass="btn btn-default"
 											icon="fa fa-arrow-left"

@@ -2,6 +2,7 @@ package br.com.grupojcr.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -19,6 +20,9 @@ import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.GrupoCotacao;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.enumerator.Modalidade;
+import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
+import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -36,6 +40,9 @@ public class SolicitacaoCompraController implements Serializable {
 	private List<Coligada> listaColigada;
 	private List<GrupoCotacao> listaGrupoCotacao;
 	private List<CentroCustoRM> listaCentroCusto;
+	private List<NaturezaOrcamentariaRM> listaNaturezaOrcamentaria;
+	private List<Modalidade> listaModalidade;
+	private List<PrioridadeSolicitacaoCompra> listaPrioridade;
 	
 	private SolicitacaoCompraDTO solicitacaoCompraDTO;
 	private Usuario usuario;
@@ -98,6 +105,10 @@ public class SolicitacaoCompraController implements Serializable {
 			}
 			
 			setListaCentroCusto(rmBusiness.listarCentroCustoPorColigada(getSolicitacaoCompraDTO().getColigada().getId()));
+			setListaNaturezaOrcamentaria(rmBusiness.listarNaturezaOrcamentaria());
+			setListaModalidade(new ArrayList<Modalidade>(Arrays.asList(Modalidade.values())));
+			setListaPrioridade(new ArrayList<PrioridadeSolicitacaoCompra>(Arrays.asList(PrioridadeSolicitacaoCompra.values())));
+			getSolicitacaoCompraDTO().setModalidade(Modalidade.MATERIAL);
 			return "/pages/solicitacaoCompra/solicitacao/nova_solicitacao.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -146,6 +157,30 @@ public class SolicitacaoCompraController implements Serializable {
 
 	public void setSolicitacaoCompraDTO(SolicitacaoCompraDTO solicitacaoCompraDTO) {
 		this.solicitacaoCompraDTO = solicitacaoCompraDTO;
+	}
+
+	public List<NaturezaOrcamentariaRM> getListaNaturezaOrcamentaria() {
+		return listaNaturezaOrcamentaria;
+	}
+
+	public void setListaNaturezaOrcamentaria(List<NaturezaOrcamentariaRM> listaNaturezaOrcamentaria) {
+		this.listaNaturezaOrcamentaria = listaNaturezaOrcamentaria;
+	}
+
+	public List<Modalidade> getListaModalidade() {
+		return listaModalidade;
+	}
+
+	public void setListaModalidade(List<Modalidade> listaModalidade) {
+		this.listaModalidade = listaModalidade;
+	}
+
+	public List<PrioridadeSolicitacaoCompra> getListaPrioridade() {
+		return listaPrioridade;
+	}
+
+	public void setListaPrioridade(List<PrioridadeSolicitacaoCompra> listaPrioridade) {
+		this.listaPrioridade = listaPrioridade;
 	}
 
 }

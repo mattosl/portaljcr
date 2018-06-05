@@ -9,8 +9,8 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 
 @Named
-@FacesConverter(forClass = CentroCustoEntity.class)
-public class CentroCustoConverter implements Converter {
+@FacesConverter(forClass = BaseStringEntity.class)
+public class SimpleStringEntityConverter implements Converter {
 
 	public Object getAsObject(FacesContext ctx, UIComponent component, String value) {  
         if (value != null) {  
@@ -24,12 +24,12 @@ public class CentroCustoConverter implements Converter {
         if (value != null  
                 && !"".equals(value)) {  
   
-            CentroCustoEntity entity = (CentroCustoEntity) value;  
+            BaseStringEntity entity = (BaseStringEntity) value;  
   
             // adiciona item como atributo do componente  
             this.addAttribute(component, entity);  
   
-            String codigo = entity.getCodigoCentroCusto();  
+            String codigo = entity.getId();  
             if (codigo != null) {  
                 return String.valueOf(codigo);  
             }  
@@ -38,8 +38,8 @@ public class CentroCustoConverter implements Converter {
         return (String) value;  
     }  
   
-    protected void addAttribute(UIComponent component, CentroCustoEntity o) {  
-        String key = o.getCodigoCentroCusto().toString();  
+    protected void addAttribute(UIComponent component, BaseStringEntity o) {  
+        String key = o.getId().toString();  
         this.getAttributesFrom(component).put(key, o);  
     }  
   

@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dto.CentroCustoRM;
+import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -141,6 +142,62 @@ public class RMDAO {
 			}
 		}
 		return listaCentroCusto;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<NaturezaOrcamentariaRM> listaNaturezaOrcamentaria() throws ApplicationException {
+		/**
+		 *  SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO
+		 *  WHERE INATIVO = 0
+		 *  ORDER BY CODTBORCAMENTO ASC	
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<NaturezaOrcamentariaRM> listaNaturezaOrcamentaria = new ArrayList<NaturezaOrcamentariaRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO ")
+			.append("WHERE INATIVO = 0 ")
+			.append("ORDER BY CODTBORCAMENTO ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				NaturezaOrcamentariaRM natureza = new NaturezaOrcamentariaRM();
+				natureza.setCodigoNaturezaOrcamentaria(set.getString("CODTBORCAMENTO"));
+				natureza.setNaturezaOrcamentaria(set.getString("DESCRICAO"));
+				
+				listaNaturezaOrcamentaria.add(natureza);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listaNaturezaOrcamentaria" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaNaturezaOrcamentaria;
 	}
 
 }
