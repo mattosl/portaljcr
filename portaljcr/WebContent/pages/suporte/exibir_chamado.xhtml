@@ -137,7 +137,7 @@
 														update="@form"
 														action="#{chamadoController.atribuir()}"
 														ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel == null}"
-														onclick="window.scrollTo(0,0);" />
+														oncomplete="window.scrollTo(0,0);" />
 													<p:commandButton
 														styleClass="btn btn-default"
 														icon="fa fa-pencil-square-o"
@@ -146,8 +146,7 @@
 														process="@this"
 														update="@form"
 														action="#{chamadoController.atribuir()}"
-														ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != null}"
-														onclick="window.scrollTo(0,0);" />
+														ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != null}" />
 												</div>
 											</div>
 										</div>
