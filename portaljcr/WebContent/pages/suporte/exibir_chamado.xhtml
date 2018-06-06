@@ -34,65 +34,63 @@
 										<div class="form-horizontal">
 											<div class="box-body">
 												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="solicitante">Solicitante:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-4 col-md-4">
 														<p:outputLabel id="solicitante" value="#{chamadoController.chamado.usuarioSolicitante.nome}" styleClass="control-label font-normal" />
 													</div>
-												</div>
-												<div class="form-group" jsf:rendered="#{chamadoController.chamado.usuarioResponsavel != null}">
-													<div class="col-sm-3 col-md-3 control-label">
+													
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="responsavel">Responsável:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-4 col-md-4">
 														<p:outputLabel id="responsavel" value="#{chamadoController.chamado.usuarioResponsavel.nome}" styleClass="control-label font-normal" />
 													</div>
 												</div>
 												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="situacao">Situação:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-4 col-md-4">
 														<p:outputLabel id="situacao" value="#{chamadoController.chamado.situacao.descricao}" styleClass="control-label font-normal" />
 													</div>
-												</div>
-												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
+													
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="prioridade">Prioridade:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-4 col-md-4">
 														<p:outputLabel id="prioridade" value="#{chamadoController.chamado.prioridade.descricao}" styleClass="control-label font-normal" />
 													</div>
 												</div>
 												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="categoria">Categoria:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-10 col-md-10">
 														<p:outputLabel id="categoria" value="#{chamadoController.chamado.categoria} / #{chamadoController.chamado.subcategoria}" styleClass="control-label font-normal" />
 													</div>
 												</div>
 												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="titulo">Título:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-10 col-md-10">
 														<p:outputLabel id="titulo" value="#{chamadoController.chamado.titulo}" styleClass="control-label font-normal" />
 													</div>
 												</div>
 												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
+													<div class="col-sm-2 col-md-2 control-label">
 														<label for="descricao">Descrição:</label>
 													</div>
 				
-													<div class="col-sm-9 col-md-9">
+													<div class="col-sm-10 col-md-10">
 														<h:inputTextarea id="descricao" value="#{chamadoController.chamado.descricao}" styleClass="form-control" rows="5" readonly="true"/>
 													</div>
 												</div>
@@ -137,7 +135,7 @@
               					<div class="tab-pane" id="acompanhamento" >
 									<p:panel toggleable="false" id="painelChat" style="border: 0px;" rendered="#{chamadoController.chamado.usuarioResponsavel != null}">
 										<div class="form-horizontal">
-											<div class="box-body direct-chat-danger" style="background-color: #f9f9f9;border-radius: 5px;">
+											<div class="box-body direct-chat-danger" style="background-color: #f9f9f9;border-radius: 5px;" jsf:rendered="#{chamadoController.chamado.mensagens.size() > 0}">
 												 <div id="messengers" class="direct-chat-messages">
 												 	<ui:repeat var="mensagem" value="#{chamadoController.chamado.mensagensList}" varStatus="status">
 												 		<p:outputPanel rendered="#{mensagem.usuario.id ne usuario.id}">
@@ -165,6 +163,11 @@
 												 	</ui:repeat>
 												 </div>
 											</div>
+											<div class="box-body" jsf:rendered="#{chamadoController.chamado.mensagens.size() == 0}" >
+												<div class="form-group" style="text-align:center;">
+													<label>Nenhuma mensagem enviada.</label>
+												</div>
+											</div>
 											<div class="box-footer">
 												<div class="col-sm-10 col-md-10">
 													<h:inputText id="nome" value="#{chamadoController.mensagem}" maxlength="500" styleClass="form-control" />
@@ -179,6 +182,7 @@
 														process="@form:painelChat"
 														update="@form:painelChat"
 														action="#{chamadoController.enviarMensagem()}"
+														oncomplete="scrollDown();"
 														ajax="true" />
 												</div>
 											</div>
@@ -214,11 +218,15 @@
 					$(document).ready(function(){
 						$("#abaAcompanhamento").on("click", function(){
 							setTimeout(function() {
-								var objDiv = document.getElementById("messengers");
-								objDiv.scrollTop = objDiv.scrollHeight;
-							}, 500)
+								scrollDown();
+							}, 0)
 						});
 					});
+
+					function scrollDown(){
+						var objDiv = document.getElementById("messengers");
+						objDiv.scrollTop = objDiv.scrollHeight;
+					}
 					
 					function start() {
 					    PF('statusDialog').show();

@@ -186,8 +186,6 @@ public class ChamadoController implements Serializable {
 				Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 				chamadoBusiness.enviarMensagem(getMensagem(), usuario, getChamado());
 				
-				Message.setMessage("chamado.mensagem");
-				
 				setMensagem(null);
 				getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
 			} else {
