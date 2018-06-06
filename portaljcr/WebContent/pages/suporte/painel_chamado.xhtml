@@ -39,7 +39,6 @@
 									        <p:commandLink ajax="true" process="@this" action="#{chamadoController.exibir()}">
 										        <h:outputText styleClass="chamadoLink" value="#{chamado.id}" />
 										        <f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
-										        <f:setPropertyActionListener value="PAINEL" target="#{chamadoController.origem}" />
 											</p:commandLink>
 									    </p:column>
 										

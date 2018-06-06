@@ -3,7 +3,8 @@ package br.com.grupojcr.enumerator;
 public enum SituacaoChamado {
 	ABERTO(0, "Aberto"),
 	EM_ANDAMENTO(1, "Em Andamento"),
-	RESOLVIDO(2, "Resolvido");
+	RESOLVIDO(2, "Resolvido"),
+	FECHADO(3, "Fechado");
 	
 	private Integer id;
 	private String descricao;

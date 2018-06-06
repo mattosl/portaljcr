@@ -12,12 +12,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.AnexoChamadoDAO;
+import br.com.grupojcr.dao.ChamadoAcompanhamentoDAO;
 import br.com.grupojcr.dao.ChamadoDAO;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.ArquivoDTO;
 import br.com.grupojcr.dto.ChamadoDTO;
 import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.Chamado;
+import br.com.grupojcr.entity.ChamadoAcompanhamento;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
@@ -41,6 +43,9 @@ public class ChamadoBusiness {
 	
 	@EJB
 	private AnexoChamadoDAO daoAnexoChamado;
+	
+	@EJB
+	private ChamadoAcompanhamentoDAO daoChamadoAcompanhamento;
 	
 	
 	public void salvar(ChamadoDTO dto, Long idUsuario) throws ApplicationException {
@@ -132,6 +137,18 @@ public class ChamadoBusiness {
 		}
 	}
 	
+	public List<ChamadoAcompanhamento> listarAcompanhamentoChamado(Long idChamado) throws ApplicationException {
+		try {
+			return daoChamadoAcompanhamento.listarAcompanhamentoPorChamado(idChamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarAcompanhamentoChamado" }, e);
+		}
+	}
+	
 	public void atribuir(Chamado chamado, Usuario usuario) throws ApplicationException {
 		try {
 			chamado.setUsuarioResponsavel(usuario);
@@ -143,6 +160,23 @@ public class ChamadoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
+		}
+	}
+	
+	public void enviarMensagem(String mensagem, Usuario usuario, Chamado chamado) throws ApplicationException {
+		try {
+			ChamadoAcompanhamento acompanhamento = new ChamadoAcompanhamento();
+			acompanhamento.setChamado(chamado);
+			acompanhamento.setDtAcompanhamento(Calendar.getInstance().getTime());
+			acompanhamento.setMensagem(mensagem);
+			acompanhamento.setUsuario(usuario);
+			daoChamadoAcompanhamento.incluir(acompanhamento);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "enviarMensagem" }, e);
 		}
 	}
 

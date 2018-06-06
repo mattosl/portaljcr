@@ -13,6 +13,10 @@
     	<ui:param name="activeMenu" value="suporte"/>
     	
     	<ui:define name="pageTitle"><i class="fa fa-plus-square fa-1x cor-padrao"></i> Chamado Nº #{chamadoController.chamado.id}</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-wrench"></i> Suporte TI</li>
+	    	<li class="active"><i class="fa fa-plus-square"></i> Exibir Chamado</li>
+		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
 				<h:form id="chamadoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
@@ -20,8 +24,9 @@
 						
 						<div class="nav-tabs-custom">
 							<ul class="nav nav-tabs">
-								<li class="active"><a href="#infoChamado" data-toggle="tab"><i class="fa fa-info-circle"></i>&nbsp;Informações do Chamado</a></li>
-								<li jsf:rendered="#{chamadoController.chamado.usuarioResponsavel != null}"><a href="#acompanhamento" data-toggle="tab"><i class="fa fa-comments-o"></i>&nbsp;Acompanhamento</a></li>
+								<li id="abaChamado" class="active"><a href="#infoChamado" data-toggle="tab"><i class="fa fa-newspaper-o"></i>&nbsp;Informações do Chamado</a></li>
+								<li id="abaAcompanhamento" jsf:rendered="#{chamadoController.chamado.usuarioResponsavel != null}"><a href="#acompanhamento" data-toggle="tab"><i class="fa fa-comments-o"></i>&nbsp;Acompanhamento</a></li>
+								<li id="abaAnexos" jsf:rendered="#{chamadoController.chamado.usuarioResponsavel != null}"><a href="#anexos" data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;Anexos</a></li>
 							</ul>
 							<div class="tab-content">
 								<div class="active tab-pane" id="infoChamado">
@@ -91,29 +96,6 @@
 														<h:inputTextarea id="descricao" value="#{chamadoController.chamado.descricao}" styleClass="form-control" rows="5" readonly="true"/>
 													</div>
 												</div>
-												<div class="form-group">
-													<p:panel toggleable="false" id="painelAnexos" styleClass="box box-danger" rendered="#{chamadoController.chamado.anexos.size() > 0}">
-														<div class="box-header with-border">
-									             			<h3 class="box-title">Anexos</h3>
-									            		</div>
-														<p:dataTable var="anexo" 
-															value="#{chamadoController.chamado.anexos}" 
-															tableStyle="table-layout: auto; word-break: keep-all;"
-															emptyMessage="Nenhum anexo cadastrado neste chamado." >
-															
-														    <p:column headerText="Nome do Arquivo">
-														        <h:outputText value="#{anexo.nome}" />
-														    </p:column>
-														    
-															<p:column headerText="Download" style="text-align: center;">
-																<p:commandLink ajax="false" process="@this" onclick="PrimeFaces.monitorDownload(start, stop);">
-																	<h:outputText value="" title="Download" styleClass="fa fa-download" />
-																	<p:fileDownload value="#{chamadoController.download(anexo)}" />
-																</p:commandLink>
-															</p:column>
-														</p:dataTable>
-													</p:panel> 
-												</div>
 											</div>
 											<div class="box-footer">
 												<div class="col-sm-3 col-md-3" >
@@ -140,7 +122,7 @@
 														oncomplete="window.scrollTo(0,0);" />
 													<p:commandButton
 														styleClass="btn btn-default"
-														icon="fa fa-pencil-square-o"
+														icon="fa fa-pencil-square"
 														value="Solucionar Chamado"
 														id="btn_adicionar_solucao"
 														process="@this"
@@ -152,43 +134,40 @@
 										</div>
 									</p:panel>
               					</div>
-              					<div class="tab-pane" id="acompanhamento">
+              					<div class="tab-pane" id="acompanhamento" >
 									<p:panel toggleable="false" id="painelChat" style="border: 0px;" rendered="#{chamadoController.chamado.usuarioResponsavel != null}">
 										<div class="form-horizontal">
 											<div class="box-body direct-chat-danger" style="background-color: #f9f9f9;border-radius: 5px;">
-												 <div class="direct-chat-messages">
-												 	<div class="direct-chat-msg">
-												 		<div class="direct-chat-info clearfix">
-												 			<span class="direct-chat-name pull-left">Leonan Yglecias Mattos</span>
-															<span class="direct-chat-timestamp pull-right">23/05/2018 12:49</span>
-												 		</div>
-												 		<div class="direct-chat-text">
-															Is this template really for free? That's unbelievable!
-													  	</div>
-												 	</div>
-												 	<div class="direct-chat-msg">
-												 		<div class="direct-chat-info clearfix">
-												 			<span class="direct-chat-name pull-left">Leonan Yglecias Mattos</span>
-															<span class="direct-chat-timestamp pull-right">23/05/2018 12:49</span>
-												 		</div>
-												 		<div class="direct-chat-text">
-															I know
-													  	</div>
-												 	</div>
-												 	<div class="direct-chat-msg right">
-												 		<div class="direct-chat-info clearfix">
-												 			<span class="direct-chat-name pull-right">Leonardo Fukuda</span>
-															<span class="direct-chat-timestamp pull-left">23/05/2018 12:49</span>
-												 		</div>
-												 		<div class="direct-chat-text">
-															Is this template really for free? That's unbelievable!
-													  	</div>
-												 	</div>
+												 <div id="messengers" class="direct-chat-messages">
+												 	<ui:repeat var="mensagem" value="#{chamadoController.chamado.mensagensList}" varStatus="status">
+												 		<p:outputPanel rendered="#{mensagem.usuario.id ne usuario.id}">
+												 			<div class="direct-chat-msg">
+														 		<div class="direct-chat-info clearfix">
+														 			<span class="direct-chat-name pull-left">#{mensagem.usuario.nome}</span>
+																	<span class="direct-chat-timestamp pull-right">#{mensagem.dataFormatada}</span>
+														 		</div>
+														 		<div class="direct-chat-text pull-left">
+																	#{mensagem.mensagem}
+															  	</div>
+														 	</div>
+												 		</p:outputPanel>
+												 		<p:outputPanel rendered="#{mensagem.usuario.id eq usuario.id}">
+												 			<div class="direct-chat-msg right">
+														 		<div class="direct-chat-info clearfix">
+														 			<span class="direct-chat-name pull-right">#{mensagem.usuario.nome}</span>
+																	<span class="direct-chat-timestamp pull-left">#{mensagem.dataFormatada}</span>
+														 		</div>
+														 		<div class="direct-chat-text pull-right">
+																	#{mensagem.mensagem}
+															  	</div>
+														 	</div>
+												 		</p:outputPanel>
+												 	</ui:repeat>
 												 </div>
 											</div>
 											<div class="box-footer">
 												<div class="col-sm-10 col-md-10">
-													<h:inputText id="nome" value="#{grupoCotacaoController.grupoCotacao.nome}" styleClass="form-control" />
+													<h:inputText id="nome" value="#{chamadoController.mensagem}" maxlength="500" styleClass="form-control" />
 													<p:watermark value="Escreva uma mensagem..." for="nome" />
 												</div>
 												<div class="col-sm-2 col-md-2">
@@ -197,19 +176,50 @@
 														icon="fa fa-arrow-right"
 														value="Enviar"
 														id="btn_enviar"
-														process="@form"
-														action="#{chamadoController.salvar()}"
+														process="@form:painelChat"
+														update="@form:painelChat"
+														action="#{chamadoController.enviarMensagem()}"
 														ajax="true" />
 												</div>
 											</div>
 										</div>
 									</p:panel>
               					</div>
+              					<div class="tab-pane" id="anexos">
+									<p:panel toggleable="false" id="painelAnexos" style="border: 0px;">
+										<p:dataTable var="anexo" 
+											value="#{chamadoController.chamado.anexos}" 
+											tableStyle="table-layout: auto; word-break: keep-all;"
+											emptyMessage="Nenhum anexo cadastrado neste chamado." >
+											
+										    <p:column headerText="Nome do Arquivo">
+										        <h:outputText value="#{anexo.nome}" />
+										    </p:column>
+										    
+											<p:column headerText="Download" style="text-align: center;">
+												<p:commandLink ajax="true" process="@this" update="@form:painelAnexos" onclick="PrimeFaces.monitorDownload(start, stop);">
+													<h:outputText value="" title="Download" styleClass="fa fa-download" />
+													<p:fileDownload value="#{chamadoController.download(anexo)}" />
+												</p:commandLink>
+											</p:column>
+										</p:dataTable>
+									</p:panel>
+								</div>
               				</div>
 						</div>
 					</f:validateBean>
 				</h:form>
 				<script type="text/javascript">
+
+					$(document).ready(function(){
+						$("#abaAcompanhamento").on("click", function(){
+							setTimeout(function() {
+								var objDiv = document.getElementById("messengers");
+								objDiv.scrollTop = objDiv.scrollHeight;
+							}, 500)
+						});
+					});
+					
 					function start() {
 					    PF('statusDialog').show();
 					}

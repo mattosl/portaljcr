@@ -1,5 +1,6 @@
 package br.com.grupojcr.entity;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.grupojcr.util.TreatDate;
+
 @Entity
 @Table(name = "TB_CHAMADO_ACOMPANHAMENTO")
 public class ChamadoAcompanhamento implements Serializable {
@@ -24,8 +27,8 @@ public class ChamadoAcompanhamento implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "CATEGORIA", length = 500, nullable = false)
-	private String categoria;
+	@Column(name = "MENSAGEM", length = 500, nullable = false)
+	private String mensagem;
 	
 	@Column(name = "DT_ACOMPANHAMENTO", nullable = false)
 	private Date dtAcompanhamento;
@@ -45,13 +48,13 @@ public class ChamadoAcompanhamento implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public String getCategoria() {
-		return categoria;
+	
+	public String getMensagem() {
+		return mensagem;
 	}
 
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
+	public void setMensagem(String mensagem) {
+		this.mensagem = mensagem;
 	}
 
 	public Date getDtAcompanhamento() {
@@ -102,6 +105,10 @@ public class ChamadoAcompanhamento implements Serializable {
 			return false;
 		return true;
 	}
-
+	
+	@Transient
+	public String getDataFormatada() {
+		return TreatDate.format("dd/MM/yyyy HH:mm:ss", dtAcompanhamento);
+	}
 
 }

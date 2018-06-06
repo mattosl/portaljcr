@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
@@ -27,11 +28,13 @@ import br.com.grupojcr.dto.ChamadoDTO;
 import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.CategoriaChamado;
 import br.com.grupojcr.entity.Chamado;
+import br.com.grupojcr.entity.ChamadoAcompanhamento;
 import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.util.Dominios;
 import br.com.grupojcr.util.TreatFile;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -53,7 +56,7 @@ public class ChamadoController implements Serializable {
 	private ArquivoDTO arquivoDTO;
 	private Chamado chamado;
 	
-	private String origem;
+	private String mensagem;
 	
 	@EJB
 	private CategoriaChamadoBusiness categoriaChamadoBusiness;
@@ -177,10 +180,36 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
+	public void enviarMensagem() throws ApplicationException {
+		try {
+			if(TreatString.isNotBlank(mensagem)) {
+				Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+				chamadoBusiness.enviarMensagem(getMensagem(), usuario, getChamado());
+				
+				Message.setMessage("chamado.mensagem");
+				
+				setMensagem(null);
+				getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
+			} else {
+				throw new ApplicationException("message.empty", new String[] {"Escreva uma mensagem."}, FacesMessage.SEVERITY_WARN);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "enviarMensagem" }, e);
+		}
+	}
+	
 	public String exibir() throws ApplicationException {
 		try {
+			getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
 			getChamado().setAnexos(new HashSet<AnexoChamado>(chamadoBusiness.listarAnexoPorChamado(getChamado().getId())));
 			return "/pages/suporte/exibir_chamado.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
@@ -236,12 +265,12 @@ public class ChamadoController implements Serializable {
 		this.chamado = chamado;
 	}
 
-	public String getOrigem() {
-		return origem;
+	public String getMensagem() {
+		return mensagem;
 	}
 
-	public void setOrigem(String origem) {
-		this.origem = origem;
+	public void setMensagem(String mensagem) {
+		this.mensagem = mensagem;
 	}
 
 }

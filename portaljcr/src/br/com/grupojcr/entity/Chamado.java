@@ -1,7 +1,10 @@
 package br.com.grupojcr.entity;
 
+import java.beans.Transient;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -78,6 +81,9 @@ public class Chamado implements Serializable {
 	
 	@OneToMany(mappedBy = "chamado", fetch = FetchType.LAZY)
 	private Set<AnexoChamado> anexos;
+	
+	@OneToMany(mappedBy = "chamado", fetch = FetchType.LAZY)
+	private Set<ChamadoAcompanhamento> mensagens;
 
 	public Long getId() {
 		return id;
@@ -224,4 +230,17 @@ public class Chamado implements Serializable {
 		this.anexos = anexos;
 	}
 
+	public Set<ChamadoAcompanhamento> getMensagens() {
+		return mensagens;
+	}
+
+	public void setMensagens(Set<ChamadoAcompanhamento> mensagens) {
+		this.mensagens = mensagens;
+	}
+	
+	@Transient
+	public List<ChamadoAcompanhamento> getMensagensList() {
+		return new ArrayList<ChamadoAcompanhamento>(mensagens);
+	}
+	
 }
