@@ -15,14 +15,17 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.business.GrupoCotacaoBusiness;
 import br.com.grupojcr.business.RMBusiness;
-import br.com.grupojcr.dto.CentroCustoRM;
+import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.GrupoCotacao;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
+import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
+import br.com.grupojcr.rm.ProdutoRM;
+import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -43,6 +46,7 @@ public class SolicitacaoCompraController implements Serializable {
 	private List<NaturezaOrcamentariaRM> listaNaturezaOrcamentaria;
 	private List<Modalidade> listaModalidade;
 	private List<PrioridadeSolicitacaoCompra> listaPrioridade;
+	private List<UnidadeRM> listaUnidade;
 	
 	private SolicitacaoCompraDTO solicitacaoCompraDTO;
 	private Usuario usuario;
@@ -109,6 +113,7 @@ public class SolicitacaoCompraController implements Serializable {
 			setListaModalidade(new ArrayList<Modalidade>(Arrays.asList(Modalidade.values())));
 			setListaPrioridade(new ArrayList<PrioridadeSolicitacaoCompra>(Arrays.asList(PrioridadeSolicitacaoCompra.values())));
 			getSolicitacaoCompraDTO().setModalidade(Modalidade.MATERIAL);
+			getSolicitacaoCompraDTO().setPrioridade(PrioridadeSolicitacaoCompra.MEDIA);
 			return "/pages/solicitacaoCompra/solicitacao/nova_solicitacao.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -116,6 +121,31 @@ public class SolicitacaoCompraController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "prosseguir" }, e);
+		}
+	}
+	
+	public void novoItem() throws ApplicationException {
+		try {
+			setListaUnidade(rmBusiness.listarUnidade());
+			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "novoItem" }, e);
+		}
+	}
+	
+	public List<ProdutoRM> autocompleteProduto(String nome) throws ApplicationException {
+		try {
+			return rmBusiness.listarProdutosPorNome(getSolicitacaoCompraDTO().getColigada().getId(), nome);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "autocompleteProduto" }, e);
 		}
 	}
 
@@ -181,6 +211,14 @@ public class SolicitacaoCompraController implements Serializable {
 
 	public void setListaPrioridade(List<PrioridadeSolicitacaoCompra> listaPrioridade) {
 		this.listaPrioridade = listaPrioridade;
+	}
+
+	public List<UnidadeRM> getListaUnidade() {
+		return listaUnidade;
+	}
+
+	public void setListaUnidade(List<UnidadeRM> listaUnidade) {
+		this.listaUnidade = listaUnidade;
 	}
 
 }

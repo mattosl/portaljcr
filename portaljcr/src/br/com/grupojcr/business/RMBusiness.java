@@ -8,8 +8,10 @@ import javax.ejb.Stateless;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.RMDAO;
-import br.com.grupojcr.dto.CentroCustoRM;
+import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
+import br.com.grupojcr.rm.ProdutoRM;
+import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -36,13 +38,37 @@ public class RMBusiness {
 	
 	public List<NaturezaOrcamentariaRM> listarNaturezaOrcamentaria() throws ApplicationException {
 		try {
-			return daoRM.listaNaturezaOrcamentaria();
+			return daoRM.listarNaturezaOrcamentaria();
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarNaturezaOrcamentaria" }, e);
+		}
+	}
+	
+	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome) throws ApplicationException {
+		try {
+			return daoRM.listarProdutosPorNome(idColigada, nome);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarProdutosPorNome" }, e);
+		}
+	}
+	
+	public List<UnidadeRM> listarUnidade() throws ApplicationException {
+		try {
+			return daoRM.listarUnidade();
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUnidades" }, e);
 		}
 	}
 

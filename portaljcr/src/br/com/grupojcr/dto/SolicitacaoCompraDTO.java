@@ -1,10 +1,14 @@
 package br.com.grupojcr.dto;
 
+import java.util.List;
+
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.GrupoCotacao;
+import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
+import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 
 public class SolicitacaoCompraDTO {
@@ -21,6 +25,9 @@ public class SolicitacaoCompraDTO {
 	private String sugestaoFornecedor;
 	private String localEntrega;
 	private Double valorAproximado;
+	private ProdutoDTO produto;
+	
+	private List<SolicitacaoCompraItem> itens;
 	
 	public Coligada getColigada() {
 		return coligada;
@@ -93,6 +100,18 @@ public class SolicitacaoCompraDTO {
 	}
 	public void setValorAproximado(Double valorAproximado) {
 		this.valorAproximado = valorAproximado;
+	}
+	public List<SolicitacaoCompraItem> getItens() {
+		return itens;
+	}
+	public void setItens(List<SolicitacaoCompraItem> itens) {
+		this.itens = itens;
+	}
+	public ProdutoDTO getProduto() {
+		return produto;
+	}
+	public void setProduto(ProdutoDTO produto) {
+		this.produto = produto;
 	}
 
 }

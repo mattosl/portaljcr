@@ -72,6 +72,7 @@
 .ui-selectonemenu label.ui-selectonemenu-label {
     cursor: pointer !important;
     padding-left: 16px !important;
+    padding-top: 7px !important;
 }
 
 .ui-selectonemenu-filter-container {
@@ -105,4 +106,16 @@
 
 .alinharRadio {
 	margin-top: -10px !important;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    height: 34px !important;
+}
+
+.ui-inputfield {
+    height: 34px !important;
+}
+
+.ui-fluid .ui-inputtext {
+    height: 34px !important;
 }

@@ -1,4 +1,4 @@
-package br.com.grupojcr.dto;
+package br.com.grupojcr.rm;
 
 import java.io.Serializable;
 

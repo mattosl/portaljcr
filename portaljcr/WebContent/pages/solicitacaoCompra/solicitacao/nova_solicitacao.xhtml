@@ -123,18 +123,44 @@
 				            		</div>
 				            		<div class="form-horizontal">
 										<div class="box-body">
-											<div class="form-group">
+											<div class="row">
 												<div class="col-sm-3 col-md-3">
-													<label for="teste">Valor Aproximado: </label>
+													<p:commandButton
+														styleClass="btn btn-default"
+														icon="fa fa-plus"
+														value="Adicionar Novo Item"
+														id="btn_add_novo_item"
+														process="@this"
+														action="#{solicitacaoCompraController.novoItem()}"
+														oncomplete="PF('modalProduto').show();"
+														update="@form:modalProduto"
+														ajax="true">
+													</p:commandButton>
 												</div>
-			
-												<div class="col-sm-2 col-md-2">
-													<div class="input-group">
-											            <span class="input-group-addon">R$</span>
-		            									<h:inputText id="teste"  styleClass="form-control" />
-		            									<p:watermark value="0,00" for="teste"></p:watermark>
-											        </div>
-												</div>
+											</div>
+											<br />
+											<div class="row">
+												<p:dataTable var="item" id="tableItens"
+													value="#{solicitacaoCompraController.solicitacaoCompraDTO.itens}" 
+													tableStyle="table-layout: auto; word-break: keep-all;"
+													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
+													
+													<p:column headerText="Produto" styleClass="col-md-6" style="text-align:center;">
+												        <h:outputText value="#{item.descricaoProduto}" />
+												    </p:column>
+												    
+												    <p:column headerText="Quantidade" styleClass="col-md-2" style="text-align:center;">
+												        <h:outputText value="#{item.quantidade}" />
+												    </p:column>
+												    
+												    <p:column headerText="Unidade" styleClass="col-md-2" style="text-align:center;">
+												        <h:outputText value="#{item.unidade}" />
+												    </p:column>
+												    
+												    <p:column headerText="Observação" styleClass="col-md-2" style="text-align:center;">
+												        <h:outputText value="#{item.observacao}" />
+												    </p:column>
+												</p:dataTable>
 											</div>
 										</div>
 									</div>
@@ -164,6 +190,101 @@
 							</div>
 						</p:panel>
 					</f:validateBean>
+					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+						id="modalProduto"
+						widgetVar="modalProduto" 
+						header="Novo Produto"
+						resizable="false" 
+						responsive="true"
+						width="60%"
+						draggable="false"
+						modal="true">
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="produto">Produto: *</label>
+									</div>
+
+									<p:outputPanel id="descricaoProdutoPanel">
+										<div class="col-sm-10 col-md-10">
+											<h:inputText id="produtoDescricao" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.descricaoProduto}" rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
+									        <p:autoComplete id="produto" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" rendered="#{!solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
+	<!-- 								        <p:watermark value="01.001.0005 - SERVIÇO DE TELEFONIA" for="produto" /> -->
+									        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produto" />
+										</div>
+									</p:outputPanel>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="qtd">Quantidade: *</label>
+									</div>
+
+									<div class="col-sm-2 col-md-2">
+								        <h:inputText id="qtd" maxlength="10" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" onkeyup="filterNumberOnly(this);" />
+<!-- 								        <p:watermark value="10" for="qtd" /> -->
+									</div>
+									<div class="col-sm-8 col-md-8">
+										<span class="users-list-date pull-right">
+											<p:selectBooleanCheckbox value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
+												<p:ajax event="change" process="@this" global="false" update="@form:descricaoProdutoPanel" />
+											</p:selectBooleanCheckbox>									
+										</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="unidade">Unidade: *</label>
+									</div>
+
+									<div class="col-sm-3 col-md-3">
+										<p:selectOneMenu id="unidade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.unidade}">
+								        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+								        	<f:selectItems value="#{solicitacaoCompraController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade}" />
+								        </p:selectOneMenu>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="marca">Marca:</label>
+									</div>
+
+									<div class="col-sm-10 col-md-10">
+								        <h:inputText id="marca" maxlength="100" styleClass="form-control"  />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="observacao">Observação:</label>
+									</div>
+
+									<div class="col-sm-10 col-md-10">
+										<h:inputTextarea id="observacao" styleClass="form-control" rows="5" />
+									</div>
+								</div>
+							</div>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left">
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-plus"
+										value="Adicionar"
+										id="btn_add_produto"
+										process="@form"
+										ajax="true" />
+								</div>
+								<div class="col-sm-3 col-md-3 pull-right" >
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-times"
+										value="Cancelar"
+										id="btn_cancelar_produto"
+										process="@form"
+										ajax="true" />
+								</div>
+							</div>
+						</div>
+					</p:dialog>
 				</h:form>
 			</div>
 		</ui:define>

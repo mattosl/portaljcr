@@ -17,8 +17,10 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
-import br.com.grupojcr.dto.CentroCustoRM;
+import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
+import br.com.grupojcr.rm.ProdutoRM;
+import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -143,9 +145,75 @@ public class RMDAO {
 		}
 		return listaCentroCusto;
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome) throws ApplicationException {
+		/**
+		 * SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO
+		 * WHERE CODCOLPRD = ?
+		 * AND INATIVO = 0
+		 * AND LEN(CODIGOPRD) > 6
+		 * AND NOMEFANTASIA LIKE ?
+		 * ORDER BY CODIGOPRD ASC
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<ProdutoRM> listaProduto = new ArrayList<ProdutoRM>();
+
+		try {
+			conn = datasource.getConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO ")
+			.append("WHERE CODCOLPRD = ? ")
+			.append("AND INATIVO = 0 ")
+			.append("AND LEN(CODIGOPRD) > 6 ")
+			.append("AND NOMEFANTASIA LIKE ? ")
+			.append("ORDER BY CODIGOPRD ASC ");
+
+			ps = conn.prepareStatement(sb.toString());
+
+			ps.setLong(1, idColigada);
+			ps.setString(2,  "%" + nome + "%");
+
+			ResultSet set = ps.executeQuery();
+
+			while (set.next()) {
+				ProdutoRM produto = new ProdutoRM();
+				produto.setIdProduto(set.getInt("IDPRD"));
+				produto.setCodigoProduto(set.getString("CODIGOPRD"));
+				produto.setProduto(set.getString("NOMEFANTASIA"));
+				
+				listaProduto.add(produto);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarProdutosPorNome" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaProduto;
+	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<NaturezaOrcamentariaRM> listaNaturezaOrcamentaria() throws ApplicationException {
+	public List<NaturezaOrcamentariaRM> listarNaturezaOrcamentaria() throws ApplicationException {
 		/**
 		 *  SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO
 		 *  WHERE INATIVO = 0
@@ -198,6 +266,60 @@ public class RMDAO {
 			}
 		}
 		return listaNaturezaOrcamentaria;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<UnidadeRM> listarUnidade() throws ApplicationException {
+		/**
+		 * SELECT CODUND, DESCRICAO FROM TUND
+		 * ORDER BY DESCRICAO ASC
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<UnidadeRM> listaUnidade = new ArrayList<UnidadeRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODUND, DESCRICAO FROM TUND ")
+			.append("ORDER BY DESCRICAO ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				UnidadeRM unidade = new UnidadeRM();
+				unidade.setCodigoUnidade(set.getString("CODUND"));
+				unidade.setUnidade(set.getString("DESCRICAO"));
+				
+				listaUnidade.add(unidade);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUnidade" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaUnidade;
 	}
 
 }
