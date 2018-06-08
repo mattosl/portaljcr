@@ -145,21 +145,27 @@
 													tableStyle="table-layout: auto; word-break: keep-all;"
 													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
 													
-													<p:column headerText="Produto" styleClass="col-md-6" style="text-align:center;">
-												        <h:outputText value="#{item.descricaoProduto}" />
+													<p:column headerText="Produto" style="text-align:center;">
+												        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
 												    </p:column>
 												    
-												    <p:column headerText="Quantidade" styleClass="col-md-2" style="text-align:center;">
+												    <p:column headerText="Quantidade" style="text-align:center;">
 												        <h:outputText value="#{item.quantidade}" />
 												    </p:column>
 												    
-												    <p:column headerText="Unidade" styleClass="col-md-2" style="text-align:center;">
+												    <p:column headerText="Unidade" style="text-align:center;">
 												        <h:outputText value="#{item.unidade}" />
 												    </p:column>
 												    
-												    <p:column headerText="Observação" styleClass="col-md-2" style="text-align:center;">
+												    <p:column headerText="Observação" style="text-align:center;">
 												        <h:outputText value="#{item.observacao}" />
 												    </p:column>
+												    
+												    <p:column headerText="Excluir" style="text-align: center;" width="8%">
+														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.excluirItem(item)}" update="@form:tableItens">
+															<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
+														</p:commandLink>
+													</p:column>
 												</p:dataTable>
 											</div>
 										</div>
@@ -172,9 +178,10 @@
 											icon="fa fa-arrow-left"
 											value="Anterior"
 											id="btn_anterior"
-											process="@form"
-											action="#{usuarioController.salvar()}"
-											ajax="true" />
+											process="@this"
+											immediate="true"
+											action="#{solicitacaoCompraController.voltar()}"
+											ajax="false" />
 									</div>
 									<div class="col-sm-3 col-md-3 pull-right" >
 										<p:commandButton
@@ -182,8 +189,8 @@
 											icon="fa fa-check"
 											value="Salvar"
 											id="btn_salvar"
-											process="@form"
-											action="#{usuarioController.salvar()}"
+											process="@form:painelCadastro"
+											action="#{solicitacaoCompraController.salvar()}"
 											ajax="true" />
 									</div>
 								</div>
@@ -196,9 +203,11 @@
 						header="Novo Produto"
 						resizable="false" 
 						responsive="true"
+						closable="false"
 						width="60%"
 						draggable="false"
 						modal="true">
+						<p:messages id="mensagemModal" showDetail="true" closable="true" />
 						<div class="form-horizontal">
 							<div class="box-body">
 								<div class="form-group">
@@ -222,12 +231,11 @@
 
 									<div class="col-sm-2 col-md-2">
 								        <h:inputText id="qtd" maxlength="10" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" onkeyup="filterNumberOnly(this);" />
-<!-- 								        <p:watermark value="10" for="qtd" /> -->
 									</div>
 									<div class="col-sm-8 col-md-8">
 										<span class="users-list-date pull-right">
-											<p:selectBooleanCheckbox value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
-												<p:ajax event="change" process="@this" global="false" update="@form:descricaoProdutoPanel" />
+											<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
+												<p:ajax event="change" process="@this" oncomplete="alterarLabelObservacao();" global="false" update="@form:descricaoProdutoPanel" />
 											</p:selectBooleanCheckbox>									
 										</span>
 									</div>
@@ -250,42 +258,55 @@
 									</div>
 
 									<div class="col-sm-10 col-md-10">
-								        <h:inputText id="marca" maxlength="100" styleClass="form-control"  />
+								        <h:inputText id="marca" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.marca}"  />
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="col-sm-2 col-md-2 control-label">
-										<label for="observacao">Observação:</label>
+										<label id="observacaoLabel" for="observacao">Observação:</label>
 									</div>
 
 									<div class="col-sm-10 col-md-10">
-										<h:inputTextarea id="observacao" styleClass="form-control" rows="5" />
+										<h:inputTextarea id="observacao" styleClass="form-control" rows="5" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.observacao}" />
 									</div>
 								</div>
 							</div>
 							<div class="box-footer">
-								<div class="col-sm-3 col-md-3 pull-left">
+								<div class="col-sm-3 col-md-3 pull-right">
 									<p:commandButton
 										styleClass="btn btn-default"
-										icon="fa fa-plus"
+										icon="fa fa-check"
 										value="Adicionar"
 										id="btn_add_produto"
-										process="@form"
+										action="#{solicitacaoCompraController.adicionarProduto()}"
+										process="@form:modalProduto"
+										update="@form:mensagemModal, @form:painelItens"
 										ajax="true" />
 								</div>
-								<div class="col-sm-3 col-md-3 pull-right" >
+								<div class="col-sm-3 col-md-3 pull-left" >
 									<p:commandButton
 										styleClass="btn btn-default"
 										icon="fa fa-times"
 										value="Cancelar"
 										id="btn_cancelar_produto"
-										process="@form"
+										process="@this"
+										immediate="true"
+										onclick="PF('modalProduto').hide();"
 										ajax="true" />
 								</div>
 							</div>
 						</div>
 					</p:dialog>
 				</h:form>
+				<script type="application/javascript">
+					function alterarLabelObservacao() {
+						if($("#observacaoLabel").text() == 'Observação:') {
+							$("#observacaoLabel").text("Observação: *");
+						} else {
+							$("#observacaoLabel").text("Observação:");	
+						}
+					}
+				</script>
 			</div>
 		</ui:define>
 	</ui:composition>

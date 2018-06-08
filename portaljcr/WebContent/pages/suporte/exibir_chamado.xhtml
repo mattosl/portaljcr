@@ -225,8 +225,7 @@
 												process="@this"
 												update="@form"
 												action="#{chamadoController.atribuir()}"
-												ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != usuario and loginController.hasGroup(['ADMINISTRADOR', 'SUPORTE'])}"
-												oncomplete="window.scrollTo(0,0);" />
+												ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != usuario and loginController.hasGroup(['ADMINISTRADOR', 'SUPORTE'])}" />
 											<p:commandButton
 												styleClass="btn btn-default"
 												icon="fa fa-pencil-square"

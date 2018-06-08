@@ -49,7 +49,7 @@
 							<h:graphicImage name="/images/ajax_loader_red.gif" />
 					</p:dialog>
 					<p:ajaxStatus onstart="PF('statusDialog').show()"
-						onsuccess="PF('statusDialog').hide()" />
+						onsuccess="PF('statusDialog').hide();window.scrollTo(0,0);" />
 				</div>
 			</div>
 			<ui:insert name="body" /> </section>
