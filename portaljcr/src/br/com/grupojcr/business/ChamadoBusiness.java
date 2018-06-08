@@ -21,6 +21,7 @@ import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.ChamadoAcompanhamento;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.enumerator.CausaChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
 import br.com.grupojcr.util.Dominios;
@@ -86,21 +87,9 @@ public class ChamadoBusiness {
 			
 			daoChamado.incluir(chamado);
 			
-			String caminhoServidor = Dominios.SERVER_PATH;
 			if(CollectionUtils.isNotEmpty(dto.getAnexos())) {
 				for(ArquivoDTO arquivo : dto.getAnexos()) {
-					String caminhoArquivo = caminhoServidor + File.separator + "CHAMADOS" + File.separator + chamado.getId() + File.separator;
-					TreatFile.saveFileByFolder(arquivo.getData(), caminhoArquivo, arquivo.getNome());
-					
-					AnexoChamado anexoChamado = new AnexoChamado();
-					anexoChamado.setCaminho(caminhoArquivo);
-					anexoChamado.setChamado(chamado);
-					anexoChamado.setDtInclusao(Calendar.getInstance().getTime());
-					anexoChamado.setNome(arquivo.getNome());
-					anexoChamado.setUsuario(usuarioLogado);
-					
-					daoAnexoChamado.incluir(anexoChamado);
-					
+					adicionarAnexoChamado(chamado, usuarioLogado, arquivo);
 				}
 			}
 			
@@ -110,6 +99,49 @@ public class ChamadoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
+		}
+	}
+	
+	public AnexoChamado adicionarAnexoChamado(Chamado chamado, Usuario usuarioLogado, ArquivoDTO dto) throws ApplicationException {
+		try {
+			String caminhoServidor = Dominios.SERVER_PATH;
+			String caminhoArquivo = caminhoServidor + File.separator + "CHAMADOS" + File.separator + chamado.getId() + File.separator;
+			TreatFile.saveFileByFolder(dto.getData(), caminhoArquivo, dto.getNome());
+			
+			AnexoChamado anexoChamado = new AnexoChamado();
+			anexoChamado.setCaminho(caminhoArquivo);
+			anexoChamado.setChamado(chamado);
+			anexoChamado.setDtInclusao(Calendar.getInstance().getTime());
+			anexoChamado.setNome(dto.getNome());
+			anexoChamado.setUsuario(usuarioLogado);
+			
+			daoAnexoChamado.incluir(anexoChamado);
+			
+			return anexoChamado;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarAnexoChamado" }, e);
+		}
+	}
+	
+	public void excluirAnexoChamado(AnexoChamado anexo) throws ApplicationException {
+		try {
+			Boolean deletado = new File(anexo.getCaminho() + File.separator + anexo.getNome()).delete();
+			if(deletado) {
+				daoAnexoChamado.excluir(anexo);
+			} else {
+				throw new ApplicationException("message.empty", new String[] {"Arquivo não pode ser excluído, pois está aberto."}, FacesMessage.SEVERITY_WARN);
+			}
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluirAnexoChamado" }, e);
 		}
 	}
 	
@@ -160,6 +192,22 @@ public class ChamadoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
+		}
+	}
+	
+	public void solucionar(Chamado chamado) throws ApplicationException {
+		try {
+			chamado.setDtFechamento(Calendar.getInstance().getTime());
+			chamado.setCausa(CausaChamado.NORMAL);
+			chamado.setSolucao("Chamado resolvido");
+			chamado.setSituacao(SituacaoChamado.RESOLVIDO);
+			daoChamado.alterar(chamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "solucionar" }, e);
 		}
 	}
 	

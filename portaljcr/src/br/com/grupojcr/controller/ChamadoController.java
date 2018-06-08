@@ -122,8 +122,61 @@ public class ChamadoController implements Serializable {
 		try {
 			String nomeArquivo = Util.converterEncoding(event.getFile().getFileName(), 
 					Dominios.ENCODING_ISO_8859_1, Dominios.ENCODING_UTF_8);
+			
+			Integer idx = 1;
+			while(existeAnexo(nomeArquivo, Boolean.TRUE).equals(Boolean.TRUE)) {
+				nomeArquivo = idx + nomeArquivo;
+				idx++;
+			}
 			ArquivoDTO arquivo = new ArquivoDTO(nomeArquivo, event.getFile().getInputstream(), event.getFile());
 			getChamadoDTO().getAnexos().add(arquivo);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "doUpload" }, e);
+		}
+	}
+	
+	private Boolean existeAnexo(String nomeArquivo, Boolean chamadoNovo) throws ApplicationException {
+		try {
+			if(chamadoNovo) {
+				
+				for(ArquivoDTO dto : getChamadoDTO().getAnexos()) {
+					if(dto.getNome().equalsIgnoreCase(nomeArquivo)) {
+						return Boolean.TRUE;
+					}
+				}
+			} else {
+				for(AnexoChamado anexo : getChamado().getAnexos()) {
+					if(anexo.getNome().equalsIgnoreCase(nomeArquivo)) {
+						return Boolean.TRUE;
+					}
+				}
+			}
+			return Boolean.FALSE;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "existeAnexo" }, e);
+		}
+	}
+	
+	public void doUploadDireto(FileUploadEvent event) throws ApplicationException {
+		try {
+			String nomeArquivo = Util.converterEncoding(event.getFile().getFileName(), 
+					Dominios.ENCODING_ISO_8859_1, Dominios.ENCODING_UTF_8);
+			
+			Integer idx = 1;
+			while(existeAnexo(nomeArquivo, Boolean.FALSE).equals(Boolean.TRUE)) {
+				nomeArquivo = idx + nomeArquivo;
+				idx++;
+			}
+			ArquivoDTO arquivo = new ArquivoDTO(nomeArquivo, event.getFile().getInputstream(), event.getFile());
+			
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			AnexoChamado anexoChamado = chamadoBusiness.adicionarAnexoChamado(getChamado(), usuario, arquivo);
+			getChamado().getAnexos().add(anexoChamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "doUpload" }, e);
@@ -148,6 +201,17 @@ public class ChamadoController implements Serializable {
 	public void excluirAnexo(ArquivoDTO dto) throws ApplicationException {
 		try {
 			getChamadoDTO().getAnexos().remove(dto);
+			
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluirAnexo" }, e);
+		}
+	}
+	
+	public void excluirAnexo(AnexoChamado anexo) throws ApplicationException {
+		try {
+			getChamado().getAnexos().remove(anexo);
+			chamadoBusiness.excluirAnexoChamado(anexo);
 			
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -212,6 +276,24 @@ public class ChamadoController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
 		}
+	}
+	
+	public String solucionarChamado() throws ApplicationException {
+		try {
+			FacesContext fc = FacesContext.getCurrentInstance();
+			fc.getExternalContext().getFlash().setKeepMessages(true);
+			
+			chamadoBusiness.solucionar(getChamado());
+			
+			Message.setMessage("chamado.resolvido", new String[] {getChamado().getId().toString()});
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "solucionarChamado" }, e);
+		}
+		return voltar();
 	}
 	
 	public String voltar() throws ApplicationException {

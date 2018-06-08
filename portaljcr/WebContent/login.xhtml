@@ -16,6 +16,12 @@
     </h:head>
     <h:body>
 		<div class="login-page">
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+					<h:graphicImage name="/images/ajax_loader_red.gif" />
+			</p:dialog>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" />
 			<div style="text-align: center;">
 				<img  src="resources/images/jcr-logo.png" alt="Grupo JCR" height="150"	width="150"  />
 				<h1 class="font-h1">PORTAL JCR</h1>
@@ -28,7 +34,7 @@
 					<h:inputSecret value="#{loginController.senha}" label="Senha" styleClass="input-login">
 						<f:passThroughAttribute name="placeholder" value="Senha" />
 					</h:inputSecret>
-					<p:commandButton styleClass="button-login" action="#{loginController.doLogin()}" value="ENTRAR" update="@form"  />
+					<p:commandButton styleClass="button-login" action="#{loginController.doLogin()}" ajax="true" value="ENTRAR" update="@form"  />
 				</h:form>
 			</div>
 		</div>

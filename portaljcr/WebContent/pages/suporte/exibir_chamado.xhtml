@@ -15,7 +15,7 @@
     	<ui:define name="pageTitle"><i class="fa fa-plus-square fa-1x cor-padrao"></i> Chamado Nº #{chamadoController.chamado.id}</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-wrench"></i> Suporte TI</li>
-	    	<li class="active"><i class="fa fa-plus-square"></i> Exibir Chamado</li>
+	    	<li class="active"><i class="fa fa-plus-square"></i> Chamado</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -25,8 +25,8 @@
 						<div class="nav-tabs-custom">
 							<ul class="nav nav-tabs">
 								<li id="abaChamado" class="active"><a href="#infoChamado" data-toggle="tab"><i class="fa fa-newspaper-o"></i>&nbsp;Informações do Chamado</a></li>
-								<li id="abaAcompanhamento" jsf:rendered="#{chamadoController.chamado.usuarioResponsavel != null}"><a href="#acompanhamento" data-toggle="tab"><i class="fa fa-comments-o"></i>&nbsp;Acompanhamento</a></li>
-								<li id="abaAnexos" jsf:rendered="#{chamadoController.chamado.usuarioResponsavel != null}"><a href="#anexos" data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;Anexos</a></li>
+								<li id="abaAnexos"><a href="#anexos" data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;Anexos</a></li>
+								<li id="abaAcompanhamento"><a href="#acompanhamento" data-toggle="tab"><i class="fa fa-comments-o"></i>&nbsp;Acompanhamento</a></li>
 							</ul>
 							<div class="tab-content">
 								<div class="active tab-pane" id="infoChamado">
@@ -95,45 +95,11 @@
 													</div>
 												</div>
 											</div>
-											<div class="box-footer">
-												<div class="col-sm-3 col-md-3" >
-													<p:commandButton
-														styleClass="btn btn-default"
-														icon="fa fa-arrow-left"
-														value="Voltar"
-														id="btn_voltar"
-														process="@this"
-														immediate="true"
-														action="#{chamadoController.voltar()}"
-														ajax="false" />
-												</div>
-												<div class="col-sm-3 col-md-3" >
-													<p:commandButton
-														styleClass="btn btn-default"
-														icon="fa fa-pencil-square-o"
-														value="Atribuir para mim"
-														id="btn_atribuir"
-														process="@this"
-														update="@form"
-														action="#{chamadoController.atribuir()}"
-														ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel == null}"
-														oncomplete="window.scrollTo(0,0);" />
-													<p:commandButton
-														styleClass="btn btn-default"
-														icon="fa fa-pencil-square"
-														value="Solucionar Chamado"
-														id="btn_adicionar_solucao"
-														process="@this"
-														update="@form"
-														action="#{chamadoController.atribuir()}"
-														ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != null}" />
-												</div>
-											</div>
 										</div>
 									</p:panel>
               					</div>
               					<div class="tab-pane" id="acompanhamento" >
-									<p:panel toggleable="false" id="painelChat" style="border: 0px;" rendered="#{chamadoController.chamado.usuarioResponsavel != null}">
+									<p:panel toggleable="false" id="painelChat" style="border: 0px;">
 										<div class="form-horizontal">
 											<div class="box-body direct-chat-danger" style="background-color: #f9f9f9;border-radius: 5px;" jsf:rendered="#{chamadoController.chamado.mensagens.size() > 0}">
 												 <div id="messengers" class="direct-chat-messages">
@@ -168,29 +134,51 @@
 													<label>Nenhuma mensagem enviada.</label>
 												</div>
 											</div>
-											<div class="box-footer">
-												<div class="col-sm-10 col-md-10">
-													<h:inputText id="nome" value="#{chamadoController.mensagem}" maxlength="500" styleClass="form-control" />
-													<p:watermark value="Escreva uma mensagem..." for="nome" />
+											<p:outputPanel>
+												<div class="box-footer">
+													<div class="col-sm-10 col-md-10">
+														<h:inputText id="nome" value="#{chamadoController.mensagem}" maxlength="500" styleClass="form-control" />
+														<p:watermark value="Escreva uma mensagem..." for="nome" />
+													</div>
+													<div class="col-sm-2 col-md-2">
+														<p:commandButton
+															styleClass="btn btn-default"
+															icon="fa fa-arrow-right"
+															value="Enviar"
+															id="btn_enviar"
+															process="@form:painelChat"
+															update="@form:painelChat"
+															action="#{chamadoController.enviarMensagem()}"
+															oncomplete="scrollDown();"
+															ajax="true" />
+													</div>
 												</div>
-												<div class="col-sm-2 col-md-2">
-													<p:commandButton
-														styleClass="btn btn-default"
-														icon="fa fa-arrow-right"
-														value="Enviar"
-														id="btn_enviar"
-														process="@form:painelChat"
-														update="@form:painelChat"
-														action="#{chamadoController.enviarMensagem()}"
-														oncomplete="scrollDown();"
-														ajax="true" />
-												</div>
-											</div>
+											</p:outputPanel>
 										</div>
 									</p:panel>
               					</div>
               					<div class="tab-pane" id="anexos">
 									<p:panel toggleable="false" id="painelAnexos" style="border: 0px;">
+										<div class="form-horizontal">
+				                       		<div class="box-body">
+												<div class="form-group">
+											    	<p:fileUpload 
+											    		label="Adicionar" 
+											    		skinSimple="true"
+											    		cancelLabel="Cancelar" 
+											    		uploadLabel="Upload"
+											    		auto="true" 
+											    		fileUploadListener="#{chamadoController.doUploadDireto}" 
+											    		update="@form:painelAnexos"
+											    		dragDropSupport="true"
+							                       		allowTypes="/(\.|\/)(jpg|JPG|jpeg|JPEG|gif|GIF|png|PNG|pdf|PDF|doc|docx|xls|xlsx)$/" 
+							                       		sizeLimit="2000000"
+							                       		invalidFileMessage="Arquivo inválido! (Formatos Aceitos: JPG, PNG, GIF, PDF, DOC, XLS)" 
+							                       		invalidSizeMessage="Tamanho do arquivo não permitido! (Máximo 2MB)"
+							                       		 />
+												</div>
+											</div>
+										</div>
 										<p:dataTable var="anexo" 
 											value="#{chamadoController.chamado.anexos}" 
 											tableStyle="table-layout: auto; word-break: keep-all;"
@@ -200,18 +188,117 @@
 										        <h:outputText value="#{anexo.nome}" />
 										    </p:column>
 										    
-											<p:column headerText="Download" style="text-align: center;">
-												<p:commandLink ajax="true" process="@this" update="@form:painelAnexos" onclick="PrimeFaces.monitorDownload(start, stop);">
+											<p:column headerText="Download" style="text-align: center;" width="8%">
+												<p:commandLink ajax="false" process="@this" update="@form:painelAnexos" onclick="PrimeFaces.monitorDownload(start, stop);">
 													<h:outputText value="" title="Download" styleClass="fa fa-download" />
 													<p:fileDownload value="#{chamadoController.download(anexo)}" />
+												</p:commandLink>
+											</p:column>
+											
+											<p:column headerText="Excluir" style="text-align: center;" width="8%">
+												<p:commandLink ajax="true" process="@this" action="#{chamadoController.excluirAnexo(anexo)}" update="@form:painelAnexos">
+													<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
 												</p:commandLink>
 											</p:column>
 										</p:dataTable>
 									</p:panel>
 								</div>
+								<p:panel toggleable="false" style="border: 0px;">
+									<div class="box-footer">
+										<div class="col-sm-3 col-md-3" >
+											<p:commandButton
+												styleClass="btn btn-default"
+												icon="fa fa-arrow-left"
+												value="Voltar"
+												id="btn_voltar"
+												process="@this"
+												immediate="true"
+												action="#{chamadoController.voltar()}"
+												ajax="false" />
+										</div>
+										<div class="col-sm-3 col-md-3" >
+											<p:commandButton
+												styleClass="btn btn-default"
+												icon="fa fa-pencil-square-o"
+												value="Atribuir para mim"
+												id="btn_atribuir"
+												process="@this"
+												update="@form"
+												action="#{chamadoController.atribuir()}"
+												ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != usuario and loginController.hasGroup(['ADMINISTRADOR', 'SUPORTE'])}"
+												oncomplete="window.scrollTo(0,0);" />
+											<p:commandButton
+												styleClass="btn btn-default"
+												icon="fa fa-pencil-square"
+												value="Solucionar Chamado"
+												id="btn_adicionar_solucao"
+												process="@this"
+												oncomplete="PF('modalSolucao').show();"
+												update="@form:modalSolucao"
+												ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel eq usuario}" />
+										</div>
+									</div>
+								</p:panel>
               				</div>
 						</div>
 					</f:validateBean>
+					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+						id="modalSolucao"
+						widgetVar="modalSolucao" 
+						header="Solucionar Chamado"
+						resizable="false" 
+						responsive="true"
+						width="50%"
+						draggable="false"
+						modal="true">
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="selectCausa">Causa: * <p:outputLabel id="info" style="color: #de4b39">&nbsp;<i style="color: #9f9f9f" class="fa fa-exclamation-circle"></i>&nbsp;</p:outputLabel></label>
+										<p:tooltip for="info" value="Insira a causa raiz do chamado, nem todos os chamados são problemas da TI." escape="false" position="top" />
+									</div>
+									<div class="col-sm-10 col-md-10">
+										<p:selectOneMenu id="selectCausa" value="#{chamadoController.chamado.causa}" >
+								        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+<!-- 								        	<f:selectItems value="#{chamadoController.listaCategoria}" /> -->
+								        </p:selectOneMenu>
+									</div>
+								</div>	        
+								<div class="form-group">
+									<div class="col-sm-2 col-md-2 control-label">
+										<label for="solucao">Solução: *</label>
+									</div>
+									
+									<div class="col-sm-10 col-md-10">
+										<h:inputTextarea id="solucao" styleClass="form-control" rows="5" />
+									</div>
+								</div>
+							</div>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left" >
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-times"
+										value="Cancelar"
+										id="btn_cancelar_solucao"
+										process="@form"
+										ajax="true" />
+								</div>
+								<div class="col-sm-3 col-md-3 pull-right">
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-check"
+										value="Solucionar"
+										id="btn_solucionar"
+										process="@form:modalSolucao"
+										action="#{chamadoController.solucionarChamado()}"
+										oncomplete="PF('modalSolucao').hide();"
+										ajax="false" />
+								</div>
+							</div>
+						</div>
+					</p:dialog>
 				</h:form>
 				<script type="text/javascript">
 
