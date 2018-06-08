@@ -223,8 +223,9 @@ public class ChamadoController implements Serializable {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			chamadoBusiness.atribuir(getChamado(), usuario);
-			
 			Message.setMessage("chamado.atribuido");
+			
+			adicionarMensagem("Olá, vou atender o seu chamado, a partir de agora sou o responsável por ele!");
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -286,6 +287,9 @@ public class ChamadoController implements Serializable {
 			chamadoBusiness.solucionar(getChamado());
 			
 			Message.setMessage("chamado.resolvido", new String[] {getChamado().getId().toString()});
+			
+			adicionarMensagem("Adicionei uma solução ao seu chamado: Chamado resolvido!");
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -294,6 +298,20 @@ public class ChamadoController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "solucionarChamado" }, e);
 		}
 		return voltar();
+	}
+	
+	private void adicionarMensagem(String mensagem) throws ApplicationException {
+		try {
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			chamadoBusiness.enviarMensagem(mensagem, usuario, getChamado());
+			getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarMensagem" }, e);
+		}
 	}
 	
 	public String voltar() throws ApplicationException {
