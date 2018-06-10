@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.CausaChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.util.Dominios;
+import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatFile;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
@@ -420,6 +422,19 @@ public class ChamadoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarMensagem" }, e);
+		}
+	}
+	
+	public Integer calcularTempoResolucao(Chamado chamado) throws ApplicationException {
+		try {
+			if(Util.isNotNull(chamado.getDtResolucao())) {
+				return TreatDate.contarDiferencaEmDias(chamado.getDtAbertura(), chamado.getDtResolucao()); 
+			} else {
+				return TreatDate.contarDiferencaEmDias(chamado.getDtAbertura(), Calendar.getInstance().getTime());
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcularTempoResolucao" }, e);
 		}
 	}
 	

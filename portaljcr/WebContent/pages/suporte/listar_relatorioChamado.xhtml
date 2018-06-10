@@ -13,7 +13,7 @@
     	<ui:param name="activeMenu" value="suporte"/>
     	
     	<f:metadata>
-			<f:viewAction action="#{meusChamadosController.iniciarProcesso()}" />
+			<f:viewAction action="#{relatorioChamadoController.iniciarProcesso()}" />
 		</f:metadata>
     	
     	<ui:define name="pageTitle"><i class="fa fa-bar-chart fa-1x cor-padrao"></i> Relatório de Chamados</ui:define>
@@ -25,113 +25,211 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="chamadoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
-							<div class="box-header with-border">
-		             			<h3 class="box-title">Consultar Chamados</h3>
-		            		</div>
-		            		<div class="form-horizontal">
-								<div class="box-body">
-									<div class="form-group">
-										<label for="situacao" class="col-sm-2 col-md-2 control-label">Situação:</label>
-	
-										<div class="col-sm-4 col-md-4">
-									        <p:selectOneRadio id="situacao" value="#{meusChamadosController.filtro.situacao}" styleClass="radio alinharRadio" layout="responsive" columns="2">
-											   <f:selectItem itemLabel="Abertos" itemValue="1" />
-											   <f:selectItem itemLabel="Fechados" itemValue="2" />
-											</p:selectOneRadio>
+					
+						<div class="nav-tabs-custom">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#filtroConsulta" data-toggle="tab"><i class="fa fa-search"></i>&nbsp;Consulta</a></li>
+								<li><a href="#filtroAvancado" data-toggle="tab"><i class="fa fa-filter"></i>&nbsp;Filtros Avançados</a></li>
+							</ul>
+							<div class="tab-content">
+								<div class="active tab-pane" id="filtroConsulta">
+									<p:panel toggleable="false" id="painelConsulta" style="border: 0px;">
+					            		<div class="form-horizontal">
+											<div class="box-body">
+												<div class="form-group">
+													<label for="dtInicio" class="col-sm-2 control-label">Período:</label>
+													<div class="row">
+										                <div class="col-xs-12 col-md-2 col-lg-2">
+										                	<div class="input-group date">
+											                	<div class="input-group-addon">
+											                		<i class="fa fa-calendar"></i>
+											                	</div>
+											                	<p:calendar styleClass="pull-right" id="dtInicio" value="#{relatorioChamadoController.filtro.periodoInicial}" readonlyInput="true" locale="pt_BR"/>
+											                </div>
+										                </div>
+										                <label for="dtFim" class="col-sm-1 col-md-1 col-lg-1 control-label" style="text-align:center;">até</label>
+										                <div class="col-xs-12 col-md-2 col-lg-2">
+										                	<div class="input-group date">
+											                	<div class="input-group-addon">
+											                		<i class="fa fa-calendar"></i>
+											                	</div>
+											                	<p:calendar styleClass="pull-right" id="dtFim" value="#{relatorioChamadoController.filtro.periodoFinal}" readonlyInput="true" locale="pt_BR"/>
+											                </div>
+										                </div>
+										            </div>
+												</div>
+												<div class="form-group">
+													<label for="situacao" class="col-sm-2 col-md-2 control-label">Situação:</label>
+				
+													<div class="col-sm-10 col-md-10" style="padding-top: 5px;">
+														<p:selectManyCheckbox id="situacao" value="#{relatorioChamadoController.filtro.situacao}">
+													        <f:selectItems value="#{relatorioChamadoController.listaSituacaoChamado}" var="situacao" itemLabel="#{situacao.descricao}" itemValue="#{situacao}" />
+													    </p:selectManyCheckbox>
+													</div>
+												</div>
+											</div>
 										</div>
-									</div>
-									<div class="form-group">
-										<label for="dtInicio" class="col-sm-2 control-label">Período:</label>
-										<div class="row">
-							                <div class="col-xs-12 col-md-2 col-lg-2">
-							                	<div class="input-group date">
-								                	<div class="input-group-addon">
-								                		<i class="fa fa-calendar"></i>
-								                	</div>
-								                	<p:calendar styleClass="pull-right" id="dtInicio" value="#{meusChamadosController.filtro.periodoInicial}" readonlyInput="true" locale="pt_BR"/>
-								                </div>
-							                </div>
-							                <label for="dtFim" class="col-sm-1 col-md-1 col-lg-1 control-label" style="text-align:center;">até</label>
-							                <div class="col-xs-12 col-md-2 col-lg-2">
-							                	<div class="input-group date">
-								                	<div class="input-group-addon">
-								                		<i class="fa fa-calendar"></i>
-								                	</div>
-								                	<p:calendar styleClass="pull-right" id="dtFim" value="#{meusChamadosController.filtro.periodoFinal}" readonlyInput="true" locale="pt_BR"/>
-								                </div>
-							                </div>
-							            </div>
-									</div>
+									</p:panel>
 								</div>
-								<div class="box-footer">
-									<div class="col-sm-4 col-md-4">
-										<p:commandButton
-											styleClass="btn btn-default"
-											icon="fa fa-search"
-											value="Pesquisar"
-											id="btn_pesquisar"
-											process="@form"
-											action="#{meusChamadosController.pesquisar()}"
-											update="@this, :gridForm"
-											ajax="true">
-										</p:commandButton>
-									</div>
+								<div class="tab-pane" id="filtroAvancado" >
+									<p:panel toggleable="false" id="painelFiltroAvancado" style="border: 0px;">
+					            		<div class="form-horizontal">
+											<div class="box-body">
+												<div class="form-group">
+													<label for="prioridade" class="col-sm-2 col-md-2 control-label">Prioridade:</label>
+				
+													<div class="col-sm-3 col-md-3">
+														<p:selectOneMenu id="prioridade" value="#{relatorioChamadoController.filtro.prioridadeChamado}" disabled="true">
+												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaPrioridadeChamado}" var="prioridade" itemLabel="#{prioridade.descricao}" itemValue="#{prioridade}" />
+												        </p:selectOneMenu>
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="causa" class="col-sm-2 col-md-2 control-label">Causa:</label>
+				
+													<div class="col-sm-6 col-md-6">
+														<p:selectOneMenu id="causa" value="#{relatorioChamadoController.filtro.causaChamado}" disabled="true">
+												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
+												        </p:selectOneMenu>
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="categoria" class="col-sm-2 col-md-2 control-label">Categoria:</label>
+				
+													<div class="col-sm-6 col-md-6">
+														<p:selectOneMenu id="categoria" value="#{relatorioChamadoController.filtro.categoria}" disabled="true">
+												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
+												        </p:selectOneMenu>
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="subcategoria" class="col-sm-2 col-md-2 control-label">Subcategoria:</label>
+				
+													<div class="col-sm-6 col-md-6">
+														<p:selectOneMenu id="subcategoria" value="#{relatorioChamadoController.filtro.categoria}" disabled="true">
+												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
+												        </p:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+									</p:panel>
 								</div>
 							</div>
-		            	</p:panel>
+							<p:panel toggleable="false" style="border: 0px;">
+								<div class="form-horizontal">
+									<div class="box-footer">
+										<div class="col-sm-4 col-md-4">
+											<p:commandButton
+												styleClass="btn btn-default"
+												icon="fa fa-filter"
+												value="Filtrar"
+												id="btn_filtrar"
+												process="@form"
+												action="#{relatorioChamadoController.pesquisar()}"
+												update="@this, :gridForm"
+												ajax="true">
+											</p:commandButton>
+										</div>
+									</div>
+								</div>
+			            	</p:panel>
+						</div>
 					</f:validateBean>
 				</h:form>
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<p:dataTable var="chamado" id="tableChamado" widgetVar="widgetTabelaChamado"
-						value="#{meusChamadosController.dataModel}" 
-						tableStyle="table-layout: auto; word-break: keep-all;" 
-						rendered="#{meusChamadosController.exibirResultado}"
-						binding="#{dataTableUtil.lazyDataTable}">
-						
-						<p:column headerText="Visualizar" style="text-align: center;font-size:12px;">
-							<p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}" >
-								<h:outputText value="" title="Editar" styleClass="fa fa-eye" />
-								<f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
-								<f:setPropertyActionListener value="LISTAR" target="#{chamadoController.origem}" />
-							</p:commandLink>
-						</p:column>
-						
-					  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{chamado.id}" />
-					    </p:column>
-						
-					    <p:column headerText="Situação" style="text-align:center;font-size:12px;">
-					    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : chamado.situacao eq 'RESOLVIDO' ? 'info' : 'default' }">#{chamado.situacao.descricao.toUpperCase()}</span>
-					    </p:column>
-					    
-					    <p:column headerText="Data de Abertura" style="text-align:center;font-size:12px;" >
-					        <h:outputText value="#{chamado.dtAbertura}" >
-					        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-					        </h:outputText>
-					    </p:column>
-					    
-					    <p:column headerText="Categoria" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{chamado.categoria}" />
-					    </p:column>
-					    
-					    <p:column headerText="Subcategoria" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{chamado.subcategoria}" />
-					    </p:column>
-					    
-					    <p:column headerText="Título" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{chamado.titulo}" />
-					    </p:column>
-					    
-					    <p:column headerText="Solicitante" style="text-align:center;font-size:12px;" rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'SUPORTE'])}">
-					        <h:outputText value="#{chamado.usuarioSolicitante.nome}" />
-					    </p:column>
-					    
-					    <p:column headerText="Responsável" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{chamado.usuarioResponsavel.nome}" />
-					    </p:column>
-					    
-					</p:dataTable>
+					<div class="nav-tabs-custom-relatorio">
+						<ul class="nav nav-tabs">
+							<li class="active" style="margin-bottom: 0px !important;">
+								<h:commandLink style="cursor:pointer;background-color: #f5f5f5;">
+					                <p:graphicImage name="/images/icon_excel.png" width="26"/>
+					                <p:dataExporter type="xls"  target="@form:tabelaChamado" fileName="relatorio_chamados" />
+									&nbsp;Exportar
+					            </h:commandLink>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="active tab-pane" id="excel">
+								<p:dataTable var="chamado" id="tabelaChamado" widgetVar="widgetTabelaChamado"
+									value="#{relatorioChamadoController.dataModel}" 
+									tableStyle="table-layout: auto; word-break: keep-all;" 
+									rendered="#{relatorioChamadoController.exibirResultado}"
+									binding="#{dataTableUtil.lazyDataTable}"
+									rowKey="#{chamado.id}" sortBy="#{null}">
+									
+			<!-- 						 <f:facet name="{Exporters}"> -->
+			<!-- 				            <h:commandLink styleClass="pull-right"> -->
+			<!-- 				                <p:graphicImage name="/images/icon_excel.png" width="26"/> -->
+			<!-- 				                <p:dataExporter type="xls" target="tabelaChamado" fileName="relatorio_chamados" preProcessor="#{relatorioChamadoController.postProcessXLS}" /> -->
+			<!-- 				            </h:commandLink> -->
+			<!-- 				        </f:facet> -->
+									
+								  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.id}" />
+								    </p:column>
+								    
+								    <p:column headerText="Situação" style="text-align:center;font-size:12px;display:none;">
+								    	<h:outputText value="#{chamado.situacao.descricao}" />
+								    </p:column>
+									
+								    <p:column headerText="Situação" style="text-align:center;font-size:12px;" exportable="false">
+								    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : chamado.situacao eq 'RESOLVIDO' ? 'info' : 'default' }">#{chamado.situacao.descricao.toUpperCase()}</span>
+								    </p:column>
+								    
+								    <p:column headerText="Categoria" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.categoria}" />
+								    </p:column>
+								    
+								    <p:column headerText="Subcategoria" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.subcategoria}" />
+								    </p:column>
+								    
+								    <p:column headerText="Título" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.titulo}" />
+								    </p:column>
+								    
+								    <p:column headerText="Solicitante" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.usuarioSolicitante.nome}" />
+								    </p:column>
+								    
+								    <p:column headerText="Responsável" style="text-align:center;font-size:12px;display:none;">
+								        <h:outputText value="#{chamado.usuarioResponsavel.nome}" />
+								    </p:column>
+								    
+								    <p:column headerText="Causa" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.causa.descricao}" />
+								    </p:column>
+								    
+								    <p:column headerText="Data de Abertura" style="text-align:center;font-size:12px;" >
+								        <h:outputText value="#{chamado.dtAbertura}" >
+								        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+								        </h:outputText>
+								    </p:column>
+								    
+								    <p:column headerText="Data de Resolução" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.dtResolucao}">
+								        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+								        </h:outputText>
+								    </p:column>
+								    
+								    <p:column headerText="Tempo de Resolução" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamadoController.calcularTempoResolucao(chamado)} dia(s)" />
+								    </p:column>
+								    
+								    <p:column headerText="Data Fechamento" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{chamado.dtFechamento}">
+								        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+								        </h:outputText>
+								    </p:column>
+								    
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
 				</h:form>
 			</div>
 		</ui:define>
