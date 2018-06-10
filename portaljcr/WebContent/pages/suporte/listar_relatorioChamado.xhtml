@@ -231,9 +231,14 @@
 								    <p:column headerText="Situação" style="text-align:center;font-size:12px;display:none;">
 								    	<h:outputText value="#{chamado.situacao.descricao}" />
 								    </p:column>
+								    
 									
 								    <p:column headerText="Situação" style="text-align:center;font-size:12px;" exportable="false">
 								    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : chamado.situacao eq 'RESOLVIDO' ? 'info' : 'danger' }">#{chamado.situacao.descricao.toUpperCase()}</span>
+								    </p:column>
+								    
+								    <p:column headerText="Título" style="text-align:center;font-size:12px;display:none;">
+								        <h:outputText value="#{chamado.titulo}" />
 								    </p:column>
 								    
 								    <p:column headerText="Categoria" style="text-align:center;font-size:12px;">
@@ -244,9 +249,10 @@
 								        <h:outputText value="#{chamado.subcategoria}" />
 								    </p:column>
 								    
-								    <p:column headerText="Título" style="text-align:center;font-size:12px;">
-								        <h:outputText value="#{chamado.titulo}" />
+							     	<p:column headerText="Prioridade" style="text-align:center;font-size:12px;display:none;">
+								        <h:outputText value="#{chamado.prioridade.descricao}" />
 								    </p:column>
+								    
 								    
 								    <p:column headerText="Solicitante" style="text-align:center;font-size:12px;">
 								        <h:outputText value="#{chamado.usuarioSolicitante.nome}" />
@@ -256,7 +262,7 @@
 								        <h:outputText value="#{chamado.usuarioResponsavel.nome}" />
 								    </p:column>
 								    
-								    <p:column headerText="Causa" style="text-align:center;font-size:12px;">
+								    <p:column headerText="Causa" style="text-align:center;font-size:12px;display:none;">
 								        <h:outputText value="#{chamado.causa.descricao}" />
 								    </p:column>
 								    
