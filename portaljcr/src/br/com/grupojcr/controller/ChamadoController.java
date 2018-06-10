@@ -14,6 +14,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
@@ -67,6 +68,9 @@ public class ChamadoController implements Serializable {
 	
 	@EJB
 	private ChamadoBusiness chamadoBusiness;
+	
+	@Inject
+	private LoginController loginController;
 
 	/**
 	 * Método responsavel por iniciar processo
@@ -294,19 +298,32 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
-	public void carregarDadosParametros() throws ApplicationException {
+	public String carregarDadosParametros() throws ApplicationException {
 		try {
 			Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 			String parametro = params.get("idChamado");
 			if(Util.isNotNull(parametro)) {
 				try {
 					Long idChamado = Long.parseLong(parametro);
-					
+					Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 					setChamado(chamadoBusiness.obterChamado(idChamado));
+					
+					if(!loginController.hasGroup(Arrays.asList("ADMINISTRADOR", "SUPORTE"))) {
+						if(!getChamado().getUsuarioSolicitante().getId().equals(usuario.getId())) {
+							Message.setMessage("message.empty", new String[] { "Você não possui permissão para visualizar este chamado." }, FacesMessage.SEVERITY_FATAL);
+							return "/pages/suporte/listar_chamado.xhtml?faces-redirect=true";
+						}
+					}
 					editar();
 				} catch (NumberFormatException e) {
-					throw new ApplicationException("message.empty", new String[] { "Chamado não existe." }, FacesMessage.SEVERITY_FATAL);
+					Message.setMessage("message.empty", new String[] { "Chamado não existe." }, FacesMessage.SEVERITY_FATAL);
+					return "/pages/suporte/listar_chamado.xhtml?faces-redirect=true";
 				}
+			}
+			
+			if(Util.isNull(getChamado())) {
+				Message.setMessage("message.empty", new String[] { "Chamado não existe." }, FacesMessage.SEVERITY_FATAL);
+				return "/pages/suporte/listar_chamado.xhtml?faces-redirect=true"; 
 			}
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -315,6 +332,7 @@ public class ChamadoController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarDadosParametros" }, e);
 		}
+		return null;
 	}
 	
 	public void carregarCausas() throws ApplicationException {

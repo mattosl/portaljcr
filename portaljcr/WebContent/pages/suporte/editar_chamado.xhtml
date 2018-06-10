@@ -198,7 +198,7 @@
 													<label>Nenhuma mensagem enviada.</label>
 												</div>
 											</div>
-											<p:outputPanel>
+											<p:outputPanel rendered="#{chamadoController.chamado.situacao ne 'FECHADO'}">
 												<div class="box-footer">
 													<div class="col-sm-10 col-md-10">
 														<h:inputText id="nome" value="#{chamadoController.mensagem}" maxlength="500" styleClass="form-control" />

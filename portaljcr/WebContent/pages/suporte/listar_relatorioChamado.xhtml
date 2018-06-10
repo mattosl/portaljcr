@@ -9,17 +9,17 @@
 	xmlns:jsf="http://xmlns.jcp.org/jsf" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
-		<ui:param name="activeSubmenu" value="meusChamados"/>
+		<ui:param name="activeSubmenu" value="relatorioChamado"/>
     	<ui:param name="activeMenu" value="suporte"/>
     	
     	<f:metadata>
 			<f:viewAction action="#{meusChamadosController.iniciarProcesso()}" />
 		</f:metadata>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-newspaper-o fa-1x cor-padrao"></i> Meus chamados</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-bar-chart fa-1x cor-padrao"></i> Relatório de Chamados</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-wrench"></i> Suporte TI</li>
-	    	<li class="active"><i class="fa fa-newspaper-o"></i> Meus Chamados</li>
+	    	<li class="active"><i class="fa fa-bar-chart"></i> Relatório de Chamados</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
