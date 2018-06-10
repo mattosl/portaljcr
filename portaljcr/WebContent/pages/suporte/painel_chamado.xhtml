@@ -24,6 +24,7 @@
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
 				<h:form id="chamadoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:poll interval="5" listener="#{painelChamadoController.iniciarProcesso()}" global="false" update="@form" />
 					<f:validateBean disabled="true" for="@form">
 						<p:panel toggleable="false" id="painelChamado" styleClass="box box-danger">
 							<div class="box-header with-border">
@@ -33,12 +34,15 @@
 								<div class="box-body table-responsive no-padding">
 									<p:dataTable var="chamado" id="tableChamados"
 										value="#{painelChamadoController.listaChamado}" 
-										tableStyle="table-layout: auto; word-break: keep-all;">
+										tableStyle="table-layout: auto; word-break: keep-all;"
+										emptyMessage="Nenhum chamado aberto no momento."
+										rendered="#{painelChamadoController.listaChamado.size() > 0}" >
 										
 										<p:column headerText="ID" style="text-align:center;font-size:12px;">
-									        <p:commandLink ajax="true" process="@this" action="#{chamadoController.exibir()}">
+									        <p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}">
 										        <h:outputText styleClass="chamadoLink" value="#{chamado.id}" />
 										        <f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
+										        <f:setPropertyActionListener value="PAINEL" target="#{chamadoController.origem}" />
 											</p:commandLink>
 									    </p:column>
 										
@@ -53,7 +57,11 @@
 									    </p:column>
 									    
 									    <p:column headerText="Categoria" style="text-align:center;font-size:12px;">
-									        <h:outputText value="#{chamado.categoria} / #{chamado.subcategoria}" />
+									        <h:outputText value="#{chamado.categoria}" />
+									    </p:column>
+									    
+									    <p:column headerText="Subcategoria" style="text-align:center;font-size:12px;">
+									        <h:outputText value="#{chamado.subcategoria}" />
 									    </p:column>
 									    
 									    <p:column headerText="Título" style="text-align:center;font-size:12px;">
@@ -85,6 +93,10 @@
 <!-- 											</p:commandLink> -->
 <!-- 										</p:column> -->
 									</p:dataTable>
+								</div>
+								<div class="form-group" style="text-align:center;" jsf:rendered="#{painelChamadoController.listaChamado.size() == 0}">
+									<br />
+									<label>Nenhum chamado aberto até o momento.</label>
 								</div>
 							</div>
 						</p:panel>

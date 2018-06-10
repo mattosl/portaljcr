@@ -114,7 +114,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			
 			return query.getResultList().size();
 		} catch (NoResultException nR) {
-			return null;
+			return 0;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ApplicationException("message.default.erro", new String[] { "obterQtdUsuario" }, e);

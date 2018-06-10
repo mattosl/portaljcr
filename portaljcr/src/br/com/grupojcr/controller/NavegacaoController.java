@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @ManagedBean
 @SessionScoped
@@ -32,6 +35,19 @@ public class NavegacaoController implements Serializable {
      * @return Welcome page name.
      */
     public String redirectToWelcome() {
+    	HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    	HttpSession session = request.getSession(true);
+    	
+    	if(session.getAttribute("lastPage") != null) {
+    		String parametros = null;
+    				
+			if(session.getAttribute("parametros") != null) {
+				parametros = session.getAttribute("parametros").toString();
+				
+				return session.getAttribute("lastPage").toString() + "?faces-redirect=true&" + parametros;
+			}
+    		return session.getAttribute("lastPage").toString() + "?faces-redirect=true&";
+    	}
         return "/pages/login/welcome.xhtml?faces-redirect=true";
     }
      

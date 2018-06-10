@@ -17,11 +17,11 @@ import br.com.grupojcr.dao.ChamadoDAO;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.ArquivoDTO;
 import br.com.grupojcr.dto.ChamadoDTO;
+import br.com.grupojcr.dto.FiltroChamado;
 import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.ChamadoAcompanhamento;
 import br.com.grupojcr.entity.Usuario;
-import br.com.grupojcr.enumerator.CausaChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
 import br.com.grupojcr.util.Dominios;
@@ -197,9 +197,7 @@ public class ChamadoBusiness {
 	
 	public void solucionar(Chamado chamado) throws ApplicationException {
 		try {
-			chamado.setDtFechamento(Calendar.getInstance().getTime());
-			chamado.setCausa(CausaChamado.NORMAL);
-			chamado.setSolucao("Chamado resolvido");
+			chamado.setDtResolucao(Calendar.getInstance().getTime());
 			chamado.setSituacao(SituacaoChamado.RESOLVIDO);
 			daoChamado.alterar(chamado);
 		} catch (ApplicationException e) {
@@ -208,6 +206,20 @@ public class ChamadoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "solucionar" }, e);
+		}
+	}
+	
+	public void encerrar(Chamado chamado) throws ApplicationException {
+		try {
+			chamado.setDtFechamento(Calendar.getInstance().getTime());
+			chamado.setSituacao(SituacaoChamado.FECHADO);
+			daoChamado.alterar(chamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrar" }, e);
 		}
 	}
 	
@@ -225,6 +237,42 @@ public class ChamadoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "enviarMensagem" }, e);
+		}
+	}
+	
+	public Integer obterQtdChamado(FiltroChamado filtro) throws ApplicationException {
+		try {
+			return daoChamado.obterQtdChamado(filtro);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdChamado" }, e);
+		}
+	}
+	
+	public List<Chamado> listarChamadoPaginado(int first, int pageSize, FiltroChamado filtro) throws ApplicationException {
+		try {
+			return daoChamado.listarChamadoPaginado(first, pageSize, filtro);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarChamadoPaginado" }, e);
+		}
+	}
+	
+	public Chamado obterChamado(Long idChamado) throws ApplicationException {
+		try {
+			return daoChamado.obterChamado(idChamado);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterChamado" }, e);
 		}
 	}
 

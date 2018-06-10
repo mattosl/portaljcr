@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -31,6 +32,7 @@ import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.ChamadoAcompanhamento;
 import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.enumerator.CausaChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.util.Dominios;
 import br.com.grupojcr.util.TreatFile;
@@ -51,12 +53,14 @@ public class ChamadoController implements Serializable {
 	
 	private List<SelectItem> listaCategoria;
 	private List<PrioridadeChamado> listaPrioridade;
+	private List<CausaChamado> listaCausaChamado;
 	
 	private ChamadoDTO chamadoDTO;
 	private ArquivoDTO arquivoDTO;
 	private Chamado chamado;
 	
 	private String mensagem;
+	private String origem;
 	
 	@EJB
 	private CategoriaChamadoBusiness categoriaChamadoBusiness;
@@ -183,7 +187,7 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
-	public void salvar() throws ApplicationException {
+	public String salvar() throws ApplicationException {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			chamadoBusiness.salvar(getChamadoDTO(), usuario.getId());
@@ -196,6 +200,7 @@ public class ChamadoController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
 		}
+		return "/pages/suporte/listar_chamado.xhtml?faces-redirect=true";
 	}
 	
 	public void excluirAnexo(ArquivoDTO dto) throws ApplicationException {
@@ -225,7 +230,7 @@ public class ChamadoController implements Serializable {
 			chamadoBusiness.atribuir(getChamado(), usuario);
 			Message.setMessage("chamado.atribuido");
 			
-			adicionarMensagem("Olá, vou atender o seu chamado, a partir de agora sou o responsável por ele!");
+			adicionarMensagem("Olá, vou atender o seu chamado e a partir de agora sou responsável por ele!");
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -265,17 +270,60 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
-	public String exibir() throws ApplicationException {
+	public String editar() throws ApplicationException {
 		try {
+//			pieModel1 = new PieChartModel();
+//	         
+//	        pieModel1.set("Abertos", 20);
+//	        pieModel1.set("Em Andamento", 19);
+//	        pieModel1.set("Resolvidos", 50);
+//	        pieModel1.set("Fechados", 60);
+//	         
+//	        pieModel1.setLegendPosition("o");
+//	        pieModel1.setSeriesColors("00A65A,F39C12,00C0EF,D2D6DE");
+			
 			getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
 			getChamado().setAnexos(new HashSet<AnexoChamado>(chamadoBusiness.listarAnexoPorChamado(getChamado().getId())));
-			return "/pages/suporte/exibir_chamado.xhtml?faces-redirect=true";
+			return "/pages/suporte/editar_chamado.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "editar" }, e);
+		}
+	}
+	
+	public void carregarDadosParametros() throws ApplicationException {
+		try {
+			Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+			String parametro = params.get("idChamado");
+			if(Util.isNotNull(parametro)) {
+				try {
+					Long idChamado = Long.parseLong(parametro);
+					
+					setChamado(chamadoBusiness.obterChamado(idChamado));
+					editar();
+				} catch (NumberFormatException e) {
+					throw new ApplicationException("message.empty", new String[] { "Chamado não existe." }, FacesMessage.SEVERITY_FATAL);
+				}
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarDadosParametros" }, e);
+		}
+	}
+	
+	public void carregarCausas() throws ApplicationException {
+		try {
+			setListaCausaChamado(new ArrayList<CausaChamado>(Arrays.asList(CausaChamado.values())));
+			getChamado().setCausa(CausaChamado.NORMAL);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarCausas" }, e);
 		}
 	}
 	
@@ -284,11 +332,23 @@ public class ChamadoController implements Serializable {
 			FacesContext fc = FacesContext.getCurrentInstance();
 			fc.getExternalContext().getFlash().setKeepMessages(true);
 			
+			if(Util.isNull(getChamado().getCausa())) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			}
+			
+			if(TreatString.isBlank(getChamado().getSolucao())) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			} else {
+				if(getChamado().getSolucao().length() > 300) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a Solução."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
 			chamadoBusiness.solucionar(getChamado());
 			
 			Message.setMessage("chamado.resolvido", new String[] {getChamado().getId().toString()});
 			
-			adicionarMensagem("Adicionei uma solução ao seu chamado: Chamado resolvido!");
+			adicionarMensagem("Adicionei uma solução ao seu chamado: " + getChamado().getSolucao());
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -296,6 +356,37 @@ public class ChamadoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "solucionarChamado" }, e);
+		}
+		return voltar();
+	}
+	
+	public String encerrarChamado() throws ApplicationException {
+		try {
+			FacesContext fc = FacesContext.getCurrentInstance();
+			fc.getExternalContext().getFlash().setKeepMessages(true);
+			
+			if(TreatString.isNotBlank(getChamado().getFeedback())) {
+				if(getChamado().getSolucao().length() > 200) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 200 caracteres para o feedback."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
+			chamadoBusiness.encerrar(getChamado());
+			
+			Message.setMessage("chamado.encerrado", new String[] {getChamado().getId().toString()});
+			
+			if(TreatString.isNotBlank(getChamado().getFeedback())) {
+				adicionarMensagem("Chamado encerrado. Feedback: " + getChamado().getFeedback());
+			} else {
+				adicionarMensagem("Chamado encerrado. Obrigado!");
+			}
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrarChamado" }, e);
 		}
 		return voltar();
 	}
@@ -316,7 +407,12 @@ public class ChamadoController implements Serializable {
 	
 	public String voltar() throws ApplicationException {
 		try {
-			return "/pages/suporte/painel_chamado.xhtml?faces-redirect=true";
+			if(TreatString.isNotBlank(origem)) {
+				if(origem.equals("PAINEL")) {
+					return "/pages/suporte/painel_chamado.xhtml?faces-redirect=true";
+				}
+			}
+			return "/pages/suporte/listar_chamado.xhtml?faces-redirect=true";
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "voltar" }, e);
@@ -369,6 +465,22 @@ public class ChamadoController implements Serializable {
 
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
+	}
+
+	public List<CausaChamado> getListaCausaChamado() {
+		return listaCausaChamado;
+	}
+
+	public void setListaCausaChamado(List<CausaChamado> listaCausaChamado) {
+		this.listaCausaChamado = listaCausaChamado;
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
 	}
 
 }

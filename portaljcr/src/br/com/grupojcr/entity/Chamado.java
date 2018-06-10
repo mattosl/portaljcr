@@ -3,6 +3,7 @@ package br.com.grupojcr.entity;
 import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import br.com.grupojcr.enumerator.CausaChamado;
@@ -58,6 +60,9 @@ public class Chamado implements Serializable {
 	@Column(name = "SOLUCAO", length = 500)
 	private String solucao;
 	
+	@Column(name = "FEEDBACK", length = 200)
+	private String feedback;
+	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "CAUSA")
 	private CausaChamado causa;
@@ -71,6 +76,9 @@ public class Chamado implements Serializable {
 	@Column(name = "DT_PREVISAO", nullable = false)
 	private Date dtPrevisao;
 	
+	@Column(name = "DT_RESOLUCAO")
+	private Date dtResolucao;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_USR_SOLICITANTE", nullable = false)
 	private Usuario usuarioSolicitante;
@@ -83,6 +91,7 @@ public class Chamado implements Serializable {
 	private Set<AnexoChamado> anexos;
 	
 	@OneToMany(mappedBy = "chamado", fetch = FetchType.LAZY)
+	@OrderBy("dtAcompanhamento DESC")
 	private Set<ChamadoAcompanhamento> mensagens;
 
 	public Long getId() {
@@ -180,6 +189,14 @@ public class Chamado implements Serializable {
 	public void setDtPrevisao(Date dtPrevisao) {
 		this.dtPrevisao = dtPrevisao;
 	}
+	
+	public Date getDtResolucao() {
+		return dtResolucao;
+	}
+
+	public void setDtResolucao(Date dtResolucao) {
+		this.dtResolucao = dtResolucao;
+	}
 
 	public Usuario getUsuarioSolicitante() {
 		return usuarioSolicitante;
@@ -195,6 +212,14 @@ public class Chamado implements Serializable {
 
 	public void setUsuarioResponsavel(Usuario usuarioResponsavel) {
 		this.usuarioResponsavel = usuarioResponsavel;
+	}
+	
+	public String getFeedback() {
+		return feedback;
+	}
+
+	public void setFeedback(String feedback) {
+		this.feedback = feedback;
 	}
 
 	@Override
@@ -240,7 +265,20 @@ public class Chamado implements Serializable {
 	
 	@Transient
 	public List<ChamadoAcompanhamento> getMensagensList() {
-		return new ArrayList<ChamadoAcompanhamento>(mensagens);
+		List<ChamadoAcompanhamento> lista = new ArrayList<ChamadoAcompanhamento>(mensagens);
+		lista.sort(new Comparator<ChamadoAcompanhamento>() {
+
+			@Override
+			public int compare(ChamadoAcompanhamento o1, ChamadoAcompanhamento o2) {
+				if(o1.getDtAcompanhamento().after(o2.getDtAcompanhamento())) {
+					return 1;
+				} else {
+					return -1;
+				}
+			}
+			
+		});
+		return lista;
 	}
-	
+
 }

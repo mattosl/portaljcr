@@ -165,6 +165,8 @@ public class LoginController implements Serializable {
     public String doLogout() {
         // Set the paremeter indicating that user is logged in to false
         logado = false;
+        
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
          
         return navegacaoController.redirectToLogin();
     }
