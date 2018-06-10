@@ -244,4 +244,65 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			throw new ApplicationException("message.default.erro", new String[] { "listarChamadoPaginado" }, e);
 		}
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Long obterQtdPorTipo(FiltroRelatorioChamado filtro, SituacaoChamado situacao) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT COUNT(chamado) FROM Chamado chamado ");
+			sb.append("WHERE chamado.id != null ");
+			
+			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
+				sb.append("AND chamado.dtAbertura BETWEEN :dtInicio AND :dtFinal ");
+			}
+			
+			if(Util.isNotNull(situacao)) {
+				sb.append("AND chamado.situacao = :situacao ");
+			}
+			
+			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
+			
+			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
+				query.setParameter("dtInicio", filtro.getPeriodoInicial());
+				query.setParameter("dtFinal", filtro.getPeriodoFinal());
+			}
+			
+			if(Util.isNotNull(situacao)) {
+				query.setParameter("situacao", situacao);
+			}
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterQtdPorTipo" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Long obterQtdPorTipo(SituacaoChamado situacao) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT COUNT(chamado) FROM Chamado chamado ");
+			sb.append("WHERE chamado.id != null ");
+			
+			if(Util.isNotNull(situacao)) {
+				sb.append("AND chamado.situacao = :situacao ");
+			}
+			
+			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
+			
+			if(Util.isNotNull(situacao)) {
+				query.setParameter("situacao", situacao);
+			}
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterQtdPorTipo" }, e);
+		}
+	}
 }

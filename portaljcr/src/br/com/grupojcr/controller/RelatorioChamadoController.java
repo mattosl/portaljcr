@@ -45,6 +45,11 @@ public class RelatorioChamadoController implements Serializable {
 	private List<PrioridadeChamado> listaPrioridadeChamado;
 	private List<CausaChamado> listaCausaChamado;
 	
+	private Long totalAberto;
+	private Long totalEmAndamento;
+	private Long totalResolvidos;
+	private Long totalFechados;
+	
 	@EJB
 	private ChamadoBusiness chamadoBusiness;
 	
@@ -69,6 +74,7 @@ public class RelatorioChamadoController implements Serializable {
 			
 			setListaPrioridadeChamado(new ArrayList<PrioridadeChamado>(Arrays.asList(PrioridadeChamado.values())));
 			setListaCausaChamado(new ArrayList<CausaChamado>(Arrays.asList(CausaChamado.values())));
+			calcular();
 			
 			
 			if(chamadoBusiness.obterQtdChamadoRelatorio(getFiltro()) == 0) {
@@ -81,6 +87,7 @@ public class RelatorioChamadoController implements Serializable {
 				dataModel.setFiltro(getFiltro());
 				setExibirResultado(Boolean.TRUE);
 			}
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -102,6 +109,19 @@ public class RelatorioChamadoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarDatas" }, e);
+		}
+	}
+	
+	private void calcular() throws ApplicationException {
+		try {
+			setTotalAberto(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.ABERTO));
+			setTotalEmAndamento(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.EM_ANDAMENTO));
+			setTotalResolvidos(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.RESOLVIDO));
+			setTotalFechados(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.FECHADO));
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
 		}
 	}
 	
@@ -196,5 +216,37 @@ public class RelatorioChamadoController implements Serializable {
 
 	public void setListaCausaChamado(List<CausaChamado> listaCausaChamado) {
 		this.listaCausaChamado = listaCausaChamado;
+	}
+
+	public Long getTotalAberto() {
+		return totalAberto;
+	}
+
+	public void setTotalAberto(Long totalAberto) {
+		this.totalAberto = totalAberto;
+	}
+
+	public Long getTotalEmAndamento() {
+		return totalEmAndamento;
+	}
+
+	public void setTotalEmAndamento(Long totalEmAndamento) {
+		this.totalEmAndamento = totalEmAndamento;
+	}
+
+	public Long getTotalResolvidos() {
+		return totalResolvidos;
+	}
+
+	public void setTotalResolvidos(Long totalResolvidos) {
+		this.totalResolvidos = totalResolvidos;
+	}
+
+	public Long getTotalFechados() {
+		return totalFechados;
+	}
+
+	public void setTotalFechados(Long totalFechados) {
+		this.totalFechados = totalFechados;
 	}
 }

@@ -300,5 +300,29 @@ public class ChamadoBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterChamado" }, e);
 		}
 	}
+	
+	public Long obterQtdChamadoPorTipo(FiltroRelatorioChamado filtro, SituacaoChamado situacao) throws ApplicationException {
+		try {
+			return daoChamado.obterQtdPorTipo(filtro, situacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdChamadoPorTipo" }, e);
+		}
+	}
+	
+	public Long obterQtdChamadoPorTipo(SituacaoChamado situacao) throws ApplicationException {
+		try {
+			return daoChamado.obterQtdPorTipo(situacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdChamadoPorTipo" }, e);
+		}
+	}
 
 }

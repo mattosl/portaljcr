@@ -24,6 +24,36 @@
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
 				<h:form id="chamadoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<div class="row">
+						<!-- ./col -->
+						<div class="col-lg-6 col-xs-6">
+							<!-- small box -->
+							<div class="small-box bg-green">
+								<div class="inner">
+									<h3>#{painelChamadoController.totalAberto}</h3>
+
+									<p>ABERTOS</p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-plus"></i>
+								</div>
+							</div>
+						</div>
+						<!-- ./col -->
+						<div class="col-lg-6 col-xs-6">
+							<!-- small box -->
+							<div class="small-box bg-yellow">
+								<div class="inner">
+									<h3>#{painelChamadoController.totalEmAndamento}</h3>
+
+									<p>EM ANDAMENTO</p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-pencil"></i>
+								</div>
+							</div>
+						</div>
+					</div>
 					<p:poll interval="5" listener="#{painelChamadoController.iniciarProcesso()}" global="false" update="@form" />
 					<f:validateBean disabled="true" for="@form">
 						<p:panel toggleable="false" id="painelChamado" styleClass="box box-danger">

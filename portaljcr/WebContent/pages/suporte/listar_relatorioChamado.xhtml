@@ -25,7 +25,64 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="chamadoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-					
+						<div class="row" jsf:rendered="#{relatorioChamadoController.exibirResultado}">
+							<!-- ./col -->
+							<div class="col-lg-3 col-xs-6">
+								<!-- small box -->
+								<div class="small-box bg-green">
+									<div class="inner">
+										<h3>#{relatorioChamadoController.totalAberto}</h3>
+	
+										<p>ABERTOS</p>
+									</div>
+									<div class="icon">
+										<i class="fa fa-plus"></i>
+									</div>
+								</div>
+							</div>
+							<!-- ./col -->
+							<div class="col-lg-3 col-xs-6">
+								<!-- small box -->
+								<div class="small-box bg-yellow">
+									<div class="inner">
+										<h3>#{relatorioChamadoController.totalEmAndamento}</h3>
+	
+										<p>EM ANDAMENTO</p>
+									</div>
+									<div class="icon">
+										<i class="fa fa-pencil"></i>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-3 col-xs-6">
+								<!-- small box -->
+								<div class="small-box bg-aqua">
+									<div class="inner">
+										<h3>#{relatorioChamadoController.totalResolvidos}</h3>
+	
+										<p>RESOLVIDOS</p>
+									</div>
+									<div class="icon">
+										<i class="fa fa-check"></i>
+									</div>
+								</div>
+							</div>
+							<!-- ./col -->
+							<div class="col-lg-3 col-xs-6">
+								<!-- small box -->
+								<div class="small-box bg-red">
+									<div class="inner">
+										<h3>#{relatorioChamadoController.totalFechados}</h3>
+	
+										<p>FECHADOS</p>
+									</div>
+									<div class="icon">
+										<i class="fa fa-times"></i>
+									</div>
+								</div>
+							</div>
+							<!-- ./col -->
+						</div>
 						<div class="nav-tabs-custom">
 							<ul class="nav nav-tabs">
 								<li class="active"><a href="#filtroConsulta" data-toggle="tab"><i class="fa fa-search"></i>&nbsp;Consulta</a></li>
@@ -142,7 +199,7 @@
 					</f:validateBean>
 				</h:form>
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<div class="nav-tabs-custom-relatorio">
+					<div class="nav-tabs-custom-relatorio" jsf:rendered="#{relatorioChamadoController.exibirResultado}">
 						<ul class="nav nav-tabs">
 							<li class="active" style="margin-bottom: 0px !important;">
 								<h:commandLink style="cursor:pointer;background-color: #f5f5f5;">
@@ -156,8 +213,7 @@
 							<div class="active tab-pane" id="excel">
 								<p:dataTable var="chamado" id="tabelaChamado" widgetVar="widgetTabelaChamado"
 									value="#{relatorioChamadoController.dataModel}" 
-									tableStyle="table-layout: auto; word-break: keep-all;" 
-									rendered="#{relatorioChamadoController.exibirResultado}"
+									tableStyle="table-layout: auto; word-break: keep-all;"
 									binding="#{dataTableUtil.lazyDataTable}"
 									rowKey="#{chamado.id}" sortBy="#{null}">
 									
@@ -177,7 +233,7 @@
 								    </p:column>
 									
 								    <p:column headerText="Situação" style="text-align:center;font-size:12px;" exportable="false">
-								    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : chamado.situacao eq 'RESOLVIDO' ? 'info' : 'default' }">#{chamado.situacao.descricao.toUpperCase()}</span>
+								    	<span class="label label-#{chamado.situacao eq 'ABERTO' ? 'success' : chamado.situacao eq 'EM_ANDAMENTO' ? 'warning' : chamado.situacao eq 'RESOLVIDO' ? 'info' : 'danger' }">#{chamado.situacao.descricao.toUpperCase()}</span>
 								    </p:column>
 								    
 								    <p:column headerText="Categoria" style="text-align:center;font-size:12px;">
