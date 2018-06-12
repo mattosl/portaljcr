@@ -61,7 +61,7 @@
 										<div class="col-sm-9 col-md-9">
 											<p:selectOneMenu id="naturezaOrcamentaria" value="#{solicitacaoCompraController.solicitacaoCompraDTO.naturezaOrcamentaria}" filter="true" filterMatchMode="contains">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.codigoNaturezaOrcamentaria} - #{natureza.naturezaOrcamentaria}" itemValue="#{natureza}" />
+									        	<f:selectItems value="#{solicitacaoCompraController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.codigoNaturezaOrcamentaria} - #{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
 									        </p:selectOneMenu>
 										</div>
 									</div>
@@ -144,6 +144,12 @@
 													value="#{solicitacaoCompraController.solicitacaoCompraDTO.itens}" 
 													tableStyle="table-layout: auto; word-break: keep-all;"
 													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
+													
+													<p:column headerText="Editar" style="text-align: center;" width="8%">
+														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.iniciarEdicao(item)}" update="@form:tableItens">
+															<h:outputText value="" title="Excluir" styleClass="fa fa-pencil" />
+														</p:commandLink>
+													</p:column>
 													
 													<p:column headerText="Produto" style="text-align:center;">
 												        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />

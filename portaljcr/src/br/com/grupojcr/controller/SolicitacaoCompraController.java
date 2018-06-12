@@ -257,6 +257,21 @@ public class SolicitacaoCompraController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluirItem" }, e);
 		}
 	}
+
+	public void iniciarEdicaoItem(SolicitacaoCompraItem item) throws ApplicationException {
+		try {
+			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
+			getSolicitacaoCompraDTO().getProduto().setMarca(item.getMarca());
+			if(getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
+				getSolicitacaoCompraDTO().getProduto().setDescricaoProduto(item.getDescricaoProduto());
+			} else {
+				getSolicitacaoCompraDTO().getProduto().setProduto(new ProdutoRM());
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarEdicaoItem" }, e);
+		}
+	}
 	
 	public List<ProdutoRM> autocompleteProduto(String nome) throws ApplicationException {
 		try {
