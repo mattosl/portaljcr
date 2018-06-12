@@ -1,7 +1,9 @@
 package br.com.grupojcr.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 
 import javax.activation.DataHandler;
@@ -19,9 +21,14 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import javax.mail.search.FlagTerm;
 import javax.naming.InitialContext;
+
+import org.apache.commons.io.IOUtils;
 
 @Stateless
 public class EnviaEmail {
@@ -32,31 +39,30 @@ public class EnviaEmail {
 	public EnviaEmail() {
 	}
 
-//	@Asynchronous
-//	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-//	public void enviaEmailOrdemCompra(String assunto, String[] destinatariosPara, MovimentoDTO dto,
-//			MonitorAprovacaoDTO primeiraAprovacao, MonitorAprovacaoDTO segundaAprovacao) throws Exception {
-//		try {
-//			InitialContext ic = new InitialContext();
-//			session = ((Session) ic.lookup("java:jboss/mail/MailService"));
-//
-//			InternetAddress[] destinatario = new InternetAddress[destinatariosPara.length];
-//
-//			InternetAddress remetente = null;
-//			remetente = new InternetAddress("mattosl@grupojcr.com.br");
-//
-//			for (int i = 0; i < destinatariosPara.length; i++) {
-//				destinatario[i] = new InternetAddress(destinatariosPara[i]);
-//			}
-//
-//			Message message = new MimeMessage(session);
-//			message.setFrom(remetente);
-//			message.setRecipients(Message.RecipientType.TO, destinatario);
-//			message.setSubject(MimeUtility.encodeText(assunto, "UTF-8", null));
-//
-//			BufferedReader fis = new BufferedReader(
-//					new InputStreamReader(getClass().getResourceAsStream("/email.ordemcompra.html")));
-//			String bodyEmail = IOUtils.toString(fis);
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public void enviaEmailOrdemCompra(String assunto, String[] destinatariosPara) throws Exception {
+		try {
+			InitialContext ic = new InitialContext();
+			session = ((Session) ic.lookup("java:jboss/mail/MailService"));
+
+			InternetAddress[] destinatario = new InternetAddress[destinatariosPara.length];
+
+			InternetAddress remetente = null;
+			remetente = new InternetAddress("nfse@grupojcr.com.br");
+
+			for (int i = 0; i < destinatariosPara.length; i++) {
+				destinatario[i] = new InternetAddress(destinatariosPara[i]);
+			}
+
+			Message message = new MimeMessage(session);
+			message.setFrom(remetente);
+			message.setRecipients(Message.RecipientType.TO, destinatario);
+			message.setSubject(MimeUtility.encodeText(assunto, "UTF-8", null));
+
+			BufferedReader fis = new BufferedReader(
+					new InputStreamReader(getClass().getResourceAsStream("/email.novoChamado.html")));
+			String bodyEmail = IOUtils.toString(fis);
 //			bodyEmail = bodyEmail.replace("${nome}", "João Carlos Ribeiro");
 //			bodyEmail = bodyEmail.replace("${empresa}", dto.getNomeEmpresa().toUpperCase());
 //			bodyEmail = bodyEmail.replace("${dtEmissao}", dto.getDataEmissao());
@@ -74,14 +80,14 @@ public class EnviaEmail {
 //					TreatDate.format("dd/MM/yyyy", segundaAprovacao.getDtAprovacao()));
 //			bodyEmail = bodyEmail.replace("${primeiraObservacao}", primeiraAprovacao.getObservacao());
 //			bodyEmail = bodyEmail.replace("${segundaObservacao}", segundaAprovacao.getObservacao());
-//
-//			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
-//
-//			Transport.send(message);
-//		} catch (MessagingException e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
+
+			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
+
+			Transport.send(message);
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
