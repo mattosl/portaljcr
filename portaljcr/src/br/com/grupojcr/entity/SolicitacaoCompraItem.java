@@ -28,6 +28,9 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(name = "ID_PRD")
+	private Integer idProduto;
+	
 	@Column(name = "CODPRD", length = 50)
 	private String codigoProduto;
 	
@@ -160,6 +163,13 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 	public void setUsuarioInclusao(Usuario usuarioInclusao) {
 		this.usuarioInclusao = usuarioInclusao;
 	}
-	
 
+	public Integer getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Integer idProduto) {
+		this.idProduto = idProduto;
+	}
+	
 }

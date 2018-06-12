@@ -11,6 +11,13 @@ public class UnidadeRM implements BaseStringEntity, Serializable {
 	private String codigoUnidade;
 	private String unidade;
 	
+	public UnidadeRM() {}
+	
+	public UnidadeRM(String codigoUnidade, String unidade) {
+		this.codigoUnidade = codigoUnidade;
+		this.unidade = unidade;
+	}
+	
 	@Override
 	public String getId() {
 		return codigoUnidade;
@@ -30,6 +37,31 @@ public class UnidadeRM implements BaseStringEntity, Serializable {
 
 	public void setUnidade(String unidade) {
 		this.unidade = unidade;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codigoUnidade == null) ? 0 : codigoUnidade.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UnidadeRM other = (UnidadeRM) obj;
+		if (codigoUnidade == null) {
+			if (other.codigoUnidade != null)
+				return false;
+		} else if (!codigoUnidade.equals(other.codigoUnidade))
+			return false;
+		return true;
 	}
 
 }

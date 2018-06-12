@@ -117,7 +117,7 @@
 										</div>
 									</div>
 								</div>
-								<p:panel toggleable="false" id="painelItens" styleClass="box box-danger">
+								<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
 									<div class="box-header with-border">
 				             			<h3 class="box-title">Itens</h3>
 				            		</div>
@@ -145,29 +145,30 @@
 													tableStyle="table-layout: auto; word-break: keep-all;"
 													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
 													
-													<p:column headerText="Editar" style="text-align: center;" width="8%">
-														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.iniciarEdicao(item)}" update="@form:tableItens">
+													<p:column headerText="Editar" style="text-align: center; font-size:12px;" width="8%">
+														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.iniciarEdicaoItem()}" oncomplete="PF('modalProduto').show();" update="@form:modalProduto">
 															<h:outputText value="" title="Excluir" styleClass="fa fa-pencil" />
+															<f:setPropertyActionListener value="#{item}" target="#{solicitacaoCompraController.solicitacaoItem}" />
 														</p:commandLink>
 													</p:column>
 													
-													<p:column headerText="Produto" style="text-align:center;">
+													<p:column headerText="Produto" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
 												    </p:column>
 												    
-												    <p:column headerText="Quantidade" style="text-align:center;">
+												    <p:column headerText="Quantidade" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.quantidade}" />
 												    </p:column>
 												    
-												    <p:column headerText="Unidade" style="text-align:center;">
+												    <p:column headerText="Unidade" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.unidade}" />
 												    </p:column>
 												    
-												    <p:column headerText="Observação" style="text-align:center;">
+												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.observacao}" />
 												    </p:column>
 												    
-												    <p:column headerText="Excluir" style="text-align: center;" width="8%">
+												    <p:column headerText="Excluir" style="text-align: center; font-size:12px;" width="8%">
 														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.excluirItem(item)}" update="@form:tableItens">
 															<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
 														</p:commandLink>
@@ -217,12 +218,12 @@
 						<div class="form-horizontal">
 							<div class="box-body">
 								<div class="form-group">
-									<div class="col-sm-2 col-md-2 control-label">
-										<label for="produto">Produto: *</label>
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="produto">Produto/Serviço: *</label>
 									</div>
 
 									<p:outputPanel id="descricaoProdutoPanel">
-										<div class="col-sm-10 col-md-10">
+										<div class="col-sm-9 col-md-9">
 											<h:inputText id="produtoDescricao" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.descricaoProduto}" rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
 									        <p:autoComplete id="produto" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" rendered="#{!solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
 	<!-- 								        <p:watermark value="01.001.0005 - SERVIÇO DE TELEFONIA" for="produto" /> -->
@@ -231,14 +232,14 @@
 									</p:outputPanel>
 								</div>
 								<div class="form-group">
-									<div class="col-sm-2 col-md-2 control-label">
+									<div class="col-sm-3 col-md-3 control-label">
 										<label for="qtd">Quantidade: *</label>
 									</div>
 
 									<div class="col-sm-2 col-md-2">
 								        <h:inputText id="qtd" maxlength="10" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" onkeyup="filterNumberOnly(this);" />
 									</div>
-									<div class="col-sm-8 col-md-8">
+									<div class="col-sm-7 col-md-7">
 										<span class="users-list-date pull-right">
 											<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
 												<p:ajax event="change" process="@this" oncomplete="alterarLabelObservacao();" global="false" update="@form:descricaoProdutoPanel" />
@@ -247,7 +248,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<div class="col-sm-2 col-md-2 control-label">
+									<div class="col-sm-3 col-md-3 control-label">
 										<label for="unidade">Unidade: *</label>
 									</div>
 
@@ -259,20 +260,20 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<div class="col-sm-2 col-md-2 control-label">
+									<div class="col-sm-3 col-md-3 control-label">
 										<label for="marca">Marca:</label>
 									</div>
 
-									<div class="col-sm-10 col-md-10">
+									<div class="col-sm-9 col-md-9">
 								        <h:inputText id="marca" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.marca}"  />
 									</div>
 								</div>
 								<div class="form-group">
-									<div class="col-sm-2 col-md-2 control-label">
-										<label id="observacaoLabel" for="observacao">Observação:</label>
+									<div class="col-sm-3 col-md-3 control-label">
+										<label id="observacaoLabel" for="observacao">Observação: *</label>
 									</div>
 
-									<div class="col-sm-10 col-md-10">
+									<div class="col-sm-9 col-md-9">
 										<h:inputTextarea id="observacao" styleClass="form-control" rows="5" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.observacao}" />
 									</div>
 								</div>
@@ -287,7 +288,18 @@
 										action="#{solicitacaoCompraController.adicionarProduto()}"
 										process="@form:modalProduto"
 										update="@form:mensagemModal, @form:painelItens"
-										ajax="true" />
+										ajax="true"
+										rendered="#{!solicitacaoCompraController.edicaoProduto}" />
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-pencil"
+										value="Editar"
+										id="btn_edit_produto"
+										action="#{solicitacaoCompraController.editarProduto()}"
+										process="@form:modalProduto"
+										update="@form:mensagemModal, @form:painelItens"
+										ajax="true"
+										rendered="#{solicitacaoCompraController.edicaoProduto}" />
 								</div>
 								<div class="col-sm-3 col-md-3 pull-left" >
 									<p:commandButton

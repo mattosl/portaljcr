@@ -6,11 +6,20 @@ import br.com.grupojcr.entity.BaseIntegerEntity;
 
 public class ProdutoRM implements BaseIntegerEntity, Serializable {
 	
+
 	private static final long serialVersionUID = 8107905232953442774L;
 	
 	private Integer idProduto;
 	private String codigoProduto;
 	private String produto;
+	
+	public ProdutoRM() {}
+
+	public ProdutoRM(Integer idProduto, String codigoProduto, String produto) {
+		this.idProduto = idProduto;
+		this.codigoProduto = codigoProduto;
+		this.produto = produto;
+	}
 
 	public String getCodigoProduto() {
 		return codigoProduto;

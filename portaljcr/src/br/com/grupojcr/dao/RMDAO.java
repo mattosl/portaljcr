@@ -155,6 +155,7 @@ public class RMDAO {
 		 * AND LEN(CODIGOPRD) > 6
 		 * AND NOMEFANTASIA LIKE ?
 		 * ORDER BY CODIGOPRD ASC
+		 * OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY
 		 */
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -169,7 +170,8 @@ public class RMDAO {
 			.append("AND INATIVO = 0 ")
 			.append("AND LEN(CODIGOPRD) > 6 ")
 			.append("AND NOMEFANTASIA LIKE ? ")
-			.append("ORDER BY CODIGOPRD ASC ");
+			.append("ORDER BY CODIGOPRD ASC ")
+			.append("OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY ");
 
 			ps = conn.prepareStatement(sb.toString());
 

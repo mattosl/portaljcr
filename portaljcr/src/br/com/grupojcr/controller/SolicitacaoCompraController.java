@@ -18,6 +18,7 @@ import org.primefaces.PrimeFaces;
 
 import br.com.grupojcr.business.GrupoCotacaoBusiness;
 import br.com.grupojcr.business.RMBusiness;
+import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.Coligada;
@@ -53,13 +54,18 @@ public class SolicitacaoCompraController implements Serializable {
 	private List<PrioridadeSolicitacaoCompra> listaPrioridade;
 	private List<UnidadeRM> listaUnidade;
 	
+	private SolicitacaoCompraItem solicitacaoItem;
 	private SolicitacaoCompraDTO solicitacaoCompraDTO;
 	private Usuario usuario;
 	
 	private Boolean voltar = Boolean.FALSE;
+	private Boolean edicaoProduto;
 	
 	@EJB
 	private GrupoCotacaoBusiness grupoCotacaoBusiness;
+	
+	@EJB
+	private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
 	
 	@EJB
 	private RMBusiness rmBusiness;
@@ -137,6 +143,7 @@ public class SolicitacaoCompraController implements Serializable {
 	
 	public void novoItem() throws ApplicationException {
 		try {
+			setEdicaoProduto(Boolean.FALSE);
 			setListaUnidade(rmBusiness.listarUnidade());
 			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
 		} catch (ApplicationException e) {
@@ -178,6 +185,8 @@ public class SolicitacaoCompraController implements Serializable {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
 			}
 			
+			solicitacaoCompraBusiness.salvar(getSolicitacaoCompraDTO(), getUsuario());
+			
 			Message.setMessage("solicitacao.compra.sucesso");
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -199,14 +208,14 @@ public class SolicitacaoCompraController implements Serializable {
 				if(Util.isBlank(getSolicitacaoCompraDTO().getProduto().getDescricaoProduto())) {
 					camposObrigatorios = Boolean.TRUE;
 				}
-				if(Util.isBlank(getSolicitacaoCompraDTO().getProduto().getObservacao())) {
-					camposObrigatorios = Boolean.TRUE;
-				} else {
-					if(getSolicitacaoCompraDTO().getProduto().getObservacao().length() > 300) {
-						throw new ApplicationException("message.empty", new String[] {"Máximo 500 caracteres na observação."}, FacesMessage.SEVERITY_WARN);
-					}
+			}
+			
+			if(Util.isBlank(getSolicitacaoCompraDTO().getProduto().getObservacao())) {
+				camposObrigatorios = Boolean.TRUE;
+			} else {
+				if(getSolicitacaoCompraDTO().getProduto().getObservacao().length() > 300) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 500 caracteres na observação."}, FacesMessage.SEVERITY_WARN);
 				}
-				
 			}
 			
 			if(Util.isNull(getSolicitacaoCompraDTO().getProduto().getQuantidade())) {
@@ -221,8 +230,19 @@ public class SolicitacaoCompraController implements Serializable {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
 			}
 			
+			if(!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
+				for(SolicitacaoCompraItem item : getSolicitacaoCompraDTO().getItens()) {
+					if(!item.getProdutoNaoEncontrado()) {
+						if(item.getIdProduto().equals(getSolicitacaoCompraDTO().getProduto().getProduto().getId())) {
+							throw new ApplicationException("message.empty", new String[] {"Este produto ja foi incluído."}, FacesMessage.SEVERITY_WARN);
+						}
+					}
+				}
+			}
+			
 			SolicitacaoCompraItem item = new SolicitacaoCompraItem();
 			if(!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
+				item.setIdProduto(getSolicitacaoCompraDTO().getProduto().getProduto().getIdProduto());
 				item.setCodigoProduto(getSolicitacaoCompraDTO().getProduto().getProduto().getCodigoProduto());
 				item.setDescricaoProduto(getSolicitacaoCompraDTO().getProduto().getProduto().getProduto());
 			} else {
@@ -236,6 +256,7 @@ public class SolicitacaoCompraController implements Serializable {
 			item.setMarca(getSolicitacaoCompraDTO().getProduto().getMarca());
 			item.setObservacao(getSolicitacaoCompraDTO().getProduto().getObservacao());
 			item.setDtInclusao(Calendar.getInstance().getTime());
+			item.setUsuarioInclusao(getUsuario());
 			
 			getSolicitacaoCompraDTO().getItens().add(item);
 			
@@ -249,6 +270,69 @@ public class SolicitacaoCompraController implements Serializable {
 		}
 	}
 	
+	public void editarProduto() throws ApplicationException {
+		try {
+			Boolean camposObrigatorios = Boolean.FALSE;
+			if(!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
+				if(Util.isNull(getSolicitacaoCompraDTO().getProduto().getProduto())) {
+					camposObrigatorios = Boolean.TRUE;
+				}
+			} else {
+				if(Util.isBlank(getSolicitacaoCompraDTO().getProduto().getDescricaoProduto())) {
+					camposObrigatorios = Boolean.TRUE;
+				}
+			}
+			
+			if(Util.isBlank(getSolicitacaoCompraDTO().getProduto().getObservacao())) {
+				camposObrigatorios = Boolean.TRUE;
+			} else {
+				if(getSolicitacaoCompraDTO().getProduto().getObservacao().length() > 300) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 500 caracteres na observação."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
+			if(Util.isNull(getSolicitacaoCompraDTO().getProduto().getQuantidade())) {
+				camposObrigatorios = Boolean.TRUE;
+			}
+			
+			if(Util.isNull(getSolicitacaoCompraDTO().getProduto().getUnidade())) {
+				camposObrigatorios = Boolean.TRUE;
+			}
+			
+			if(camposObrigatorios) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			}
+			
+			getSolicitacaoCompraDTO().getItens().remove(getSolicitacaoItem());
+			if(!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
+				getSolicitacaoItem().setIdProduto(getSolicitacaoCompraDTO().getProduto().getProduto().getIdProduto());
+				getSolicitacaoItem().setCodigoProduto(getSolicitacaoCompraDTO().getProduto().getProduto().getCodigoProduto());
+				getSolicitacaoItem().setDescricaoProduto(getSolicitacaoCompraDTO().getProduto().getProduto().getProduto());
+			} else {
+				getSolicitacaoItem().setDescricaoProduto(getSolicitacaoCompraDTO().getProduto().getDescricaoProduto());
+			}
+			
+			getSolicitacaoItem().setProdutoNaoEncontrado(getSolicitacaoCompraDTO().getProduto().getNaoEncontrei());
+			getSolicitacaoItem().setQuantidade(getSolicitacaoCompraDTO().getProduto().getQuantidade());
+			getSolicitacaoItem().setCodigoUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getCodigoUnidade());
+			getSolicitacaoItem().setUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getUnidade());
+			getSolicitacaoItem().setMarca(getSolicitacaoCompraDTO().getProduto().getMarca());
+			getSolicitacaoItem().setObservacao(getSolicitacaoCompraDTO().getProduto().getObservacao());
+			getSolicitacaoItem().setDtInclusao(Calendar.getInstance().getTime());
+			getSolicitacaoItem().setUsuarioInclusao(getUsuario());
+			
+			getSolicitacaoCompraDTO().getItens().add(getSolicitacaoItem());
+			
+			PrimeFaces.current().executeScript("PF('modalProduto').hide();");
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "editarProduto" }, e);
+		}
+	}
+	
 	public void excluirItem(SolicitacaoCompraItem item) throws ApplicationException {
 		try {
 			getSolicitacaoCompraDTO().getItens().remove(item);
@@ -258,15 +342,23 @@ public class SolicitacaoCompraController implements Serializable {
 		}
 	}
 
-	public void iniciarEdicaoItem(SolicitacaoCompraItem item) throws ApplicationException {
+	public void iniciarEdicaoItem() throws ApplicationException {
 		try {
+			setEdicaoProduto(Boolean.TRUE);
+			setListaUnidade(rmBusiness.listarUnidade());
 			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
-			getSolicitacaoCompraDTO().getProduto().setMarca(item.getMarca());
+			getSolicitacaoCompraDTO().getProduto().setMarca(getSolicitacaoItem().getMarca());
+			getSolicitacaoCompraDTO().getProduto().setNaoEncontrei(getSolicitacaoItem().getProdutoNaoEncontrado());
 			if(getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
-				getSolicitacaoCompraDTO().getProduto().setDescricaoProduto(item.getDescricaoProduto());
+				getSolicitacaoCompraDTO().getProduto().setDescricaoProduto(getSolicitacaoItem().getDescricaoProduto());
 			} else {
-				getSolicitacaoCompraDTO().getProduto().setProduto(new ProdutoRM());
+				getSolicitacaoCompraDTO().getProduto().setProduto(new ProdutoRM(getSolicitacaoItem().getIdProduto(), getSolicitacaoItem().getCodigoProduto(), getSolicitacaoItem().getDescricaoProduto()));
 			}
+			
+			getSolicitacaoCompraDTO().getProduto().setQuantidade(getSolicitacaoItem().getQuantidade());
+			getSolicitacaoCompraDTO().getProduto().setUnidade(new UnidadeRM(getSolicitacaoItem().getCodigoUnidade(), getSolicitacaoItem().getUnidade()));
+			getSolicitacaoCompraDTO().getProduto().setMarca(getSolicitacaoItem().getMarca());
+			getSolicitacaoCompraDTO().getProduto().setObservacao(getSolicitacaoItem().getObservacao());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarEdicaoItem" }, e);
@@ -373,6 +465,22 @@ public class SolicitacaoCompraController implements Serializable {
 
 	public void setVoltar(Boolean voltar) {
 		this.voltar = voltar;
+	}
+
+	public Boolean getEdicaoProduto() {
+		return edicaoProduto;
+	}
+
+	public void setEdicaoProduto(Boolean edicaoProduto) {
+		this.edicaoProduto = edicaoProduto;
+	}
+
+	public SolicitacaoCompraItem getSolicitacaoItem() {
+		return solicitacaoItem;
+	}
+
+	public void setSolicitacaoItem(SolicitacaoCompraItem solicitacaoItem) {
+		this.solicitacaoItem = solicitacaoItem;
 	}
 
 }
