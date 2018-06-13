@@ -29,6 +29,9 @@ public class SolicitacaoCompraBusiness {
 	@EJB
 	private SolicitacaoCompraItemDAO daoSolicitacaoCompraItem;
 	
+	@EJB
+	private FluigBusiness fluigBusiness;
+	
 	public void salvar(SolicitacaoCompraDTO dto, Usuario usuario) throws ApplicationException {
 		try {
 			SolicitacaoCompra solicitacao = new SolicitacaoCompra();
@@ -66,14 +69,42 @@ public class SolicitacaoCompraBusiness {
 			solicitacao.setDtPrazo(prazo.getTime());
 			solicitacao.setUsuarioAprovacaoFluig("leonan");
 			
-			// TODO INICIAR FLUIG
-			
 			daoSolicitacaoCompra.incluir(solicitacao);
+			
+			StringBuilder itens = new StringBuilder("{\"itens\": [");
+			int tamanho = itens.length();
 			
 			for(SolicitacaoCompraItem sci : dto.getItens()) {
 				sci.setSolicitacaoCompra(solicitacao);
 				daoSolicitacaoCompraItem.incluir(sci);
+				
+				
+				if(itens.length() > tamanho) {
+					itens.append(",");
+				}
+				itens.append("{\"produto\": \"" + sci.getDescricaoProduto().toUpperCase() + 
+						"\", \"quantidade\": \"" + sci.getQuantidade() + 
+						"\", \"unidade\": \"" + sci.getUnidade() + 
+						"\", \"observacao\": \"" + sci.getObservacao().toUpperCase() +
+						"\"}");
 			}
+			
+			itens.append("]}");
+			
+			String [][] parametros = new String[][] { 
+				{ "idSolicitacao", solicitacao.getId().toString()}, 
+				{ "empresa", solicitacao.getColigada().getRazaoSocial().toUpperCase()},
+				{"descricaoPadrao", "SOLICITAÇÃO Nº " + solicitacao.getId().toString()},
+				{ "solicitante", solicitacao.getUsuarioSolicitante().getNome().toUpperCase()}, 
+				{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
+				{ "natureza", solicitacao.getCodigoNaturezaOrcamentaria() + " - " + solicitacao.getNaturezaOrcamentaria().toUpperCase()}, 
+				{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
+				{ "itens", itens.toString()} 
+			};
+			
+			// Inicia processo do Fluig
+			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", "leonan", 9, parametros);
+			System.out.println(resultado.toString());
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);

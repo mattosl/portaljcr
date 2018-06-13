@@ -242,7 +242,7 @@
 									<div class="col-sm-7 col-md-7">
 										<span class="users-list-date pull-right">
 											<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
-												<p:ajax event="change" process="@this" oncomplete="alterarLabelObservacao();" global="false" update="@form:descricaoProdutoPanel" />
+												<p:ajax event="change" process="@this" global="false" update="@form:descricaoProdutoPanel" />
 											</p:selectBooleanCheckbox>									
 										</span>
 									</div>
@@ -316,15 +316,6 @@
 						</div>
 					</p:dialog>
 				</h:form>
-				<script type="application/javascript">
-					function alterarLabelObservacao() {
-						if($("#observacaoLabel").text() == 'Observação:') {
-							$("#observacaoLabel").text("Observação: *");
-						} else {
-							$("#observacaoLabel").text("Observação:");	
-						}
-					}
-				</script>
 			</div>
 		</ui:define>
 	</ui:composition>

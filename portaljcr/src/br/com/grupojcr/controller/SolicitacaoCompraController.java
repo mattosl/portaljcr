@@ -69,7 +69,7 @@ public class SolicitacaoCompraController implements Serializable {
 	
 	@EJB
 	private RMBusiness rmBusiness;
-
+	
 	/**
 	 * Método responsavel por iniciar processo
 	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
