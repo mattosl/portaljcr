@@ -421,5 +421,25 @@ public class ChamadoBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdChamadoPorTipo" }, e);
 		}
 	}
+	
+	public void fecharChamados() throws ApplicationException {
+		try {
+			List<Chamado> chamados = daoChamado.listarChamadosParaFechar();
+			
+			if(Util.isNotNull(chamados)) {
+				for(Chamado chamado : chamados) {
+					chamado.setSituacao(SituacaoChamado.FECHADO);
+					chamado.setDtFechamento(Calendar.getInstance().getTime());
+					daoChamado.alterar(chamado);
+				}
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "fecharChamados" }, e);
+		}
+	}
 
 }

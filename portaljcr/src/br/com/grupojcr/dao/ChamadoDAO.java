@@ -1,6 +1,7 @@
 package br.com.grupojcr.dao;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -94,8 +95,18 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			}
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
-				query.setParameter("dtInicio", filtro.getPeriodoInicial());
-				query.setParameter("dtFinal", filtro.getPeriodoFinal());
+				Calendar inicio = Calendar.getInstance();
+				inicio.setTime(filtro.getPeriodoInicial());
+				inicio.set(Calendar.HOUR, 0);
+				inicio.set(Calendar.MINUTE, 0);
+				inicio.set(Calendar.SECOND, 0);
+				query.setParameter("dtInicio", inicio.getTime());
+				Calendar fim = Calendar.getInstance();
+				fim.setTime(filtro.getPeriodoFinal());
+				fim.set(Calendar.HOUR, 23);
+				fim.set(Calendar.MINUTE, 59);
+				fim.set(Calendar.SECOND, 59);
+				query.setParameter("dtFinal", fim.getTime());
 			}
 			
 			if(Util.isNotNull(filtro.getUsuarioLogado())) {
@@ -129,8 +140,18 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
-				query.setParameter("dtInicio", filtro.getPeriodoInicial());
-				query.setParameter("dtFinal", filtro.getPeriodoFinal());
+				Calendar inicio = Calendar.getInstance();
+				inicio.setTime(filtro.getPeriodoInicial());
+				inicio.set(Calendar.HOUR, 0);
+				inicio.set(Calendar.MINUTE, 0);
+				inicio.set(Calendar.SECOND, 0);
+				query.setParameter("dtInicio", inicio.getTime());
+				Calendar fim = Calendar.getInstance();
+				fim.setTime(filtro.getPeriodoFinal());
+				fim.set(Calendar.HOUR, 23);
+				fim.set(Calendar.MINUTE, 59);
+				fim.set(Calendar.SECOND, 59);
+				query.setParameter("dtFinal", fim.getTime());
 			}
 			
 			if(Util.isNotNull(filtro.getSituacao()) && filtro.getSituacao().length != 0) {
@@ -179,8 +200,18 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			}
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
-				query.setParameter("dtInicio", filtro.getPeriodoInicial());
-				query.setParameter("dtFinal", filtro.getPeriodoFinal());
+				Calendar inicio = Calendar.getInstance();
+				inicio.setTime(filtro.getPeriodoInicial());
+				inicio.set(Calendar.HOUR, 0);
+				inicio.set(Calendar.MINUTE, 0);
+				inicio.set(Calendar.SECOND, 0);
+				query.setParameter("dtInicio", inicio.getTime());
+				Calendar fim = Calendar.getInstance();
+				fim.setTime(filtro.getPeriodoFinal());
+				fim.set(Calendar.HOUR, 23);
+				fim.set(Calendar.MINUTE, 59);
+				fim.set(Calendar.SECOND, 59);
+				query.setParameter("dtFinal", fim.getTime());
 			}
 			
 			if(Util.isNotNull(filtro.getUsuarioLogado())) {
@@ -223,8 +254,18 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			TypedQuery<Chamado> query = manager.createQuery(sb.toString(), Chamado.class);
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
-				query.setParameter("dtInicio", filtro.getPeriodoInicial());
-				query.setParameter("dtFinal", filtro.getPeriodoFinal());
+				Calendar inicio = Calendar.getInstance();
+				inicio.setTime(filtro.getPeriodoInicial());
+				inicio.set(Calendar.HOUR, 0);
+				inicio.set(Calendar.MINUTE, 0);
+				inicio.set(Calendar.SECOND, 0);
+				query.setParameter("dtInicio", inicio.getTime());
+				Calendar fim = Calendar.getInstance();
+				fim.setTime(filtro.getPeriodoFinal());
+				fim.set(Calendar.HOUR, 23);
+				fim.set(Calendar.MINUTE, 59);
+				fim.set(Calendar.SECOND, 59);
+				query.setParameter("dtFinal", fim.getTime());
 			}
 			
 			if(Util.isNotNull(filtro.getSituacao()) && filtro.getSituacao().length != 0) {
@@ -263,8 +304,18 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
-				query.setParameter("dtInicio", filtro.getPeriodoInicial());
-				query.setParameter("dtFinal", filtro.getPeriodoFinal());
+				Calendar inicio = Calendar.getInstance();
+				inicio.setTime(filtro.getPeriodoInicial());
+				inicio.set(Calendar.HOUR, 0);
+				inicio.set(Calendar.MINUTE, 0);
+				inicio.set(Calendar.SECOND, 0);
+				query.setParameter("dtInicio", inicio.getTime());
+				Calendar fim = Calendar.getInstance();
+				fim.setTime(filtro.getPeriodoFinal());
+				fim.set(Calendar.HOUR, 23);
+				fim.set(Calendar.MINUTE, 59);
+				fim.set(Calendar.SECOND, 59);
+				query.setParameter("dtFinal", fim.getTime());
 			}
 			
 			if(Util.isNotNull(situacao)) {
@@ -303,6 +354,28 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ApplicationException("message.default.erro", new String[] { "obterQtdPorTipo" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public List<Chamado> listarChamadosParaFechar() throws ApplicationException {
+		try{
+			StringBuilder sb = new StringBuilder("SELECT chamado FROM Chamado chamado ");
+			sb.append("WHERE chamado.situacao = :situacaoResolvido ");
+			sb.append("AND chamado.dtResolucao < :dtAtual ");
+			
+			TypedQuery<Chamado> query = manager.createQuery(sb.toString(), Chamado.class);
+			query.setParameter("situacaoResolvido", SituacaoChamado.RESOLVIDO);
+			Calendar calendario = Calendar.getInstance();
+			calendario.add(Calendar.DAY_OF_MONTH, -1);
+			query.setParameter("dtAtual", calendario.getTime());
+			
+			return query.getResultList();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException("message.default.erro", new String[] { "listarChamadosParaFechar" }, e);
 		}
 	}
 }

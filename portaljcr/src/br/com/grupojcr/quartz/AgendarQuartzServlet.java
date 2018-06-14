@@ -27,6 +27,8 @@ public class AgendarQuartzServlet extends HttpServlet {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			
 //			agendarMonitoramentoXML(scheduler);
+			
+			agendarFechamentoChamados(scheduler);
 
 		} catch (Exception e) {
 			log.error(KEY_ERRO, e);
@@ -44,6 +46,35 @@ public class AgendarQuartzServlet extends HttpServlet {
 
 			//cria o horario de agendamento
 			String cronExpression = "0 0 1/1 ? * *";
+			String triggerName = "Trigger_" + jobName;
+			Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerName, group).withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+
+			//remove o job se ele ja esta agendado
+			if (scheduler.checkExists(jobKey)) {
+				scheduler.deleteJob(jobKey);
+			}
+			
+			//agenda o job para execucao
+			scheduler.scheduleJob(jobDetail, trigger);
+			
+			return jobKey;
+			
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, e);
+		}
+	}
+	
+	protected JobKey agendarFechamentoChamados(Scheduler scheduler) throws ApplicationException {
+		try {
+			// Cria o job a ser executado
+			String jobName = "FECHAR_CHAMADOS";
+			String group = "SUPORTE";
+			JobKey jobKey = new JobKey(jobName, group);
+			JobDetail jobDetail = JobBuilder.newJob(FecharChamadosJob.class).withIdentity(jobKey).build();
+
+			//cria o horario de agendamento
+			String cronExpression = "0 0 3/3 ? * *";
 			String triggerName = "Trigger_" + jobName;
 			Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerName, group).withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
 
