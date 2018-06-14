@@ -186,6 +186,9 @@ public class ChamadoController implements Serializable {
 			
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			AnexoChamado anexoChamado = chamadoBusiness.adicionarAnexoChamado(getChamado(), usuario, arquivo);
+			
+			adicionarMensagem("Adicionei um anexo: " + nomeArquivo);
+			
 			getChamado().getAnexos().add(anexoChamado);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);

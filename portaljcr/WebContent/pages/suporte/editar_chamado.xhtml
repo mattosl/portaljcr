@@ -135,12 +135,13 @@
 											    		uploadLabel="Upload"
 											    		auto="true" 
 											    		fileUploadListener="#{chamadoController.doUploadDireto}" 
-											    		update="@form:painelAnexos"
+											    		update="@form:painelAnexos, @form:painelChat"
 											    		dragDropSupport="true"
 							                       		allowTypes="/(\.|\/)(jpg|JPG|jpeg|JPEG|gif|GIF|png|PNG|pdf|PDF|doc|docx|xls|xlsx)$/" 
 							                       		sizeLimit="2000000"
 							                       		invalidFileMessage="Arquivo inválido! (Formatos Aceitos: JPG, PNG, GIF, PDF, DOC, XLS)" 
 							                       		invalidSizeMessage="Tamanho do arquivo não permitido! (Máximo 2MB)"
+							                       		rendered="#{chamadoController.chamado.situacao ne 'FECHADO'}"
 							                       		 />
 												</div>
 											</div>

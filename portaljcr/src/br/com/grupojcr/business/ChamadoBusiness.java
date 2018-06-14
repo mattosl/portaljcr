@@ -329,7 +329,6 @@ public class ChamadoBusiness {
 			acompanhamento.setUsuario(usuario);
 			daoChamadoAcompanhamento.incluir(acompanhamento);
 			
-			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
