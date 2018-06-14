@@ -297,16 +297,6 @@ public class ChamadoController implements Serializable {
 	
 	public String editar() throws ApplicationException {
 		try {
-//			pieModel1 = new PieChartModel();
-//	         
-//	        pieModel1.set("Abertos", 20);
-//	        pieModel1.set("Em Andamento", 19);
-//	        pieModel1.set("Resolvidos", 50);
-//	        pieModel1.set("Fechados", 60);
-//	         
-//	        pieModel1.setLegendPosition("o");
-//	        pieModel1.setSeriesColors("00A65A,F39C12,00C0EF,D2D6DE");
-			
 			getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
 			getChamado().setAnexos(new HashSet<AnexoChamado>(chamadoBusiness.listarAnexoPorChamado(getChamado().getId())));
 			return "/pages/suporte/editar_chamado.xhtml?faces-redirect=true";

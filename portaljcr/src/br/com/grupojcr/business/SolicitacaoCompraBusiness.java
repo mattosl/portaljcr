@@ -1,6 +1,7 @@
 package br.com.grupojcr.business;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraItemDAO;
+import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
@@ -105,7 +107,22 @@ public class SolicitacaoCompraBusiness {
 			
 			// Inicia processo do Fluig
 			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", "leonan", 9, parametros);
-			System.out.println(resultado.toString());
+
+			for(int i = 0; i < resultado.length; i++) {
+				for(int j = 0; j < resultado[i].length; j++) {
+					if(resultado[i][j].equals("iProcess")) {
+						try {
+							Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
+							solicitacao.setIdentificadorFluig(idFluig);
+							
+							daoSolicitacaoCompra.alterar(solicitacao);
+							break;
+						} catch(NumberFormatException e) {
+							solicitacao.setIdentificadorFluig(null);
+						}
+					}
+				}
+			}
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -148,6 +165,30 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "recusar" }, e);
+		}
+	}
+	
+	public Integer obterQtdSolicitacaoCompra(FiltroSolicitacaoCompra filtro) throws ApplicationException {
+		try {
+			return daoSolicitacaoCompra.obterQtdSolicitacaoCompra(filtro);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdSolicitacaoCompra" }, e);
+		}
+	}
+	
+	public List<SolicitacaoCompra> listarSolicitacaoCompraPaginado(int first, int pageSize, FiltroSolicitacaoCompra filtro) throws ApplicationException {
+		try {
+			return daoSolicitacaoCompra.listarSolicitacaoCompraPaginado(first, pageSize, filtro);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarSolicitacaoCompraPaginado" }, e);
 		}
 	}
 	

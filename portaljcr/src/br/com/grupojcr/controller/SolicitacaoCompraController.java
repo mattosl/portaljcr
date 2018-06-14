@@ -155,7 +155,7 @@ public class SolicitacaoCompraController implements Serializable {
 		}
 	}
 	
-	public void salvar() throws ApplicationException {
+	public String salvar() throws ApplicationException {
 		try {
 			Boolean validado = Boolean.TRUE;
 			if(Util.isNull(getSolicitacaoCompraDTO().getPrioridade())) {
@@ -195,6 +195,7 @@ public class SolicitacaoCompraController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
 		}
+		return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";
 	}
 	
 	public void adicionarProduto() throws ApplicationException {
