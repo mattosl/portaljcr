@@ -59,6 +59,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@Column(name = "MOTIVO_COMPRA", length = 500, nullable = false)
 	private String motivoCompra;
 	
+	@Column(name = "MOTIVO_CANCELAMENTO", length = 300)
+	private String motivoCancelamento;
+	
 	@Column(name = "SUG_FORNECEDOR", length = 100)
 	private String sugestaoFornecedor;
 	
@@ -67,6 +70,10 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	
 	@Column(name = "VLR_APROXIMADO", precision = 10, scale = 2)
 	private Double valorAproximado;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_CANCELAMENTO")
+	private Date dtCancelamento;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_SOLICITACAO", nullable = false)
@@ -305,6 +312,23 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	public void setGrupoCotacao(GrupoCotacao grupoCotacao) {
 		this.grupoCotacao = grupoCotacao;
 	}
+	
+	public String getMotivoCancelamento() {
+		return motivoCancelamento;
+	}
+
+	public void setMotivoCancelamento(String motivoCancelamento) {
+		this.motivoCancelamento = motivoCancelamento;
+	}
+	
+	public Date getDtCancelamento() {
+		return dtCancelamento;
+	}
+
+	public void setDtCancelamento(Date dtCancelamento) {
+		this.dtCancelamento = dtCancelamento;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -330,7 +354,5 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 			return false;
 		return true;
 	}
-
-	
 
 }

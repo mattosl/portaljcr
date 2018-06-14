@@ -15,6 +15,7 @@ import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -67,7 +68,7 @@ public class SolicitacaoCompraBusiness {
 				prazo.add(Calendar.DAY_OF_MONTH, 1);
 			}
 			solicitacao.setDtPrazo(prazo.getTime());
-			solicitacao.setUsuarioAprovacaoFluig("leonan");
+			solicitacao.setUsuarioAprovacaoFluig("leonan"); // TODO Buscar aprovadores
 			
 			daoSolicitacaoCompra.incluir(solicitacao);
 			
@@ -112,6 +113,41 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
+		}
+	}
+	
+	public void aprovar(Long idSolicitacao) throws ApplicationException {
+		try {
+			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
+			if(Util.isNotNull(solicitacao)) {
+				solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
+				solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
+				daoSolicitacaoCompra.alterar(solicitacao);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "aprovar" }, e);
+		}
+	}
+
+	public void recusar(Long idSolicitacao, String motivo) throws ApplicationException {
+		try {
+			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
+			if(Util.isNotNull(solicitacao)) {
+				solicitacao.setSituacao(SituacaoSolicitacaoCompra.CANCELADA);
+				solicitacao.setMotivoCancelamento(motivo);
+				solicitacao.setDtCancelamento(Calendar.getInstance().getTime());
+				daoSolicitacaoCompra.alterar(solicitacao);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "recusar" }, e);
 		}
 	}
 	
