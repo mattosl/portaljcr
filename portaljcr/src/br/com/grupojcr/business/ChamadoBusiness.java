@@ -26,6 +26,7 @@ import br.com.grupojcr.email.EmailChamado;
 import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.ChamadoAcompanhamento;
+import br.com.grupojcr.entity.Grupo;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
@@ -118,19 +119,19 @@ public class ChamadoBusiness {
 	@Asynchronous
 	public void enviarEmailNovoChamado(Chamado chamado) throws ApplicationException {
 		try {
-//			Grupo grupo = daoGrupo.obterGrupo("SUPORTE");
+			Grupo grupo = daoGrupo.obterGrupo("SUPORTE");
 			List<String> destinatarios = new ArrayList<String>();
 			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
 				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
 			}
 	
-//			if(CollectionUtils.isNotEmpty(grupo.getUsuarios())) {
-//				for(Usuario user : grupo.getUsuarios()) {
-//					if(TreatString.isNotBlank(user.getEmail())) {
-//						destinatarios.add(user.getEmail());
-//					}
-//				}
-//			}
+			if(CollectionUtils.isNotEmpty(grupo.getUsuarios())) {
+				for(Usuario user : grupo.getUsuarios()) {
+					if(TreatString.isNotBlank(user.getEmail())) {
+						destinatarios.add(user.getEmail());
+					}
+				}
+			}
 			
 			if(CollectionUtils.isNotEmpty(destinatarios)) {
 				EmailChamado email = new EmailChamado();
