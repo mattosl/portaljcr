@@ -54,9 +54,21 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:selectOneMenu id="selectCategoria" value="#{chamadoController.chamadoDTO.subcategoria}" >
+											<p:selectOneMenu id="selectCategoria" value="#{chamadoController.chamadoDTO.subcategoria}" filter="true" filterMatchMode="contains" >
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{chamadoController.listaCategoria}" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="selectLocalizacao">Localização: *</label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9">
+											<p:selectOneMenu id="selectLocalizacao" value="#{chamadoController.chamadoDTO.localizacao}" filter="true" filterMatchMode="contains" >
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{chamadoController.listaLocalizacao}" var="localizacao" itemLabel="#{localizacao.descricao}" itemValue="#{localizacao}" />
 									        </p:selectOneMenu>
 										</div>
 									</div>

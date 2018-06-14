@@ -18,7 +18,6 @@ import br.com.grupojcr.business.ChamadoBusiness;
 import br.com.grupojcr.dto.FiltroChamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.datamodel.ChamadoDataModel;
-import br.com.grupojcr.util.EnviaEmail;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -54,8 +53,6 @@ public class MeusChamadosController implements Serializable {
 	 */
 	public void iniciarProcesso() throws ApplicationException {
 		try {
-			EnviaEmail envia = new EnviaEmail();
-			envia.enviaEmailOrdemCompra("Teste", new String[] {"mattosl@grupojcr.com.br"});
 			setExibirResultado(Boolean.FALSE);
 			setFiltro(new FiltroChamado());
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");

@@ -35,6 +35,7 @@ import br.com.grupojcr.entity.ChamadoAcompanhamento;
 import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.CausaChamado;
+import br.com.grupojcr.enumerator.LocalizacaoChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.util.Dominios;
 import br.com.grupojcr.util.TreatDate;
@@ -57,6 +58,7 @@ public class ChamadoController implements Serializable {
 	private List<SelectItem> listaCategoria;
 	private List<PrioridadeChamado> listaPrioridade;
 	private List<CausaChamado> listaCausaChamado;
+	private List<LocalizacaoChamado> listaLocalizacao;
 	
 	private ChamadoDTO chamadoDTO;
 	private ArquivoDTO arquivoDTO;
@@ -84,6 +86,7 @@ public class ChamadoController implements Serializable {
 		try {
 			carregarCategorias();
 			setListaPrioridade(Arrays.asList(PrioridadeChamado.values()));
+			setListaLocalizacao(Arrays.asList(LocalizacaoChamado.values()));
 			setChamadoDTO(new ChamadoDTO());
 			getChamadoDTO().setPrioridade(PrioridadeChamado.MEDIA);
 			
@@ -196,7 +199,9 @@ public class ChamadoController implements Serializable {
 	public String salvar() throws ApplicationException {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
-			chamadoBusiness.salvar(getChamadoDTO(), usuario.getId());
+			Chamado chamado = chamadoBusiness.salvar(getChamadoDTO(), usuario.getId());
+			
+			chamadoBusiness.enviarEmailNovoChamado(chamado);
 			
 			Message.setMessage("chamado.salvar");
 		} catch (ApplicationException e) {
@@ -233,7 +238,10 @@ public class ChamadoController implements Serializable {
 	public void atribuir() throws ApplicationException {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
-			chamadoBusiness.atribuir(getChamado(), usuario);
+			Chamado chamado = chamadoBusiness.atribuir(getChamado(), usuario);
+			
+			chamadoBusiness.enviarEmailAtribuido(chamado);
+			
 			Message.setMessage("chamado.atribuido");
 			
 			adicionarMensagem("Olá, vou atender o seu chamado e a partir de agora sou responsável por ele!");
@@ -261,6 +269,14 @@ public class ChamadoController implements Serializable {
 			if(TreatString.isNotBlank(mensagem)) {
 				Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 				chamadoBusiness.enviarMensagem(getMensagem(), usuario, getChamado());
+				
+				if(chamado.getUsuarioSolicitante().equals(usuario)) {
+					if(Util.isNotNull(getChamado().getUsuarioResponsavel())) {
+						chamadoBusiness.enviarEmailAcompanhamento(getChamado(), mensagem, usuario, getChamado().getUsuarioResponsavel());
+					}
+				} else {
+					chamadoBusiness.enviarEmailAcompanhamento(getChamado(), mensagem, usuario, getChamado().getUsuarioSolicitante());
+				}
 				
 				setMensagem(null);
 				getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
@@ -366,6 +382,8 @@ public class ChamadoController implements Serializable {
 			
 			chamadoBusiness.solucionar(getChamado());
 			
+			chamadoBusiness.enviarEmailResolvido(getChamado());
+			
 			Message.setMessage("chamado.resolvido", new String[] {getChamado().getId().toString()});
 			
 			adicionarMensagem("Adicionei uma solução ao seu chamado: " + getChamado().getSolucao());
@@ -415,6 +433,7 @@ public class ChamadoController implements Serializable {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			chamadoBusiness.enviarMensagem(mensagem, usuario, getChamado());
+			
 			getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -514,6 +533,14 @@ public class ChamadoController implements Serializable {
 
 	public void setOrigem(String origem) {
 		this.origem = origem;
+	}
+
+	public List<LocalizacaoChamado> getListaLocalizacao() {
+		return listaLocalizacao;
+	}
+
+	public void setListaLocalizacao(List<LocalizacaoChamado> listaLocalizacao) {
+		this.listaLocalizacao = listaLocalizacao;
 	}
 
 }

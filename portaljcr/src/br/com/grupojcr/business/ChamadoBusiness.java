@@ -1,9 +1,11 @@
 package br.com.grupojcr.business;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
@@ -14,11 +16,13 @@ import org.apache.log4j.Logger;
 import br.com.grupojcr.dao.AnexoChamadoDAO;
 import br.com.grupojcr.dao.ChamadoAcompanhamentoDAO;
 import br.com.grupojcr.dao.ChamadoDAO;
+import br.com.grupojcr.dao.GrupoDAO;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.ArquivoDTO;
 import br.com.grupojcr.dto.ChamadoDTO;
 import br.com.grupojcr.dto.FiltroChamado;
 import br.com.grupojcr.dto.FiltroRelatorioChamado;
+import br.com.grupojcr.email.EmailChamado;
 import br.com.grupojcr.entity.AnexoChamado;
 import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.ChamadoAcompanhamento;
@@ -49,10 +53,16 @@ public class ChamadoBusiness {
 	@EJB
 	private ChamadoAcompanhamentoDAO daoChamadoAcompanhamento;
 	
+	@EJB
+	private GrupoDAO daoGrupo;
 	
-	public void salvar(ChamadoDTO dto, Long idUsuario) throws ApplicationException {
+	
+	public Chamado salvar(ChamadoDTO dto, Long idUsuario) throws ApplicationException {
 		try {
 			if(Util.isNull(dto.getSubcategoria())) {
+				throw new ApplicationException("message.empty", new String[] {"Favor preencher os campos obrigatórios (*)"}, FacesMessage.SEVERITY_WARN);
+			}
+			if(Util.isNull(dto.getLocalizacao())) {
 				throw new ApplicationException("message.empty", new String[] {"Favor preencher os campos obrigatórios (*)"}, FacesMessage.SEVERITY_WARN);
 			}
 			if(Util.isNull(dto.getPrioridade())) {
@@ -72,6 +82,7 @@ public class ChamadoBusiness {
 			chamado.setTitulo(dto.getTitulo());
 			chamado.setDescricao(dto.getDescricao());
 			chamado.setSituacao(SituacaoChamado.ABERTO);
+			chamado.setLocalizacao(dto.getLocalizacao().getDescricao());
 			Calendar calendario = Calendar.getInstance();
 			chamado.setDtAbertura(calendario.getTime());
 			
@@ -94,12 +105,96 @@ public class ChamadoBusiness {
 				}
 			}
 			
+			return chamado;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailNovoChamado(Chamado chamado) throws ApplicationException {
+		try {
+//			Grupo grupo = daoGrupo.obterGrupo("SUPORTE");
+			List<String> destinatarios = new ArrayList<String>();
+			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
+				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
+			}
+	
+//			if(CollectionUtils.isNotEmpty(grupo.getUsuarios())) {
+//				for(Usuario user : grupo.getUsuarios()) {
+//					if(TreatString.isNotBlank(user.getEmail())) {
+//						destinatarios.add(user.getEmail());
+//					}
+//				}
+//			}
+			
+			if(CollectionUtils.isNotEmpty(destinatarios)) {
+				EmailChamado email = new EmailChamado();
+				email.novoChamado("[SUPORTE] NOVO CHAMADO Nº " + chamado.getId(), destinatarios, chamado);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailAtribuido(Chamado chamado) throws ApplicationException {
+		try {
+			List<String> destinatarios = new ArrayList<String>();
+			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
+				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
+			}
+	
+			if(CollectionUtils.isNotEmpty(destinatarios)) {
+				EmailChamado email = new EmailChamado();
+				email.atribuido("[SUPORTE] CHAMADO Nº " + chamado.getId() + " EM ANDAMENTO", destinatarios, chamado);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailResolvido(Chamado chamado) throws ApplicationException {
+		try {
+			List<String> destinatarios = new ArrayList<String>();
+			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
+				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
+			}
+	
+			if(CollectionUtils.isNotEmpty(destinatarios)) {
+				EmailChamado email = new EmailChamado();
+				email.resolvido("[SUPORTE] CHAMADO Nº " + chamado.getId() + " RESOLVIDO", destinatarios, chamado);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailAcompanhamento(Chamado chamado, String mensagem, Usuario usuarioLogado, Usuario usuarioDestino) throws ApplicationException {
+		try {
+			List<String> destinatarios = new ArrayList<String>();
+			destinatarios.add(usuarioDestino.getEmail());
+	
+			if(CollectionUtils.isNotEmpty(destinatarios)) {
+				EmailChamado email = new EmailChamado();
+				email.novaMensagem("[SUPORTE] NOVA MENSAGEM NO CHAMADO Nº " + chamado.getId(), destinatarios, chamado, usuarioLogado, mensagem);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
 		}
 	}
 	
@@ -182,11 +277,12 @@ public class ChamadoBusiness {
 		}
 	}
 	
-	public void atribuir(Chamado chamado, Usuario usuario) throws ApplicationException {
+	public Chamado atribuir(Chamado chamado, Usuario usuario) throws ApplicationException {
 		try {
 			chamado.setUsuarioResponsavel(usuario);
 			chamado.setSituacao(SituacaoChamado.EM_ANDAMENTO);
 			daoChamado.alterar(chamado);
+			return chamado;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -232,6 +328,8 @@ public class ChamadoBusiness {
 			acompanhamento.setMensagem(mensagem);
 			acompanhamento.setUsuario(usuario);
 			daoChamadoAcompanhamento.incluir(acompanhamento);
+			
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

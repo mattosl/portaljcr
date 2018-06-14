@@ -12,6 +12,7 @@ public class FiltroRelatorioChamado {
 	private SituacaoChamado[] situacao;
 	private String categoria;
 	private String subCategoria;
+	private String localizacao;
 	private Usuario usuarioSolicitante;
 	private Usuario usuarioResponsavel;
 	private PrioridadeChamado prioridadeChamado;
@@ -72,6 +73,12 @@ public class FiltroRelatorioChamado {
 	}
 	public void setPeriodoFinal(Date periodoFinal) {
 		this.periodoFinal = periodoFinal;
+	}
+	public String getLocalizacao() {
+		return localizacao;
+	}
+	public void setLocalizacao(String localizacao) {
+		this.localizacao = localizacao;
 	}
 	
 	

@@ -1,4 +1,4 @@
-package br.com.grupojcr.entity;
+	package br.com.grupojcr.entity;
 
 import java.beans.Transient;
 import java.io.Serializable;
@@ -59,6 +59,9 @@ public class Chamado implements Serializable {
 	
 	@Column(name = "SOLUCAO", length = 500)
 	private String solucao;
+	
+	@Column(name = "LOCALIZACAO", length = 50, nullable = false)
+	private String localizacao;
 	
 	@Column(name = "FEEDBACK", length = 200)
 	private String feedback;
@@ -221,6 +224,15 @@ public class Chamado implements Serializable {
 	public void setFeedback(String feedback) {
 		this.feedback = feedback;
 	}
+	
+	public String getLocalizacao() {
+		return localizacao;
+	}
+
+	public void setLocalizacao(String localizacao) {
+		this.localizacao = localizacao;
+	}
+
 
 	@Override
 	public int hashCode() {

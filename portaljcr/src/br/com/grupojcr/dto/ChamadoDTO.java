@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.grupojcr.entity.SubCategoriaChamado;
+import br.com.grupojcr.enumerator.LocalizacaoChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 
 public class ChamadoDTO {
@@ -12,6 +13,7 @@ public class ChamadoDTO {
 	private PrioridadeChamado prioridade;
 	private String titulo;
 	private String descricao;
+	private LocalizacaoChamado localizacao;
 	private List<ArquivoDTO> anexos;
 	
 	public SubCategoriaChamado getSubcategoria() {
@@ -38,14 +40,20 @@ public class ChamadoDTO {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+	public void setAnexos(List<ArquivoDTO> anexos) {
+		this.anexos = anexos;
+	}
+	public LocalizacaoChamado getLocalizacao() {
+		return localizacao;
+	}
+	public void setLocalizacao(LocalizacaoChamado localizacao) {
+		this.localizacao = localizacao;
+	}
 	public List<ArquivoDTO> getAnexos() {
 		if(anexos == null) {
 			anexos = new ArrayList<ArquivoDTO>();
 		}
 		return anexos;
-	}
-	public void setAnexos(List<ArquivoDTO> anexos) {
-		this.anexos = anexos;
 	}
 
 }

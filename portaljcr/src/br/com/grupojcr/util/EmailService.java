@@ -31,13 +31,12 @@ import javax.naming.InitialContext;
 import org.apache.commons.io.IOUtils;
 
 @Stateless
-public class EnviaEmail {
+public class EmailService {
 	
 	@Resource(name = "java:jboss/mail/MailService")
 	private Session session;
 	
-	public EnviaEmail() {
-	}
+	public EmailService() {}
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
