@@ -99,7 +99,7 @@
 						rendered="#{minhaSolicitacaoCompraController.exibirResultado}"
 						binding="#{dataTableUtil.lazyDataTable}">
 						
-						<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="8%">
+						<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
 							<p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}" >
 								<h:outputText value="" title="Editar" styleClass="fa fa-file-text-o" />
 								<f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
@@ -109,11 +109,19 @@
 					  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
 					        <h:outputText value="#{solicitacao.id}" />
 					    </p:column>
-
-					  	<p:column headerText="Situação" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{solicitacao.situacao.descricao}" />
+					    
+					    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.coligada.razaoSocial.toUpperCase()}" />
 					    </p:column>
 					    
+					    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.codigoCentroCusto}  -  #{solicitacao.centroCusto}" />
+					    </p:column>
+					    
+					     <p:column headerText="Natureza Orçamentária" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.codigoNaturezaOrcamentaria}  -  #{solicitacao.naturezaOrcamentaria}" />
+					    </p:column>
+
 					    <p:column headerText="Data da Solicitação" style="text-align:center;font-size:12px;" >
 					        <h:outputText value="#{solicitacao.dtSolicitacao}" >
 					        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
@@ -123,8 +131,12 @@
 					    <p:column headerText="Grupo de Cotação/Cotador" style="text-align:center;font-size:12px;">
 					        <h:outputText value="#{solicitacao.grupoCotacao != null ? solicitacao.grupoCotacao.nome.toUpperCase() : solicitacao.usuarioSolicitante.nome.toUpperCase()}" />
 					    </p:column>
-					    
-					    <p:column headerText="Cancelar" style="text-align: center;font-size:12px;" width="8%">
+
+						<p:column headerText="Situação" style="text-align:center;font-size:12px;">
+							<h:outputText value="#{solicitacao.situacao.descricao}" />
+						</p:column>
+
+						<p:column headerText="Cancelar" style="text-align: center;font-size:12px;" width="5%">
 							<p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}" >
 								<h:outputText value="" title="Editar" styleClass="fa fa-times" />
 								<f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />

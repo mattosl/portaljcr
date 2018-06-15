@@ -32,7 +32,7 @@ public class EmailChamado {
 	
 	protected static Logger LOG = Logger.getLogger(EmailChamado.class);
 	
-	@Resource(name = "java:jboss/mail/MailService")
+	@Resource(name = "java:jboss/mail/MailChamadoService")
 	private Session session;
 	
 	public EmailChamado() {}
@@ -42,12 +42,12 @@ public class EmailChamado {
 	public void novoChamado(String assunto, List<String> destinatariosPara, Chamado chamado) throws Exception {
 		try {
 			InitialContext ic = new InitialContext();
-			session = ((Session) ic.lookup("java:jboss/mail/MailService"));
+			session = ((Session) ic.lookup("java:jboss/mail/MailChamadoService"));
 
 			InternetAddress[] destinatario = new InternetAddress[destinatariosPara.size()];
 
 			InternetAddress remetente = null;
-			remetente = new InternetAddress("nfse@grupojcr.com.br");
+			remetente = new InternetAddress("helpdesk@grupojcr.com.br");
 
 			for (int i = 0; i < destinatariosPara.size(); i++) {
 				destinatario[i] = new InternetAddress(destinatariosPara.get(i));
@@ -88,12 +88,12 @@ public class EmailChamado {
 	public void atribuido(String assunto, List<String> destinatariosPara, Chamado chamado) throws Exception {
 		try {
 			InitialContext ic = new InitialContext();
-			session = ((Session) ic.lookup("java:jboss/mail/MailService"));
+			session = ((Session) ic.lookup("java:jboss/mail/MailChamadoService"));
 
 			InternetAddress[] destinatario = new InternetAddress[destinatariosPara.size()];
 
 			InternetAddress remetente = null;
-			remetente = new InternetAddress("nfse@grupojcr.com.br");
+			remetente = new InternetAddress("helpdesk@grupojcr.com.br");
 
 			for (int i = 0; i < destinatariosPara.size(); i++) {
 				destinatario[i] = new InternetAddress(destinatariosPara.get(i));
@@ -134,12 +134,12 @@ public class EmailChamado {
 	public void resolvido(String assunto, List<String> destinatariosPara, Chamado chamado) throws Exception {
 		try {
 			InitialContext ic = new InitialContext();
-			session = ((Session) ic.lookup("java:jboss/mail/MailService"));
+			session = ((Session) ic.lookup("java:jboss/mail/MailChamadoService"));
 
 			InternetAddress[] destinatario = new InternetAddress[destinatariosPara.size()];
 
 			InternetAddress remetente = null;
-			remetente = new InternetAddress("nfse@grupojcr.com.br");
+			remetente = new InternetAddress("helpdesk@grupojcr.com.br");
 
 			for (int i = 0; i < destinatariosPara.size(); i++) {
 				destinatario[i] = new InternetAddress(destinatariosPara.get(i));
@@ -181,12 +181,12 @@ public class EmailChamado {
 	public void novaMensagem(String assunto, List<String> destinatariosPara, Chamado chamado, Usuario usuarioLogado, String mensagem) throws Exception {
 		try {
 			InitialContext ic = new InitialContext();
-			session = ((Session) ic.lookup("java:jboss/mail/MailService"));
+			session = ((Session) ic.lookup("java:jboss/mail/MailChamadoService"));
 
 			InternetAddress[] destinatario = new InternetAddress[destinatariosPara.size()];
 
 			InternetAddress remetente = null;
-			remetente = new InternetAddress("nfse@grupojcr.com.br");
+			remetente = new InternetAddress("helpdesk@grupojcr.com.br");
 
 			for (int i = 0; i < destinatariosPara.size(); i++) {
 				destinatario[i] = new InternetAddress(destinatariosPara.get(i));
