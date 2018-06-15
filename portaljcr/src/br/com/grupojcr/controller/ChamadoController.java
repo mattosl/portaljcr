@@ -437,6 +437,16 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
+	public void iniciarFeedback() throws ApplicationException {
+		try {
+			getChamado().setChamadoSolucionado(Boolean.TRUE);
+			getChamado().setNota(10);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarFeedback" }, e);
+		}
+	}
+	
 	public Integer calcularTempoResolucao(Chamado chamado) throws ApplicationException {
 		try {
 			if(Util.isNotNull(chamado.getDtResolucao())) {

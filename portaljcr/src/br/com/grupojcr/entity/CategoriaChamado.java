@@ -14,7 +14,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "TB_CATEGORIA_CHAMADO")
-public class CategoriaChamado implements Serializable {
+public class CategoriaChamado implements BaseEntity, Serializable {
 
 	private static final long serialVersionUID = -6132325561192536178L;
 	

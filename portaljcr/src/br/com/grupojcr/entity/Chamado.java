@@ -22,6 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import br.com.grupojcr.enumerator.CausaChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
@@ -65,6 +67,13 @@ public class Chamado implements Serializable {
 	
 	@Column(name = "FEEDBACK", length = 200)
 	private String feedback;
+	
+	@Column(name = "FEEDBACK_SOLUCIONADO", columnDefinition = "TINYINT")
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	private Boolean chamadoSolucionado;
+	
+	@Column(name = "FEEDBACK_NOTA")
+	private Integer nota;
 	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "CAUSA")
@@ -233,6 +242,37 @@ public class Chamado implements Serializable {
 		this.localizacao = localizacao;
 	}
 
+	public Set<AnexoChamado> getAnexos() {
+		return anexos;
+	}
+
+	public void setAnexos(Set<AnexoChamado> anexos) {
+		this.anexos = anexos;
+	}
+
+	public Set<ChamadoAcompanhamento> getMensagens() {
+		return mensagens;
+	}
+
+	public void setMensagens(Set<ChamadoAcompanhamento> mensagens) {
+		this.mensagens = mensagens;
+	}
+	
+	public Boolean getChamadoSolucionado() {
+		return chamadoSolucionado;
+	}
+
+	public void setChamadoSolucionado(Boolean chamadoSolucionado) {
+		this.chamadoSolucionado = chamadoSolucionado;
+	}
+
+	public Integer getNota() {
+		return nota;
+	}
+
+	public void setNota(Integer nota) {
+		this.nota = nota;
+	}
 
 	@Override
 	public int hashCode() {
@@ -257,22 +297,6 @@ public class Chamado implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	public Set<AnexoChamado> getAnexos() {
-		return anexos;
-	}
-
-	public void setAnexos(Set<AnexoChamado> anexos) {
-		this.anexos = anexos;
-	}
-
-	public Set<ChamadoAcompanhamento> getMensagens() {
-		return mensagens;
-	}
-
-	public void setMensagens(Set<ChamadoAcompanhamento> mensagens) {
-		this.mensagens = mensagens;
 	}
 	
 	@Transient

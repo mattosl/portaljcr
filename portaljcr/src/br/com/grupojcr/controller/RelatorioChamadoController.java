@@ -16,10 +16,14 @@ import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.grupojcr.business.CategoriaChamadoBusiness;
 import br.com.grupojcr.business.ChamadoBusiness;
 import br.com.grupojcr.dto.FiltroRelatorioChamado;
+import br.com.grupojcr.entity.CategoriaChamado;
+import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.datamodel.RelatorioChamadoDataModel;
 import br.com.grupojcr.enumerator.CausaChamado;
+import br.com.grupojcr.enumerator.LocalizacaoChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
 import br.com.grupojcr.util.Util;
@@ -40,10 +44,11 @@ public class RelatorioChamadoController implements Serializable {
 	private Boolean exibirResultado;
 	
 	private List<SituacaoChamado> listaSituacaoChamado;
-	private List<String> listaCategoria;
-	private List<String> listaSubCategoria;
+	private List<CategoriaChamado> listaCategoria;
+	private List<SubCategoriaChamado> listaSubCategoria;
 	private List<PrioridadeChamado> listaPrioridadeChamado;
 	private List<CausaChamado> listaCausaChamado;
+	private List<LocalizacaoChamado> listaLocalizacaoChamado;
 	
 	private Long totalAberto;
 	private Long totalEmAndamento;
@@ -53,8 +58,12 @@ public class RelatorioChamadoController implements Serializable {
 	@EJB
 	private ChamadoBusiness chamadoBusiness;
 	
+	@EJB
+	private CategoriaChamadoBusiness categoriaChamadoBusiness;
+	
 	@Inject
 	private RelatorioChamadoDataModel dataModel;
+	
 	
 	/**
 	 * Método responsavel por iniciar processo
@@ -74,6 +83,8 @@ public class RelatorioChamadoController implements Serializable {
 			
 			setListaPrioridadeChamado(new ArrayList<PrioridadeChamado>(Arrays.asList(PrioridadeChamado.values())));
 			setListaCausaChamado(new ArrayList<CausaChamado>(Arrays.asList(CausaChamado.values())));
+			setListaLocalizacaoChamado(new ArrayList<LocalizacaoChamado>(Arrays.asList(LocalizacaoChamado.values())));
+			setListaCategoria(categoriaChamadoBusiness.listarCategoriaChamado());
 			calcular();
 			
 			
@@ -109,6 +120,18 @@ public class RelatorioChamadoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarDatas" }, e);
+		}
+	}
+	
+	public void carregarSubcategorias() throws ApplicationException {
+		try {
+			if(Util.isNotNull(getFiltro().getCategoria())) {
+				setListaSubCategoria(new ArrayList<SubCategoriaChamado>(getFiltro().getCategoria().getSubCategorias()));
+			}
+			getFiltro().setSubCategoria(null);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarSubcategorias" }, e);
 		}
 	}
 	
@@ -186,22 +209,6 @@ public class RelatorioChamadoController implements Serializable {
 		this.listaSituacaoChamado = listaSituacaoChamado;
 	}
 
-	public List<String> getListaCategoria() {
-		return listaCategoria;
-	}
-
-	public void setListaCategoria(List<String> listaCategoria) {
-		this.listaCategoria = listaCategoria;
-	}
-
-	public List<String> getListaSubCategoria() {
-		return listaSubCategoria;
-	}
-
-	public void setListaSubCategoria(List<String> listaSubCategoria) {
-		this.listaSubCategoria = listaSubCategoria;
-	}
-
 	public List<PrioridadeChamado> getListaPrioridadeChamado() {
 		return listaPrioridadeChamado;
 	}
@@ -248,5 +255,29 @@ public class RelatorioChamadoController implements Serializable {
 
 	public void setTotalFechados(Long totalFechados) {
 		this.totalFechados = totalFechados;
+	}
+
+	public List<LocalizacaoChamado> getListaLocalizacaoChamado() {
+		return listaLocalizacaoChamado;
+	}
+
+	public void setListaLocalizacaoChamado(List<LocalizacaoChamado> listaLocalizacaoChamado) {
+		this.listaLocalizacaoChamado = listaLocalizacaoChamado;
+	}
+
+	public List<CategoriaChamado> getListaCategoria() {
+		return listaCategoria;
+	}
+
+	public void setListaCategoria(List<CategoriaChamado> listaCategoria) {
+		this.listaCategoria = listaCategoria;
+	}
+
+	public List<SubCategoriaChamado> getListaSubCategoria() {
+		return listaSubCategoria;
+	}
+
+	public void setListaSubCategoria(List<SubCategoriaChamado> listaSubCategoria) {
+		this.listaSubCategoria = listaSubCategoria;
 	}
 }

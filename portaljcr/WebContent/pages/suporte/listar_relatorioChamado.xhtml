@@ -136,7 +136,7 @@
 													<label for="prioridade" class="col-sm-2 col-md-2 control-label">Prioridade:</label>
 				
 													<div class="col-sm-3 col-md-3">
-														<p:selectOneMenu id="prioridade" value="#{relatorioChamadoController.filtro.prioridadeChamado}" disabled="true">
+														<p:selectOneMenu id="prioridade" value="#{relatorioChamadoController.filtro.prioridadeChamado}">
 												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
 												        	<f:selectItems value="#{relatorioChamadoController.listaPrioridadeChamado}" var="prioridade" itemLabel="#{prioridade.descricao}" itemValue="#{prioridade}" />
 												        </p:selectOneMenu>
@@ -146,27 +146,7 @@
 													<label for="causa" class="col-sm-2 col-md-2 control-label">Causa:</label>
 				
 													<div class="col-sm-6 col-md-6">
-														<p:selectOneMenu id="causa" value="#{relatorioChamadoController.filtro.causaChamado}" disabled="true">
-												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
-												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
-												        </p:selectOneMenu>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="categoria" class="col-sm-2 col-md-2 control-label">Categoria:</label>
-				
-													<div class="col-sm-6 col-md-6">
-														<p:selectOneMenu id="categoria" value="#{relatorioChamadoController.filtro.categoria}" disabled="true">
-												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
-												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
-												        </p:selectOneMenu>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="subcategoria" class="col-sm-2 col-md-2 control-label">Subcategoria:</label>
-				
-													<div class="col-sm-6 col-md-6">
-														<p:selectOneMenu id="subcategoria" value="#{relatorioChamadoController.filtro.categoria}" disabled="true">
+														<p:selectOneMenu id="causa" value="#{relatorioChamadoController.filtro.causaChamado}">
 												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
 												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
 												        </p:selectOneMenu>
@@ -176,12 +156,34 @@
 													<label for="localizacao" class="col-sm-2 col-md-2 control-label">Localização:</label>
 				
 													<div class="col-sm-6 col-md-6">
-														<p:selectOneMenu id="localizacao" value="#{relatorioChamadoController.filtro.localizacao}" disabled="true">
+														<p:selectOneMenu id="localizacao" value="#{relatorioChamadoController.filtro.localizacao}">
 												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
-												        	<f:selectItems value="#{relatorioChamadoController.listaCausaChamado}" var="causa" itemLabel="#{causa.descricao}" itemValue="#{causa}" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaLocalizacaoChamado}" var="localizacao" itemLabel="#{localizacao.descricao}" itemValue="#{localizacao.descricao}" />
 												        </p:selectOneMenu>
 													</div>
 												</div>
+												<div class="form-group">
+													<label for="categoria" class="col-sm-2 col-md-2 control-label">Categoria:</label>
+				
+													<div class="col-sm-6 col-md-6">
+														<p:selectOneMenu id="categoria" value="#{relatorioChamadoController.filtro.categoria}">
+												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaCategoria}" var="categoria" itemLabel="#{categoria.nome}" itemValue="#{categoria}" />
+												        	<p:ajax event="change" listener="#{relatorioChamadoController.carregarSubcategorias()}" process="@this" update="@form:subcategoria" global="false" />
+												        </p:selectOneMenu>
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="subcategoria" class="col-sm-2 col-md-2 control-label">Subcategoria:</label>
+				
+													<div class="col-sm-6 col-md-6">
+														<p:selectOneMenu id="subcategoria" value="#{relatorioChamadoController.filtro.subCategoria}" disabled="#{relatorioChamadoController.filtro.categoria == null}">
+												        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+												        	<f:selectItems value="#{relatorioChamadoController.listaSubCategoria}" var="subc" itemLabel="#{subc.nome}" itemValue="#{subc}" />
+												        </p:selectOneMenu>
+													</div>
+												</div>
+												
 											</div>
 										</div>
 									</p:panel>

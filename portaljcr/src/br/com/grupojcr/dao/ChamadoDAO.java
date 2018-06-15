@@ -16,6 +16,7 @@ import br.com.grupojcr.dto.FiltroChamado;
 import br.com.grupojcr.dto.FiltroRelatorioChamado;
 import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.enumerator.SituacaoChamado;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -137,6 +138,26 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 				sb.append("AND chamado.situacao IN :situacoes ");
 			}
 			
+			if(Util.isNotNull(filtro.getPrioridadeChamado())) {
+				sb.append("AND chamado.prioridade = :prioridade ");
+			}
+			
+			if(Util.isNotNull(filtro.getCausaChamado())) {
+				sb.append("AND chamado.causa = :causa ");
+			}
+			
+			if(TreatString.isNotBlank(filtro.getLocalizacao())) {
+				sb.append("AND chamado.localizacao like :localizacao ");
+			}
+			
+			if(Util.isNotNull(filtro.getCategoria())) {
+				sb.append("AND chamado.categoria like :categoria ");
+			}
+			
+			if(Util.isNotNull(filtro.getSubCategoria())) {
+				sb.append("AND chamado.subcategoria like :subcategoria ");
+			}
+			
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
@@ -156,6 +177,26 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			
 			if(Util.isNotNull(filtro.getSituacao()) && filtro.getSituacao().length != 0) {
 				query.setParameter("situacoes", Arrays.asList(filtro.getSituacao()));
+			}
+			
+			if(Util.isNotNull(filtro.getPrioridadeChamado())) {
+				query.setParameter("prioridade", filtro.getPrioridadeChamado());
+			}
+			
+			if(Util.isNotNull(filtro.getCausaChamado())) {
+				query.setParameter("causa", filtro.getCausaChamado());
+			}
+			
+			if(TreatString.isNotBlank(filtro.getLocalizacao())) {
+				query.setParameter("localizacao", filtro.getLocalizacao());
+			}
+			
+			if(Util.isNotNull(filtro.getCategoria())) {
+				query.setParameter("categoria", filtro.getCategoria().getNome());
+			}
+			
+			if(Util.isNotNull(filtro.getSubCategoria())) {
+				query.setParameter("subcategoria", filtro.getSubCategoria().getNome());
 			}
 			
 			return query.getSingleResult().intValue();
@@ -249,6 +290,26 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 				sb.append("AND chamado.situacao IN :situacoes ");
 			}
 			
+			if(Util.isNotNull(filtro.getPrioridadeChamado())) {
+				sb.append("AND chamado.prioridade = :prioridade ");
+			}
+			
+			if(Util.isNotNull(filtro.getCausaChamado())) {
+				sb.append("AND chamado.causa = :causa ");
+			}
+			
+			if(TreatString.isNotBlank(filtro.getLocalizacao())) {
+				sb.append("AND chamado.localizacao like :localizacao ");
+			}
+			
+			if(Util.isNotNull(filtro.getCategoria())) {
+				sb.append("AND chamado.categoria like :categoria ");
+			}
+			
+			if(Util.isNotNull(filtro.getSubCategoria())) {
+				sb.append("AND chamado.subcategoria like :subcategoria ");
+			}
+			
 			sb.append("ORDER BY chamado.dtAbertura DESC ");
 			
 			TypedQuery<Chamado> query = manager.createQuery(sb.toString(), Chamado.class);
@@ -270,6 +331,26 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			
 			if(Util.isNotNull(filtro.getSituacao()) && filtro.getSituacao().length != 0) {
 				query.setParameter("situacoes", Arrays.asList(filtro.getSituacao()));
+			}
+			
+			if(Util.isNotNull(filtro.getPrioridadeChamado())) {
+				query.setParameter("prioridade", filtro.getPrioridadeChamado());
+			}
+			
+			if(Util.isNotNull(filtro.getCausaChamado())) {
+				query.setParameter("causa", filtro.getCausaChamado());
+			}
+			
+			if(TreatString.isNotBlank(filtro.getLocalizacao())) {
+				query.setParameter("localizacao", filtro.getLocalizacao());
+			}
+			
+			if(Util.isNotNull(filtro.getCategoria())) {
+				query.setParameter("categoria", filtro.getCategoria().getNome());
+			}
+			
+			if(Util.isNotNull(filtro.getSubCategoria())) {
+				query.setParameter("subcategoria", filtro.getSubCategoria().getNome());
 			}
 			
 			if(Util.isNotNull(first) && Util.isNotNull(pageSize)){

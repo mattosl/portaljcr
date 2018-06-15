@@ -268,9 +268,10 @@
 												value="Feedback"
 												id="btn_feedback"
 												process="@this"
-												immediate="true"
+												update="@form:modalFeedback"
+												action="#{chamadoController.iniciarFeedback()}"
 												rendered="#{chamadoController.chamado.situacao eq 'RESOLVIDO' and chamadoController.chamado.usuarioSolicitante eq usuario}"
-												onclick="PF('modalFeedback').show();"
+												oncomplete="PF('modalFeedback').show();"
 												ajax="true" />
 										</div>
 									</div>
@@ -350,6 +351,41 @@
 						<div class="form-horizontal">
 							<div class="box-body">
 								<div class="form-group">
+									<div class="col-sm-12 col-md-12">
+										<label>Seu chamado foi solucionado?</label>
+									</div>
+
+									<div class="col-sm-12 col-md-12">
+										<p:selectOneRadio id="solucionado" value="#{chamadoController.chamado.chamadoSolucionado}">
+								            <f:selectItem itemLabel="Sim" itemValue="true" />
+								            <f:selectItem itemLabel="Não" itemValue="false" />
+								        </p:selectOneRadio>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-12 col-md-12">
+										<label>De 0 a 10 qual nota você dá para a solução?</label>
+									</div>
+
+									<div class="col-sm-12 col-md-12">
+										<p:selectOneRadio id="nota" value="#{chamadoController.chamado.nota}">
+								            <f:selectItem itemLabel="1" itemValue="1" />
+								            <f:selectItem itemLabel="2" itemValue="2" />
+								            <f:selectItem itemLabel="3" itemValue="3" />
+								            <f:selectItem itemLabel="4" itemValue="4" />
+								            <f:selectItem itemLabel="5" itemValue="5" />
+								            <f:selectItem itemLabel="6" itemValue="6" />
+								            <f:selectItem itemLabel="7" itemValue="7" />
+								            <f:selectItem itemLabel="8" itemValue="8" />
+								            <f:selectItem itemLabel="9" itemValue="9" />
+								            <f:selectItem itemLabel="10" itemValue="10" />
+								        </p:selectOneRadio>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-12 col-md-12">
+										<label>Comentário:</label>
+									</div>
 									<div class="col-sm-12 col-md-12">
 										<h:inputTextarea id="feedback" value="#{chamadoController.chamado.feedback}" styleClass="form-control" rows="5" />
 									</div>

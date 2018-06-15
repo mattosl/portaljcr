@@ -2,6 +2,8 @@ package br.com.grupojcr.dto;
 
 import java.util.Date;
 
+import br.com.grupojcr.entity.CategoriaChamado;
+import br.com.grupojcr.entity.SubCategoriaChamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.CausaChamado;
 import br.com.grupojcr.enumerator.PrioridadeChamado;
@@ -10,8 +12,8 @@ import br.com.grupojcr.enumerator.SituacaoChamado;
 public class FiltroRelatorioChamado {
 	
 	private SituacaoChamado[] situacao;
-	private String categoria;
-	private String subCategoria;
+	private CategoriaChamado categoria;
+	private SubCategoriaChamado subCategoria;
 	private String localizacao;
 	private Usuario usuarioSolicitante;
 	private Usuario usuarioResponsavel;
@@ -25,18 +27,6 @@ public class FiltroRelatorioChamado {
 	}
 	public void setSituacao(SituacaoChamado[] situacao) {
 		this.situacao = situacao;
-	}
-	public String getCategoria() {
-		return categoria;
-	}
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
-	public String getSubCategoria() {
-		return subCategoria;
-	}
-	public void setSubCategoria(String subCategoria) {
-		this.subCategoria = subCategoria;
 	}
 	public Usuario getUsuarioSolicitante() {
 		return usuarioSolicitante;
@@ -79,6 +69,18 @@ public class FiltroRelatorioChamado {
 	}
 	public void setLocalizacao(String localizacao) {
 		this.localizacao = localizacao;
+	}
+	public CategoriaChamado getCategoria() {
+		return categoria;
+	}
+	public void setCategoria(CategoriaChamado categoria) {
+		this.categoria = categoria;
+	}
+	public SubCategoriaChamado getSubCategoria() {
+		return subCategoria;
+	}
+	public void setSubCategoria(SubCategoriaChamado subCategoria) {
+		this.subCategoria = subCategoria;
 	}
 	
 	
