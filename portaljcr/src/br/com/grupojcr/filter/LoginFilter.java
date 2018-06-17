@@ -50,9 +50,6 @@ public class LoginFilter implements Filter {
 		}
 		
 		if (loginBean == null || !loginBean.isLogado()) {
-			if(loginBean == null) {
-				session.invalidate();
-			}
 			String contextPath = ((HttpServletRequest) request).getContextPath();
 			((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
 		} else {
