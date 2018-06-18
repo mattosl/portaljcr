@@ -2,6 +2,7 @@ package br.com.grupojcr.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -120,6 +122,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_GRUPO_COTACAO")
 	private GrupoCotacao grupoCotacao;
+	
+	@OneToMany(mappedBy = "solicitacaoCompra", fetch = FetchType.LAZY)
+	private Set<SolicitacaoCompraItem> itens;
 
 	public Long getId() {
 		return id;
@@ -329,6 +334,13 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 		this.dtCancelamento = dtCancelamento;
 	}
 
+	public Set<SolicitacaoCompraItem> getItens() {
+		return itens;
+	}
+
+	public void setItens(Set<SolicitacaoCompraItem> itens) {
+		this.itens = itens;
+	}
 
 	@Override
 	public int hashCode() {
@@ -354,5 +366,6 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 			return false;
 		return true;
 	}
+
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -19,6 +20,8 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.entity.Coligada;
+import br.com.grupojcr.entity.SolicitacaoCompra;
+import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.datamodel.SolicitacaoCompraDataModel;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
@@ -44,6 +47,8 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 	private List<Coligada> listaColigada;
 	
 	private Usuario usuario;
+	
+	private SolicitacaoCompra solicitacaoCompra;
 	
 	@EJB
 	private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
@@ -129,6 +134,20 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 		}
 	}
 	
+	public String exibir() throws ApplicationException {
+		try {
+			if(Util.isNotNull(getSolicitacaoCompra())) {
+				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
+			}
+			return "/pages/solicitacaoCompra/solicitacao/exibir_solicitacao.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
+		}
+	}
 	
 	public String voltar() throws ApplicationException {
 		try {
@@ -185,5 +204,13 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public SolicitacaoCompra getSolicitacaoCompra() {
+		return solicitacaoCompra;
+	}
+
+	public void setSolicitacaoCompra(SolicitacaoCompra solicitacaoCompra) {
+		this.solicitacaoCompra = solicitacaoCompra;
 	}
 }

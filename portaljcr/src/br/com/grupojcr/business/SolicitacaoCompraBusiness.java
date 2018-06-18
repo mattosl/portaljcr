@@ -192,4 +192,16 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
+	public List<SolicitacaoCompraItem> listarItensPorSolicitacao(Long idSolicitacao) throws ApplicationException {
+		try {
+			return daoSolicitacaoCompraItem.listarItemPorSolicitacao(idSolicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarItensPorSolicitacao" }, e);
+		}
+	}
+	
 }

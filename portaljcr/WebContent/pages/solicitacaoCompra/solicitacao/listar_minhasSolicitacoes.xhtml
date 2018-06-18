@@ -100,9 +100,9 @@
 						binding="#{dataTableUtil.lazyDataTable}">
 						
 						<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
-							<p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}" >
-								<h:outputText value="" title="Editar" styleClass="fa fa-file-text-o" />
-								<f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
+							<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+								<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
+								<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
 							</p:commandLink>
 						</p:column>
 						

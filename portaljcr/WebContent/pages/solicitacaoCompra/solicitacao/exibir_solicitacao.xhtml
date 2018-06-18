@@ -29,89 +29,84 @@
 								<div class="box-body">
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="prioridade"> Prioridade: *  <p:outputLabel id="info" style="color: #de4b39">&nbsp;<i style="color: #9f9f9f" class="fa fa-question-circle"></i>&nbsp;</p:outputLabel></label>
-											<p:tooltip for="info" value="Alta: Até 3 dias para cotação.&lt;br/&gt;Média: Até 7 dias para cotação.&lt;br/&gt;Baixa: Até 10 dias para cotação." escape="false" position="top" />
+											<label for="prioridade"> Prioridade: </label>
 										</div>
 										
 										<div class="col-sm-3 col-md-3">
-											<p:out
+											<p:outputLabel id="prioridade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="centroCusto">Centro de Custo: *</label>
+											<label for="centroCusto">Centro de Custo: </label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:selectOneMenu id="centroCusto"  value="#{solicitacaoCompraController.solicitacaoCompraDTO.centroCusto}" filter="true" filterMatchMode="contains">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaCentroCusto}" var="cc" itemLabel="#{cc.codigoCentroCusto} - #{cc.centroCusto.toUpperCase()}" itemValue="#{cc}" />
-									        </p:selectOneMenu>
+											<p:outputLabel id="centroCusto" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.codigoCentroCusto} - #{minhaSolicitacaoCompraController.solicitacaoCompra.centroCusto.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="naturezaOrcamentaria">Natureza Orçamentária: *</label>
+											<label for="naturezaOrcamentaria">Natureza Orçamentária: </label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:selectOneMenu id="naturezaOrcamentaria" value="#{solicitacaoCompraController.solicitacaoCompraDTO.naturezaOrcamentaria}" filter="true" filterMatchMode="contains">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.codigoNaturezaOrcamentaria} - #{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
-									        </p:selectOneMenu>
+											<p:outputLabel id="naturezaOrcamentaria" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.codigoNaturezaOrcamentaria} - #{minhaSolicitacaoCompraController.solicitacaoCompra.naturezaOrcamentaria.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="modalidade">Modalidade: *</label>
+											<label for="modalidade">Modalidade: </label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:selectOneRadio id="modalidade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.modalidade}" styleClass="radio alinharRadio" layout="responsive" columns="3">
-											   <f:selectItems value="#{solicitacaoCompraController.listaModalidade}" var="modalidade" itemLabel="#{modalidade.descricao}" itemValue="#{modalidade}" />
-											</p:selectOneRadio>
+											<p:outputLabel id="modalidade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="motivoCompra">Motivo da Compra: *</label>
+											<label for="motivoCompra">Motivo da Compra: </label>
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<h:inputTextarea id="motivoCompra" value="#{solicitacaoCompraController.solicitacaoCompraDTO.motivoCompra}" styleClass="form-control" rows="5" />
+											<p:outputLabel id="motivoCompra" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
+									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.sugestaoFornecedor != null}">
+										<div class="form-group">
+											<div class="col-sm-3 col-md-3 control-label">
+												<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
+											</div>
+		
+											<div class="col-sm-9 col-md-9">
+												<p:outputLabel id="sugestaoFornecedor" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.sugestaoFornecedor}" styleClass="control-label font-normal" />
+											</div>
 										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<h:inputText id="sugestaoFornecedor" value="#{solicitacaoCompraController.solicitacaoCompraDTO.sugestaoFornecedor}" maxlength="100" styleClass="form-control" />
+									</p:outputPanel>
+									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.localEntrega != null}">
+										<div class="form-group">
+											<div class="col-sm-3 col-md-3 control-label">
+												<label for="localEntrega">Local de Entrega: </label>
+											</div>
+		
+											<div class="col-sm-9 col-md-9">
+												<p:outputLabel id="localEntrega" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.localEntrega}" styleClass="control-label font-normal" />
+											</div>
 										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="localEntrega">Local de Entrega: </label>
+									</p:outputPanel>
+									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.valorAproximado != null}">
+										<div class="form-group">
+											<div class="col-sm-3 col-md-3 control-label">
+												<label for="valorAproximado">Valor Aproximado: </label>
+											</div>
+		
+											<div class="col-sm-3 col-md-3">
+	           									<p:outputLabel id="valorAproximado" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
+	            									<f:convertNumber type="currency" currencySymbol=""/>
+	           									</p:outputLabel>
+											</div>
 										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<h:inputText id="localEntrega" value="#{solicitacaoCompraController.solicitacaoCompraDTO.localEntrega}" maxlength="100" styleClass="form-control" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="valorAproximado">Valor Aproximado: </label>
-										</div>
-	
-										<div class="col-sm-3 col-md-3">
-											<div class="input-group">
-									            <span class="input-group-addon">R$</span>
-            									<p:inputNumber id="valorAproximado" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," />
-            									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
-									        </div>
-										</div>
-									</div>
+									</p:outputPanel>
 								</div>
 								<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
 									<div class="box-header with-border">
@@ -120,33 +115,10 @@
 				            		<div class="form-horizontal">
 										<div class="box-body">
 											<div class="row">
-												<div class="col-sm-3 col-md-3">
-													<p:commandButton
-														styleClass="btn btn-default"
-														icon="fa fa-plus"
-														value="Adicionar Novo Item"
-														id="btn_add_novo_item"
-														process="@this"
-														action="#{solicitacaoCompraController.novoItem()}"
-														oncomplete="PF('modalProduto').show();"
-														update="@form:modalProduto"
-														ajax="true">
-													</p:commandButton>
-												</div>
-											</div>
-											<br />
-											<div class="row">
 												<p:dataTable var="item" id="tableItens"
-													value="#{solicitacaoCompraController.solicitacaoCompraDTO.itens}" 
+													value="#{minhaSolicitacaoCompraController.solicitacaoCompra.itens}" 
 													tableStyle="table-layout: auto; word-break: keep-all;"
 													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
-													
-													<p:column headerText="Editar" style="text-align: center; font-size:12px;" width="8%">
-														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.iniciarEdicaoItem()}" oncomplete="PF('modalProduto').show();" update="@form:modalProduto">
-															<h:outputText value="" title="Excluir" styleClass="fa fa-pencil" />
-															<f:setPropertyActionListener value="#{item}" target="#{solicitacaoCompraController.solicitacaoItem}" />
-														</p:commandLink>
-													</p:column>
 													
 													<p:column headerText="Produto" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
@@ -160,15 +132,14 @@
 												        <h:outputText value="#{item.unidade}" />
 												    </p:column>
 												    
+												    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{item.marca}" />
+												    </p:column>
+												    
 												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.observacao}" />
 												    </p:column>
 												    
-												    <p:column headerText="Excluir" style="text-align: center; font-size:12px;" width="8%">
-														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.excluirItem(item)}" update="@form:tableItens">
-															<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
-														</p:commandLink>
-													</p:column>
 												</p:dataTable>
 											</div>
 										</div>
@@ -179,138 +150,17 @@
 										<p:commandButton
 											styleClass="btn btn-default"
 											icon="fa fa-arrow-left"
-											value="Anterior"
-											id="btn_anterior"
+											value="Voltar"
+											id="btn_voltar"
 											process="@this"
 											immediate="true"
-											action="#{solicitacaoCompraController.voltar()}"
+											action="#{minhaSolicitacaoCompraController.voltar()}"
 											ajax="false" />
-									</div>
-									<div class="col-sm-3 col-md-3 pull-right" >
-										<p:commandButton
-											styleClass="btn btn-default"
-											icon="fa fa-check"
-											value="Salvar"
-											id="btn_salvar"
-											process="@form:painelCadastro"
-											action="#{solicitacaoCompraController.salvar()}"
-											ajax="true" />
 									</div>
 								</div>
 							</div>
 						</p:panel>
 					</f:validateBean>
-					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
-						id="modalProduto"
-						widgetVar="modalProduto" 
-						header="Novo Produto"
-						resizable="false" 
-						responsive="true"
-						closable="false"
-						width="60%"
-						draggable="false"
-						modal="true">
-						<p:messages id="mensagemModal" showDetail="true" closable="true" />
-						<div class="form-horizontal">
-							<div class="box-body">
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
-										<label for="produto">Produto/Serviço: *</label>
-									</div>
-
-									<p:outputPanel id="descricaoProdutoPanel">
-										<div class="col-sm-9 col-md-9">
-											<h:inputText id="produtoDescricao" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.descricaoProduto}" rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
-									        <p:autoComplete id="produto" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" rendered="#{!solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
-	<!-- 								        <p:watermark value="01.001.0005 - SERVIÇO DE TELEFONIA" for="produto" /> -->
-									        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produto" />
-										</div>
-									</p:outputPanel>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
-										<label for="qtd">Quantidade: *</label>
-									</div>
-
-									<div class="col-sm-2 col-md-2">
-								        <h:inputText id="qtd" maxlength="10" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" onkeyup="filterNumberOnly(this);" />
-									</div>
-									<div class="col-sm-7 col-md-7">
-										<span class="users-list-date pull-right">
-											<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
-												<p:ajax event="change" process="@this" global="false" update="@form:descricaoProdutoPanel" />
-											</p:selectBooleanCheckbox>									
-										</span>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
-										<label for="unidade">Unidade: *</label>
-									</div>
-
-									<div class="col-sm-3 col-md-3">
-										<p:selectOneMenu id="unidade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.unidade}">
-								        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-								        	<f:selectItems value="#{solicitacaoCompraController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade}" />
-								        </p:selectOneMenu>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
-										<label for="marca">Marca:</label>
-									</div>
-
-									<div class="col-sm-9 col-md-9">
-								        <h:inputText id="marca" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.marca}"  />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
-										<label id="observacaoLabel" for="observacao">Observação: *</label>
-									</div>
-
-									<div class="col-sm-9 col-md-9">
-										<h:inputTextarea id="observacao" styleClass="form-control" rows="5" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.observacao}" />
-									</div>
-								</div>
-							</div>
-							<div class="box-footer">
-								<div class="col-sm-3 col-md-3 pull-right">
-									<p:commandButton
-										styleClass="btn btn-default"
-										icon="fa fa-check"
-										value="Adicionar"
-										id="btn_add_produto"
-										action="#{solicitacaoCompraController.adicionarProduto()}"
-										process="@form:modalProduto"
-										update="@form:mensagemModal, @form:painelItens"
-										ajax="true"
-										rendered="#{!solicitacaoCompraController.edicaoProduto}" />
-									<p:commandButton
-										styleClass="btn btn-default"
-										icon="fa fa-pencil"
-										value="Editar"
-										id="btn_edit_produto"
-										action="#{solicitacaoCompraController.editarProduto()}"
-										process="@form:modalProduto"
-										update="@form:mensagemModal, @form:painelItens"
-										ajax="true"
-										rendered="#{solicitacaoCompraController.edicaoProduto}" />
-								</div>
-								<div class="col-sm-3 col-md-3 pull-left" >
-									<p:commandButton
-										styleClass="btn btn-default"
-										icon="fa fa-times"
-										value="Cancelar"
-										id="btn_cancelar_produto"
-										process="@this"
-										immediate="true"
-										onclick="PF('modalProduto').hide();"
-										ajax="true" />
-								</div>
-							</div>
-						</div>
-					</p:dialog>
 				</h:form>
 			</div>
 		</ui:define>
