@@ -28,6 +28,7 @@ import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewAccessScoped
@@ -147,6 +148,44 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
 		}
+	}
+	
+	public String iniciarCancelamento() throws ApplicationException {
+		try {
+			if(Util.isNotNull(getSolicitacaoCompra())) {
+				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
+			}
+			return "/pages/solicitacaoCompra/solicitacao/exibir_cancelarSolicitacao.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "exibir" }, e);
+		}
+	}
+	
+	public String cancelar() throws ApplicationException {
+		try {
+			if(Util.isBlank(getSolicitacaoCompra().getMotivoCancelamento())) {
+				throw new ApplicationException("message.empty", new String[] {"Favor preencher o motivo do cancelamento"}, FacesMessage.SEVERITY_WARN );
+			} else {
+				if(getSolicitacaoCompra().getMotivoCancelamento().trim().length() > 300) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para o motivo do cancelamento."}, FacesMessage.SEVERITY_WARN );
+				}
+			}
+			
+			solicitacaoCompraBusiness.cancelar(getSolicitacaoCompra(), getUsuario());
+			
+			Message.setMessage("solicitacao.compra.cancelada");
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "cancelar" }, e);
+		}
+		return voltar();
 	}
 	
 	public String voltar() throws ApplicationException {

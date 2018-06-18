@@ -41,5 +41,18 @@ public class FluigBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarProcessoFluig" }, e);
 		}
 	}
+	
+	public void cancelarProcessoFluig(Long idProcesso, Long idSolicitacao, String motivoCancelamento, String nomeUsuario) throws ApplicationException {
+		try {
+			ECMWorkflowEngineServiceServiceSoapBindingStub cliente = obterProxyECMWorkFlowEngineService();
+			
+			String textoCancelamento = "SOLICITAÇÃO DE COMPRA Nº " + idSolicitacao + " cancelada por: " + nomeUsuario + " [MOTIVO: " + motivoCancelamento + "]";
+			
+			cliente.cancelInstance("fluig_admin", "Flu1g@dm1m", 1, idProcesso.intValue(), "fluig_admin", textoCancelamento);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "cancelarProcessoFluig" }, e);
+		}
+	}
 
 }

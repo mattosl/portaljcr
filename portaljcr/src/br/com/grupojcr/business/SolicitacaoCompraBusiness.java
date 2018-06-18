@@ -204,4 +204,23 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
+	public void cancelar(SolicitacaoCompra solicitacao, Usuario usuario) throws ApplicationException {
+		try {
+			solicitacao.setUsuarioCancelamento(usuario);
+			solicitacao.setSituacao(SituacaoSolicitacaoCompra.CANCELADA);
+			
+			daoSolicitacaoCompra.alterar(solicitacao);
+			
+			if(Util.isNotNull(solicitacao.getIdentificadorFluig())) {
+				fluigBusiness.cancelarProcessoFluig(solicitacao.getIdentificadorFluig(), solicitacao.getId(), solicitacao.getMotivoCancelamento(), usuario.getNome().toUpperCase());
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "cancelar" }, e);
+		}
+	}
+	
 }

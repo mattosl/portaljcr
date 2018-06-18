@@ -137,9 +137,9 @@
 						</p:column>
 
 						<p:column headerText="Cancelar" style="text-align: center;font-size:12px;" width="5%">
-							<p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}" >
-								<h:outputText value="" title="Editar" styleClass="fa fa-times" />
-								<f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
+							<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.iniciarCancelamento()}" rendered="#{solicitacao.situacao eq 'AGUARDANDO_APRV' or solicitacao.situacao eq 'APROVADA_COTACAO' or solicitacao.situacao eq 'EM_COTACAO'}" >
+								<h:outputText value="" title="Cancelar" styleClass="fa fa-times" />
+								<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
 							</p:commandLink>
 						</p:column>
 					    

@@ -114,6 +114,10 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_USR_FINALIZACAO")
 	private Usuario usuarioFinalizacao;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="ID_USR_CANCELAMENTO")
+	private Usuario usuarioCancelamento;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_COLIGADA", nullable = false)
@@ -342,6 +346,14 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 		this.itens = itens;
 	}
 
+	public Usuario getUsuarioCancelamento() {
+		return usuarioCancelamento;
+	}
+
+	public void setUsuarioCancelamento(Usuario usuarioCancelamento) {
+		this.usuarioCancelamento = usuarioCancelamento;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -366,6 +378,5 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 			return false;
 		return true;
 	}
-
 
 }
