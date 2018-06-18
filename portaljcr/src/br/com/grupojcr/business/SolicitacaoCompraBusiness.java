@@ -223,4 +223,32 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
+	public List<SolicitacaoCompra> listarSolicitacaoCompraPendente(FiltroSolicitacaoCompra filtro) throws ApplicationException {
+		try {
+			return daoSolicitacaoCompra.listarSolicitacaoCompraPendente(filtro);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarSolicitacaoCompraPendente" }, e);
+		}
+	}
+	
+	public void iniciarCotacao(SolicitacaoCompra solicitacao, Usuario usuario) throws ApplicationException {
+		try {
+			solicitacao.setDtInicioCotacao(Calendar.getInstance().getTime());
+			solicitacao.setUsuarioCotacao(usuario);
+			solicitacao.setSituacao(SituacaoSolicitacaoCompra.EM_COTACAO);
+			
+			daoSolicitacaoCompra.alterar(solicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarCotacao" }, e);
+		}
+	}
+	
 }

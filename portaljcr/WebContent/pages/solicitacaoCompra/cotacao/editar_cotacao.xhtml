@@ -9,13 +9,13 @@
 	xmlns:jsf="http://xmlns.jcp.org/jsf" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
-		<ui:param name="activeSubmenu" value="minhasSolicitacoes"/>
-    	<ui:param name="activeMenu" value="solicitacaoCompra"/>
+		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
+    	<ui:param name="activeMenu" value="cotacao"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Solicitação</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Cotação</ui:define>
 		<ui:define name="breadcrumb">
-			<li><i class="fa fa-shopping-cart"></i> Solicitação de Compra</li>
-	    	<li class="active"><i class="fa fa-cart-plus"></i> Exibir Solicitação</li>
+			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
+	    	<li class="active"><i class="fa fa-calculator"></i> Cotação</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -33,7 +33,7 @@
 										</div>
 										
 										<div class="col-sm-3 col-md-3">
-											<p:outputLabel id="prioridade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+											<p:outputLabel id="prioridade" value="#{cotacaoController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -42,7 +42,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="centroCusto" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.codigoCentroCusto} - #{minhaSolicitacaoCompraController.solicitacaoCompra.centroCusto.toUpperCase()}" styleClass="control-label font-normal" />
+											<p:outputLabel id="centroCusto" value="#{cotacaoController.solicitacaoCompra.codigoCentroCusto} - #{cotacaoController.solicitacaoCompra.centroCusto.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -51,7 +51,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="naturezaOrcamentaria" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.codigoNaturezaOrcamentaria} - #{minhaSolicitacaoCompraController.solicitacaoCompra.naturezaOrcamentaria.toUpperCase()}" styleClass="control-label font-normal" />
+											<p:outputLabel id="naturezaOrcamentaria" value="#{cotacaoController.solicitacaoCompra.codigoNaturezaOrcamentaria} - #{cotacaoController.solicitacaoCompra.naturezaOrcamentaria.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -60,7 +60,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="modalidade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+											<p:outputLabel id="modalidade" value="#{cotacaoController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -69,7 +69,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="motivoCompra" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
+											<p:outputLabel id="motivoCompra" value="#{cotacaoController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -78,39 +78,39 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="situacao" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+											<p:outputLabel id="situacao" value="#{cotacaoController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
-									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.sugestaoFornecedor != null}">
+									<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor != null}">
 										<div class="form-group">
 											<div class="col-sm-3 col-md-3 control-label">
 												<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
 											</div>
 		
 											<div class="col-sm-9 col-md-9">
-												<p:outputLabel id="sugestaoFornecedor" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.sugestaoFornecedor}" styleClass="control-label font-normal" />
+												<p:outputLabel id="sugestaoFornecedor" value="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor}" styleClass="control-label font-normal" />
 											</div>
 										</div>
 									</p:outputPanel>
-									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.localEntrega != null}">
+									<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.localEntrega != null}">
 										<div class="form-group">
 											<div class="col-sm-3 col-md-3 control-label">
 												<label for="localEntrega">Local de Entrega: </label>
 											</div>
 		
 											<div class="col-sm-9 col-md-9">
-												<p:outputLabel id="localEntrega" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.localEntrega}" styleClass="control-label font-normal" />
+												<p:outputLabel id="localEntrega" value="#{cotacaoController.solicitacaoCompra.localEntrega}" styleClass="control-label font-normal" />
 											</div>
 										</div>
 									</p:outputPanel>
-									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.valorAproximado != null}">
+									<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.valorAproximado != null}">
 										<div class="form-group">
 											<div class="col-sm-3 col-md-3 control-label">
 												<label for="valorAproximado">Valor Aproximado: </label>
 											</div>
 		
 											<div class="col-sm-3 col-md-3">
-	           									<p:outputLabel id="valorAproximado" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
+	           									<p:outputLabel id="valorAproximado" value="#{cotacaoController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
 	            									<f:convertNumber type="currency" currencySymbol=""/>
 	           									</p:outputLabel>
 											</div>
@@ -125,7 +125,7 @@
 										<div class="box-body">
 											<div class="row">
 												<p:dataTable var="item" id="tableItens"
-													value="#{minhaSolicitacaoCompraController.solicitacaoCompra.itens}" 
+													value="#{cotacaoController.solicitacaoCompra.itens}" 
 													tableStyle="table-layout: auto; word-break: keep-all;"
 													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
 													
@@ -163,7 +163,7 @@
 											id="btn_voltar"
 											process="@this"
 											immediate="true"
-											action="#{minhaSolicitacaoCompraController.voltar()}"
+											action="#{cotacaoController.voltar()}"
 											ajax="false" />
 									</div>
 								</div>

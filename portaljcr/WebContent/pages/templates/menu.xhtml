@@ -57,7 +57,7 @@
 				</ul>
 			</li>
 			
-			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}" jsf:rendered="false">
+			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}">
 				<a href="#"> 
 					<i class="fa fa-pencil-square-o"></i> <span>Cotação</span>
 					 <span class="pull-right-container">
@@ -65,14 +65,8 @@
 	                 </span>
 				</a>
 				<ul class="treeview-menu">
-					<li class="#{activeSubmenu eq 'novaSolicitacao' ? 'active' : ''}">
-						<p:link href="/pages/solicitacaoCompra/solicitacao/exibir_solicitacao.xhtml" ajax="false">
-							<i class="fa fa-files-o"></i>
-							<span>Minhas Cotações</span>
-						</p:link>
-					</li>
-					<li class="#{activeSubmenu eq 'minhasSolicitacoes' ? 'active' : ''}">
-						<p:link href="/pages/solicitacaoCompra/solicitacao/listar_solicitacao.xhtml" ajax="false">
+					<li class="#{activeSubmenu eq 'cotacaoPendente' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml" ajax="false">
 							<i class="fa fa-calculator"></i>
 							<span>Cotações Pendentes</span>
 						</p:link>

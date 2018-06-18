@@ -25,6 +25,7 @@ import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.datamodel.SolicitacaoCompraDataModel;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -49,6 +50,8 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 	
 	private Usuario usuario;
 	
+	private String origem;
+	
 	private SolicitacaoCompra solicitacaoCompra;
 	
 	@EJB
@@ -68,6 +71,7 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			setExibirResultado(Boolean.FALSE);
 			setFiltro(new FiltroSolicitacaoCompra());
 			carregarDatas();
+			setOrigem(null);
 			
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
 			setListaColigada(new ArrayList<Coligada>());
@@ -190,6 +194,11 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 	
 	public String voltar() throws ApplicationException {
 		try {
+			if(TreatString.isNotBlank(getOrigem())) {
+				if(getOrigem().equals("COTACAO")) {
+					return "/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml?faces-redirect=true";
+				}
+			}
 			return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -251,5 +260,13 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 
 	public void setSolicitacaoCompra(SolicitacaoCompra solicitacaoCompra) {
 		this.solicitacaoCompra = solicitacaoCompra;
+	}
+
+	public String getOrigem() {
+		return origem;
+	}
+
+	public void setOrigem(String origem) {
+		this.origem = origem;
 	}
 }

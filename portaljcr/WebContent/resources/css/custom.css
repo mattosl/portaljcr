@@ -128,6 +128,14 @@
 	font-weight: normal !important;	
 }
 
-.nav-tabs-custom-relatorio {
+.nav-tabs-custom-relatorio {	
     background: none !important;
+}
+
+.cotacaoVencida {
+	background-color: #ffe6e6;
+}
+
+.text-cotacao-vencida {
+	color:#ffe6e6 !important
 }

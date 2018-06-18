@@ -152,5 +152,44 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			throw new ApplicationException("message.default.erro", new String[] { "listarSolicitacaoCompraPaginado" }, e);
 		}
 	}
+
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public List<SolicitacaoCompra> listarSolicitacaoCompraPendente(FiltroSolicitacaoCompra filtro) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT solicitacao FROM SolicitacaoCompra solicitacao ");
+			sb.append("LEFT JOIN FETCH solicitacao.coligada coligada ");
+			sb.append("LEFT JOIN FETCH solicitacao.grupoCotacao grupoCotacao ");
+			sb.append("LEFT JOIN FETCH grupoCotacao.usuarios usuarios ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioSolicitante usuarioSolicitante ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioCotacao usuarioCotacao ");
+			sb.append("WHERE solicitacao.id != null ");
+			
+			sb.append("AND (usuarios.id = :idUsuarioLogado ");
+			sb.append("OR usuarioCotacao.id = :idUsuarioLogado) ");
+			
+			if(Util.isNotNull(filtro.getSituacao())) {
+				sb.append("AND solicitacao.situacao = :situacao ");
+			}
+			
+			
+			sb.append("ORDER BY solicitacao.dtSolicitacao DESC ");
+			
+			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
+			
+			query.setParameter("idUsuarioLogado", filtro.getUsuarioLogado().getId());
+			
+			if(Util.isNotNull(filtro.getSituacao())) {
+				query.setParameter("situacao", filtro.getSituacao());
+			}
+			
+			return query.getResultList();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "listarSolicitacaoCompraPendente" }, e);
+		}
+	}
 	
 }
