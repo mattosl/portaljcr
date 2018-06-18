@@ -71,12 +71,12 @@
 							        </h:outputText>
 							    </p:column>
 							    
-							    <p:column headerText="Iniciar Cotação" style="text-align: center;font-size:12px;" width="10%">
+							    <p:column headerText="Cotação" style="text-align: center;font-size:12px;" width="8%">
 									<p:commandLink ajax="true" process="@this" action="#{cotacaoController.iniciarCotacao()}" >
 										<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-calculator" />
 										<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
 										<f:setPropertyActionListener value="COTACAO_PENDENTE" target="#{cotacaoController.origem}" />
-										<p:confirm header="Iniciar Cotação" message="Tem certeza que deseja iniciar está cotação?" icon="fa fa-warning" />
+										<p:confirm header="Cotação" message="Tem certeza que deseja iniciar está cotação?" icon="fa fa-warning" />
 									</p:commandLink>
 								</p:column>
 							</p:dataTable>
@@ -88,7 +88,7 @@
 					</div>
 					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 				        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
-				        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" icon="ui-icon-close" />
+				        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
 				    </p:confirmDialog>
 				</h:form>
 			</div>

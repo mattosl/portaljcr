@@ -12,7 +12,7 @@
 		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
     	<ui:param name="activeMenu" value="cotacao"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Cotação</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Cotação - Solicitação de Compra Nº #{cotacaoController.solicitacaoCompra.id}</ui:define>
 		<ui:define name="breadcrumb">
 			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
 	    	<li class="active"><i class="fa fa-calculator"></i> Cotação</li>
@@ -21,139 +21,198 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<p:panel toggleable="false" id="painelCadastro" styleClass="box box-danger">
-							<div class="box-header with-border">
-		             			<h3 class="box-title">Solicitação de Compra</h3>
-		            		</div>
-							<div class="form-horizontal">
-								<div class="box-body">
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="prioridade"> Prioridade: </label>
-										</div>
-										
-										<div class="col-sm-3 col-md-3">
-											<p:outputLabel id="prioridade" value="#{cotacaoController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="centroCusto">Centro de Custo: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="centroCusto" value="#{cotacaoController.solicitacaoCompra.codigoCentroCusto} - #{cotacaoController.solicitacaoCompra.centroCusto.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="naturezaOrcamentaria">Natureza Orçamentária: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="naturezaOrcamentaria" value="#{cotacaoController.solicitacaoCompra.codigoNaturezaOrcamentaria} - #{cotacaoController.solicitacaoCompra.naturezaOrcamentaria.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="modalidade">Modalidade: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="modalidade" value="#{cotacaoController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="motivoCompra">Motivo da Compra: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="motivoCompra" value="#{cotacaoController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="situacao">Situação: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="situacao" value="#{cotacaoController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor != null}">
-										<div class="form-group">
-											<div class="col-sm-3 col-md-3 control-label">
-												<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
-											</div>
-		
-											<div class="col-sm-9 col-md-9">
-												<p:outputLabel id="sugestaoFornecedor" value="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor}" styleClass="control-label font-normal" />
-											</div>
-										</div>
-									</p:outputPanel>
-									<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.localEntrega != null}">
-										<div class="form-group">
-											<div class="col-sm-3 col-md-3 control-label">
-												<label for="localEntrega">Local de Entrega: </label>
-											</div>
-		
-											<div class="col-sm-9 col-md-9">
-												<p:outputLabel id="localEntrega" value="#{cotacaoController.solicitacaoCompra.localEntrega}" styleClass="control-label font-normal" />
-											</div>
-										</div>
-									</p:outputPanel>
-									<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.valorAproximado != null}">
-										<div class="form-group">
-											<div class="col-sm-3 col-md-3 control-label">
-												<label for="valorAproximado">Valor Aproximado: </label>
-											</div>
-		
-											<div class="col-sm-3 col-md-3">
-	           									<p:outputLabel id="valorAproximado" value="#{cotacaoController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
-	            									<f:convertNumber type="currency" currencySymbol=""/>
-	           									</p:outputLabel>
-											</div>
-										</div>
-									</p:outputPanel>
-								</div>
-								<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
-									<div class="box-header with-border">
-				             			<h3 class="box-title">Itens</h3>
-				            		</div>
-				            		<div class="form-horizontal">
-										<div class="box-body">
-											<div class="row">
-												<p:dataTable var="item" id="tableItens"
-													value="#{cotacaoController.solicitacaoCompra.itens}" 
-													tableStyle="table-layout: auto; word-break: keep-all;"
-													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
+						<div class="nav-tabs-custom">
+							<ul class="nav nav-tabs">
+								<li id="abaCotacoes" class="active"><a href="#cotacoes" data-toggle="tab"><i class="fa fa-calculator"></i>&nbsp;Cotações</a></li>
+								<li id="abaSolicitacao"><a href="#infoSolicitacao" data-toggle="tab"><i class="fa fa-shopping-cart"></i>&nbsp;Informações da Solicitação</a></li>
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane" id="infoSolicitacao">
+									<p:panel toggleable="false" id="painelCadastro" style="border: 0px;">
+										<div class="form-horizontal">
+											<div class="box-body">
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="prioridade"> Prioridade: </label>
+													</div>
 													
-													<p:column headerText="Produto" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
-												    </p:column>
-												    
-												    <p:column headerText="Quantidade" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.quantidade}" />
-												    </p:column>
-												    
-												    <p:column headerText="Unidade" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.unidade}" />
-												    </p:column>
-												    
-												    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.marca}" />
-												    </p:column>
-												    
-												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.observacao}" />
-												    </p:column>
-												    
-												</p:dataTable>
+													<div class="col-sm-3 col-md-3">
+														<p:outputLabel id="prioridade" value="#{cotacaoController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="centroCusto">Centro de Custo: </label>
+													</div>
+				
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="centroCusto" value="#{cotacaoController.solicitacaoCompra.codigoCentroCusto} - #{cotacaoController.solicitacaoCompra.centroCusto.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="naturezaOrcamentaria">Natureza Orçamentária: </label>
+													</div>
+				
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="naturezaOrcamentaria" value="#{cotacaoController.solicitacaoCompra.codigoNaturezaOrcamentaria} - #{cotacaoController.solicitacaoCompra.naturezaOrcamentaria.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="modalidade">Modalidade: </label>
+													</div>
+				
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="modalidade" value="#{cotacaoController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="motivoCompra">Motivo da Compra: </label>
+													</div>
+				
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="motivoCompra" value="#{cotacaoController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="situacao">Situação: </label>
+													</div>
+				
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="situacao" value="#{cotacaoController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor != null}">
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="sugestaoFornecedor">Sugestão de Fornecedor: </label>
+														</div>
+					
+														<div class="col-sm-9 col-md-9">
+															<p:outputLabel id="sugestaoFornecedor" value="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor}" styleClass="control-label font-normal" />
+														</div>
+													</div>
+												</p:outputPanel>
+												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.localEntrega != null}">
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="localEntrega">Local de Entrega: </label>
+														</div>
+					
+														<div class="col-sm-9 col-md-9">
+															<p:outputLabel id="localEntrega" value="#{cotacaoController.solicitacaoCompra.localEntrega}" styleClass="control-label font-normal" />
+														</div>
+													</div>
+												</p:outputPanel>
+												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.valorAproximado != null}">
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="valorAproximado">Valor Aproximado: </label>
+														</div>
+					
+														<div class="col-sm-3 col-md-3">
+				           									<p:outputLabel id="valorAproximado" value="#{cotacaoController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
+				            									<f:convertNumber type="currency" currencySymbol=""/>
+				           									</p:outputLabel>
+														</div>
+													</div>
+												</p:outputPanel>
+											</div>
+											<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
+												<div class="box-header with-border">
+							             			<h3 class="box-title">Itens</h3>
+							            		</div>
+							            		<div class="form-horizontal">
+													<div class="box-body">
+														<div class="row">
+															<p:dataTable var="item" id="tableItens"
+																value="#{cotacaoController.solicitacaoCompra.itens}" 
+																tableStyle="table-layout: auto; word-break: keep-all;"
+																binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
+																
+																<p:column headerText="Produto" style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
+															    </p:column>
+															    
+															    <p:column headerText="Quantidade" style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.quantidade}" />
+															    </p:column>
+															    
+															    <p:column headerText="Unidade" style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.unidade}" />
+															    </p:column>
+															    
+															    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.marca}" />
+															    </p:column>
+															    
+															    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.observacao}" />
+															    </p:column>
+															    
+															</p:dataTable>
+														</div>
+													</div>
+												</div>
+											</p:panel>
+										</div>
+									</p:panel>
+								</div>
+								<div class="active tab-pane" id="cotacoes">
+									<p:panel toggleable="false" id="painelCotacao" style="border: 0px;">
+										<div class="row" style="padding:0px;">
+											<div class="col-sm-3 col-md-3">
+												<p:commandButton
+													styleClass="btn btn-default"
+													icon="fa fa-fax"
+													value="Adicionar Cotação"
+													id="btn_add_nova_cotacao"
+													process="@this"
+													action="#{solicitacaoCompraController.novoItem()}"
+													ajax="true">
+												</p:commandButton>
 											</div>
 										</div>
-									</div>
-								</p:panel>
+										<br />
+					            		<div class="form-horizontal">
+											<div class="box-body">
+												<div class="row">
+													<p:dataTable var="item" id="tableCotacao"
+														value="#{cotacaoController.solicitacaoCompra.itens}" 
+														tableStyle="table-layout: auto; word-break: keep-all;"
+														binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
+														
+														<p:column headerText="Produto" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
+													    </p:column>
+													    
+													    <p:column headerText="Quantidade" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{item.quantidade}" />
+													    </p:column>
+													    
+													    <p:column headerText="Unidade" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{item.unidade}" />
+													    </p:column>
+													    
+													    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{item.marca}" />
+													    </p:column>
+													    
+													    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{item.observacao}" />
+													    </p:column>
+													    
+													</p:dataTable>
+												</div>
+											</div>
+										</div>
+									</p:panel>
+								</div>
+							</div>
+							<p:panel toggleable="false" style="border: 0px;">
 								<div class="box-footer">
 									<div class="col-sm-3 col-md-3 pull-left">
 										<p:commandButton
@@ -166,9 +225,20 @@
 											action="#{cotacaoController.voltar()}"
 											ajax="false" />
 									</div>
+									<div class="col-sm-3 col-md-3 pull-right">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-check"
+											value="Concluir Cotação"
+											id="btn_concluir_cotação"
+											process="@this"
+											immediate="true"
+											action="#{cotacaoController.voltar()}"
+											ajax="false" />
+									</div>
 								</div>
-							</div>
-						</p:panel>
+							</p:panel>
+						</div>
 					</f:validateBean>
 				</h:form>
 			</div>
