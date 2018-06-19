@@ -9,8 +9,8 @@ public class ProdutoDTO {
 	private String descricaoProduto;
 	private Integer quantidade;
 	private UnidadeRM unidade;
-	private String marca;
 	private String observacao;
+	private Double valorAproximado;
 	private Boolean naoEncontrei;
 	
 	public ProdutoRM getProduto() {
@@ -31,12 +31,6 @@ public class ProdutoDTO {
 	public void setUnidade(UnidadeRM unidade) {
 		this.unidade = unidade;
 	}
-	public String getMarca() {
-		return marca;
-	}
-	public void setMarca(String marca) {
-		this.marca = marca;
-	}
 	public String getObservacao() {
 		return observacao;
 	}
@@ -54,6 +48,12 @@ public class ProdutoDTO {
 	}
 	public void setDescricaoProduto(String descricaoProduto) {
 		this.descricaoProduto = descricaoProduto;
+	}
+	public Double getValorAproximado() {
+		return valorAproximado;
+	}
+	public void setValorAproximado(Double valorAproximado) {
+		this.valorAproximado = valorAproximado;
 	}
 	
 

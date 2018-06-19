@@ -12,10 +12,10 @@
 		<ui:param name="activeSubmenu" value="minhasSolicitacoes"/>
     	<ui:param name="activeMenu" value="solicitacaoCompra"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Solicitação</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-list-alt fa-1x cor-padrao"></i> Cancelar Solicitação</ui:define>
 		<ui:define name="breadcrumb">
 			<li><i class="fa fa-shopping-cart"></i> Solicitação de Compra</li>
-	    	<li class="active"><i class="fa fa-cart-plus"></i> Cancelar Solicitação</li>
+	    	<li class="active"><i class="fa fa-list-alt"></i> Cancelar Solicitação</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -23,10 +23,40 @@
 					<f:validateBean disabled="true" for="@form">
 						<p:panel toggleable="false" id="painelCadastro" styleClass="box box-danger">
 							<div class="box-header with-border">
-		             			<h3 class="box-title">Cancelar Solicitação de Compra</h3>
+		             			<h3 class="box-title">Solicitação de Compra</h3>
 		            		</div>
 							<div class="form-horizontal">
 								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="solicitante"> Solicitante: </label>
+										</div>
+										
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="solicitante" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.usuarioSolicitante.nome.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="dtSolicitacao"> Data de Solicitação: </label>
+										</div>
+										
+										<div class="col-sm-3 col-md-3">
+											<p:outputLabel id="dtSolicitacao" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.dtSolicitacao}" styleClass="control-label font-normal">
+												<f:convertDateTime pattern="dd/MM/yyyy"/>
+											</p:outputLabel>
+										</div>
+										
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="dtPrazo"> Previsão: </label>
+										</div>
+										
+										<div class="col-sm-3 col-md-3">
+											<p:outputLabel id="dtPrazo" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.dtPrazo}" styleClass="control-label font-normal">
+												<f:convertDateTime pattern="dd/MM/yyyy"/>
+											</p:outputLabel>
+										</div>
+									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
 											<label for="prioridade"> Prioridade: </label>
@@ -35,6 +65,35 @@
 										<div class="col-sm-3 col-md-3">
 											<p:outputLabel id="prioridade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
+										
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="modalidade">Modalidade: </label>
+										</div>
+	
+										<div class="col-sm-3 col-md-3">
+											<p:outputLabel id="modalidade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
+											<label for="situacao">Situação: </label>
+										</div>
+	
+										<div class="col-sm-3 col-md-3">
+											<p:outputLabel id="situacao" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+										
+										<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.dtAprovacao != null}">
+											<div class="col-sm-3 col-md-3 control-label">
+												<label for="dtAprovacao">Data de Aprovação: </label>
+											</div>
+		
+											<div class="col-sm-3 col-md-3">
+	           									<p:outputLabel id="dtAprovacao" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.dtAprovacao}" styleClass="control-label font-normal">
+													<f:convertDateTime pattern="dd/MM/yyyy"/>
+												</p:outputLabel>
+											</div>
+										</p:outputPanel>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
@@ -52,15 +111,6 @@
 	
 										<div class="col-sm-9 col-md-9">
 											<p:outputLabel id="naturezaOrcamentaria" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.codigoNaturezaOrcamentaria} - #{minhaSolicitacaoCompraController.solicitacaoCompra.naturezaOrcamentaria.toUpperCase()}" styleClass="control-label font-normal" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="modalidade">Modalidade: </label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="modalidade" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -94,19 +144,6 @@
 											</div>
 										</div>
 									</p:outputPanel>
-									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.valorAproximado != null}">
-										<div class="form-group">
-											<div class="col-sm-3 col-md-3 control-label">
-												<label for="valorAproximado">Valor Aproximado: </label>
-											</div>
-		
-											<div class="col-sm-3 col-md-3">
-	           									<p:outputLabel id="valorAproximado" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
-	            									<f:convertNumber type="currency" currencySymbol=""/>
-	           									</p:outputLabel>
-											</div>
-										</div>
-									</p:outputPanel>
 								</div>
 								<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
 									<div class="box-header with-border">
@@ -132,8 +169,10 @@
 												        <h:outputText value="#{item.unidade}" />
 												    </p:column>
 												    
-												    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.marca}" />
+													<p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
+												        	<f:convertNumber type="currency" currencySymbol="R$"/>
+												        </h:outputText>
 												    </p:column>
 												    
 												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">

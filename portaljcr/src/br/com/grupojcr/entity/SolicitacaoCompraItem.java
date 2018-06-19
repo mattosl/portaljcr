@@ -50,15 +50,15 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 	@Column(name = "UNIDADE", length = 50)
 	private String unidade;
 	
-	@Column(name = "MARCA", length = 100)
-	private String marca;
-	
 	@Column(name = "OBSERVACAO", length = 300)
 	private String observacao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_INCLUSAO", nullable = false)
 	private Date dtInclusao;
+	
+	@Column(name = "VLR_APROXIMADO", precision = 10, scale = 2)
+	private Double valorAproximado;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_SOLICITACAO_COMPRA", nullable = false)
@@ -124,14 +124,6 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 		this.unidade = unidade;
 	}
 
-	public String getMarca() {
-		return marca;
-	}
-
-	public void setMarca(String marca) {
-		this.marca = marca;
-	}
-
 	public String getObservacao() {
 		return observacao;
 	}
@@ -170,6 +162,14 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 
 	public void setIdProduto(Integer idProduto) {
 		this.idProduto = idProduto;
+	}
+
+	public Double getValorAproximado() {
+		return valorAproximado;
+	}
+
+	public void setValorAproximado(Double valorAproximado) {
+		this.valorAproximado = valorAproximado;
 	}
 	
 }

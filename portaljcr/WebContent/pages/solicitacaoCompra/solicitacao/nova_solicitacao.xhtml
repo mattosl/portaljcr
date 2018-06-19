@@ -103,19 +103,6 @@
 											<h:inputText id="localEntrega" value="#{solicitacaoCompraController.solicitacaoCompraDTO.localEntrega}" maxlength="100" styleClass="form-control" />
 										</div>
 									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
-											<label for="valorAproximado">Valor Aproximado: </label>
-										</div>
-	
-										<div class="col-sm-3 col-md-3">
-											<div class="input-group">
-									            <span class="input-group-addon">R$</span>
-            									<p:inputNumber id="valorAproximado" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," />
-            									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
-									        </div>
-										</div>
-									</div>
 								</div>
 								<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
 									<div class="box-header with-border">
@@ -162,6 +149,12 @@
 												    
 												    <p:column headerText="Unidade" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.unidade}" />
+												    </p:column>
+												    
+												    <p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
+												        	<f:convertNumber type="currency" currencySymbol="R$"/>
+												        </h:outputText>
 												    </p:column>
 												    
 												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
@@ -261,20 +254,24 @@
 								</div>
 								<div class="form-group">
 									<div class="col-sm-3 col-md-3 control-label">
-										<label for="marca">Marca:</label>
-									</div>
-
-									<div class="col-sm-9 col-md-9">
-								        <h:inputText id="marca" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.marca}"  />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
 										<label id="observacaoLabel" for="observacao">Observação: *</label>
 									</div>
 
 									<div class="col-sm-9 col-md-9">
 										<h:inputTextarea id="observacao" styleClass="form-control" rows="5" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.observacao}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="valorAproximado">Valor Aproximado: </label>
+									</div>
+
+									<div class="col-sm-3 col-md-3">
+										<div class="input-group">
+								            <span class="input-group-addon">R$</span>
+           									<p:inputNumber id="valorAproximado" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.valorAproximado}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," />
+           									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
+								        </div>
 									</div>
 								</div>
 							</div>

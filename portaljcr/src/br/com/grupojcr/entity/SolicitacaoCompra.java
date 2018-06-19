@@ -70,9 +70,6 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@Column(name = "LOCAL_ENTREGA", length = 100)
 	private String localEntrega;
 	
-	@Column(name = "VLR_APROXIMADO", precision = 10, scale = 2)
-	private Double valorAproximado;
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_CANCELAMENTO")
 	private Date dtCancelamento;
@@ -218,13 +215,6 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 		this.localEntrega = localEntrega;
 	}
 
-	public Double getValorAproximado() {
-		return valorAproximado;
-	}
-
-	public void setValorAproximado(Double valorAproximado) {
-		this.valorAproximado = valorAproximado;
-	}
 
 	public Date getDtSolicitacao() {
 		return dtSolicitacao;

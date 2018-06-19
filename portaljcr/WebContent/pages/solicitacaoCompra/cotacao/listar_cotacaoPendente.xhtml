@@ -16,80 +16,85 @@
 			<f:viewAction action="#{cotacaoController.iniciarProcessoCotacaoPendente()}" />
 		</f:metadata>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Cotações Pendentes</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-paste fa-1x cor-padrao"></i> Solicitações Pendentes</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
-	    	<li class="active"><i class="fa fa-calculator"></i> Cotações Pendentes</li>
+	    	<li class="active"><i class="fa fa-paste"></i> Solicitações Pendentes</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<div class="form-horizontal">
-						<div class="box-body table-responsive no-padding">
-							<p:dataTable var="solicitacao" id="tableSolicitacoes" widgetVar="widgetTabelaSolicitacoes" 
-								value="#{cotacaoController.listaSolicitacao}" 
-								tableStyle="table-layout: auto; word-break: keep-all;"
-								rendered="#{cotacaoController.listaSolicitacao.size() > 0}" rowStyleClass="#{cotacaoController.validarVencimento(solicitacao)}">
-								
-								<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
-									<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
-										<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
-										<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
-										<f:setPropertyActionListener value="COTACAO" target="#{minhaSolicitacaoCompraController.origem}" />
-									</p:commandLink>
-								</p:column>
-								
-								<p:column headerText="Data da Solicitação" style="text-align:center;font-size:12px;" >
-							        <h:outputText value="#{solicitacao.dtSolicitacao}" >
-							        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-							        </h:outputText>
-							    </p:column>
-								
-							  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
-							        <h:outputText value="#{solicitacao.id}" />
-							    </p:column>
-							    
-							    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
-							        <h:outputText value="#{solicitacao.coligada.razaoSocial.toUpperCase()}" />
-							    </p:column>
-							    
-							    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
-							        <h:outputText value="#{solicitacao.codigoCentroCusto}  -  #{solicitacao.centroCusto}" />
-							    </p:column>
-							    
-							    <p:column headerText="Natureza Orçamentária" style="text-align:center;font-size:12px;">
-							        <h:outputText value="#{solicitacao.codigoNaturezaOrcamentaria}  -  #{solicitacao.naturezaOrcamentaria}" />
-							    </p:column>
-		
-							    <p:column headerText="Solicitante" style="text-align:center;font-size:12px;">
-							        <h:outputText value="#{solicitacao.usuarioSolicitante.nome}" />
-							    </p:column>
-							    
-							    <p:column headerText="Prazo" style="text-align:center;font-size:12px;">
-							        <h:outputText value="#{solicitacao.dtPrazo}" >
-							        	<f:convertDateTime pattern="dd/MM/yyyy" />
-							        </h:outputText>
-							    </p:column>
-							    
-							    <p:column headerText="Cotação" style="text-align: center;font-size:12px;" width="8%">
-									<p:commandLink ajax="true" process="@this" action="#{cotacaoController.iniciarCotacao()}" >
-										<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-calculator" />
-										<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
-										<f:setPropertyActionListener value="COTACAO_PENDENTE" target="#{cotacaoController.origem}" />
-										<p:confirm header="Cotação" message="Tem certeza que deseja iniciar está cotação?" icon="fa fa-warning" />
-									</p:commandLink>
-								</p:column>
-							</p:dataTable>
+					<p:panel toggleable="false" id="painelSolicitacoes" styleClass="box box-danger">
+						<div class="box-header with-border">
+	             			<h3 class="box-title">Solicitações</h3>
+	            		</div>
+						<div class="form-horizontal">
+							<div class="box-body table-responsive no-padding">
+								<p:dataTable var="solicitacao" id="tableSolicitacoes" widgetVar="widgetTabelaSolicitacoes" 
+									value="#{cotacaoController.listaSolicitacao}" 
+									tableStyle="table-layout: auto; word-break: keep-all;"
+									rendered="#{cotacaoController.listaSolicitacao.size() > 0}" rowStyleClass="#{cotacaoController.validarVencimento(solicitacao)}">
+									
+									<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
+										<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+											<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
+											<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+											<f:setPropertyActionListener value="COTACAO" target="#{minhaSolicitacaoCompraController.origem}" />
+										</p:commandLink>
+									</p:column>
+									
+									<p:column headerText="Data da Solicitação" style="text-align:center;font-size:12px;" >
+								        <h:outputText value="#{solicitacao.dtSolicitacao}" >
+								        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+								        </h:outputText>
+								    </p:column>
+									
+								  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.id}" />
+								    </p:column>
+								    
+								    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.coligada.razaoSocial.toUpperCase()}" />
+								    </p:column>
+								    
+								    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.codigoCentroCusto}  -  #{solicitacao.centroCusto}" />
+								    </p:column>
+								    
+								    <p:column headerText="Natureza Orçamentária" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.codigoNaturezaOrcamentaria}  -  #{solicitacao.naturezaOrcamentaria}" />
+								    </p:column>
+			
+								    <p:column headerText="Solicitante" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.usuarioSolicitante.nome}" />
+								    </p:column>
+								    
+								    <p:column headerText="Prazo" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.dtPrazo}" >
+								        	<f:convertDateTime pattern="dd/MM/yyyy" />
+								        </h:outputText>
+								    </p:column>
+								    
+								    <p:column headerText="Cotação" style="text-align: center;font-size:12px;" width="8%">
+										<p:commandLink ajax="true" process="@this" action="#{cotacaoController.iniciarCotacao()}" >
+											<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-calculator" />
+											<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
+											<f:setPropertyActionListener value="COTACAO_PENDENTE" target="#{cotacaoController.origem}" />
+											<p:confirm header="Cotação" message="Tem certeza que deseja iniciar está cotação?" icon="fa fa-warning" />
+										</p:commandLink>
+									</p:column>
+								</p:dataTable>
+							</div>
 						</div>
-					</div>
-					<div class="form-group" style="text-align:center;" jsf:rendered="#{cotacaoController.listaSolicitacao.size() == 0}">
-						<br />
-						<label>Nenhuma cotação pendente.</label>
-					</div>
-					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-				        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
-				        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
-				    </p:confirmDialog>
+						<div class="form-group" style="text-align:center;" jsf:rendered="#{cotacaoController.listaSolicitacao.size() == 0}">
+							<br />
+							<label>Nenhuma solicitação pendente para cotação.</label>
+						</div>
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+					        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+					    </p:confirmDialog>
+					</p:panel>
 				</h:form>
 			</div>
 		</ui:define>

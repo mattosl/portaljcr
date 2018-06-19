@@ -12,7 +12,7 @@
 		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
     	<ui:param name="activeMenu" value="cotacao"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-cart-plus fa-1x cor-padrao"></i> Cotação - Solicitação de Compra Nº #{cotacaoController.solicitacaoCompra.id}</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Cotação - Solicitação de Compra Nº #{cotacaoController.solicitacaoCompra.id}</ui:define>
 		<ui:define name="breadcrumb">
 			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
 	    	<li class="active"><i class="fa fa-calculator"></i> Cotação</li>
@@ -20,6 +20,14 @@
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
 				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+<!-- 					<div class="alert alert-warning alert-dismissible"> -->
+<!-- 		                <i class="icon fa fa-info-circle"></i> -->
+<!-- 		                <strong>Está solicitação possui 0 cotações, realize no minímo 3 cotações.</strong> -->
+<!-- 	              	</div> -->
+<!-- 	              	<div class="alert alert-success alert-dismissible"> -->
+<!-- 		                <i class="icon fa fa-info-circle"></i> -->
+<!-- 		                <strong>Está solicitação já possui 3 cotações.</strong> -->
+<!-- 	              	</div> -->
 					<f:validateBean disabled="true" for="@form">
 						<div class="nav-tabs-custom">
 							<ul class="nav nav-tabs">
@@ -33,12 +41,71 @@
 											<div class="box-body">
 												<div class="form-group">
 													<div class="col-sm-3 col-md-3 control-label">
+														<label for="solicitante"> Solicitante: </label>
+													</div>
+													
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="solicitante" value="#{cotacaoController.solicitacaoCompra.usuarioSolicitante.nome.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="dtSolicitacao"> Data de Solicitação: </label>
+													</div>
+													
+													<div class="col-sm-3 col-md-3">
+														<p:outputLabel id="dtSolicitacao" value="#{cotacaoController.solicitacaoCompra.dtSolicitacao}" styleClass="control-label font-normal">
+															<f:convertDateTime pattern="dd/MM/yyyy"/>
+														</p:outputLabel>
+													</div>
+													
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="dtPrazo"> Previsão: </label>
+													</div>
+													
+													<div class="col-sm-3 col-md-3">
+														<p:outputLabel id="dtPrazo" value="#{cotacaoController.solicitacaoCompra.dtPrazo}" styleClass="control-label font-normal">
+															<f:convertDateTime pattern="dd/MM/yyyy"/>
+														</p:outputLabel>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
 														<label for="prioridade"> Prioridade: </label>
 													</div>
 													
 													<div class="col-sm-3 col-md-3">
 														<p:outputLabel id="prioridade" value="#{cotacaoController.solicitacaoCompra.prioridade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 													</div>
+													
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="modalidade">Modalidade: </label>
+													</div>
+				
+													<div class="col-sm-3 col-md-3">
+														<p:outputLabel id="modalidade" value="#{cotacaoController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="situacao">Situação: </label>
+													</div>
+				
+													<div class="col-sm-3 col-md-3">
+														<p:outputLabel id="situacao" value="#{cotacaoController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+													
+													<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.dtAprovacao != null}">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="dtAprovacao">Data de Aprovação: </label>
+														</div>
+					
+														<div class="col-sm-3 col-md-3">
+				           									<p:outputLabel id="dtAprovacao" value="#{cotacaoController.solicitacaoCompra.dtAprovacao}" styleClass="control-label font-normal">
+																<f:convertDateTime pattern="dd/MM/yyyy"/>
+															</p:outputLabel>
+														</div>
+													</p:outputPanel>
 												</div>
 												<div class="form-group">
 													<div class="col-sm-3 col-md-3 control-label">
@@ -60,29 +127,11 @@
 												</div>
 												<div class="form-group">
 													<div class="col-sm-3 col-md-3 control-label">
-														<label for="modalidade">Modalidade: </label>
-													</div>
-				
-													<div class="col-sm-9 col-md-9">
-														<p:outputLabel id="modalidade" value="#{cotacaoController.solicitacaoCompra.modalidade.descricao.toUpperCase()}" styleClass="control-label font-normal" />
-													</div>
-												</div>
-												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
 														<label for="motivoCompra">Motivo da Compra: </label>
 													</div>
 				
 													<div class="col-sm-9 col-md-9">
 														<p:outputLabel id="motivoCompra" value="#{cotacaoController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
-													</div>
-												</div>
-												<div class="form-group">
-													<div class="col-sm-3 col-md-3 control-label">
-														<label for="situacao">Situação: </label>
-													</div>
-				
-													<div class="col-sm-9 col-md-9">
-														<p:outputLabel id="situacao" value="#{cotacaoController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 													</div>
 												</div>
 												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.sugestaoFornecedor != null}">
@@ -104,19 +153,6 @@
 					
 														<div class="col-sm-9 col-md-9">
 															<p:outputLabel id="localEntrega" value="#{cotacaoController.solicitacaoCompra.localEntrega}" styleClass="control-label font-normal" />
-														</div>
-													</div>
-												</p:outputPanel>
-												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.valorAproximado != null}">
-													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
-															<label for="valorAproximado">Valor Aproximado: </label>
-														</div>
-					
-														<div class="col-sm-3 col-md-3">
-				           									<p:outputLabel id="valorAproximado" value="#{cotacaoController.solicitacaoCompra.valorAproximado}" styleClass="control-label font-normal">
-				            									<f:convertNumber type="currency" currencySymbol=""/>
-				           									</p:outputLabel>
 														</div>
 													</div>
 												</p:outputPanel>
@@ -145,8 +181,10 @@
 															        <h:outputText value="#{item.unidade}" />
 															    </p:column>
 															    
-															    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
-															        <h:outputText value="#{item.marca}" />
+															    <p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
+															        	<f:convertNumber type="currency" currencySymbol="R$"/>
+															        </h:outputText>
 															    </p:column>
 															    
 															    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
@@ -197,8 +235,10 @@
 													        <h:outputText value="#{item.unidade}" />
 													    </p:column>
 													    
-													    <p:column headerText="Marca" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{item.marca}" />
+													    <p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
+													        	<f:convertNumber type="currency" currencySymbol="R$"/>
+													        </h:outputText>
 													    </p:column>
 													    
 													    <p:column headerText="Observação" style="text-align:center; font-size:12px;">

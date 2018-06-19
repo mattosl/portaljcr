@@ -254,7 +254,7 @@ public class SolicitacaoCompraController implements Serializable {
 			item.setQuantidade(getSolicitacaoCompraDTO().getProduto().getQuantidade());
 			item.setCodigoUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getCodigoUnidade());
 			item.setUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getUnidade());
-			item.setMarca(getSolicitacaoCompraDTO().getProduto().getMarca());
+			item.setValorAproximado(getSolicitacaoCompraDTO().getProduto().getValorAproximado());
 			item.setObservacao(getSolicitacaoCompraDTO().getProduto().getObservacao());
 			item.setDtInclusao(Calendar.getInstance().getTime());
 			item.setUsuarioInclusao(getUsuario());
@@ -317,7 +317,7 @@ public class SolicitacaoCompraController implements Serializable {
 			getSolicitacaoItem().setQuantidade(getSolicitacaoCompraDTO().getProduto().getQuantidade());
 			getSolicitacaoItem().setCodigoUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getCodigoUnidade());
 			getSolicitacaoItem().setUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getUnidade());
-			getSolicitacaoItem().setMarca(getSolicitacaoCompraDTO().getProduto().getMarca());
+			getSolicitacaoItem().setValorAproximado(getSolicitacaoCompraDTO().getProduto().getValorAproximado());
 			getSolicitacaoItem().setObservacao(getSolicitacaoCompraDTO().getProduto().getObservacao());
 			getSolicitacaoItem().setDtInclusao(Calendar.getInstance().getTime());
 			getSolicitacaoItem().setUsuarioInclusao(getUsuario());
@@ -348,7 +348,6 @@ public class SolicitacaoCompraController implements Serializable {
 			setEdicaoProduto(Boolean.TRUE);
 			setListaUnidade(rmBusiness.listarUnidade());
 			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
-			getSolicitacaoCompraDTO().getProduto().setMarca(getSolicitacaoItem().getMarca());
 			getSolicitacaoCompraDTO().getProduto().setNaoEncontrei(getSolicitacaoItem().getProdutoNaoEncontrado());
 			if(getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
 				getSolicitacaoCompraDTO().getProduto().setDescricaoProduto(getSolicitacaoItem().getDescricaoProduto());
@@ -358,7 +357,7 @@ public class SolicitacaoCompraController implements Serializable {
 			
 			getSolicitacaoCompraDTO().getProduto().setQuantidade(getSolicitacaoItem().getQuantidade());
 			getSolicitacaoCompraDTO().getProduto().setUnidade(new UnidadeRM(getSolicitacaoItem().getCodigoUnidade(), getSolicitacaoItem().getUnidade()));
-			getSolicitacaoCompraDTO().getProduto().setMarca(getSolicitacaoItem().getMarca());
+			getSolicitacaoCompraDTO().getProduto().setValorAproximado(getSolicitacaoItem().getValorAproximado());
 			getSolicitacaoCompraDTO().getProduto().setObservacao(getSolicitacaoItem().getObservacao());
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);

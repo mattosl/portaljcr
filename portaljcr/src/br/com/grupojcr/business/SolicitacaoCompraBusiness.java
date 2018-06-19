@@ -48,7 +48,6 @@ public class SolicitacaoCompraBusiness {
 			solicitacao.setMotivoCompra(dto.getMotivoCompra());
 			solicitacao.setSugestaoFornecedor(dto.getSugestaoFornecedor());
 			solicitacao.setLocalEntrega(dto.getLocalEntrega());
-			solicitacao.setValorAproximado(dto.getValorAproximado());
 			solicitacao.setDtSolicitacao(Calendar.getInstance().getTime());
 			solicitacao.setUsuarioSolicitante(usuario);
 			solicitacao.setColigada(dto.getColigada());
