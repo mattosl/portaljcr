@@ -136,6 +136,10 @@
 	background-color: #ffe6e6;
 }
 
+.cotacaoMelhorOpcao {
+	background-color: #dfffdf;
+}
+
 .text-cotacao-vencida {
 	color:#ffe6e6 !important
 }

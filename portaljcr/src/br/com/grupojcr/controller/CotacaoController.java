@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
+import br.com.grupojcr.entity.Cotacao;
+import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -43,6 +45,7 @@ public class CotacaoController implements Serializable {
 	private List<SolicitacaoCompra> listaSolicitacao;
 	
 	private SolicitacaoCompra solicitacaoCompra;
+	private Cotacao cotacao;
 	private Usuario usuario;
 	
 	@EJB
@@ -81,6 +84,7 @@ public class CotacaoController implements Serializable {
 			
 			if(Util.isNotNull(getSolicitacaoCompra())) {
 				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
 			}
 			
 			Message.setMessage("solicitacao.compra.cotacao.iniciar", new String[] {getSolicitacaoCompra().getId().toString()});
@@ -105,6 +109,40 @@ public class CotacaoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "validarVencimento" }, e);
+		}
+	}
+	
+	public String novaCotacao() throws ApplicationException {
+		try {
+			setCotacao(new Cotacao());
+			getCotacao().setItens(new HashSet<CotacaoItem>());
+			for(SolicitacaoCompraItem item : getSolicitacaoCompra().getItens()) {
+				CotacaoItem cotacaoItem = new CotacaoItem();
+				cotacaoItem.setSolicitacaoCompraItem(item);
+				cotacaoItem.setNaoPossui(Boolean.FALSE);
+				getCotacao().getItens().add(cotacaoItem);
+			}
+			return "/pages/solicitacaoCompra/cotacao/editar_novaCotacao.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "novaCotacao" }, e);
+		}
+	}
+	
+	public void calcular(CotacaoItem item) throws ApplicationException {
+		try {
+			if(Util.isNotNull(item.getValor())) {
+				Double valor = item.getValor();
+				Double frete = item.getFrete();
+				Double valorTotal = valor;
+				if(Util.isNotNull(frete)) {
+					valorTotal += frete;
+				}
+				item.setValorTotal(valorTotal);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcular" }, e);
 		}
 	}
 	
@@ -176,6 +214,14 @@ public class CotacaoController implements Serializable {
 
 	public void setOrigem(String origem) {
 		this.origem = origem;
+	}
+
+	public Cotacao getCotacao() {
+		return cotacao;
+	}
+
+	public void setCotacao(Cotacao cotacao) {
+		this.cotacao = cotacao;
 	}
 	
 	

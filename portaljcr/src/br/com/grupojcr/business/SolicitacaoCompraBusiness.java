@@ -8,10 +8,12 @@ import javax.ejb.Stateless;
 
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.dao.CotacaoDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraItemDAO;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
+import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -31,6 +33,9 @@ public class SolicitacaoCompraBusiness {
 	
 	@EJB
 	private SolicitacaoCompraItemDAO daoSolicitacaoCompraItem;
+
+	@EJB
+	private CotacaoDAO daoCotacao;
 	
 	@EJB
 	private FluigBusiness fluigBusiness;
@@ -188,6 +193,18 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarSolicitacaoCompraPaginado" }, e);
+		}
+	}
+	
+	public List<Cotacao> listarCotacoesPorSolicitacao(Long idSolicitacao) throws ApplicationException {
+		try {
+			return daoCotacao.listarCotacoesPorSolicitacao(idSolicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarItensPorSolicitacao" }, e);
 		}
 	}
 	

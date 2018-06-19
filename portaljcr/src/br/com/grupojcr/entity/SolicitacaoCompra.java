@@ -126,6 +126,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	
 	@OneToMany(mappedBy = "solicitacaoCompra", fetch = FetchType.LAZY)
 	private Set<SolicitacaoCompraItem> itens;
+	
+	@OneToMany(mappedBy = "solicitacaoCompra", fetch = FetchType.LAZY)
+	private Set<Cotacao> cotacoes;
 
 	public Long getId() {
 		return id;
@@ -367,6 +370,14 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Set<Cotacao> getCotacoes() {
+		return cotacoes;
+	}
+
+	public void setCotacoes(Set<Cotacao> cotacoes) {
+		this.cotacoes = cotacoes;
 	}
 
 }

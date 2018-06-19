@@ -209,7 +209,7 @@
 													value="Adicionar Cotação"
 													id="btn_add_nova_cotacao"
 													process="@this"
-													action="#{solicitacaoCompraController.novoItem()}"
+													action="#{cotacaoController.novaCotacao()}"
 													ajax="true">
 												</p:commandButton>
 											</div>
@@ -218,31 +218,29 @@
 					            		<div class="form-horizontal">
 											<div class="box-body">
 												<div class="row">
-													<p:dataTable var="item" id="tableCotacao"
-														value="#{cotacaoController.solicitacaoCompra.itens}" 
-														tableStyle="table-layout: auto; word-break: keep-all;"
-														binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhum produto cadastrado.">
+													<p:dataTable var="cotacao" id="tableCotacao"
+														value="#{cotacaoController.solicitacaoCompra.cotacoes}" 
+														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada."
+														rowStyleClass="#{cotacao.melhorOpcao ? 'cotacaoMelhorOpcao' : null}">
 														
-														<p:column headerText="Produto" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{item.descricaoProduto.toUpperCase()}" />
+														<p:column headerText="Fornecedor" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{cotacao.fornecedor.toUpperCase()}" />
 													    </p:column>
 													    
-													    <p:column headerText="Quantidade" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{item.quantidade}" />
-													    </p:column>
-													    
-													    <p:column headerText="Unidade" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{item.unidade}" />
-													    </p:column>
-													    
-													    <p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
-													        	<f:convertNumber type="currency" currencySymbol="R$"/>
+													    <p:column headerText="Data Cotação" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{cotacao.dtCotacao}">
+													        	<f:convertDateTime pattern="dd?mm/yyyy" />
 													        </h:outputText>
 													    </p:column>
 													    
-													    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{item.observacao}" />
+													    <p:column headerText="Contato" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{cotacao.contatoFornecedor}" />
+													    </p:column>
+													    
+													    <p:column headerText="Valor Total" style="text-align:center; font-size:12px;">
+													        <h:outputText value="#{cotacao.valorTotal}">
+													        	<f:convertNumber type="currency" currencySymbol="R$"/>
+													        </h:outputText>
 													    </p:column>
 													    
 													</p:dataTable>
