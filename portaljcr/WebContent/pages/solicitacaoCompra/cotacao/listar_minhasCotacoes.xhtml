@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
+    	<ui:param name="activeMenu" value="cotacao"/>
+    	
+    	<f:metadata>
+			<f:viewAction action="#{cotacaoController.iniciarProcesso()}" />
+		</f:metadata>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Minhas Cotações</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
+	    	<li class="active"><i class="fa fa-calculator"></i> Minhas Cotações</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="solicitacaoCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Consultar Cotações</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<label for="situacao" class="col-sm-2 col-md-2 control-label">Nº da Solicitação:</label>
+	
+										<div class="col-sm-2 col-md-2">
+									       <h:inputText id="nome" value="#{cotacaoController.filtro.numeroSolicitacao}" styleClass="form-control" onkeyup="filterNumberOnly(this);" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa:</label>
+	
+										<div class="col-sm-10 col-md-10">
+									        <p:selectOneMenu id="coligada" value="#{cotacaoController.filtro.coligada}">
+									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{cotacaoController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="situacao" class="col-sm-2 col-md-2 control-label">Situação:</label>
+	
+										<div class="col-sm-6 col-md-6">
+									        <p:selectOneMenu id="situacao" value="#{cotacaoController.filtro.situacao}">
+									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{cotacaoController.listaSituacao}" var="situacao" itemLabel="#{situacao.descricao}" itemValue="#{situacao}" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="dtInicio" class="col-sm-2 control-label">Período da Solicitação:</label>
+										<div class="row">
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtInicio" value="#{cotacaoController.filtro.periodoInicial}" readonlyInput="true" locale="pt_BR"/>
+								                </div>
+							                </div>
+							                <label for="dtFim" class="col-sm-1 col-md-1 col-lg-1 control-label" style="text-align:center;">até</label>
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtFim" value="#{cotacaoController.filtro.periodoFinal}" readonlyInput="true" locale="pt_BR"/>
+								                </div>
+							                </div>
+							            </div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-search"
+											value="Pesquisar"
+											id="btn_pesquisar"
+											process="@form"
+											action="#{cotacaoController.pesquisar()}"
+											update="@this, :gridForm"
+											ajax="true">
+										</p:commandButton>
+									</div>
+								</div>
+							</div>
+		            	</p:panel>
+					</f:validateBean>
+				</h:form>
+				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:dataTable var="solicitacao" id="tableSolicitacoes" widgetVar="widgetTabelaSolicitacoes"
+						value="#{cotacaoController.dataModel}" 
+						tableStyle="table-layout: auto; word-break: keep-all;" 
+						rendered="#{cotacaoController.exibirResultado}"
+						binding="#{dataTableUtil.lazyDataTable}">
+						
+					  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.id}" />
+					    </p:column>
+					    
+					    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.coligada.razaoSocial.toUpperCase()}" />
+					    </p:column>
+					    
+					    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.codigoCentroCusto}  -  #{solicitacao.centroCusto}" />
+					    </p:column>
+					    
+					     <p:column headerText="Natureza Orçamentária" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{solicitacao.codigoNaturezaOrcamentaria}  -  #{solicitacao.naturezaOrcamentaria}" />
+					    </p:column>
+
+					    <p:column headerText="Data da Solicitação" style="text-align:center;font-size:12px;" >
+					        <h:outputText value="#{solicitacao.dtSolicitacao}" >
+					        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+					        </h:outputText>
+					    </p:column>
+
+						<p:column headerText="Situação" style="text-align:center;font-size:12px;">
+							<h:outputText value="#{solicitacao.situacao.descricao}" />
+						</p:column>
+						
+						<p:column headerText="Cotação" style="text-align: center;font-size:12px;" width="8%">
+							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}" >
+								<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-calculator" />
+								<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
+							</p:commandLink>
+						</p:column>
+
+					</p:dataTable>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

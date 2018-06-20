@@ -65,10 +65,16 @@
 	                 </span>
 				</a>
 				<ul class="treeview-menu">
-					<li class="#{activeSubmenu eq 'cotacaoPendente' ? 'active' : ''}">
+					<li class="#{activeSubmenu eq 'cotacoesPendentes' ? 'active' : ''}">
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml" ajax="false">
 							<i class="fa fa-paste"></i>
 							<span>Solicitações Pendentes</span>
+						</p:link>
+					</li>
+					<li class="#{activeSubmenu eq 'minhasCotacoes' ? 'active' : ''}">
+						<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
+							<i class="fa fa-calculator"></i>
+							<span>Minhas Cotações</span>
 						</p:link>
 					</li>
 				</ul>

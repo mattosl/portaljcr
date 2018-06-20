@@ -44,6 +44,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 				sb.append("AND solicitacao.usuarioSolicitante = :usuarioSolicitante ");
 			}
 			
+			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
+				sb.append("AND solicitacao.usuarioCotacao = :usuarioCotacao ");
+			}
+			
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
@@ -71,6 +75,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			
 			if(Util.isNotNull(filtro.getUsuarioLogado())) {
 				query.setParameter("usuarioSolicitante", filtro.getUsuarioLogado());
+			}
+			
+			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
+				query.setParameter("usuarioCotacao", filtro.getUsuarioCotacao());
 			}
 			
 			return query.getSingleResult().intValue();
@@ -108,6 +116,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 				sb.append("AND usuarioSolicitante = :usuarioSolicitante ");
 			}
 			
+			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
+				sb.append("AND solicitacao.usuarioCotacao = :usuarioCotacao ");
+			}
+			
 			sb.append("ORDER BY solicitacao.dtSolicitacao DESC ");
 			
 			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
@@ -137,6 +149,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			
 			if(Util.isNotNull(filtro.getUsuarioLogado())) {
 				query.setParameter("usuarioSolicitante", filtro.getUsuarioLogado());
+			}
+			
+			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
+				query.setParameter("usuarioCotacao", filtro.getUsuarioCotacao());
 			}
 			
 			if(Util.isNotNull(first) && Util.isNotNull(pageSize)){

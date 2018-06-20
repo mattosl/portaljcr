@@ -1,5 +1,8 @@
 package br.com.grupojcr.enumerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum SituacaoSolicitacaoCompra {
 	AGUARDANDO_APRV(0, "Aguardando Aprovação"),
 	APROVADA_COTACAO(1, "Aprovada para Cotação"),
@@ -35,6 +38,16 @@ public enum SituacaoSolicitacaoCompra {
 			}
 		}
 		return null;
+	}
+	
+	public static List<SituacaoSolicitacaoCompra> listarParaCotacao() {
+		List<SituacaoSolicitacaoCompra> solicitacoes = new ArrayList<SituacaoSolicitacaoCompra>();
+		for(SituacaoSolicitacaoCompra obj : SituacaoSolicitacaoCompra.values()) {
+			if(!obj.getId().equals(AGUARDANDO_APRV.getId()) && !obj.getId().equals(APROVADA_COTACAO.getId())) {
+				solicitacoes.add(obj);
+			}
+		}
+		return solicitacoes;
 	}
 
 }

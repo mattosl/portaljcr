@@ -13,6 +13,8 @@ public class FiltroSolicitacaoCompra {
 	private Date periodoInicial;
 	private Date periodoFinal;
 	private Usuario usuarioLogado;
+	private Usuario usuarioCotacao;
+	private Long numeroSolicitacao;
 	
 	public SituacaoSolicitacaoCompra getSituacao() {
 		return situacao;
@@ -43,6 +45,18 @@ public class FiltroSolicitacaoCompra {
 	}
 	public void setUsuarioLogado(Usuario usuarioLogado) {
 		this.usuarioLogado = usuarioLogado;
+	}
+	public Long getNumeroSolicitacao() {
+		return numeroSolicitacao;
+	}
+	public void setNumeroSolicitacao(Long numeroSolicitacao) {
+		this.numeroSolicitacao = numeroSolicitacao;
+	}
+	public Usuario getUsuarioCotacao() {
+		return usuarioCotacao;
+	}
+	public void setUsuarioCotacao(Usuario usuarioCotacao) {
+		this.usuarioCotacao = usuarioCotacao;
 	}
 	
 

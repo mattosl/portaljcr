@@ -9,8 +9,8 @@
 	xmlns:jsf="http://xmlns.jcp.org/jsf" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
-		<ui:param name="activeSubmenu" value="minhasSolicitacoes"/>
-    	<ui:param name="activeMenu" value="solicitacaoCompra"/>
+		<ui:param name="activeSubmenu" value="#{minhaSolicitacaoCompraController.origem eq 'MINHAS_COTACOES' ? 'minhasCotacoes' : minhaSolicitacaoCompraController.origem eq 'COTACAO' ? 'cotacoesPendentes' : 'minhasSolicitacoes' }"/>
+    	<ui:param name="activeMenu" value="#{minhaSolicitacaoCompraController.origem eq 'MINHAS_COTACOES' ? 'cotacao' : minhaSolicitacaoCompraController.origem eq 'COTACAO' ? 'cotacao' : 'solicitacaoCompra' }"/>
     	
     	<ui:define name="pageTitle"><i class="fa fa-list-alt fa-1x cor-padrao"></i> Solicitação</ui:define>
 		<ui:define name="breadcrumb">

@@ -224,16 +224,16 @@
 														rowStyleClass="#{cotacao.melhorOpcao ? 'cotacaoMelhorOpcao' : null}">
 														
 														<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
-															<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+															<p:commandLink ajax="true" process="@this" action="#{cotacaoController.exibir()}" >
 																<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
-																<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+																<f:setPropertyActionListener value="#{cotacao}" target="#{cotacaoController.cotacao}" />
 															</p:commandLink>
 														</p:column>
 														
 														<p:column headerText="Editar" style="text-align: center;font-size:12px;" width="5%">
-															<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+															<p:commandLink ajax="true" process="@this" action="#{cotacaoController.editarCotacao()}" >
 																<h:outputText value="" title="Editar" styleClass="fa fa-pencil" />
-																<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+																<f:setPropertyActionListener value="#{cotacao}" target="#{cotacaoController.cotacao}" />
 															</p:commandLink>
 														</p:column>
 														
@@ -254,13 +254,18 @@
 													    </p:column>
 													    
 													    <p:column headerText="Excluir" style="text-align: center;font-size:12px;" width="5%">
-															<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+															<p:commandLink ajax="true" process="@this" update="@form:tableCotacao" action="#{cotacaoController.excluirCotacao()}" >
 																<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
-																<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+																<f:setPropertyActionListener value="#{cotacao}" target="#{cotacaoController.cotacao}" />
+																<p:confirm header="Alerta!" message="Tem certeza que deseja excluir está cotação?" icon="fa fa-warning" />
 															</p:commandLink>
 														</p:column>
 													    
 													</p:dataTable>
+													<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+												        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+												        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+												    </p:confirmDialog>
 												</div>
 											</div>
 										</div>

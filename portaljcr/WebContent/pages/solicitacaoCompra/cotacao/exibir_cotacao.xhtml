@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
+    	<ui:param name="activeMenu" value="cotacao"/>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Cotação - Solicitação de Compra Nº #{cotacaoController.solicitacaoCompra.id}</ui:define>
+		<ui:define name="breadcrumb">
+			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
+	    	<li class="active"><i class="fa fa-calculator"></i> Exibir Cotação</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="cotacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelNovaSolicitacao" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Cotação</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2 control-label">
+											<label for="fornecedor"> Fornecedor: </label>
+										</div>
+										
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="fornecedor" value="#{cotacaoController.cotacao.fornecedor.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<p:outputPanel id="campoContato" rendered="#{cotacaoController.cotacao.contatoFornecedor ne null}">
+										<div class="form-group">
+											<div class="col-sm-2 col-md-2 control-label">
+												<label for="contatoFornecedor"> Contato: </label>
+											</div>
+											
+											<div class="col-sm-10 col-md-10">
+												<p:outputLabel id="contatoFornecedor" value="#{cotacaoController.cotacao.contatoFornecedor}" styleClass="control-label font-normal" />
+											</div>
+										</div>
+									</p:outputPanel>
+									<p:outputPanel id="campoObservacao" rendered="#{cotacaoController.cotacao.observacao ne null}">
+										<div class="form-group">
+											<div class="col-sm-2 col-md-2 control-label">
+												<label for="observacao">Observação: </label>
+											</div>
+		
+											<div class="col-sm-10 col-md-10">
+												<p:outputLabel id="observacao" value="#{cotacaoController.cotacao.observacao}" styleClass="control-label font-normal" />
+											</div>
+										</div>
+									</p:outputPanel>
+									<ui:repeat var="item" value="#{cotacaoController.cotacao.itensList}" varStatus="status">
+								 		<p:panel id="painelItem" toggleable="false" styleClass="box box-danger">
+											<div class="box-header with-border">
+						             			<h3 class="box-title"><i class="fa fa-calculator"></i> Item #{status.index + 1}</h3>
+												<span class="users-list-date pull-right">
+													<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{item.naoPossui}" styleClass="pull-right" itemLabel="Fornecedor não possui o produto." disabled="true" />
+												</span>
+						            		</div>
+						            		<div class="form-horizontal">
+												<div class="box-body">
+										 			<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="produtoServico"> Produto/Serviço: </label>
+														</div>
+														
+														<div class="col-sm-9 col-md-9">
+															<p:outputLabel id="produtoServico" value="#{item.solicitacaoCompraItem.descricaoProduto}" styleClass="control-label font-normal" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="qtd"> Quantidade: </label>
+														</div>
+														
+														<div class="col-sm-3 col-md-3">
+															<p:outputLabel id="qtd" value="#{item.solicitacaoCompraItem.quantidade}" styleClass="control-label font-normal" />
+														</div>
+														
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="unidade"> Unidade: </label>
+														</div>
+														
+														<div class="col-sm-3 col-md-3">
+															<p:outputLabel id="unidade" value="#{item.solicitacaoCompraItem.unidade.toUpperCase()}" styleClass="control-label font-normal" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="vlrAproximado"> Valor Aproximado: </label>
+														</div>
+														
+														<div class="col-sm-9 col-md-9">
+															<p:outputLabel id="vlrAproximado" value="#{item.solicitacaoCompraItem.valorAproximado ne null ? item.solicitacaoCompraItem.valorAproximado : 'NÃO INFORMADO'}" styleClass="control-label font-normal">
+																<f:convertNumber type="currency" currencySymbol="R$" />
+															</p:outputLabel>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="obs"> Observação: </label>
+														</div>
+														
+														<div class="col-sm-9 col-md-9">
+															<p:outputLabel id="obs" value="#{item.solicitacaoCompraItem.observacao}" styleClass="control-label font-normal" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="vlrUnitario"> Valor Unitário: </label>
+														</div>
+														
+														<div class="col-sm-3 col-md-3">
+				           									<p:outputLabel id="vlrUnitario" value="#{item.valor}" styleClass="control-label font-normal">
+				           										<f:convertNumber type="currency" currencySymbol="R$"/>
+				           									</p:outputLabel>
+														</div>
+														
+														<p:outputPanel id="campoTotal">
+															<div class="col-sm-3 col-md-3 control-label">
+																<label for="total"> Total: <p:outputLabel id="info" style="color: #de4b39">&nbsp;<i style="color: #9f9f9f" class="fa fa-question-circle"></i>&nbsp;</p:outputLabel></label>
+																<p:tooltip for="info" value="(Valor Unitário) x (Quantidade)" position="top" />
+															</div>
+															
+															<div class="col-sm-3 col-md-3">
+																<p:outputLabel id="total" value="#{item.valorTotal}" styleClass="control-label font-normal">
+																	<f:convertNumber type="currency" currencySymbol="R$"/>
+																</p:outputLabel>
+															</div>
+														</p:outputPanel>
+													</div>
+												</div>
+											</div>
+								 		</p:panel>
+								 	</ui:repeat>
+								 	<p:outputPanel id="totalizador">
+								 		<p:separator  />
+								 		<div class="form-group">
+											<div class="col-sm-6 col-md-6 control-label">
+												<label for="frete"> FRETE: </label>
+											</div>
+											
+											<div class="col-sm-3 col-md-3">
+	           									<p:outputLabel id="frete" value="#{cotacaoController.cotacao.frete}" styleClass="control-label font-normal">
+	           										<f:convertNumber type="currency" currencySymbol="R$"/>
+	           									</p:outputLabel>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-6 col-md-6 control-label">
+												<label for="totalCotacao"> VALOR TOTAL DA COTAÇÃO: </label>
+											</div>
+											
+											<div class="col-sm-3 col-md-3">
+										        <p:outputLabel id="totalCotacao" value="R$ #{cotacaoController.calcularTotal()}" styleClass="control-label font-normal" />
+											</div>
+										</div>
+										<p:separator  />
+									</p:outputPanel>
+							 		<br />
+								</div>
+							</div>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left">
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-arrow-left"
+										value="Voltar"
+										id="btn_voltar"
+										process="@this"
+										immediate="true"
+										action="#{cotacaoController.voltarEdicao()}"
+										ajax="false" />
+								</div>
+							</div>
+	            		</p:panel>
+					</f:validateBean>
+				</h:form>
+				<script>
+				$(document).ready(function(){
+					var obj = PrimeFaces.escapeClientId("cotacaoForm:contatoFornecedor");
+					$(obj).mask("(99) 99999999?9");
+				});
+
+
+				</script>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

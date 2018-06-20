@@ -197,6 +197,8 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			if(TreatString.isNotBlank(getOrigem())) {
 				if(getOrigem().equals("COTACAO")) {
 					return "/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml?faces-redirect=true";
+				} else if(getOrigem().equals("MINHAS_COTACOES")) {
+					return "/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml?faces-redirect=true";
 				}
 			}
 			return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";

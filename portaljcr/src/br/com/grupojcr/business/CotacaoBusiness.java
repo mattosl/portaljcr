@@ -1,6 +1,7 @@
 package br.com.grupojcr.business;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -14,6 +15,7 @@ import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -37,7 +39,11 @@ public class CotacaoBusiness {
 			cotacao.setMelhorOpcao(Boolean.FALSE);
 			cotacao.setCotacaoPrincipal(Boolean.FALSE);
 			
-			daoCotacao.incluir(cotacao);
+			if(Util.isNotNull(cotacao.getId())) {
+				daoCotacao.alterar(cotacao);
+			} else {
+				daoCotacao.incluir(cotacao);
+			}
 			
 			for(CotacaoItem item : cotacao.getItens()) {
 				item.setCotacao(cotacao);
@@ -45,7 +51,11 @@ public class CotacaoBusiness {
 					item.setValor(new Double(0));
 					item.setValorTotal(new Double(0));
 				}
-				daoCotacaoItem.incluir(item);
+				if(Util.isNotNull(item.getId())) {
+					daoCotacaoItem.alterar(item);
+				} else {
+					daoCotacaoItem.incluir(item);
+				}
 			}
 			
 			return cotacao;
@@ -55,6 +65,34 @@ public class CotacaoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
+		}
+	}
+
+	public void excluir(Cotacao cotacao) throws ApplicationException {
+		try {
+			for(CotacaoItem item : cotacao.getItens()) {
+				daoCotacaoItem.excluir(item);
+			}
+			
+			daoCotacao.excluir(cotacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluir" }, e);
+		}
+	}
+	
+	public List<CotacaoItem> listarItensCotacao(Long idCotacao) throws ApplicationException {
+		try {
+			return daoCotacaoItem.listarItensCotacao(idCotacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarItensPorSolicitacao" }, e);
 		}
 	}
 	
