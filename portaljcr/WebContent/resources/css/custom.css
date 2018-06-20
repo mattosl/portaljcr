@@ -143,3 +143,8 @@
 .text-cotacao-vencida {
 	color:#ffe6e6 !important
 }
+
+.valorTotalVerde {
+	font-weight: bold !important;
+	color: #00a400 !important;
+}

@@ -28,9 +28,6 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	@Column(name = "VLR_UNITARIO", precision = 10, scale = 2, nullable = false)
 	private Double valor;
 	
-	@Column(name = "FRETE", precision = 10, scale = 2, nullable = false)
-	private Double frete;
-	
 	@Column(name = "VLR_TOTAL", precision = 10, scale = 2, nullable = false)
 	private Double valorTotal;
 	
@@ -91,14 +88,6 @@ public class CotacaoItem implements BaseEntity, Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	public Double getFrete() {
-		return frete;
-	}
-
-	public void setFrete(Double frete) {
-		this.frete = frete;
 	}
 
 	public String getObservacao() {

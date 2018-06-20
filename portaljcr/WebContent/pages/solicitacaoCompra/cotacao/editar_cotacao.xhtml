@@ -223,18 +223,28 @@
 														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada."
 														rowStyleClass="#{cotacao.melhorOpcao ? 'cotacaoMelhorOpcao' : null}">
 														
+														<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
+															<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+																<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
+																<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+															</p:commandLink>
+														</p:column>
+														
+														<p:column headerText="Editar" style="text-align: center;font-size:12px;" width="5%">
+															<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+																<h:outputText value="" title="Editar" styleClass="fa fa-pencil" />
+																<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+															</p:commandLink>
+														</p:column>
+														
 														<p:column headerText="Fornecedor" style="text-align:center; font-size:12px;">
 													        <h:outputText value="#{cotacao.fornecedor.toUpperCase()}" />
 													    </p:column>
 													    
 													    <p:column headerText="Data Cotação" style="text-align:center; font-size:12px;">
 													        <h:outputText value="#{cotacao.dtCotacao}">
-													        	<f:convertDateTime pattern="dd?mm/yyyy" />
+													        	<f:convertDateTime pattern="dd/MM/yyyy" />
 													        </h:outputText>
-													    </p:column>
-													    
-													    <p:column headerText="Contato" style="text-align:center; font-size:12px;">
-													        <h:outputText value="#{cotacao.contatoFornecedor}" />
 													    </p:column>
 													    
 													    <p:column headerText="Valor Total" style="text-align:center; font-size:12px;">
@@ -242,6 +252,13 @@
 													        	<f:convertNumber type="currency" currencySymbol="R$"/>
 													        </h:outputText>
 													    </p:column>
+													    
+													    <p:column headerText="Excluir" style="text-align: center;font-size:12px;" width="5%">
+															<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+																<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
+																<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+															</p:commandLink>
+														</p:column>
 													    
 													</p:dataTable>
 												</div>

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,6 +14,7 @@ import javax.inject.Named;
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.business.CotacaoBusiness;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.entity.Cotacao;
@@ -22,6 +24,7 @@ import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.datamodel.SolicitacaoCompraDataModel;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
+import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
@@ -50,6 +53,9 @@ public class CotacaoController implements Serializable {
 	
 	@EJB
 	private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
+	
+	@EJB
+	private CotacaoBusiness cotacaoBusiness;
 	
 	@Inject
 	private SolicitacaoCompraDataModel dataModel;
@@ -129,21 +135,100 @@ public class CotacaoController implements Serializable {
 		}
 	}
 	
+	public String salvarCotacao() throws ApplicationException {
+		try {
+			
+			if(TreatString.isBlank(getCotacao().getFornecedor())) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			}
+			if(TreatString.isNotBlank(getCotacao().getObservacao())) {
+				if(getCotacao().getObservacao().length() > 300) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a observação."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
+			Boolean produtoCotado = Boolean.FALSE;
+			for(CotacaoItem item : getCotacao().getItens()) {
+				if(!item.getNaoPossui()) {
+					produtoCotado = Boolean.TRUE;
+				}
+			}
+			
+			if(!produtoCotado) {
+				throw new ApplicationException("message.empty", new String[] {"Nenhum produto/serviço foi cotado. Não é possível continuar sem a cotação de no minímo um item."}, FacesMessage.SEVERITY_WARN);
+			}
+			
+			for(CotacaoItem item : getCotacao().getItens()) {
+				if(!item.getNaoPossui()) {
+					if(Util.isNull(item.getValorTotal()) || item.getValorTotal().equals(new Double(0))) {
+						throw new ApplicationException("message.empty", new String[] {"Itens com valor zerado. Favor inserir o valor total dos itens."}, FacesMessage.SEVERITY_WARN);
+					}
+				}
+			}
+			
+			cotacaoBusiness.salvar(getSolicitacaoCompra(), getCotacao());
+			
+			getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
+			
+			Message.setMessage("cotacao.incluida");
+			return "/pages/solicitacaoCompra/cotacao/editar_cotacao.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvarCotacao" }, e);
+		}
+	}
+	
 	public void calcular(CotacaoItem item) throws ApplicationException {
 		try {
 			if(Util.isNotNull(item.getValor())) {
 				Double valor = item.getValor();
-				Double frete = item.getFrete();
-				Double valorTotal = valor;
-				if(Util.isNotNull(frete)) {
-					valorTotal += frete;
-				}
+				Double valorTotal = valor * item.getSolicitacaoCompraItem().getQuantidade();
 				item.setValorTotal(valorTotal);
 			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcular" }, e);
 		}
+	}
+	
+	public String calcularTotal() throws ApplicationException {
+		try {
+			if(Util.isNotNull(getCotacao().getItens())) {
+				Double total = new Double(0);
+				for(CotacaoItem item : getCotacao().getItens()) {
+					if(Util.isNotNull(item.getValorTotal())) {
+						total += item.getValorTotal();
+					}
+				}
+				
+				if(Util.isNotNull(getCotacao().getFrete())) {
+					total += getCotacao().getFrete();
+				}
+				
+				getCotacao().setValorTotal(total);
+				
+				return TreatNumber.formatMoney(total);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcularTotal" }, e);
+		}
+		return "0,00";
+	}
+	
+	public String limparValores(CotacaoItem item) throws ApplicationException {
+		try {
+			item.setValor(null);
+			item.setValorTotal(new Double(0));
+			calcular(item);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "limparValores" }, e);
+		}
+		return "0,00";
 	}
 	
 	public String voltar() throws ApplicationException {
@@ -157,6 +242,15 @@ public class CotacaoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "voltar" }, e);
+		}
+	}
+	
+	public String voltarEdicao() throws ApplicationException {
+		try {
+			return "/pages/solicitacaoCompra/cotacao/editar_novaCotacao.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "voltarEdicao" }, e);
 		}
 	}
 

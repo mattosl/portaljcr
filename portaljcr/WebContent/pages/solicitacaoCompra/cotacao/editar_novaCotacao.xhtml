@@ -30,7 +30,7 @@
 								<div class="box-body">
 									<div class="form-group">
 										<div class="col-sm-2 col-md-2 control-label">
-											<label for="fornecedor"> Fornecedor: </label>
+											<label for="fornecedor"> Fornecedor: *</label>
 										</div>
 										
 										<div class="col-sm-10 col-md-10">
@@ -56,12 +56,12 @@
 										</div>
 									</div>
 									<ui:repeat var="item" value="#{cotacaoController.cotacao.itensList}" varStatus="status">
-								 		<p:panel toggleable="false" styleClass="box box-danger">
+								 		<p:panel id="painelItem" toggleable="false" styleClass="box box-danger">
 											<div class="box-header with-border">
 						             			<h3 class="box-title"><i class="fa fa-calculator"></i> Item #{status.index + 1}</h3>
 												<span class="users-list-date pull-right">
 													<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{item.naoPossui}" styleClass="pull-right" itemLabel="Fornecedor não possui o produto.">
-														<p:ajax event="change" process="@this" global="false" update="@form" />
+														<p:ajax event="change" process="@this, @form:totalizador" global="false" update="painelItem, @form:totalCotacao, @form:btn_salvar" listener="#{cotacaoController.limparValores(item)}" />
 													</p:selectBooleanCheckbox>									
 												</span>
 						            		</div>
@@ -122,51 +122,94 @@
 															<div class="input-group">
 													            <span class="input-group-addon">R$</span>
 					           									<p:inputNumber id="vlrUnitario" value="#{item.valor}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator=","  disabled="#{item.naoPossui}">
-					           										<p:ajax global="false" update="campoTotal" listener="#{cotacaoController.calcular(item)}" />
+					           										<p:ajax global="false" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
 					           									</p:inputNumber>
 					           									<p:watermark value="0,00" for="vlrUnitario"></p:watermark>
 													        </div>
 														</div>
-													</div>
-													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
-															<label for="frete"> Frete: </label>
-														</div>
 														
-														<div class="col-sm-3 col-md-3">
-															<div class="input-group">
-													            <span class="input-group-addon">R$</span>
-					           									<p:inputNumber id="frete" value="#{item.frete}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," disabled="#{item.naoPossui}">
-					           										<p:ajax global="false" update="campoTotal" listener="#{cotacaoController.calcular(item)}" />
-					           									</p:inputNumber>
-					           									<p:watermark value="0,00" for="frete"></p:watermark>
-													        </div>
-														</div>
-													</div>
-													<p:outputPanel id="campoTotal">
-														<div class="form-group">
+														<p:outputPanel id="campoTotal">
 															<div class="col-sm-3 col-md-3 control-label">
-																<label for="total"> Total: </label>
+																<label for="total"> Total: <p:outputLabel id="info" style="color: #de4b39">&nbsp;<i style="color: #9f9f9f" class="fa fa-question-circle"></i>&nbsp;</p:outputLabel></label>
+																<p:tooltip for="info" value="(Valor Unitário) x (Quantidade)" position="top" />
 															</div>
 															
 															<div class="col-sm-3 col-md-3">
-																<div class="input-group">
-														            <span class="input-group-addon">R$</span>
-																	<p:inputNumber id="total" value="#{item.valorTotal}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," disabled="#{item.naoPossui}" />
-																	<p:watermark value="0,00" for="total"></p:watermark>
-														        </div>
+																<p:outputLabel id="total" value="#{item.valorTotal}" styleClass="control-label font-normal">
+																	<f:convertNumber type="currency" currencySymbol="R$"/>
+																</p:outputLabel>
 															</div>
-														</div>
-													</p:outputPanel>
+														</p:outputPanel>
+													</div>
 												</div>
 											</div>
 								 		</p:panel>
-								 		<br />
 								 	</ui:repeat>
+								 	<p:outputPanel id="totalizador">
+								 		<p:separator  />
+								 		<div class="form-group">
+											<div class="col-sm-6 col-md-6 control-label">
+												<label for="frete"> FRETE: </label>
+											</div>
+											
+											<div class="col-sm-3 col-md-3">
+												<div class="input-group">
+										            <span class="input-group-addon">R$</span>
+		           									<p:inputNumber id="frete" value="#{cotacaoController.cotacao.frete}" decimalPlaces="2" maxValue="9999" thousandSeparator="." decimalSeparator=",">
+		           										<p:ajax global="false" update="totalCotacao, @form:btn_salvar" />
+		           									</p:inputNumber>
+		           									<p:watermark value="0,00" for="frete"></p:watermark>
+										        </div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="col-sm-6 col-md-6 control-label">
+												<label for="totalCotacao"> VALOR TOTAL DA COTAÇÃO: </label>
+											</div>
+											
+											<div class="col-sm-3 col-md-3">
+												<div class="input-group">
+										            <span class="input-group-addon">R$</span>
+		           									<p:inputText id="totalCotacao" value="#{cotacaoController.calcularTotal()}" styleClass="pull-left font-normal valorTotalVerde" readonly="true" />
+		           									<p:watermark value="0,00" for="frete"></p:watermark>
+										        </div>
+											</div>
+										</div>
+										<p:separator  />
+									</p:outputPanel>
+							 		<br />
 								</div>
 							</div>
-		            		
-		            	</p:panel>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left">
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-arrow-left"
+										value="Voltar"
+										id="btn_voltar"
+										process="@this"
+										immediate="true"
+										action="#{cotacaoController.voltarEdicao()}"
+										ajax="false" />
+								</div>
+								<div class="col-sm-3 col-md-3 pull-right" >
+									<p:commandButton
+										styleClass="btn btn-default"
+										icon="fa fa-check"
+										value="Salvar"
+										id="btn_salvar"
+										process="@form:painelNovaSolicitacao"
+										action="#{cotacaoController.salvarCotacao()}"
+										ajax="true">
+										<p:confirm header="Alerta!" message="Tem certeza que deseja salvar está cotação de R$ #{cotacaoController.calcularTotal()}?" icon="fa fa-warning" />										
+									</p:commandButton>
+								</div>
+							</div>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+						    </p:confirmDialog>
+	            		</p:panel>
 					</f:validateBean>
 				</h:form>
 				<script>

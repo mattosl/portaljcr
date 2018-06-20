@@ -52,6 +52,9 @@ public class Cotacao implements BaseEntity, Serializable {
 	@Column(name = "OBSERVACAO", length = 300)
 	private String observacao;
 	
+	@Column(name = "FRETE", precision = 10, scale = 2, nullable = false)
+	private Double frete;
+	
 	@Column(name = "COTACAO_PRINCIPAL", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean cotacaoPrincipal;
@@ -165,6 +168,14 @@ public class Cotacao implements BaseEntity, Serializable {
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+	
+	public Double getFrete() {
+		return frete;
+	}
+
+	public void setFrete(Double frete) {
+		this.frete = frete;
 	}
 
 	@Override
