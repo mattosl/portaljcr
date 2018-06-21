@@ -1,6 +1,7 @@
 package br.com.grupojcr.controller;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -11,12 +12,14 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.grupojcr.business.ColigadaBusiness;
 import br.com.grupojcr.business.CotacaoBusiness;
+import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.entity.Coligada;
@@ -27,6 +30,7 @@ import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.datamodel.SolicitacaoCompraDataModel;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
+import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
@@ -57,6 +61,8 @@ public class CotacaoController implements Serializable {
 	
 	private List<SolicitacaoCompra> listaSolicitacao;
 	
+	private List<UnidadeRM> listaUnidade;
+	
 	@EJB
 	private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
 	
@@ -65,6 +71,9 @@ public class CotacaoController implements Serializable {
 	
 	@EJB
 	private ColigadaBusiness coligadaBusiness;
+	
+	@EJB
+	private RMBusiness rmBusiness;
 	
 	@Inject
 	private SolicitacaoCompraDataModel dataModel;
@@ -129,7 +138,13 @@ public class CotacaoController implements Serializable {
 	
 	public String concluirCotacao() throws ApplicationException {
 		try {
+			if(CollectionUtils.isEmpty(getSolicitacaoCompra().getCotacoes())) {
+				throw new ApplicationException("cotacao.nenhuma", FacesMessage.SEVERITY_WARN);
+			}
 			return "/pages/solicitacaoCompra/cotacao/editar_concluirCotacao.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluirCotacao" }, e);
@@ -261,12 +276,15 @@ public class CotacaoController implements Serializable {
 	
 	public String novaCotacao() throws ApplicationException {
 		try {
+			setListaUnidade(rmBusiness.listarUnidade());
 			setCotacao(new Cotacao());
 			getCotacao().setItens(new HashSet<CotacaoItem>());
 			for(SolicitacaoCompraItem item : getSolicitacaoCompra().getItens()) {
 				CotacaoItem cotacaoItem = new CotacaoItem();
 				cotacaoItem.setSolicitacaoCompraItem(item);
 				cotacaoItem.setNaoPossui(Boolean.FALSE);
+				cotacaoItem.setQuantidade(item.getQuantidade());
+				cotacaoItem.setCodigoUnidade(item.getCodigoUnidade());
 				getCotacao().getItens().add(cotacaoItem);
 			}
 			return "/pages/solicitacaoCompra/cotacao/editar_novaCotacao.xhtml?faces-redirect=true";
@@ -278,6 +296,7 @@ public class CotacaoController implements Serializable {
 
 	public String editarCotacao() throws ApplicationException {
 		try {
+			setListaUnidade(rmBusiness.listarUnidade());
 			if(Util.isNotNull(getCotacao())) {
 				getCotacao().setItens(new HashSet<CotacaoItem>(cotacaoBusiness.listarItensCotacao(getCotacao().getId())));
 			}
@@ -319,6 +338,12 @@ public class CotacaoController implements Serializable {
 					if(Util.isNull(item.getValorTotal()) || item.getValorTotal().equals(new Double(0))) {
 						throw new ApplicationException("message.empty", new String[] {"Itens com valor zerado. Favor inserir o valor total dos itens."}, FacesMessage.SEVERITY_WARN);
 					}
+					if(TreatString.isBlank(item.getCodigoUnidade())) {
+						throw new ApplicationException("message.empty", new String[] {"Itens sem unidade. Favor inserir a unidade dos itens."}, FacesMessage.SEVERITY_WARN);
+					}
+					if(Util.isNullOrZero(item.getQuantidade())) {
+						throw new ApplicationException("message.empty", new String[] {"Itens sem quantidade. Favor inserir a quantidade dos itens."}, FacesMessage.SEVERITY_WARN);
+					}
 				}
 			}
 			
@@ -358,9 +383,14 @@ public class CotacaoController implements Serializable {
 	public void calcular(CotacaoItem item) throws ApplicationException {
 		try {
 			if(Util.isNotNull(item.getValor())) {
-				Double valor = item.getValor();
-				Double valorTotal = valor * item.getSolicitacaoCompraItem().getQuantidade();
-				item.setValorTotal(valorTotal);
+				BigDecimal valor = item.getValor();
+				Integer quantidade = item.getQuantidade();
+				if(Util.isNotNull(quantidade)) {
+					BigDecimal valorTotal = valor.multiply(new BigDecimal(quantidade));
+					item.setValorTotal(valorTotal);
+				} else {
+					item.setValorTotal(new BigDecimal(0));
+				}
 			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -371,15 +401,15 @@ public class CotacaoController implements Serializable {
 	public String calcularTotal() throws ApplicationException {
 		try {
 			if(Util.isNotNull(getCotacao().getItens())) {
-				Double total = new Double(0);
+				BigDecimal total = new BigDecimal(0);
 				for(CotacaoItem item : getCotacao().getItens()) {
 					if(Util.isNotNull(item.getValorTotal())) {
-						total += item.getValorTotal();
+						total = total.add(item.getValorTotal());
 					}
 				}
 				
 				if(Util.isNotNull(getCotacao().getFrete())) {
-					total += getCotacao().getFrete();
+					total = total.add(getCotacao().getFrete());
 				}
 				
 				getCotacao().setValorTotal(total);
@@ -396,7 +426,9 @@ public class CotacaoController implements Serializable {
 	public String limparValores(CotacaoItem item) throws ApplicationException {
 		try {
 			item.setValor(null);
-			item.setValorTotal(new Double(0));
+			item.setQuantidade(1);
+			item.setCodigoUnidade(null);
+			item.setValorTotal(new BigDecimal(0));
 			calcular(item);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -421,6 +453,10 @@ public class CotacaoController implements Serializable {
 	
 	public String voltarEdicao() throws ApplicationException {
 		try {
+			if(Util.isNotNull(getSolicitacaoCompra())) {
+				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
+			}
 			return "/pages/solicitacaoCompra/cotacao/editar_cotacao.xhtml?faces-redirect=true";
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -510,6 +546,14 @@ public class CotacaoController implements Serializable {
 
 	public void setListaColigada(List<Coligada> listaColigada) {
 		this.listaColigada = listaColigada;
+	}
+
+	public List<UnidadeRM> getListaUnidade() {
+		return listaUnidade;
+	}
+
+	public void setListaUnidade(List<UnidadeRM> listaUnidade) {
+		this.listaUnidade = listaUnidade;
 	}
 	
 	

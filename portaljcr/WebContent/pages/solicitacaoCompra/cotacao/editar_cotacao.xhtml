@@ -210,7 +210,8 @@
 													id="btn_add_nova_cotacao"
 													process="@this"
 													action="#{cotacaoController.novaCotacao()}"
-													ajax="true">
+													ajax="true"
+													rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}">
 												</p:commandButton>
 											</div>
 										</div>
@@ -229,7 +230,7 @@
 															</p:commandLink>
 														</p:column>
 														
-														<p:column headerText="Editar" style="text-align: center;font-size:12px;" width="5%">
+														<p:column headerText="Editar" style="text-align: center;font-size:12px;" width="5%" rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}">
 															<p:commandLink ajax="true" process="@this" action="#{cotacaoController.editarCotacao()}" >
 																<h:outputText value="" title="Editar" styleClass="fa fa-pencil" />
 																<f:setPropertyActionListener value="#{cotacao}" target="#{cotacaoController.cotacao}" />
@@ -252,7 +253,7 @@
 													        </h:outputText>
 													    </p:column>
 													    
-													    <p:column headerText="Excluir" style="text-align: center;font-size:12px;" width="5%">
+													    <p:column headerText="Excluir" style="text-align: center;font-size:12px;" width="5%" rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}">
 															<p:commandLink ajax="true" process="@this" update="@form:tableCotacao" action="#{cotacaoController.excluirCotacao()}" >
 																<h:outputText value="" title="Excluir" styleClass="fa fa-times" />
 																<f:setPropertyActionListener value="#{cotacao}" target="#{cotacaoController.cotacao}" />
@@ -293,7 +294,8 @@
 											process="@this"
 											immediate="true"
 											action="#{cotacaoController.concluirCotacao()}"
-											ajax="false" />
+											ajax="true"
+											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}" />
 									</div>
 								</div>
 							</p:panel>

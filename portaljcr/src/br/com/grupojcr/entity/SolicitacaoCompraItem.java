@@ -1,6 +1,7 @@
 package br.com.grupojcr.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -58,7 +59,7 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 	private Date dtInclusao;
 	
 	@Column(name = "VLR_APROXIMADO", precision = 10, scale = 2)
-	private Double valorAproximado;
+	private BigDecimal valorAproximado;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_SOLICITACAO_COMPRA", nullable = false)
@@ -164,11 +165,11 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 		this.idProduto = idProduto;
 	}
 
-	public Double getValorAproximado() {
+	public BigDecimal getValorAproximado() {
 		return valorAproximado;
 	}
 
-	public void setValorAproximado(Double valorAproximado) {
+	public void setValorAproximado(BigDecimal valorAproximado) {
 		this.valorAproximado = valorAproximado;
 	}
 	

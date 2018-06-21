@@ -113,16 +113,42 @@
 															<p:outputLabel id="obs" value="#{item.solicitacaoCompraItem.observacao}" styleClass="control-label font-normal" />
 														</div>
 													</div>
+													<div class="box-header with-border">
+														<h3 class="box-title">Cotação</h3>
+													</div>
+													<br />
 													<div class="form-group">
 														<div class="col-sm-3 col-md-3 control-label">
-															<label for="vlrUnitario"> Valor Unitário: </label>
+															<label for="qtdCotacao">Quantidade: *</label>
+														</div>
+					
+														<div class="col-sm-3 col-md-3">
+													        <h:inputText id="qtdCotacao" maxlength="9" styleClass="form-control" value="#{item.quantidade}" onkeyup="filterNumberOnly(this);" readonly="#{item.naoPossui}">
+													        	<p:ajax global="false" process="@this, painelItem, unidadeCotacao" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
+													        </h:inputText>
+														</div>
+														
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="unidadeCotacao">Unidade: *</label>
+														</div>
+					
+														<div class="col-sm-3 col-md-3">
+															<p:selectOneMenu id="unidadeCotacao" value="#{item.codigoUnidade}" disabled="#{item.naoPossui}">
+													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+													        	<f:selectItems value="#{cotacaoController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade.codigoUnidade}" />
+													        </p:selectOneMenu>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="vlrUnitario"> Valor Unitário: *</label>
 														</div>
 														
 														<div class="col-sm-3 col-md-3">
 															<div class="input-group">
 													            <span class="input-group-addon">R$</span>
 					           									<p:inputNumber id="vlrUnitario" value="#{item.valor}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator=","  disabled="#{item.naoPossui}">
-					           										<p:ajax global="false" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
+					           										<p:ajax global="false" process="@this, painelItem, unidadeCotacao" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
 					           									</p:inputNumber>
 					           									<p:watermark value="0,00" for="vlrUnitario"></p:watermark>
 													        </div>

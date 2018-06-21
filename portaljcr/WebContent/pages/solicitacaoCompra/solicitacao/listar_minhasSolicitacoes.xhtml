@@ -142,6 +142,13 @@
 								<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
 							</p:commandLink>
 						</p:column>
+						
+						<p:column headerText="Cotação" style="text-align: center;font-size:12px;" width="5%">
+							<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.iniciarCancelamento()}" rendered="#{solicitacao.situacao eq 'AGUARDANDO_APRV_COTACAO'}" >
+								<h:outputText value="" title="Cotação" styleClass="fa fa-calculator" />
+								<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+							</p:commandLink>
+						</p:column>
 					    
 					</p:dataTable>
 				</h:form>

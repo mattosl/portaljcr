@@ -7,7 +7,7 @@ public enum SituacaoSolicitacaoCompra {
 	AGUARDANDO_APRV(0, "Aguardando Aprovação"),
 	APROVADA_COTACAO(1, "Aprovada para Cotação"),
 	EM_COTACAO(2, "Em Cotação"),
-	AGUARDANDO_APRV_COTACAO(3, "Aguardando Aprovação da Cotação"),
+	AGUARDANDO_APRV_COTACAO(3, "Cotação para Aprovação"),
 	COTACAO_APROVADA(4, "Cotação Aprovada"),
 	COTACAO_RECUSADA(5, "Cotação Recusada"),
 	FINALIZADA(6, "Finalizada"),

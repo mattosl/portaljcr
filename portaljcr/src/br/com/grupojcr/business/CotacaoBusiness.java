@@ -1,5 +1,6 @@
 package br.com.grupojcr.business;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,10 +12,12 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.CotacaoDAO;
 import br.com.grupojcr.dao.CotacaoItemDAO;
+import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -29,6 +32,9 @@ public class CotacaoBusiness {
 	
 	@EJB
 	private CotacaoItemDAO daoCotacaoItem;
+	
+	@EJB
+	private RMDAO daoRM;
 	
 	public Cotacao salvar(SolicitacaoCompra solicitacao, Cotacao cotacao) throws ApplicationException {
 		try {
@@ -46,11 +52,17 @@ public class CotacaoBusiness {
 			}
 			
 			for(CotacaoItem item : cotacao.getItens()) {
-				item.setCotacao(cotacao);
 				if(item.getNaoPossui()) {
-					item.setValor(new Double(0));
-					item.setValorTotal(new Double(0));
+					item.setQuantidade(0);
+					item.setCodigoUnidade(null);
+					item.setValor(new BigDecimal(0));
+					item.setValorTotal(new BigDecimal(0));
+				} else {
+					if(TreatString.isNotBlank(item.getCodigoUnidade())) {
+						item.setCodigoUnidade(item.getCodigoUnidade());
+					}
 				}
+				item.setCotacao(cotacao);
 				if(Util.isNotNull(item.getId())) {
 					daoCotacaoItem.alterar(item);
 				} else {

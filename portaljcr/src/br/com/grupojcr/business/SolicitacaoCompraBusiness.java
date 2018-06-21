@@ -312,7 +312,7 @@ public class SolicitacaoCompraBusiness {
 					if(Util.isNull(cotacaoMenorValor)) {
 						cotacaoMenorValor = cotacao;
 					} else {
-						if(cotacao.getValorTotal() < cotacaoMenorValor.getValorTotal()) {
+						if(cotacao.getValorTotal().compareTo(cotacaoMenorValor.getValorTotal()) == -1) {
 							cotacaoMenorValor = cotacao;
 						} else if(cotacao.getValorTotal().equals(cotacaoMenorValor.getValorTotal())) {
 							if(cotacao.getDtCotacao().before(cotacaoMenorValor.getDtCotacao())) {
@@ -338,7 +338,7 @@ public class SolicitacaoCompraBusiness {
 					if(Util.isNull(cotacaoMenorValor)) {
 						cotacaoMenorValor = cotacao;
 					} else {
-						if(cotacao.getValorTotal() < cotacaoMenorValor.getValorTotal()) {
+						if(cotacao.getValorTotal().compareTo(cotacaoMenorValor.getValorTotal()) == -1) {
 							cotacaoMenorValor = cotacao;
 						} else if(cotacao.getValorTotal().equals(cotacaoMenorValor.getValorTotal())) {
 							if(cotacao.getDtCotacao().before(cotacaoMenorValor.getDtCotacao())) {

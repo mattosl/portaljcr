@@ -1,5 +1,7 @@
 package br.com.grupojcr.dto;
 
+import java.math.BigDecimal;
+
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 
@@ -10,7 +12,7 @@ public class ProdutoDTO {
 	private Integer quantidade;
 	private UnidadeRM unidade;
 	private String observacao;
-	private Double valorAproximado;
+	private BigDecimal valorAproximado;
 	private Boolean naoEncontrei;
 	
 	public ProdutoRM getProduto() {
@@ -49,10 +51,10 @@ public class ProdutoDTO {
 	public void setDescricaoProduto(String descricaoProduto) {
 		this.descricaoProduto = descricaoProduto;
 	}
-	public Double getValorAproximado() {
+	public BigDecimal getValorAproximado() {
 		return valorAproximado;
 	}
-	public void setValorAproximado(Double valorAproximado) {
+	public void setValorAproximado(BigDecimal valorAproximado) {
 		this.valorAproximado = valorAproximado;
 	}
 	

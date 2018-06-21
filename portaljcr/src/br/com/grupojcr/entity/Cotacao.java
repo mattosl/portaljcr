@@ -2,6 +2,7 @@ package br.com.grupojcr.entity;
 
 import java.beans.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,14 +50,14 @@ public class Cotacao implements BaseEntity, Serializable {
 	@Column(name = "CONTATO_FORNECEDOR", length = 15)
 	private String contatoFornecedor;
 
-	@Column(name = "VLR_TOTAL", precision = 10, scale = 2, nullable = false)
-	private Double valorTotal;
+	@Column(name = "VLR_TOTAL", precision = 38, scale = 2, nullable = false)
+	private BigDecimal valorTotal;
 	
 	@Column(name = "OBSERVACAO", length = 300)
 	private String observacao;
 	
 	@Column(name = "FRETE", precision = 10, scale = 2, nullable = false)
-	private Double frete;
+	private BigDecimal frete;
 	
 	@Column(name = "COTACAO_PRINCIPAL", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
@@ -117,11 +118,11 @@ public class Cotacao implements BaseEntity, Serializable {
 		this.contatoFornecedor = contatoFornecedor;
 	}
 
-	public Double getValorTotal() {
+	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
 
-	public void setValorTotal(Double valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
 
@@ -173,11 +174,11 @@ public class Cotacao implements BaseEntity, Serializable {
 		this.observacao = observacao;
 	}
 	
-	public Double getFrete() {
+	public BigDecimal getFrete() {
 		return frete;
 	}
 
-	public void setFrete(Double frete) {
+	public void setFrete(BigDecimal frete) {
 		this.frete = frete;
 	}
 

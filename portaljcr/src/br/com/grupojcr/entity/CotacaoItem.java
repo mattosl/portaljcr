@@ -1,6 +1,7 @@
 package br.com.grupojcr.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,13 +27,20 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	private Long id;
 
 	@Column(name = "VLR_UNITARIO", precision = 10, scale = 2, nullable = false)
-	private Double valor;
+	private BigDecimal valor;
 	
-	@Column(name = "VLR_TOTAL", precision = 10, scale = 2, nullable = false)
-	private Double valorTotal;
+	@Column(name = "VLR_TOTAL", precision = 38, scale = 2, nullable = false)
+	private BigDecimal valorTotal;
 	
 	@Column(name = "OBSERVACAO")
 	private String observacao;
+	
+	@Column(name = "QTD")
+	private Integer quantidade;
+
+	@Column(name = "CODUNIDADE", length = 5)
+	private String codigoUnidade;
+	
 	
 	@Column(name = "NAO_POSSUI", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
@@ -45,7 +53,7 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ID_SOLICITACAO_COMPRA_ITEM", nullable = false)
 	private SolicitacaoCompraItem solicitacaoCompraItem;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -54,11 +62,11 @@ public class CotacaoItem implements BaseEntity, Serializable {
 		this.id = id;
 	}
 
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
@@ -98,13 +106,28 @@ public class CotacaoItem implements BaseEntity, Serializable {
 		this.observacao = observacao;
 	}
 
-	public Double getValorTotal() {
+	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
 
-	public void setValorTotal(Double valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
 
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
+	}
+
+	public String getCodigoUnidade() {
+		return codigoUnidade;
+	}
+
+	public void setCodigoUnidade(String codigoUnidade) {
+		this.codigoUnidade = codigoUnidade;
+	}
 
 }
