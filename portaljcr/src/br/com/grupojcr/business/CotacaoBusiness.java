@@ -67,7 +67,7 @@ public class CotacaoBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
 		}
 	}
-
+	
 	public void excluir(Cotacao cotacao) throws ApplicationException {
 		try {
 			for(CotacaoItem item : cotacao.getItens()) {

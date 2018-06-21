@@ -43,14 +43,14 @@
 										</p:commandLink>
 									</p:column>
 									
+								  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.id}" />
+								    </p:column>
+								    
 									<p:column headerText="Data da Solicitação" style="text-align:center;font-size:12px;" >
 								        <h:outputText value="#{solicitacao.dtSolicitacao}" >
 								        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
 								        </h:outputText>
-								    </p:column>
-									
-								  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
-								        <h:outputText value="#{solicitacao.id}" />
 								    </p:column>
 								    
 								    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">

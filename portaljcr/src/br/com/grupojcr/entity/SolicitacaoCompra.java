@@ -87,6 +87,10 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	private Date dtAprovacao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DT_COTACAO")
+	private Date dtCotacao;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_INICIO_COTACAO")
 	private Date dtInicioCotacao;
 	
@@ -346,6 +350,22 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	public void setUsuarioCancelamento(Usuario usuarioCancelamento) {
 		this.usuarioCancelamento = usuarioCancelamento;
 	}
+	
+	public Set<Cotacao> getCotacoes() {
+		return cotacoes;
+	}
+
+	public void setCotacoes(Set<Cotacao> cotacoes) {
+		this.cotacoes = cotacoes;
+	}
+
+	public Date getDtCotacao() {
+		return dtCotacao;
+	}
+
+	public void setDtCotacao(Date dtCotacao) {
+		this.dtCotacao = dtCotacao;
+	}
 
 	@Override
 	public int hashCode() {
@@ -372,12 +392,5 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 		return true;
 	}
 
-	public Set<Cotacao> getCotacoes() {
-		return cotacoes;
-	}
-
-	public void setCotacoes(Set<Cotacao> cotacoes) {
-		this.cotacoes = cotacoes;
-	}
 
 }

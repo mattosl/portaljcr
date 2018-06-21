@@ -10,6 +10,7 @@ public class FiltroSolicitacaoCompra {
 	
 	private Coligada coligada;
 	private SituacaoSolicitacaoCompra situacao;
+	private SituacaoSolicitacaoCompra[] situacaoIgnorar;
 	private Date periodoInicial;
 	private Date periodoFinal;
 	private Usuario usuarioLogado;
@@ -58,6 +59,11 @@ public class FiltroSolicitacaoCompra {
 	public void setUsuarioCotacao(Usuario usuarioCotacao) {
 		this.usuarioCotacao = usuarioCotacao;
 	}
-	
+	public SituacaoSolicitacaoCompra[] getSituacaoIgnorar() {
+		return situacaoIgnorar;
+	}
+	public void setSituacaoIgnorar(SituacaoSolicitacaoCompra[] situacaoIgnorar) {
+		this.situacaoIgnorar = situacaoIgnorar;
+	}
 
 }

@@ -1,11 +1,13 @@
 package br.com.grupojcr.business;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.CotacaoDAO;
@@ -14,6 +16,7 @@ import br.com.grupojcr.dao.SolicitacaoCompraItemDAO;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.Cotacao;
+import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -264,6 +267,78 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarCotacao" }, e);
+		}
+	}
+	
+	public void concluir(SolicitacaoCompra solicitacao) throws ApplicationException {
+		try {
+			solicitacao.setDtCotacao(Calendar.getInstance().getTime());
+			solicitacao.setSituacao(SituacaoSolicitacaoCompra.AGUARDANDO_APRV_COTACAO);
+			
+			List<Cotacao> cotacoes = daoCotacao.listarCotacoesPorSolicitacao(solicitacao.getId());
+			
+			List<Cotacao> cotacoesCompletas = new ArrayList<Cotacao>();
+			
+			for(Cotacao cotacao : cotacoes) {
+				Boolean cotacaoCompleta = Boolean.TRUE;
+				for(CotacaoItem item : cotacao.getItens()) {
+					if(item.getNaoPossui()) {
+						cotacaoCompleta = Boolean.FALSE;
+					}
+				}
+				
+				if(cotacaoCompleta) {
+					cotacoesCompletas.add(cotacao);
+				}
+			}
+			
+			if(CollectionUtils.isNotEmpty(cotacoesCompletas)) {
+				
+				Cotacao cotacaoMenorValor = null;
+				for(Cotacao cotacao : cotacoesCompletas) {
+					if(Util.isNull(cotacaoMenorValor)) {
+						cotacaoMenorValor = cotacao;
+					} else {
+						if(cotacao.getValorTotal() < cotacaoMenorValor.getValorTotal()) {
+							cotacaoMenorValor = cotacao;
+						} else if(cotacao.getValorTotal().equals(cotacaoMenorValor.getValorTotal())) {
+							if(cotacao.getDtCotacao().before(cotacaoMenorValor.getDtCotacao())) {
+								cotacaoMenorValor = cotacao;
+							}
+						}
+					}
+				}
+				
+				cotacaoMenorValor.setMelhorOpcao(Boolean.TRUE);
+				daoCotacao.alterar(cotacaoMenorValor);
+			} else {
+				Cotacao cotacaoMenorValor = null;
+				for(Cotacao cotacao : cotacoes) {
+					if(Util.isNull(cotacaoMenorValor)) {
+						cotacaoMenorValor = cotacao;
+					} else {
+						if(cotacao.getValorTotal() < cotacaoMenorValor.getValorTotal()) {
+							cotacaoMenorValor = cotacao;
+						} else if(cotacao.getValorTotal().equals(cotacaoMenorValor.getValorTotal())) {
+							if(cotacao.getDtCotacao().before(cotacaoMenorValor.getDtCotacao())) {
+								cotacaoMenorValor = cotacao;
+							}
+						}
+					}
+				}
+				
+				cotacaoMenorValor.setMelhorOpcao(Boolean.TRUE);
+				daoCotacao.alterar(cotacaoMenorValor);
+			}
+			
+			daoSolicitacaoCompra.alterar(solicitacao);
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluir" }, e);
 		}
 	}
 	

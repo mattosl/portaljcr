@@ -19,7 +19,7 @@
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
-				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+				<h:form id="cotacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 <!-- 					<div class="alert alert-warning alert-dismissible"> -->
 <!-- 		                <i class="icon fa fa-info-circle"></i> -->
 <!-- 		                <strong>Está solicitação possui 0 cotações, realize no minímo 3 cotações.</strong> -->
@@ -293,7 +293,7 @@
 											id="btn_concluir_cotação"
 											process="@this"
 											immediate="true"
-											action="#{cotacaoController.voltar()}"
+											action="#{cotacaoController.concluirCotacao()}"
 											ajax="false" />
 									</div>
 								</div>

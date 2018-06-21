@@ -1,7 +1,6 @@
 package br.com.grupojcr.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +15,7 @@ import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.grupojcr.business.ColigadaBusiness;
 import br.com.grupojcr.business.CotacaoBusiness;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
@@ -63,6 +63,9 @@ public class CotacaoController implements Serializable {
 	@EJB
 	private CotacaoBusiness cotacaoBusiness;
 	
+	@EJB
+	private ColigadaBusiness coligadaBusiness;
+	
 	@Inject
 	private SolicitacaoCompraDataModel dataModel;
 	
@@ -77,16 +80,10 @@ public class CotacaoController implements Serializable {
 			setFiltro(new FiltroSolicitacaoCompra());
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
 			getFiltro().setUsuarioCotacao(getUsuario());
+			getFiltro().setSituacaoIgnorar(new SituacaoSolicitacaoCompra[] {SituacaoSolicitacaoCompra.AGUARDANDO_APRV, SituacaoSolicitacaoCompra.APROVADA_COTACAO});
 			carregarDatas();
 			
-			setListaColigada(new ArrayList<Coligada>());
-			if(Util.isNotNull(getUsuario().getColigadas())) {
-				for(Coligada coligada : getUsuario().getColigadas()) {
-					if(coligada.getSituacao()) {
-						getListaColigada().add(coligada);
-					}
-				}
-			}
+			setListaColigada(coligadaBusiness.listarColigadas());
 			
 			setListaSituacao(SituacaoSolicitacaoCompra.listarParaCotacao());
 			
@@ -127,6 +124,18 @@ public class CotacaoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "pesquisar" }, e);
+		}
+	}
+	
+	public String concluirCotacao() throws ApplicationException {
+		try {
+			return "/pages/solicitacaoCompra/cotacao/editar_concluirCotacao.xhtml?faces-redirect=true";
+//		} catch (ApplicationException e) {
+//			LOG.info(e.getMessage(), e);
+//			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluirCotacao" }, e);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package br.com.grupojcr.dao;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -48,6 +49,14 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 				sb.append("AND solicitacao.usuarioCotacao = :usuarioCotacao ");
 			}
 			
+			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {
+				sb.append("AND solicitacao.situacao NOT IN :situacaoIgnorar ");
+			}
+			
+			if(Util.isNotNull(filtro.getNumeroSolicitacao())) {
+				sb.append("AND solicitacao.id = :numeroSolicitacao ");
+			}
+			
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
@@ -79,6 +88,14 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			
 			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
 				query.setParameter("usuarioCotacao", filtro.getUsuarioCotacao());
+			}
+			
+			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {
+				query.setParameter("situacaoIgnorar", Arrays.asList(filtro.getSituacaoIgnorar()));
+			}
+			
+			if(Util.isNotNull(filtro.getNumeroSolicitacao())) {
+				query.setParameter("numeroSolicitacao", filtro.getNumeroSolicitacao());
 			}
 			
 			return query.getSingleResult().intValue();
@@ -120,6 +137,14 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 				sb.append("AND solicitacao.usuarioCotacao = :usuarioCotacao ");
 			}
 			
+			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {
+				sb.append("AND solicitacao.situacao NOT IN :situacaoIgnorar ");
+			}
+			
+			if(Util.isNotNull(filtro.getNumeroSolicitacao())) {
+				sb.append("AND solicitacao.id = :numeroSolicitacao ");
+			}
+			
 			sb.append("ORDER BY solicitacao.dtSolicitacao DESC ");
 			
 			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
@@ -153,6 +178,14 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			
 			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
 				query.setParameter("usuarioCotacao", filtro.getUsuarioCotacao());
+			}
+			
+			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {
+				query.setParameter("situacaoIgnorar", Arrays.asList(filtro.getSituacaoIgnorar()));
+			}
+			
+			if(Util.isNotNull(filtro.getNumeroSolicitacao())) {
+				query.setParameter("numeroSolicitacao", filtro.getNumeroSolicitacao());
 			}
 			
 			if(Util.isNotNull(first) && Util.isNotNull(pageSize)){

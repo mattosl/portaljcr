@@ -16,10 +16,10 @@
 			<f:viewAction action="#{cotacaoController.iniciarProcesso()}" />
 		</f:metadata>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Minhas Cotações</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Cotações</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
-	    	<li class="active"><i class="fa fa-calculator"></i> Minhas Cotações</li>
+	    	<li class="active"><i class="fa fa-calculator"></i> Cotações</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -41,7 +41,7 @@
 									<div class="form-group">
 										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa:</label>
 	
-										<div class="col-sm-10 col-md-10">
+										<div class="col-sm-8 col-md-8">
 									        <p:selectOneMenu id="coligada" value="#{cotacaoController.filtro.coligada}">
 									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{cotacaoController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
@@ -51,7 +51,7 @@
 									<div class="form-group">
 										<label for="situacao" class="col-sm-2 col-md-2 control-label">Situação:</label>
 	
-										<div class="col-sm-6 col-md-6">
+										<div class="col-sm-4 col-md-4">
 									        <p:selectOneMenu id="situacao" value="#{cotacaoController.filtro.situacao}">
 									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{cotacaoController.listaSituacao}" var="situacao" itemLabel="#{situacao.descricao}" itemValue="#{situacao}" />
