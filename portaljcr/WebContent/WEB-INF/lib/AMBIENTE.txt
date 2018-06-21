@@ -1,0 +1,7 @@
+/* Lembretes para geração de ambiente */
+
+AMBIENTE HOMOLOGACAO: 10.0.0.69:8080/portaljcr
+AMBIENTE PRODUCAO: 10.0.0.70:8180/portaljcr ou portal.grupojcr.com.br
+
+Lembrete 1:
+- Alterar classe Dominios com PATH para link
