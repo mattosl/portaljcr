@@ -1,7 +1,10 @@
 package br.com.grupojcr.entity;
 
+import java.beans.Transient;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -390,6 +393,11 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	@Transient
+	public List<Cotacao> getCotacoesList() {
+		return new ArrayList<Cotacao>(cotacoes);
 	}
 
 

@@ -130,13 +130,25 @@ public class CotacaoController implements Serializable {
 	public String concluirCotacao() throws ApplicationException {
 		try {
 			return "/pages/solicitacaoCompra/cotacao/editar_concluirCotacao.xhtml?faces-redirect=true";
-//		} catch (ApplicationException e) {
-//			LOG.info(e.getMessage(), e);
-//			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluirCotacao" }, e);
 		}
+	}
+	
+	public String concluir() throws ApplicationException {
+		try {
+			solicitacaoCompraBusiness.concluir(getSolicitacaoCompra());
+			
+			Message.setMessage("cotacao.concluida");
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluir" }, e);
+		}
+		return voltar();
 	}
 	
 	private void carregarDatas() throws ApplicationException {
@@ -311,6 +323,8 @@ public class CotacaoController implements Serializable {
 			}
 			
 			cotacaoBusiness.salvar(getSolicitacaoCompra(), getCotacao());
+			
+			solicitacaoCompraBusiness.calcularMelhorOpcao(getSolicitacaoCompra());
 			
 			getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
 			

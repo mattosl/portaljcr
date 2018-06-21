@@ -22,6 +22,9 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
+import br.com.grupojcr.util.TreatDate;
+import br.com.grupojcr.util.TreatNumber;
+
 @Entity
 @Table(name = "TB_COTACAO")
 public class Cotacao implements BaseEntity, Serializable {
@@ -206,6 +209,22 @@ public class Cotacao implements BaseEntity, Serializable {
 	@Transient
 	public List<CotacaoItem> getItensList() {
 		return new ArrayList<CotacaoItem>(itens);
+	}
+	
+	@Transient
+	public String getValorTotalFormatado() {
+		if(valorTotal != null) {
+			return TreatNumber.formatMoneyCurrency(valorTotal);
+		}
+		return null;
+	}
+	
+	@Transient
+	public String getDataCotacaoFormatado() {
+		if(dtCotacao != null) {
+			return TreatDate.format("dd/MM/yyyy", dtCotacao);
+		}
+		return null;
 	}
 
 }

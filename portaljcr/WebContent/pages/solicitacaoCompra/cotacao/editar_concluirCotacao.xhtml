@@ -28,55 +28,48 @@
 		            		<div class="form-horizontal">
 								<div class="box-body">
 									<div class="col-md-12 col-sm-12">
-										<div class="small-box bg-green">
-											<div class="inner">
-												<h3>
-													53<sup style="font-size: 20px">%</sup>
-												</h3>
-			
-												<p>Bounce Rate</p>
+										<ui:repeat var="cotacao" value="#{cotacaoController.solicitacaoCompra.cotacoesList}">
+											<div class="info-box #{cotacao.melhorOpcao ? 'bg-green' : ''}" style="background-color: #f8f8f8;">
+												<span class="info-box-icon #{!cotacao.melhorOpcao ? 'bg-yellow' : ''}"><i
+													class="fa #{cotacao.melhorOpcao ? 'fa-check' : 'fa-calculator'}"></i></span>
+	
+												<div class="info-box-content">
+													<span class="info-box-text pull-right" style="font-weight: bold;">#{cotacao.melhorOpcao ? 'MELHOR OPÇÃO' : ''}</span>
+													<span class="info-box-text" style="font-size: 20px;">#{cotacao.fornecedor.toUpperCase()}</span> <span
+														class="info-box-number" style="font-size:20px;">#{cotacao.valorTotalFormatado}</span>
+	
+													<span class="progress-description"> Cotado em: #{cotacao.dataCotacaoFormatado} </span>
+												</div>
+												<!-- /.info-box-content -->
 											</div>
-											<div class="icon">
-												<i class="ion ion-stats-bars"></i>
-											</div>
-											<a href="#" class="small-box-footer"> More info <i
-												class="fa fa-arrow-circle-right"></i>
-											</a>
-										</div>
-										<div class="small-box">
-											<div class="inner">
-												<h3>
-													53<sup style="font-size: 20px">%</sup>
-												</h3>
-			
-												<p>Bounce Rate</p>
-											</div>
-											<div class="icon">
-												<i class="ion ion-stats-bars"></i>
-											</div>
-											<a href="#" class="small-box-footer"> More info <i
-												class="fa fa-arrow-circle-right"></i>
-											</a>
-										</div>
-										<div class="small-box">
-											<div class="inner">
-												<h3>
-													53<sup style="font-size: 20px">%</sup>
-												</h3>
-			
-												<p>Bounce Rate</p>
-											</div>
-											<div class="icon">
-												<i class="ion ion-stats-bars"></i>
-											</div>
-											<a href="#" class="small-box-footer"> More info <i
-												class="fa fa-arrow-circle-right"></i>
-											</a>
-										</div>
+										</ui:repeat>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-3 col-md-3 pull-left">
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-arrow-left"
+											value="Voltar"
+											id="btn_voltar"
+											process="@this"
+											immediate="true"
+											action="#{cotacaoController.voltarEdicao()}"
+											ajax="false" />
+									</div>
+									<div class="col-sm-3 col-md-3 pull-right"> 
+										<p:commandButton
+											styleClass="btn btn-default"
+											icon="fa fa-check-square-o"
+											value="Concluir"
+											id="btn_concluir_cotação"
+											process="@this"
+											immediate="true"
+											action="#{cotacaoController.concluir()}"
+											ajax="false" />
 									</div>
 								</div>
 							</div>
-							
 						</p:panel>
 					</f:validateBean>
 				</h:form>

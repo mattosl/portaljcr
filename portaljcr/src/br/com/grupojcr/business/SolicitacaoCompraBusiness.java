@@ -275,6 +275,19 @@ public class SolicitacaoCompraBusiness {
 			solicitacao.setDtCotacao(Calendar.getInstance().getTime());
 			solicitacao.setSituacao(SituacaoSolicitacaoCompra.AGUARDANDO_APRV_COTACAO);
 			
+			daoSolicitacaoCompra.alterar(solicitacao);
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluir" }, e);
+		}
+	}
+	
+	public void calcularMelhorOpcao(SolicitacaoCompra solicitacao) throws ApplicationException {
+		try {
 			List<Cotacao> cotacoes = daoCotacao.listarCotacoesPorSolicitacao(solicitacao.getId());
 			
 			List<Cotacao> cotacoesCompletas = new ArrayList<Cotacao>();
@@ -311,6 +324,14 @@ public class SolicitacaoCompraBusiness {
 				
 				cotacaoMenorValor.setMelhorOpcao(Boolean.TRUE);
 				daoCotacao.alterar(cotacaoMenorValor);
+				
+				for(Cotacao cotacao : cotacoes) {
+					if(!cotacao.getId().equals(cotacaoMenorValor.getId())) {
+						cotacao.setMelhorOpcao(Boolean.FALSE);
+						daoCotacao.alterar(cotacao);
+					}
+				}
+
 			} else {
 				Cotacao cotacaoMenorValor = null;
 				for(Cotacao cotacao : cotacoes) {
@@ -329,16 +350,21 @@ public class SolicitacaoCompraBusiness {
 				
 				cotacaoMenorValor.setMelhorOpcao(Boolean.TRUE);
 				daoCotacao.alterar(cotacaoMenorValor);
+				
+				for(Cotacao cotacao : cotacoes) {
+					if(!cotacao.getId().equals(cotacaoMenorValor.getId())) {
+						cotacao.setMelhorOpcao(Boolean.FALSE);
+						daoCotacao.alterar(cotacao);
+					}
+				}
 			}
-			
-			daoSolicitacaoCompra.alterar(solicitacao);
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluir" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcularMelhorOpcao" }, e);
 		}
 	}
 	

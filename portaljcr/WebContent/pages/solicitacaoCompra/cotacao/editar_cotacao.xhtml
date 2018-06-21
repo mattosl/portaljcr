@@ -220,8 +220,7 @@
 												<div class="row">
 													<p:dataTable var="cotacao" id="tableCotacao"
 														value="#{cotacaoController.solicitacaoCompra.cotacoes}" 
-														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada."
-														rowStyleClass="#{cotacao.melhorOpcao ? 'cotacaoMelhorOpcao' : null}">
+														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada.">
 														
 														<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
 															<p:commandLink ajax="true" process="@this" action="#{cotacaoController.exibir()}" >
