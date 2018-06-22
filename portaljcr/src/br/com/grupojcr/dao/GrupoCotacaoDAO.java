@@ -39,6 +39,25 @@ public class GrupoCotacaoDAO extends GenericDAO<GrupoCotacao> {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public GrupoCotacao obterGrupoCotacao(Long idGrupoCotacao) throws ApplicationException {
+		try{
+			StringBuilder sb = new StringBuilder("SELECT gc FROM GrupoCotacao gc ");
+			sb.append("LEFT JOIN FETCH gc.usuarios ");
+			sb.append("WHERE gc.id = :idGrupoCotacao ");
+			
+			TypedQuery<GrupoCotacao> query = manager.createQuery(sb.toString(), GrupoCotacao.class);
+			query.setParameter("idGrupoCotacao", idGrupoCotacao);
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterGrupoCotacao" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public List<GrupoCotacao> listarGrupoCotacaoAtivos() throws ApplicationException {
 		try{
 			StringBuilder sb = new StringBuilder("SELECT DISTINCT gc FROM GrupoCotacao gc ");

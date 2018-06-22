@@ -27,6 +27,8 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 		try {
 			
 			StringBuilder sb = new StringBuilder("SELECT COUNT(solicitacao) FROM SolicitacaoCompra solicitacao ");
+			sb.append("LEFT JOIN solicitacao.grupoCotacao grupoCotacao ");
+			sb.append("LEFT JOIN grupoCotacao.usuarios usuarios ");
 			sb.append("WHERE solicitacao.id != null ");
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
@@ -46,15 +48,12 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			}
 			
 			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
-				sb.append("AND solicitacao.usuarioCotacao = :usuarioCotacao ");
+				sb.append("AND (solicitacao.usuarioCotacao = :usuarioCotacao ");
+				sb.append("OR usuarios.id = :usuarioCotacao) ");
 			}
 			
 			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {
 				sb.append("AND solicitacao.situacao NOT IN :situacaoIgnorar ");
-			}
-			
-			if(Util.isNotNull(filtro.getNumeroSolicitacao())) {
-				sb.append("AND solicitacao.id = :numeroSolicitacao ");
 			}
 			
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
@@ -114,6 +113,7 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			StringBuilder sb = new StringBuilder("SELECT solicitacao FROM SolicitacaoCompra solicitacao ");
 			sb.append("LEFT JOIN FETCH solicitacao.coligada coligada ");
 			sb.append("LEFT JOIN FETCH solicitacao.grupoCotacao grupoCotacao ");
+			sb.append("LEFT JOIN FETCH grupoCotacao.usuarios usuarios ");
 			sb.append("LEFT JOIN FETCH solicitacao.usuarioSolicitante usuarioSolicitante ");
 			sb.append("WHERE solicitacao.id != null ");
 			
@@ -134,7 +134,8 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			}
 			
 			if(Util.isNotNull(filtro.getUsuarioCotacao())) {
-				sb.append("AND solicitacao.usuarioCotacao = :usuarioCotacao ");
+				sb.append("AND (solicitacao.usuarioCotacao = :usuarioCotacao ");
+				sb.append("OR usuarios.id = :usuarioCotacao) ");
 			}
 			
 			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {

@@ -12,7 +12,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.GrupoCotacaoDAO;
+import br.com.grupojcr.dao.GrupoDAO;
 import br.com.grupojcr.dao.UsuarioDAO;
+import br.com.grupojcr.entity.Grupo;
 import br.com.grupojcr.entity.GrupoCotacao;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.util.TreatString;
@@ -27,6 +29,9 @@ public class GrupoCotacaoBusiness {
 
 	@EJB
 	private GrupoCotacaoDAO daoGrupoCotacao;
+	
+	@EJB
+	private GrupoDAO daoGrupo;
 
 	@EJB
 	private UsuarioDAO daoUsuario;
@@ -65,7 +70,34 @@ public class GrupoCotacaoBusiness {
 				throw new ApplicationException("grupo.cotacao.existente", FacesMessage.SEVERITY_WARN);
 			}
 			
+			Grupo grupoCotador = daoGrupo.obterGrupo("COTACAO");
 			if(Util.isNotNull(gc.getId())) {
+				GrupoCotacao grupoAtual = daoGrupoCotacao.obterGrupoCotacao(gc.getId());
+				if(CollectionUtils.isNotEmpty(grupoAtual.getUsuarios())) {
+					for(Usuario usuario : grupoAtual.getUsuarios()) {
+						if(!gc.getUsuarios().contains(usuario)) {
+							Usuario usr = daoUsuario.obterUsuarioPorId(usuario.getId());
+							if(CollectionUtils.isNotEmpty(usr.getGrupos())) {
+								if(Util.isNotNull(grupoCotador)) {
+									if(usr.getGrupos().contains(grupoCotador)) {
+										usr.getGrupos().remove(grupoCotador);
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				for(Usuario usr : gc.getUsuarios()) {
+					Usuario u = daoUsuario.obterUsuarioPorId(usr.getId());
+					if(Util.isNotNull(grupoCotador)) {
+						if(!u.getGrupos().contains(grupoCotador)) {
+							u.getGrupos().add(grupoCotador);
+							daoUsuario.alterar(u);
+						}
+					}
+				}
+				
 				daoGrupoCotacao.alterar(gc);
 			} else {
 				GrupoCotacao grupoCotacao = new GrupoCotacao();
@@ -74,7 +106,15 @@ public class GrupoCotacaoBusiness {
 				grupoCotacao.setUsuarios(new HashSet<Usuario>());
 				List<Usuario> usuarios = new ArrayList<Usuario>();
 				for(Usuario usr : gc.getUsuarios()) {
-					Usuario u = daoUsuario.obter(usr.getId());
+					Usuario u = daoUsuario.obterUsuarioPorId(usr.getId());
+					
+					if(Util.isNotNull(grupoCotador)) {
+						if(!u.getGrupos().contains(grupoCotador)) {
+							u.getGrupos().add(grupoCotador);
+							daoUsuario.alterar(u);
+						}
+						
+					}
 					usuarios.add(u);
 				}
 				grupoCotacao.getUsuarios().addAll(usuarios);

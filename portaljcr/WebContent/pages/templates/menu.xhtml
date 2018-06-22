@@ -57,7 +57,7 @@
 				</ul>
 			</li>
 			
-			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}">
+			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
 				<a href="#"> 
 					<i class="fa fa-pencil-square-o"></i> <span>Cotação</span>
 					 <span class="pull-right-container">
