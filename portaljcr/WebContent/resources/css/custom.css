@@ -148,3 +148,32 @@
 	font-weight: bold !important;
 	color: #00a400 !important;
 }
+
+.custom-btn {
+	background-image: none !important;
+	background-color: #fff !important;
+	color: #fff !important;
+}
+
+.ui-button-text-icon-left .ui-button-text {
+    margin-top: 2px !important; 
+}
+
+.button-login {
+  font-family: "Roboto", sans-serif !important;
+  text-transform: uppercase !important;
+  outline: 0 !important;
+  background: #9F262D !important;
+  padding: 5px !important;
+  width: 100% !important;
+  border: 0 !important;
+  color: #FFFFFF !important;
+  font-size: 14px !important;
+  -webkit-transition: all 0.3 ease !important;
+  transition: all 0.3 ease !important;
+  cursor: pointer !important;
+}
+
+.button-login:hover,.button-login:active,.button-login:focus {
+  background: #CC343D !important;
+}
