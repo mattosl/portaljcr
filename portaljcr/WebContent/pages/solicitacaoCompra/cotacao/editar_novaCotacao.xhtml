@@ -90,7 +90,7 @@
 														</div>
 														
 														<div class="col-sm-3 col-md-3">
-															<p:outputLabel id="unidade" value="#{item.solicitacaoCompraItem.unidade.toUpperCase()}" styleClass="control-label font-normal" />
+															<p:outputLabel id="unidade" value="#{item.solicitacaoCompraItem.codigoUnidade.toUpperCase()}" styleClass="control-label font-normal" />
 														</div>
 													</div>
 													<div class="form-group">
@@ -209,7 +209,7 @@
 							<div class="box-footer">
 								<div class="col-sm-3 col-md-3 pull-left">
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-vermelho"
 										icon="fa fa-arrow-left"
 										value="Voltar"
 										id="btn_voltar"
@@ -220,8 +220,8 @@
 								</div>
 								<div class="col-sm-3 col-md-3 pull-right" >
 									<p:commandButton
-										styleClass="btn btn-default"
-										icon="fa fa-check"
+										styleClass="btn-verde"
+										icon="fa fa-save"
 										value="Salvar"
 										id="btn_salvar"
 										process="@form:painelNovaSolicitacao"

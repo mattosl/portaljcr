@@ -111,9 +111,9 @@
 				            		<div class="form-horizontal">
 										<div class="box-body">
 											<div class="row">
-												<div class="col-sm-3 col-md-3">
+												<div class="col-sm-3 col-md-3" style="padding: 0px !important;">
 													<p:commandButton
-														styleClass="btn btn-default"
+														styleClass="btn-azul"
 														icon="fa fa-plus"
 														value="Adicionar Novo Item"
 														id="btn_add_novo_item"
@@ -174,19 +174,19 @@
 								<div class="box-footer">
 									<div class="col-sm-3 col-md-3 pull-left">
 										<p:commandButton
-											styleClass="btn btn-default"
+											styleClass="btn-vermelho"
 											icon="fa fa-arrow-left"
 											value="Anterior"
 											id="btn_anterior"
 											process="@this"
 											immediate="true"
 											action="#{solicitacaoCompraController.voltar()}"
-											ajax="false" />
+											ajax="true" />
 									</div>
 									<div class="col-sm-3 col-md-3 pull-right" >
 										<p:commandButton
-											styleClass="btn btn-default"
-											icon="fa fa-check"
+											styleClass="btn-verde"
+											icon="fa fa-save"
 											value="Salvar"
 											id="btn_salvar"
 											process="@form:painelCadastro"
@@ -278,7 +278,7 @@
 							<div class="box-footer">
 								<div class="col-sm-3 col-md-3 pull-right">
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-azul"
 										icon="fa fa-check"
 										value="Adicionar"
 										id="btn_add_produto"
@@ -288,7 +288,7 @@
 										ajax="true"
 										rendered="#{!solicitacaoCompraController.edicaoProduto}" />
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-azul"
 										icon="fa fa-pencil"
 										value="Editar"
 										id="btn_edit_produto"
@@ -300,7 +300,7 @@
 								</div>
 								<div class="col-sm-3 col-md-3 pull-left" >
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-vermelho"
 										icon="fa fa-times"
 										value="Cancelar"
 										id="btn_cancelar_produto"

@@ -54,7 +54,7 @@
 											</div>
 		
 											<div class="col-sm-10 col-md-10">
-												<p:outputLabel id="observacao" value="#{cotacaoController.cotacao.observacao}" styleClass="control-label font-normal" />
+												<h:inputTextarea id="observacao" styleClass="form-control" value="#{cotacaoController.cotacao.observacao}" readonly="true" rows="5" style="background-color: #fff !important;" />
 											</div>
 										</div>
 									</p:outputPanel>
@@ -111,7 +111,28 @@
 														</div>
 														
 														<div class="col-sm-9 col-md-9">
-															<p:outputLabel id="obs" value="#{item.solicitacaoCompraItem.observacao}" styleClass="control-label font-normal" />
+															<h:inputTextarea value="#{item.solicitacaoCompraItem.observacao}" styleClass="form-control" readonly="true" style="background-color: #fff !important;" rows="3" />
+														</div>
+													</div>
+													<div class="box-header with-border">
+														<h3 class="box-title">Cotação</h3>
+													</div>
+													<br />
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="qtdCotacao">Quantidade:</label>
+														</div>
+					
+														<div class="col-sm-3 col-md-3">
+															<p:outputLabel id="qtdCotacao" value="#{item.solicitacaoCompraItem.quantidade}" styleClass="control-label font-normal" />
+														</div>
+														
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="unidadeCotacao">Unidade:</label>
+														</div>
+					
+														<div class="col-sm-3 col-md-3">
+															<p:outputLabel id="unidadeCotacao" value="#{item.solicitacaoCompraItem.codigoUnidade}" styleClass="control-label font-normal" />
 														</div>
 													</div>
 													<div class="form-group">

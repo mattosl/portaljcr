@@ -17,6 +17,7 @@ import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
@@ -44,6 +45,10 @@ public class CotacaoBusiness {
 			cotacao.setDtCotacao(Calendar.getInstance().getTime());
 			cotacao.setMelhorOpcao(Boolean.FALSE);
 			cotacao.setCotacaoPrincipal(Boolean.FALSE);
+			
+			if(TreatNumber.isNullOrZero(cotacao.getFrete())) {
+				cotacao.setFrete(new BigDecimal(0));
+			}
 			
 			if(Util.isNotNull(cotacao.getId())) {
 				daoCotacao.alterar(cotacao);

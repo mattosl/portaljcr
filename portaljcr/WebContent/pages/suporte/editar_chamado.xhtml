@@ -214,7 +214,7 @@
 													</div>
 													<div class="col-sm-2 col-md-2">
 														<p:commandButton
-															styleClass="btn btn-default"
+															styleClass="btn-vermelho"
 															icon="fa fa-arrow-right"
 															value="Enviar"
 															id="btn_enviar"
@@ -233,7 +233,7 @@
 									<div class="box-footer">
 										<div class="col-sm-3 col-md-3" >
 											<p:commandButton
-												styleClass="btn btn-default"
+												styleClass="btn-vermelho"
 												icon="fa fa-arrow-left"
 												value="Voltar"
 												id="btn_voltar"
@@ -244,7 +244,7 @@
 										</div>
 										<div class="col-sm-3 col-md-3" >
 											<p:commandButton
-												styleClass="btn btn-default"
+												styleClass="btn-azul"
 												icon="fa fa-pencil-square-o"
 												value="Atribuir para mim"
 												id="btn_atribuir"
@@ -253,7 +253,7 @@
 												action="#{chamadoController.atribuir()}"
 												ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel != usuario and loginController.hasGroup(['ADMINISTRADOR', 'SUPORTE'])}" />
 											<p:commandButton
-												styleClass="btn btn-default"
+												styleClass="btn-verde"
 												icon="fa fa-pencil-square"
 												value="Solucionar Chamado"
 												id="btn_adicionar_solucao"
@@ -263,7 +263,7 @@
 												update="@form:modalSolucao"
 												ajax="true" rendered="#{chamadoController.chamado.usuarioResponsavel eq usuario and chamadoController.chamado.situacao eq 'EM_ANDAMENTO'}" />
 											<p:commandButton
-												styleClass="btn btn-default"
+												styleClass="btn-azul"
 												icon="fa fa-thumbs-up"
 												value="Feedback"
 												id="btn_feedback"
@@ -317,7 +317,7 @@
 							<div class="box-footer">
 								<div class="col-sm-3 col-md-3 pull-left" >
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-vermelho"
 										icon="fa fa-times"
 										value="Cancelar"
 										id="btn_cancelar_solucao"
@@ -327,7 +327,7 @@
 								</div>
 								<div class="col-sm-3 col-md-3 pull-right">
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-verde"
 										icon="fa fa-check"
 										value="Solucionar"
 										id="btn_solucionar"
@@ -394,7 +394,7 @@
 							<div class="box-footer">
 								<div class="col-sm-12 col-md-12 pull-right">
 									<p:commandButton
-										styleClass="btn btn-default"
+										styleClass="btn-azul"
 										icon="fa fa-check"
 										value="Encerrar Chamado"
 										id="btn_encerrar"
