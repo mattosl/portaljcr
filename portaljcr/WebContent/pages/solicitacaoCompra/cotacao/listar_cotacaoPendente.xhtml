@@ -30,7 +30,7 @@
 	            		</div>
 						<div class="form-horizontal">
 							<div class="box-body table-responsive no-padding">
-								<p:dataTable var="solicitacao" id="tableSolicitacoes" widgetVar="widgetTabelaSolicitacoes" 
+								<p:dataTable var="solicitacao" id="tableSolicitacoes" widgetVar="widgetTabelaSolicitacoes"
 									value="#{cotacaoController.listaSolicitacao}" 
 									tableStyle="table-layout: auto; word-break: keep-all;"
 									rendered="#{cotacaoController.listaSolicitacao.size() > 0}" rowStyleClass="#{cotacaoController.validarVencimento(solicitacao)}">

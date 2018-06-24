@@ -253,3 +253,7 @@
 .btn-vermelho-claro:hover,.btn-vermelho-claro:active,.btn-vermelho-claro:focus {
   background: #c63222 !important;
 }
+
+.ui-datatable tbody td {
+    padding: 6px 6px 4px 6px !important;
+}

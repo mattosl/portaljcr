@@ -73,6 +73,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@Column(name = "LOCAL_ENTREGA", length = 100)
 	private String localEntrega;
 	
+	@Column(name = "JUSTIFICATIVA", length = 300)
+	private String justificativa;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_CANCELAMENTO")
 	private Date dtCancelamento;
@@ -369,6 +372,15 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	public void setDtCotacao(Date dtCotacao) {
 		this.dtCotacao = dtCotacao;
 	}
+	
+	public String getJustificativa() {
+		return justificativa;
+	}
+
+	public void setJustificativa(String justificativa) {
+		this.justificativa = justificativa;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -399,6 +411,5 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	public List<Cotacao> getCotacoesList() {
 		return new ArrayList<Cotacao>(cotacoes);
 	}
-
 
 }

@@ -9,8 +9,8 @@
 	xmlns:jsf="http://xmlns.jcp.org/jsf" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
-		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
-    	<ui:param name="activeMenu" value="cotacao"/>
+		<ui:param name="activeSubmenu" value="#{cotacaoController.origem eq 'MINHA_SOLICITACAO' ? 'minhasSolicitacoes' : 'minhasCotacoes'}"/>
+    	<ui:param name="activeMenu" value="#{cotacaoController.origem eq 'MINHA_SOLICITACAO' ? 'solicitacaoCompra' : 'cotacao'}"/>
     	
     	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Cotação - Solicitação de Compra Nº #{cotacaoController.solicitacaoCompra.id}</ui:define>
 		<ui:define name="breadcrumb">
@@ -215,7 +215,6 @@
 												</p:commandButton>
 											</div>
 										</div>
-										<br />
 					            		<div class="form-horizontal">
 											<div class="box-body">
 												<div class="row">
@@ -296,6 +295,28 @@
 											action="#{cotacaoController.concluirCotacao()}"
 											ajax="true"
 											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}" />
+										<p:commandButton
+											styleClass="btn-verde"
+											icon="fa fa-dollar"
+											value="Liberar Compra"
+											id="btn_liberar_compra"
+											process="@this"
+											immediate="true"
+											action="#{cotacaoController.concluirCotacao()}"
+											ajax="true"
+											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'AGUARDANDO_APRV_COTACAO' and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" />
+									</div>
+									<div class="col-sm-3 col-md-3 pull-right">
+										<p:commandButton
+											styleClass="btn-vermelho-claro"
+											icon="fa fa-times"
+											value="Recusar Cotação"
+											id="btn_recusar_cotacao"
+											process="@this"
+											immediate="true"
+											action="#{cotacaoController.concluirCotacao()}"
+											ajax="true"
+											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'AGUARDANDO_APRV_COTACAO' and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" />
 									</div>
 								</div>
 							</p:panel>

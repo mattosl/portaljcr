@@ -52,7 +52,7 @@
 										</div>
 	
 										<div class="col-sm-10 col-md-10">
-											<h:inputTextarea id="observacao" value="#{cotacaoController.cotacao.observacao}" styleClass="form-control" rows="5" />
+											<h:inputTextarea id="observacao" value="#{cotacaoController.cotacao.observacao}" styleClass="form-control" rows="3" />
 										</div>
 									</div>
 									<ui:repeat var="item" value="#{cotacaoController.cotacao.itensList}" varStatus="status">
@@ -68,49 +68,49 @@
 						            		<div class="form-horizontal">
 												<div class="box-body">
 										 			<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="produtoServico"> Produto/Serviço: </label>
 														</div>
 														
-														<div class="col-sm-9 col-md-9">
+														<div class="col-sm-10 col-md-10">
 															<p:outputLabel id="produtoServico" value="#{item.solicitacaoCompraItem.descricaoProduto}" styleClass="control-label font-normal" />
 														</div>
 													</div>
 													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="qtd"> Quantidade: </label>
 														</div>
 														
-														<div class="col-sm-3 col-md-3">
+														<div class="col-sm-4 col-md-4">
 															<p:outputLabel id="qtd" value="#{item.solicitacaoCompraItem.quantidade}" styleClass="control-label font-normal" />
 														</div>
 														
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="unidade"> Unidade: </label>
 														</div>
 														
-														<div class="col-sm-3 col-md-3">
+														<div class="col-sm-4 col-md-4">
 															<p:outputLabel id="unidade" value="#{item.solicitacaoCompraItem.codigoUnidade.toUpperCase()}" styleClass="control-label font-normal" />
 														</div>
 													</div>
 													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="vlrAproximado"> Valor Aproximado: </label>
 														</div>
 														
-														<div class="col-sm-9 col-md-9">
+														<div class="col-sm-10 col-md-10">
 															<p:outputLabel id="vlrAproximado" value="#{item.solicitacaoCompraItem.valorAproximado ne null ? item.solicitacaoCompraItem.valorAproximado : 'NÃO INFORMADO'}" styleClass="control-label font-normal">
 																<f:convertNumber type="currency" currencySymbol="R$" />
 															</p:outputLabel>
 														</div>
 													</div>
 													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="obs"> Observação: </label>
 														</div>
 														
-														<div class="col-sm-9 col-md-9">
-															<p:outputLabel id="obs" value="#{item.solicitacaoCompraItem.observacao}" styleClass="control-label font-normal" />
+														<div class="col-sm-10 col-md-10">
+															<h:inputTextarea value="#{item.solicitacaoCompraItem.observacao}" styleClass="form-control" readonly="true" style="background-color: #fff !important;" rows="3" />
 														</div>
 													</div>
 													<div class="box-header with-border">
@@ -118,21 +118,21 @@
 													</div>
 													<br />
 													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="qtdCotacao">Quantidade: *</label>
 														</div>
 					
-														<div class="col-sm-3 col-md-3">
+														<div class="col-sm-4 col-md-4">
 													        <h:inputText id="qtdCotacao" maxlength="9" styleClass="form-control" value="#{item.quantidade}" onkeyup="filterNumberOnly(this);" readonly="#{item.naoPossui}">
 													        	<p:ajax global="false" process="@this, painelItem, unidadeCotacao" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
 													        </h:inputText>
 														</div>
 														
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="unidadeCotacao">Unidade: *</label>
 														</div>
 					
-														<div class="col-sm-3 col-md-3">
+														<div class="col-sm-4 col-md-4">
 															<p:selectOneMenu id="unidadeCotacao" value="#{item.codigoUnidade}" disabled="#{item.naoPossui}">
 													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 													        	<f:selectItems value="#{cotacaoController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade.codigoUnidade}" />
@@ -140,11 +140,11 @@
 														</div>
 													</div>
 													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
+														<div class="col-sm-2 col-md-2 control-label">
 															<label for="vlrUnitario"> Valor Unitário: *</label>
 														</div>
 														
-														<div class="col-sm-3 col-md-3">
+														<div class="col-sm-4 col-md-4">
 															<div class="input-group">
 													            <span class="input-group-addon">R$</span>
 					           									<p:inputNumber id="vlrUnitario" value="#{item.valor}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator=","  disabled="#{item.naoPossui}">
@@ -155,17 +155,26 @@
 														</div>
 														
 														<p:outputPanel id="campoTotal">
-															<div class="col-sm-3 col-md-3 control-label">
+															<div class="col-sm-2 col-md-2 control-label">
 																<label for="total"> Total: <p:outputLabel id="info" style="color: #de4b39">&nbsp;<i style="color: #9f9f9f" class="fa fa-question-circle"></i>&nbsp;</p:outputLabel></label>
 																<p:tooltip for="info" value="(Valor Unitário) x (Quantidade)" position="top" />
 															</div>
 															
-															<div class="col-sm-3 col-md-3">
-																<p:outputLabel id="total" value="#{item.valorTotal}" styleClass="control-label font-normal">
+															<div class="col-sm-4 col-md-4">
+																<p:outputLabel id="total" value="#{item.valorTotal}" styleClass="control-label font-normal valorTotalVerde">
 																	<f:convertNumber type="currency" currencySymbol="R$"/>
 																</p:outputLabel>
 															</div>
 														</p:outputPanel>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-2 col-md-2 control-label">
+															<label for="observacaoCotacao">Observação: </label>
+														</div>
+					
+														<div class="col-sm-10 col-md-10">
+															<h:inputTextarea id="observacaoCotacao" value="#{item.observacao}" styleClass="form-control" rows="3" readonly="#{item.naoPossui}" />
+														</div>
 													</div>
 												</div>
 											</div>

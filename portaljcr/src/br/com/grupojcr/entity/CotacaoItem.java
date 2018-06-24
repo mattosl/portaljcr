@@ -32,7 +32,7 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	@Column(name = "VLR_TOTAL", precision = 38, scale = 2, nullable = false)
 	private BigDecimal valorTotal;
 	
-	@Column(name = "OBSERVACAO")
+	@Column(name = "OBSERVACAO", length = 300)
 	private String observacao;
 	
 	@Column(name = "QTD")

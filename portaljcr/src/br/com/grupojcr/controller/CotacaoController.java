@@ -53,6 +53,7 @@ public class CotacaoController implements Serializable {
 	private Usuario usuario;
 	
 	private Boolean exibirResultado;
+	private Boolean possuiMinimoCotacao;
 	private String origem;
 	
 	private List<SituacaoSolicitacaoCompra> listaSituacao;
@@ -141,6 +142,12 @@ public class CotacaoController implements Serializable {
 			if(CollectionUtils.isEmpty(getSolicitacaoCompra().getCotacoes())) {
 				throw new ApplicationException("cotacao.nenhuma", FacesMessage.SEVERITY_WARN);
 			}
+			
+			if(getSolicitacaoCompra().getCotacoes().size() < 3) {
+				setPossuiMinimoCotacao(Boolean.FALSE);
+			} else {
+				setPossuiMinimoCotacao(Boolean.TRUE);
+			}
 			return "/pages/solicitacaoCompra/cotacao/editar_concluirCotacao.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -153,6 +160,16 @@ public class CotacaoController implements Serializable {
 	
 	public String concluir() throws ApplicationException {
 		try {
+			
+			if(getSolicitacaoCompra().getCotacoes().size() < 3) {
+				if(TreatString.isBlank(getSolicitacaoCompra().getJustificativa())) {
+					throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+				}
+				if(TreatString.isBlank(getSolicitacaoCompra().getJustificativa())) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a justificativa."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
 			solicitacaoCompraBusiness.concluir(getSolicitacaoCompra());
 			
 			Message.setMessage("cotacao.concluida");
@@ -285,6 +302,7 @@ public class CotacaoController implements Serializable {
 				cotacaoItem.setNaoPossui(Boolean.FALSE);
 				cotacaoItem.setQuantidade(item.getQuantidade());
 				cotacaoItem.setCodigoUnidade(item.getCodigoUnidade());
+				cotacaoItem.setValorTotal(new BigDecimal(0));
 				getCotacao().getItens().add(cotacaoItem);
 			}
 			return "/pages/solicitacaoCompra/cotacao/editar_novaCotacao.xhtml?faces-redirect=true";
@@ -343,6 +361,11 @@ public class CotacaoController implements Serializable {
 					}
 					if(Util.isNullOrZero(item.getQuantidade())) {
 						throw new ApplicationException("message.empty", new String[] {"Itens sem quantidade. Favor inserir a quantidade dos itens."}, FacesMessage.SEVERITY_WARN);
+					}
+					if(TreatString.isNotBlank(item.getObservacao())) {
+						if(item.getObservacao().length() > 300) {
+							throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a observação dos itens."}, FacesMessage.SEVERITY_WARN);
+						}
 					}
 				}
 			}
@@ -429,6 +452,7 @@ public class CotacaoController implements Serializable {
 			item.setQuantidade(1);
 			item.setCodigoUnidade(null);
 			item.setValorTotal(new BigDecimal(0));
+			item.setObservacao("");
 			calcular(item);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
@@ -442,6 +466,9 @@ public class CotacaoController implements Serializable {
 			if(TreatString.isNotBlank(getOrigem())) {
 				if(getOrigem().equals("COTACAO_PENDENTE")) {
 					return "/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml?faces-redirect=true";
+				}
+				if(getOrigem().equals("MINHA_SOLICITACAO")) {
+					return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";
 				}
 			}
 			return "/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml?faces-redirect=true";
@@ -554,6 +581,14 @@ public class CotacaoController implements Serializable {
 
 	public void setListaUnidade(List<UnidadeRM> listaUnidade) {
 		this.listaUnidade = listaUnidade;
+	}
+
+	public Boolean getPossuiMinimoCotacao() {
+		return possuiMinimoCotacao;
+	}
+
+	public void setPossuiMinimoCotacao(Boolean possuiMinimoCotacao) {
+		this.possuiMinimoCotacao = possuiMinimoCotacao;
 	}
 	
 	

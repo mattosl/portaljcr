@@ -26,6 +26,10 @@
 							<p><i class="icon fa fa-caret-right"></i> 1. Possuir todos os produtos/serviços solicitados na cotação e com menor valor.</p>
 							<p><i class="icon fa fa-caret-right"></i> 2. Possuir parcialmente os produtos/serviços e com menor valor.</p>
 						</div>
+						<div class="alert alert-danger alert-dismissible">
+							<h4><i class="icon fa fa-warning"></i> ATENÇÃO!</h4>
+							Você não efetuou <strong>3</strong> cotações, para concluir você deve preencher a <strong>justificativa</strong>.
+						</div>
 						<p:panel toggleable="false" id="painelNovaSolicitacao" styleClass="box box-danger">
 							<div class="box-header with-border">
 		             			<h3 class="box-title">Concluir Cotação</h3>
@@ -50,6 +54,15 @@
 										</ui:repeat>
 									</div>
 								</div>
+								<div class="form-group">
+									<div class="col-sm-12 col-md-12">
+										<label for="justificativa">Justificativa: *</label>
+									</div>
+
+									<div class="col-sm-12 col-md-12">
+										<h:inputTextarea id="justificativa" value="#{cotacaoController.solicitacaoCompra.justificativa}" styleClass="form-control" rows="3" readonly="#{item.naoPossui}" />
+									</div>
+								</div>
 								<div class="box-footer">
 									<div class="col-sm-3 col-md-3 pull-left">
 										<p:commandButton
@@ -68,8 +81,7 @@
 											icon="fa fa-check-square-o"
 											value="Concluir"
 											id="btn_concluir_cotação"
-											process="@this"
-											immediate="true"
+											process="@form"
 											action="#{cotacaoController.concluir()}"
 											ajax="false" />
 									</div>
