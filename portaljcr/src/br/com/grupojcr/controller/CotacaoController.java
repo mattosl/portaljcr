@@ -158,6 +158,63 @@ public class CotacaoController implements Serializable {
 		}
 	}
 	
+	public String liberarCotacao() throws ApplicationException {
+		try {
+			setCotacao(null);
+			if(getSolicitacaoCompra().getCotacoes().size() < 3) {
+				setPossuiMinimoCotacao(Boolean.FALSE);
+			} else {
+				setPossuiMinimoCotacao(Boolean.TRUE);
+			}
+			return "/pages/solicitacaoCompra/cotacao/editar_liberarCompra.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "liberarCotacao" }, e);
+		}
+	}
+	
+	public String liberar() throws ApplicationException {
+		try {
+			Boolean selecionadoPrincipal = Boolean.FALSE;
+			for(Cotacao cotacao : getSolicitacaoCompra().getCotacoes()) {
+				if(cotacao.getCotacaoPrincipal()) {
+					selecionadoPrincipal = Boolean.TRUE;
+					solicitacaoCompraBusiness.liberar(getSolicitacaoCompra());
+					break;
+				}
+			}
+			
+			if(!selecionadoPrincipal) {
+				throw new ApplicationException("cotacao.selecionada", FacesMessage.SEVERITY_WARN);
+			}
+			
+			Message.setMessage("cotacao.aprovada");
+			return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "liberar" }, e);
+		}
+	}
+	
+	public void selecionarCotacao(Cotacao cotacao) throws ApplicationException {
+		try {
+			for(Cotacao cot : getSolicitacaoCompra().getCotacoes()) {
+				if(cot.getId().equals(cotacao.getId())) {
+					cot.setCotacaoPrincipal(Boolean.TRUE);
+				} else {
+					cot.setCotacaoPrincipal(Boolean.FALSE);
+				}
+				
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "selecionarCotacao" }, e);
+		}
+	}
+	
 	public String concluir() throws ApplicationException {
 		try {
 			

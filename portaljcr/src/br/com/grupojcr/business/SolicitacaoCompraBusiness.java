@@ -6,15 +6,18 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.dao.AprovadorCentroCustoDAO;
 import br.com.grupojcr.dao.CotacaoDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraItemDAO;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
+import br.com.grupojcr.entity.AprovadorCentroCusto;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
@@ -39,6 +42,9 @@ public class SolicitacaoCompraBusiness {
 
 	@EJB
 	private CotacaoDAO daoCotacao;
+	
+	@EJB
+	private AprovadorCentroCustoDAO daoAprovadorCentroCusto;
 	
 	@EJB
 	private FluigBusiness fluigBusiness;
@@ -77,7 +83,25 @@ public class SolicitacaoCompraBusiness {
 				prazo.add(Calendar.DAY_OF_MONTH, 1);
 			}
 			solicitacao.setDtPrazo(prazo.getTime());
-			solicitacao.setUsuarioAprovacaoFluig("leonan"); // TODO Buscar aprovadores
+			
+			Integer nivel = 0;
+			Boolean mesmoAprovador = Boolean.FALSE;
+			AprovadorCentroCusto aprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getCodigoCentroCusto(), nivel);
+			if(Util.isNotNull(aprovador)) {
+				while(solicitacao.getUsuarioSolicitante().getUsuario().equals(aprovador.getUsuario())) {
+					AprovadorCentroCusto novoAprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getCodigoCentroCusto(), ++nivel);
+					if(Util.isNull(novoAprovador)) {
+//						solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
+//						solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
+//						mesmoAprovador = Boolean.TRUE; //TODO DESCOMENTAR
+						break;
+					}
+				}
+				solicitacao.setUsuarioAprovacaoFluig(aprovador.getAprovador());
+				
+			} else {
+				throw new ApplicationException("message.empty", new String[] {"Centro de Custo não possui aprovador, solicite o cadastro dos aprovadores."}, FacesMessage.SEVERITY_ERROR);
+			}
 			
 			daoSolicitacaoCompra.incluir(solicitacao);
 			
@@ -101,31 +125,34 @@ public class SolicitacaoCompraBusiness {
 			
 			itens.append("]}");
 			
-			String [][] parametros = new String[][] { 
-				{ "idSolicitacao", solicitacao.getId().toString()}, 
-				{ "empresa", solicitacao.getColigada().getRazaoSocial().toUpperCase()},
-				{"descricaoPadrao", "SOLICITAÇÃO Nº " + solicitacao.getId().toString()},
-				{ "solicitante", solicitacao.getUsuarioSolicitante().getNome().toUpperCase()}, 
-				{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
-				{ "natureza", solicitacao.getCodigoNaturezaOrcamentaria() + " - " + solicitacao.getNaturezaOrcamentaria().toUpperCase()}, 
-				{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
-				{ "itens", itens.toString()} 
-			};
-			
-			// Inicia processo do Fluig
-			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", "leonan", 9, parametros);
-
-			for(int i = 0; i < resultado.length; i++) {
-				for(int j = 0; j < resultado[i].length; j++) {
-					if(resultado[i][j].equals("iProcess")) {
-						try {
-							Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
-							solicitacao.setIdentificadorFluig(idFluig);
-							
-							daoSolicitacaoCompra.alterar(solicitacao);
-							break;
-						} catch(NumberFormatException e) {
-							solicitacao.setIdentificadorFluig(null);
+			if(!mesmoAprovador) {
+				
+				String [][] parametros = new String[][] { 
+					{ "idSolicitacao", solicitacao.getId().toString()}, 
+					{ "empresa", solicitacao.getColigada().getRazaoSocial().toUpperCase()},
+					{"descricaoPadrao", "SOLICITAÇÃO Nº " + solicitacao.getId().toString()},
+					{ "solicitante", solicitacao.getUsuarioSolicitante().getNome().toUpperCase()}, 
+					{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
+					{ "natureza", solicitacao.getCodigoNaturezaOrcamentaria() + " - " + solicitacao.getNaturezaOrcamentaria().toUpperCase()}, 
+					{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
+					{ "itens", itens.toString()} 
+				};
+				
+				// Inicia processo do Fluig
+				String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", aprovador.getAprovador(), 9, parametros);
+	
+				for(int i = 0; i < resultado.length; i++) {
+					for(int j = 0; j < resultado[i].length; j++) {
+						if(resultado[i][j].equals("iProcess")) {
+							try {
+								Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
+								solicitacao.setIdentificadorFluig(idFluig);
+								
+								daoSolicitacaoCompra.alterar(solicitacao);
+								break;
+							} catch(NumberFormatException e) {
+								solicitacao.setIdentificadorFluig(null);
+							}
 						}
 					}
 				}
@@ -286,6 +313,21 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
+	public void liberar(SolicitacaoCompra solicitacao) throws ApplicationException {
+		try {
+			solicitacao.setSituacao(SituacaoSolicitacaoCompra.COTACAO_APROVADA);
+			
+			daoSolicitacaoCompra.alterar(solicitacao);
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "liberar" }, e);
+		}
+	}
+	
 	public void calcularMelhorOpcao(SolicitacaoCompra solicitacao) throws ApplicationException {
 		try {
 			List<Cotacao> cotacoes = daoCotacao.listarCotacoesPorSolicitacao(solicitacao.getId());
@@ -323,11 +365,13 @@ public class SolicitacaoCompraBusiness {
 				}
 				
 				cotacaoMenorValor.setMelhorOpcao(Boolean.TRUE);
+				cotacaoMenorValor.setCotacaoPrincipal(Boolean.TRUE);
 				daoCotacao.alterar(cotacaoMenorValor);
 				
 				for(Cotacao cotacao : cotacoes) {
 					if(!cotacao.getId().equals(cotacaoMenorValor.getId())) {
 						cotacao.setMelhorOpcao(Boolean.FALSE);
+						cotacao.setCotacaoPrincipal(Boolean.FALSE);
 						daoCotacao.alterar(cotacao);
 					}
 				}
@@ -349,11 +393,13 @@ public class SolicitacaoCompraBusiness {
 				}
 				
 				cotacaoMenorValor.setMelhorOpcao(Boolean.TRUE);
+				cotacaoMenorValor.setCotacaoPrincipal(Boolean.TRUE);
 				daoCotacao.alterar(cotacaoMenorValor);
 				
 				for(Cotacao cotacao : cotacoes) {
 					if(!cotacao.getId().equals(cotacaoMenorValor.getId())) {
 						cotacao.setMelhorOpcao(Boolean.FALSE);
+						cotacao.setCotacaoPrincipal(Boolean.FALSE);
 						daoCotacao.alterar(cotacao);
 					}
 				}

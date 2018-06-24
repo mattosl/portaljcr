@@ -222,6 +222,7 @@
 														value="#{cotacaoController.solicitacaoCompra.cotacoes}" 
 														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada.">
 														
+														
 														<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
 															<p:commandLink ajax="true" process="@this" action="#{cotacaoController.exibir()}" >
 																<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
@@ -302,7 +303,7 @@
 											id="btn_liberar_compra"
 											process="@this"
 											immediate="true"
-											action="#{cotacaoController.concluirCotacao()}"
+											action="#{cotacaoController.liberarCotacao()}"
 											ajax="true"
 											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'AGUARDANDO_APRV_COTACAO' and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" />
 									</div>
@@ -314,7 +315,7 @@
 											id="btn_recusar_cotacao"
 											process="@this"
 											immediate="true"
-											action="#{cotacaoController.concluirCotacao()}"
+											action="#{cotacaoController.recusarCotacao()}"
 											ajax="true"
 											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'AGUARDANDO_APRV_COTACAO' and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" />
 									</div>
