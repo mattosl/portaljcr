@@ -32,26 +32,14 @@
 		            		</div>
 		            		<div class="form-horizontal">
 								<div class="box-body">
-									<div class="col-md-12 col-sm-12">
-										<p:outputPanel id="cotacoesPanel">
-											<ui:repeat var="cotacao" value="#{cotacaoController.solicitacaoCompra.cotacoesList}">
-												<p:commandLink actionListener="#{cotacaoController.selecionarCotacao(cotacao)}" update="@form:cotacoesPanel" ajax="true" global="false">
-													<div class="info-box #{cotacao.cotacaoPrincipal ? 'bg-green' : ''}" style="background-color: #f8f8f8;">
-														<span class="info-box-icon #{cotacao.cotacaoPrincipal ? 'bg-green' : 'bg-yellow'}"><i
-															class="fa #{cotacao.cotacaoPrincipal ? 'fa-check' : 'fa-calculator'}"></i></span>
-			
-														<div class="info-box-content">
-															<span class="info-box-text pull-right" style="font-weight: bold;">#{cotacao.melhorOpcao ? 'MELHOR OPÇÃO' : ''}</span>
-															<span class="info-box-text" style="font-size: 20px;">#{cotacao.fornecedor.toUpperCase()}</span> <span
-																class="info-box-number" style="font-size:20px;">#{cotacao.valorTotalFormatado}</span>
-			
-															<span class="progress-description"> Cotado em: #{cotacao.dataCotacaoFormatado} </span>
-														</div>
-														<!-- /.info-box-content -->
-													</div>
-												</p:commandLink>
-											</ui:repeat>
-										</p:outputPanel>
+									<div class="form-group">
+										<div class="col-sm-12 col-md-12">
+											<label for="justificativa">Motivo: *</label>
+										</div>
+	
+										<div class="col-sm-12 col-md-12">
+											<h:inputTextarea id="justificativa" value="#{cotacaoController.solicitacaoCompra.justificativa}" styleClass="form-control" rows="3" readonly="#{item.naoPossui}" />
+										</div>
 									</div>
 								</div>
 								<div class="box-footer">
@@ -72,17 +60,12 @@
 											icon="fa fa-check-square-o"
 											value="Liberar"
 											id="btn_liberar_cotação"
-											process="@this"
+											process="@this, @form:painelNovaSolicitacao"
 											action="#{cotacaoController.liberar()}"
 											ajax="true">
-											<p:confirm header="Confirmação!" message="Tem certeza que deseja liberar a cotação para compra?" icon="fa fa-warning" />
 										</p:commandButton>
 									</div>
 								</div>
-								<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
-							        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
-							        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
-							    </p:confirmDialog>
 							</div>
 						</p:panel>
 					</f:validateBean>

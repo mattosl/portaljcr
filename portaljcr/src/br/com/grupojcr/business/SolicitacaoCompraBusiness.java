@@ -183,6 +183,25 @@ public class SolicitacaoCompraBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "aprovar" }, e);
 		}
 	}
+	
+	public void solicitarCotacoes(Long idSolicitacao) throws ApplicationException {
+		try {
+			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
+			if(Util.isNotNull(solicitacao)) {
+				solicitacao.setSituacao(SituacaoSolicitacaoCompra.EM_COTACAO);
+				solicitacao.setDtCotacao(null);
+				solicitacao.setJustificativa(null);
+				
+				daoSolicitacaoCompra.alterar(solicitacao);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "solicitarCotacoes" }, e);
+		}
+	}
 
 	public void recusar(Long idSolicitacao, String motivo) throws ApplicationException {
 		try {
@@ -315,7 +334,7 @@ public class SolicitacaoCompraBusiness {
 	
 	public void liberar(SolicitacaoCompra solicitacao) throws ApplicationException {
 		try {
-			solicitacao.setSituacao(SituacaoSolicitacaoCompra.COTACAO_APROVADA);
+			solicitacao.setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
 			
 			daoSolicitacaoCompra.alterar(solicitacao);
 			

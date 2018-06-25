@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="gerarOrdemCompra"/>
+    	<ui:param name="activeMenu" value="cotacao"/>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Solicitação de Compra Nº #{cotacaoController.solicitacaoCompra.id}</ui:define>
+		<ui:define name="breadcrumb">
+			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
+	    	<li class="active"><i class="fa fa-dollar"></i> Gerar Ordem de Compra</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="ordemCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelStep" styleClass="box no-padding">
+							<p:steps activeIndex="0">
+								<p:menuitem value="Solicitação de Compra" containerStyleClass="col-sm-3 col-md-3 col-xs-3"  />
+								<p:menuitem value="Fornecedor" containerStyleClass="col-sm-3 col-md-3 col-xs-3" />
+								<p:menuitem value="Produto" containerStyleClass="col-sm-3 col-md-3 col-xs-3" />
+								<p:menuitem value="Resumo" containerStyleClass="col-sm-3 col-md-3 col-xs-3" />
+							</p:steps>
+						</p:panel>
+						<p:panel toggleable="false" id="painelNovaSolicitacao" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Solicitação de Compra</h3>
+		             			<span class="users-list-date pull-right">(*) Campos Obrigatórios.</span>
+		            		</div>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left">
+									<p:commandButton
+										styleClass="btn-vermelho"
+										icon="fa fa-arrow-left"
+										value="Voltar"
+										id="btn_voltar"
+										process="@this"
+										immediate="true"
+										action="#{cotacaoController.voltarEdicao()}"
+										ajax="false" />
+								</div>
+								<div class="col-sm-3 col-md-3 pull-right" >
+									<p:commandButton
+										styleClass="btn-vermelho"
+										icon="fa fa-arrow-right"
+										value="Continuar"
+										id="btn_continuar"
+										process="@form:painelNovaSolicitacao"
+										action="#{cotacaoController.salvarCotacao()}"
+										ajax="true">
+									</p:commandButton>
+								</div>
+							</div>
+	            		</p:panel>
+					</f:validateBean>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

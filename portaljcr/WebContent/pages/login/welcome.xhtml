@@ -50,7 +50,7 @@
 									</div>
 								</p:link>
 							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12">
+							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
 								<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
 									<div class="info-box" style="background-color: #f8f8f8;">
 										<span class="info-box-icon bg-yellow"><i
@@ -64,7 +64,7 @@
 									</div>
 								</p:link>
 							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12">
+							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
 								<p:link href="#" disabled="true">
 									<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
 										<span class="info-box-icon bg-light-blue"><i
@@ -78,7 +78,7 @@
 									</div>
 								</p:link>
 							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12">
+							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
 								<p:link href="#" disabled="true">
 									<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
 										<span class="info-box-icon bg-purple"><i
@@ -92,7 +92,7 @@
 									</div>
 								</p:link>
 							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12">
+							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
 								<p:link href="#" disabled="true">
 									<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
 										<span class="info-box-icon bg-purple" style="background-color: #00acdf !important"><i

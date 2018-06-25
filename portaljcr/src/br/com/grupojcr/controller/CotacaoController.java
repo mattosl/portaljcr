@@ -199,6 +199,22 @@ public class CotacaoController implements Serializable {
 		}
 	}
 	
+	public String solicitarCotacoes() throws ApplicationException {
+		try {
+			
+			solicitacaoCompraBusiness.solicitarCotacoes(getSolicitacaoCompra().getId());
+			
+			Message.setMessage("cotacao.mais.cotacoes");
+			return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "liberar" }, e);
+		}
+	}
+	
 	public void selecionarCotacao(Cotacao cotacao) throws ApplicationException {
 		try {
 			for(Cotacao cot : getSolicitacaoCompra().getCotacoes()) {
@@ -280,6 +296,24 @@ public class CotacaoController implements Serializable {
 		}
 	}
 	
+	public void iniciarProcessoOrdemCompra() throws ApplicationException {
+		try {
+			setFiltro(new FiltroSolicitacaoCompra());
+			getFiltro().setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
+			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
+			getFiltro().setUsuarioLogado(getUsuario());
+			
+			setListaSolicitacao(solicitacaoCompraBusiness.listarSolicitacaoCompraPendente(filtro));
+		
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarProcessoOrdemCompra" }, e);
+		}
+	}
+	
 	public String iniciarCotacao() throws ApplicationException {
 		try {
 			solicitacaoCompraBusiness.iniciarCotacao(getSolicitacaoCompra(), getUsuario());
@@ -299,6 +333,18 @@ public class CotacaoController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarCotacao" }, e);
 		}
 		return "/pages/solicitacaoCompra/cotacao/editar_cotacao.xhtml?faces-redirect=true";
+	}
+	
+	public String iniciarOrdemCompra() throws ApplicationException {
+		try {
+//		} catch (ApplicationException e) {
+//			LOG.info(e.getMessage(), e);
+//			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarCotacao" }, e);
+		}
+		return "/pages/solicitacaoCompra/cotacao/editar_ordemCompra.xhtml?faces-redirect=true";
 	}
 	
 	public String cotar() throws ApplicationException {

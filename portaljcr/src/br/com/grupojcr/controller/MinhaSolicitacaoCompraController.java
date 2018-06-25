@@ -74,6 +74,7 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			setOrigem(null);
 			
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
+			getFiltro().setUsuarioLogado(getUsuario());
 			setListaColigada(new ArrayList<Coligada>());
 			if(Util.isNotNull(getUsuario().getColigadas())) {
 				for(Coligada coligada : getUsuario().getColigadas()) {

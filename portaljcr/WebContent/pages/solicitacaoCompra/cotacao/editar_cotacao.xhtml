@@ -220,7 +220,8 @@
 												<div class="row">
 													<p:dataTable var="cotacao" id="tableCotacao"
 														value="#{cotacaoController.solicitacaoCompra.cotacoes}" 
-														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada.">
+														tableStyle="table-layout: auto; word-break: keep-all;"  emptyMessage="Nenhuma cotação cadastrada."
+														rowStyleClass="#{cotacao.cotacaoPrincipal and cotacaoController.solicitacaoCompra.situacao eq 'LIBERADO_ORDEM_COMPRA' ? 'cotacaoMelhorOpcao' : ''}">
 														
 														
 														<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
@@ -262,10 +263,6 @@
 														</p:column>
 													    
 													</p:dataTable>
-													<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-												        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
-												        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
-												    </p:confirmDialog>
 												</div>
 											</div>
 										</div>
@@ -310,17 +307,23 @@
 									<div class="col-sm-3 col-md-3 pull-right">
 										<p:commandButton
 											styleClass="btn-vermelho-claro"
-											icon="fa fa-times"
-											value="Recusar Cotação"
+											icon="fa fa-plus"
+											value="Cotações"
 											id="btn_recusar_cotacao"
 											process="@this"
 											immediate="true"
-											action="#{cotacaoController.recusarCotacao()}"
+											action="#{cotacaoController.solicitarCotacoes()}"
 											ajax="true"
-											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'AGUARDANDO_APRV_COTACAO' and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" />
+											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'AGUARDANDO_APRV_COTACAO' and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}">
+											<p:confirm header="Confirmação!" message="Deseja solicitar mais cotações para o cotador?" icon="fa fa-warning" />
+										</p:commandButton>
 									</div>
 								</div>
 							</p:panel>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+						        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+						    </p:confirmDialog>
 						</div>
 					</f:validateBean>
 				</h:form>

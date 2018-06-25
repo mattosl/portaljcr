@@ -52,6 +52,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 				sb.append("OR usuarios.id = :usuarioCotacao) ");
 			}
 			
+			if(Util.isNotNull(filtro.getNumeroSolicitacao())) {
+				sb.append("AND solicitacao.id = :numeroSolicitacao ");
+			}
+			
 			if(Util.isNotNull(filtro.getSituacaoIgnorar())) {
 				sb.append("AND solicitacao.situacao NOT IN :situacaoIgnorar ");
 			}
@@ -221,7 +225,6 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			if(Util.isNotNull(filtro.getSituacao())) {
 				sb.append("AND solicitacao.situacao = :situacao ");
 			}
-			
 			
 			sb.append("ORDER BY solicitacao.dtSolicitacao DESC ");
 			

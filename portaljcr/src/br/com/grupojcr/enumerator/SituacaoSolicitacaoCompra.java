@@ -8,10 +8,9 @@ public enum SituacaoSolicitacaoCompra {
 	APROVADA_COTACAO(1, "Aprovada para Cotação"),
 	EM_COTACAO(2, "Em Cotação"),
 	AGUARDANDO_APRV_COTACAO(3, "Cotação para Aprovação"),
-	COTACAO_APROVADA(4, "Cotação Aprovada"),
-	COTACAO_RECUSADA(5, "Cotação Recusada"),
-	FINALIZADA(6, "Finalizada"),
-	CANCELADA(7, "Cancelada");
+	LIBERADO_ORDEM_COMPRA(4, "Liberado Ordem de Compra"),
+	FINALIZADA(5, "Finalizada"),
+	CANCELADA(6, "Cancelada");
 	
 	private Integer id;
 	private String descricao;
