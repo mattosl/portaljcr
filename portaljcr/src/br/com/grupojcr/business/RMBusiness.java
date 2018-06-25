@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
 
@@ -13,6 +14,8 @@ import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.exception.ApplicationException;
+import br.com.totvs.www.br.WsDataServerLocator;
+import br.com.totvs.www.br.WsDataServerSoapStub;
 
 @Stateless
 public class RMBusiness {
@@ -69,6 +72,40 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUnidades" }, e);
+		}
+	}
+	
+	private WsDataServerSoapStub obterProxyWsDataServerSoapStub() throws ServiceException {
+		try {
+			WsDataServerLocator locator = new WsDataServerLocator();
+			WsDataServerSoapStub cliente = (WsDataServerSoapStub) locator
+					.getwsDataServerSoap();
+			return cliente;
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw e;
+		}
+	}
+	
+	public String readRecordAuth(String dataServerName, String primaryKey, String contexto, String usuario, String senha) throws ApplicationException {
+		try {
+			WsDataServerSoapStub cliente = obterProxyWsDataServerSoapStub();
+			
+			return cliente.readRecordAuth(dataServerName, primaryKey, contexto, usuario, senha);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "readRecordAuth" }, e);
+		}
+	}
+	
+	public String saveRecordAuth(String dataServerName, String xml, String primaryKey, String contexto, String usuario, String senha) throws ApplicationException {
+		try {
+			WsDataServerSoapStub cliente = obterProxyWsDataServerSoapStub();
+			
+			return cliente.saveRecordAuth(dataServerName, xml, contexto, usuario, senha);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "saveRecordAuth" }, e);
 		}
 	}
 

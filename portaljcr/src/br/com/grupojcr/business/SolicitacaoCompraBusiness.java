@@ -1,5 +1,6 @@
 package br.com.grupojcr.business;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -23,6 +26,7 @@ import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.entity.xml.TMOVXML;
 import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.util.Util;
@@ -430,6 +434,41 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcularMelhorOpcao" }, e);
+		}
+	}
+	
+	public String montarXML(SolicitacaoCompra solicitacao) throws ApplicationException {
+		try {
+			StringBuilder xml = new StringBuilder();
+			TMOVXML tmov = new TMOVXML();
+			
+			tmov.setCODCOLIGADA("7");
+			tmov.setCODCFO("00000003");
+			tmov.setCODTMV("1.1.04");
+			tmov.setCODCPG("42");
+				tmov.setCODCFOAUX("00000003");
+				tmov.setCODCCUSTO("001.001.013");
+				tmov.preencherValores("667,00");
+				tmov.preencherUsuario("leonan");
+				tmov.setCODCOLIGADA1("7");
+				tmov.setHISTORICOLONGO("COMPRA DE TONERS DR TAMAR");
+			
+			
+			JAXBContext context = JAXBContext.newInstance(TMOVXML.class);
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			StringWriter sw = new StringWriter();
+			marshaller.marshal(tmov, sw);
+			xml.append(sw.toString());
+			
+			return xml.toString();
+			
+//		} catch (ApplicationException e) {
+//			LOG.info(e.getMessage(), e);
+//			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "montarXML" }, e);
 		}
 	}
 	

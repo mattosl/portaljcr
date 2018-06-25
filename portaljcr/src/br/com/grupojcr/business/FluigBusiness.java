@@ -27,7 +27,7 @@ public class FluigBusiness {
 			throw e;
 		}
 	}
-
+	
 	public String[][] iniciarProcessoFluig(String nomeProcesso, String usrAprova, Integer idAtividade, String[][] parametros) throws ApplicationException {
 		try {
 			ECMWorkflowEngineServiceServiceSoapBindingStub cliente = obterProxyECMWorkFlowEngineService();

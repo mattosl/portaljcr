@@ -22,12 +22,13 @@
 				<h:form id="ordemCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
 						<p:panel toggleable="false" id="painelStep" styleClass="box no-padding">
-							<p:steps activeIndex="0">
-								<p:menuitem value="Solicitação de Compra" containerStyleClass="col-sm-3 col-md-3 col-xs-3"  />
-								<p:menuitem value="Fornecedor" containerStyleClass="col-sm-3 col-md-3 col-xs-3" />
-								<p:menuitem value="Produto" containerStyleClass="col-sm-3 col-md-3 col-xs-3" />
-								<p:menuitem value="Resumo" containerStyleClass="col-sm-3 col-md-3 col-xs-3" />
-							</p:steps>
+							 <ul class="progress-indicator">
+								<li class="completed"><span class="bubble"></span> Step 1.</li>
+								<li class="completed"><span class="bubble"></span> Step 2.</li>
+								<li><span class="bubble"></span> Step 3.</li>
+								<li><span class="bubble"></span> Step 4.</li>
+								<li><span class="bubble"></span> Step 5.</li>
+							</ul>
 						</p:panel>
 						<p:panel toggleable="false" id="painelNovaSolicitacao" styleClass="box box-danger">
 							<div class="box-header with-border">

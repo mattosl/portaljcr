@@ -337,9 +337,11 @@ public class CotacaoController implements Serializable {
 	
 	public String iniciarOrdemCompra() throws ApplicationException {
 		try {
-//		} catch (ApplicationException e) {
-//			LOG.info(e.getMessage(), e);
-//			throw e;
+			solicitacaoCompraBusiness.montarXML(getSolicitacaoCompra());
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarCotacao" }, e);
