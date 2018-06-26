@@ -1,25 +1,35 @@
 package br.com.grupojcr.entity.xml;
 
+import java.util.Calendar;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import br.com.grupojcr.util.TreatDate;
+
 @XmlRootElement(name="TNFE")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TNFEXML {
 	
-	public TNFEXML() {
+	public TNFEXML(String codColigada, String usuario) {
+		this.CODCOLIGADA = codColigada;
+		this.IDMOV = "-1";
 		this.VALORSERVICO = "0,00";
 		this.DEDUCAOSERVICO = "0,00";
 		this.ALIQUOTAISS = "0,00";
-		this.VALORSERVICO = "0,00";
-		this.VALORSERVICO = "0,00";
-		this.VALORSERVICO = "0,00";
-		this.VALORSERVICO = "0,00";
-		this.VALORSERVICO = "0,00";
+		this.ISSRETIDO = "0";
+		this.VALORISS = "0,00";
+		this.VALORCREDITOIPTU = "0,00";
+		this.BASEDECALCULO = "0,00";
+		this.EDITADO = "0";
+		this.RECCREATEDBY = usuario;
+		this.RECCREATEDON = TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", Calendar.getInstance().getTime());
+		this.RECMODIFIEDBY = usuario;
+		this.RECMODIFIEDON = TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", Calendar.getInstance().getTime());
 	}
-
+	
 	@XmlElement(name = "CODCOLIGADA")
 	private String CODCOLIGADA;
 	@XmlElement(name = "IDMOV")
@@ -159,11 +169,6 @@ public class TNFEXML {
 
 	public void setRECMODIFIEDON(String rECMODIFIEDON) {
 		RECMODIFIEDON = rECMODIFIEDON;
-	}
-	
-	public void preencherUsuario(String usuario) {
-		this.RECCREATEDBY = usuario;
-		this.RECMODIFIEDBY = usuario;
 	}
 	
 }
