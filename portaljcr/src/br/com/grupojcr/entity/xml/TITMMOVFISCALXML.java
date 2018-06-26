@@ -9,18 +9,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.grupojcr.util.TreatDate;
 
-@XmlRootElement(name="TMOVFISCAL")
+@XmlRootElement(name="TITMMOVFISCAL")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TMOVFISCALXML {
+public class TITMMOVFISCALXML {
 	
-	public TMOVFISCALXML(){}
+	public TITMMOVFISCALXML() {}
 	
-	public TMOVFISCALXML(String codColigada, String usuario) {
+	public TITMMOVFISCALXML(String codColigada, String sequencial, String usuario) {
 		this.CODCOLIGADA = codColigada;
 		this.IDMOV = "-1";
-		this.CONTRIBUINTECREDENCIADO = "0";
-		this.OPERACAOCONSUMIDORFINAL = "0";
-		this.OPERACAOPRESENCIAL = "0";
+		this.NSEQITMMOV = sequencial;
+		this.QTDECONTRATADA = "0,00";
+		this.VLRTOTTRIB = "0,00";
 		this.RECCREATEDBY = usuario;
 		this.RECCREATEDON = TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", Calendar.getInstance().getTime());
 		this.RECMODIFIEDBY = usuario;
@@ -31,12 +31,12 @@ public class TMOVFISCALXML {
 	private String CODCOLIGADA;
 	@XmlElement(name = "IDMOV")
 	private String IDMOV;
-	@XmlElement(name = "CONTRIBUINTECREDENCIADO")
-	private String CONTRIBUINTECREDENCIADO;
-	@XmlElement(name = "OPERACAOCONSUMIDORFINAL")
-	private String OPERACAOCONSUMIDORFINAL;
-	@XmlElement(name = "OPERACAOPRESENCIAL")
-	private String OPERACAOPRESENCIAL;
+	@XmlElement(name = "NSEQITMMOV")
+	private String NSEQITMMOV;
+	@XmlElement(name = "QTDECONTRATADA")
+	private String QTDECONTRATADA;
+	@XmlElement(name = "VLRTOTTRIB")
+	private String VLRTOTTRIB;
 	@XmlElement(name = "RECCREATEDBY")
 	private String RECCREATEDBY;
 	@XmlElement(name = "RECCREATEDON")
@@ -45,6 +45,7 @@ public class TMOVFISCALXML {
 	private String RECMODIFIEDBY;
 	@XmlElement(name = "RECMODIFIEDON")
 	private String RECMODIFIEDON;
+	
 	public String getCODCOLIGADA() {
 		return CODCOLIGADA;
 	}
@@ -57,23 +58,23 @@ public class TMOVFISCALXML {
 	public void setIDMOV(String iDMOV) {
 		IDMOV = iDMOV;
 	}
-	public String getCONTRIBUINTECREDENCIADO() {
-		return CONTRIBUINTECREDENCIADO;
+	public String getNSEQITMMOV() {
+		return NSEQITMMOV;
 	}
-	public void setCONTRIBUINTECREDENCIADO(String cONTRIBUINTECREDENCIADO) {
-		CONTRIBUINTECREDENCIADO = cONTRIBUINTECREDENCIADO;
+	public void setNSEQITMMOV(String nSEQITMMOV) {
+		NSEQITMMOV = nSEQITMMOV;
 	}
-	public String getOPERACAOCONSUMIDORFINAL() {
-		return OPERACAOCONSUMIDORFINAL;
+	public String getQTDECONTRATADA() {
+		return QTDECONTRATADA;
 	}
-	public void setOPERACAOCONSUMIDORFINAL(String oPERACAOCONSUMIDORFINAL) {
-		OPERACAOCONSUMIDORFINAL = oPERACAOCONSUMIDORFINAL;
+	public void setQTDECONTRATADA(String qTDECONTRATADA) {
+		QTDECONTRATADA = qTDECONTRATADA;
 	}
-	public String getOPERACAOPRESENCIAL() {
-		return OPERACAOPRESENCIAL;
+	public String getVLRTOTTRIB() {
+		return VLRTOTTRIB;
 	}
-	public void setOPERACAOPRESENCIAL(String oPERACAOPRESENCIAL) {
-		OPERACAOPRESENCIAL = oPERACAOPRESENCIAL;
+	public void setVLRTOTTRIB(String vLRTOTTRIB) {
+		VLRTOTTRIB = vLRTOTTRIB;
 	}
 	public String getRECCREATEDBY() {
 		return RECCREATEDBY;
@@ -99,6 +100,5 @@ public class TMOVFISCALXML {
 	public void setRECMODIFIEDON(String rECMODIFIEDON) {
 		RECMODIFIEDON = rECMODIFIEDON;
 	}
-	
 	
 }

@@ -47,12 +47,6 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@Column(name = "CENTRO_CUSTO", length = 100, nullable = false)
 	private String centroCusto;
 	
-	@Column(name = "CODNATORCAMENTO", length = 50, nullable = false)
-	private String codigoNaturezaOrcamentaria;
-	
-	@Column(name = "NATUREZA_ORC", length = 100 , nullable = false)
-	private String naturezaOrcamentaria;
-	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "MODALIDADE", nullable = false)
 	private Modalidade modalidade;
@@ -170,22 +164,6 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 
 	public void setCentroCusto(String centroCusto) {
 		this.centroCusto = centroCusto;
-	}
-
-	public String getCodigoNaturezaOrcamentaria() {
-		return codigoNaturezaOrcamentaria;
-	}
-
-	public void setCodigoNaturezaOrcamentaria(String codigoNaturezaOrcamentaria) {
-		this.codigoNaturezaOrcamentaria = codigoNaturezaOrcamentaria;
-	}
-
-	public String getNaturezaOrcamentaria() {
-		return naturezaOrcamentaria;
-	}
-
-	public void setNaturezaOrcamentaria(String naturezaOrcamentaria) {
-		this.naturezaOrcamentaria = naturezaOrcamentaria;
 	}
 
 	public Modalidade getModalidade() {

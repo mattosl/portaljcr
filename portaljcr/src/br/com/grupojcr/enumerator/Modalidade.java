@@ -2,8 +2,7 @@ package br.com.grupojcr.enumerator;
 
 public enum Modalidade {
 	MATERIAL(0, "Material"),
-	SERVICO(1, "Serviço"),
-	CONTRATO(2, "Contrato");
+	SERVICO(1, "Serviço");
 	
 	private Integer id;
 	private String descricao;

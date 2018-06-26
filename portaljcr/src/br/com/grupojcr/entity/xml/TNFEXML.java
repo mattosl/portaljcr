@@ -13,6 +13,8 @@ import br.com.grupojcr.util.TreatDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TNFEXML {
 	
+	public TNFEXML(){}
+	
 	public TNFEXML(String codColigada, String usuario) {
 		this.CODCOLIGADA = codColigada;
 		this.IDMOV = "-1";

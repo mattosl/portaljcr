@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.rm.CentroCustoRM;
+import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
@@ -144,6 +145,70 @@ public class RMDAO {
 			}
 		}
 		return listaCentroCusto;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<FornecedorRM> listarFornecedorPorNome(String nome) throws ApplicationException {
+		/**
+		 * SELECT CODCFO, NOMEFANTASIA, CGCCFO FROM FCFO
+		 * WHERE CODCOLIGADA = 0
+		 * AND NOMEFANTASIA LIKE ?
+		 * ORDER BY NOMEFANTASIA ASC
+		 * OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY
+		 *
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<FornecedorRM> listaFornecedor = new ArrayList<FornecedorRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODCFO, NOMEFANTASIA, CGCCFO FROM FCFO ")
+			.append("WHERE CODCOLIGADA = 0 ")
+			.append("AND NOMEFANTASIA LIKE ? ")
+			.append("ORDER BY NOMEFANTASIA ASC ")
+			.append("OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			
+			ps.setString(1,  "%" + nome + "%");
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				FornecedorRM fornecedor = new FornecedorRM();
+				fornecedor.setCodigoFornecedor(set.getString("CODCFO"));
+				fornecedor.setFornecedor(set.getString("NOMEFANTASIA"));
+				fornecedor.setCnpjCpf(set.getString("CGCCFO"));
+				
+				listaFornecedor.add(fornecedor);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarFornecedorPorNome" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaFornecedor;
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

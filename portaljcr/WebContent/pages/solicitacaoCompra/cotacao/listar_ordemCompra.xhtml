@@ -13,7 +13,7 @@
     	<ui:param name="activeMenu" value="cotacao"/>
     	
     	<f:metadata>
-			<f:viewAction action="#{cotacaoController.iniciarProcessoOrdemCompra()}" />
+			<f:viewAction action="#{gerarOrdemCompraController.iniciarProcesso()}" />
 		</f:metadata>
     	
     	<ui:define name="pageTitle"><i class="fa fa-dollar fa-1x cor-padrao"></i> Gerar Ordem de Compra</ui:define>
@@ -31,9 +31,9 @@
 						<div class="form-horizontal">
 							<div class="box-body table-responsive no-padding">
 								<p:dataTable var="solicitacao" id="tableSolicitacoes" widgetVar="widgetTabelaSolicitacoes"
-									value="#{cotacaoController.listaSolicitacao}" 
+									value="#{gerarOrdemCompraController.listaSolicitacao}" 
 									tableStyle="table-layout: auto; word-break: keep-all;"
-									rendered="#{cotacaoController.listaSolicitacao.size() > 0}" rowStyleClass="#{cotacaoController.validarVencimento(solicitacao)}">
+									rendered="#{gerarOrdemCompraController.listaSolicitacao.size() > 0}">
 									
 								  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
 								        <h:outputText value="#{solicitacao.id}" />
@@ -64,15 +64,15 @@
 								    </p:column>
 								    
 								    <p:column headerText="Gerar Ordem de Compra" style="text-align: center;font-size:12px;" width="15%">
-										<p:commandLink ajax="true" process="@this" action="#{cotacaoController.iniciarOrdemCompra()}" >
+										<p:commandLink ajax="true" process="@this" action="#{gerarOrdemCompraController.iniciarOrdemCompra()}" >
 											<h4><h:outputText value="" title="Gerar Ordem de Compra" styleClass="fa fa-list-alt" /></h4>
-											<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
+											<f:setPropertyActionListener value="#{solicitacao}" target="#{gerarOrdemCompraController.solicitacaoCompra}" />
 										</p:commandLink>
 									</p:column>
 								</p:dataTable>
 							</div>
 						</div>
-						<div class="form-group" style="text-align:center;" jsf:rendered="#{cotacaoController.listaSolicitacao.size() == 0}">
+						<div class="form-group" style="text-align:center;" jsf:rendered="#{gerarOrdemCompraController.listaSolicitacao.size() == 0}">
 							<br />
 							<label>Nenhuma solicitação pendente para gerar ordem de compra.</label>
 						</div>

@@ -23,13 +23,23 @@ import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.AprovadorCentroCusto;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
+import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.entity.xml.TCTRCMOVXML;
+import br.com.grupojcr.entity.xml.TITMMOVCOMPLXML;
+import br.com.grupojcr.entity.xml.TITMMOVFISCALXML;
+import br.com.grupojcr.entity.xml.TITMMOVRATCCUXML;
+import br.com.grupojcr.entity.xml.TITMMOVXML;
+import br.com.grupojcr.entity.xml.TMOVCOMPLXML;
 import br.com.grupojcr.entity.xml.TMOVFISCALXML;
 import br.com.grupojcr.entity.xml.TMOVRATCCUXML;
+import br.com.grupojcr.entity.xml.TMOVTRANSPXML;
 import br.com.grupojcr.entity.xml.TMOVXML;
 import br.com.grupojcr.entity.xml.TNFEXML;
+import br.com.grupojcr.entity.xml.TTRBITMMOVXML;
+import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.util.Util;
@@ -62,8 +72,6 @@ public class SolicitacaoCompraBusiness {
 			solicitacao.setSituacao(SituacaoSolicitacaoCompra.AGUARDANDO_APRV);
 			solicitacao.setCodigoCentroCusto(dto.getCentroCusto().getCodigoCentroCusto());
 			solicitacao.setCentroCusto(dto.getCentroCusto().getCentroCusto());
-			solicitacao.setCodigoNaturezaOrcamentaria(dto.getNaturezaOrcamentaria().getCodigoNaturezaOrcamentaria());
-			solicitacao.setNaturezaOrcamentaria(dto.getNaturezaOrcamentaria().getNaturezaOrcamentaria());
 			solicitacao.setModalidade(dto.getModalidade());
 			solicitacao.setPrioridade(dto.getPrioridade());
 			solicitacao.setMotivoCompra(dto.getMotivoCompra());
@@ -140,7 +148,6 @@ public class SolicitacaoCompraBusiness {
 					{"descricaoPadrao", "SOLICITAÇÃO Nº " + solicitacao.getId().toString()},
 					{ "solicitante", solicitacao.getUsuarioSolicitante().getNome().toUpperCase()}, 
 					{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
-					{ "natureza", solicitacao.getCodigoNaturezaOrcamentaria() + " - " + solicitacao.getNaturezaOrcamentaria().toUpperCase()}, 
 					{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
 					{ "itens", itens.toString()} 
 				};
@@ -440,7 +447,7 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
-	public String montarXML(SolicitacaoCompra solicitacao) throws ApplicationException {
+	public String montarXML(OrdemCompra ordemCompra) throws ApplicationException {
 		try {
 			StringBuilder xml = new StringBuilder();
 			StringWriter sw = new StringWriter();
@@ -449,16 +456,23 @@ public class SolicitacaoCompraBusiness {
 			
 			TMOVXML tmov = new TMOVXML();
 			
-			tmov.setCODCOLIGADA("7");
+			tmov.setCODCOLIGADA(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString());
 			tmov.setCODCFO("00000003");
-			tmov.setCODTMV("1.1.04");
+			
+			if(ordemCompra.getSolicitacaoCompra().getModalidade().equals(Modalidade.MATERIAL)) {
+				tmov.setCODTMV("1.1.04");
+			} else if(ordemCompra.getSolicitacaoCompra().getModalidade().equals(Modalidade.SERVICO)) {
+				tmov.setCODTMV("1.1.17");
+			} else {
+				tmov.setCODTMV("1.1.04");
+			}
 			tmov.setCODCPG("42");
 			tmov.setCODCFOAUX("00000003");
-			tmov.setCODCCUSTO("001.001.013");
+			tmov.setCODCCUSTO(ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto());
 			tmov.preencherValores("667,00");
 			tmov.preencherUsuario("leonan");
-			tmov.setCODCOLIGADA1("7");
-			tmov.setHISTORICOLONGO("COMPRA DE TONERS DR TAMAR");
+			tmov.setCODCOLIGADA1(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString());
+			tmov.setHISTORICOLONGO(ordemCompra.getSolicitacaoCompra().getMotivoCompra());
 			
 			
 			context = JAXBContext.newInstance(TMOVXML.class);
@@ -467,31 +481,174 @@ public class SolicitacaoCompraBusiness {
 			marshaller.marshal(tmov, sw);
 			xml.append(sw.toString());
 			
-			TNFEXML tnfe = new TNFEXML("7", "leonan");
+			TNFEXML tnfe = new TNFEXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), "leonan");
 			
+			sw = new StringWriter();
 			context = JAXBContext.newInstance(TNFEXML.class);
 			marshaller = context.createMarshaller();
 			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
 			marshaller.marshal(tnfe, sw);
 			xml.append(sw.toString());
 
-			TMOVFISCALXML tmovfiscal = new TMOVFISCALXML("7", "leonan");
+			TMOVFISCALXML tmovfiscal = new TMOVFISCALXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), "leonan");
 			
+			sw = new StringWriter();
 			context = JAXBContext.newInstance(TMOVFISCALXML.class);
 			marshaller = context.createMarshaller();
 			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
 			marshaller.marshal(tmovfiscal, sw);
 			xml.append(sw.toString());
 			
-			TMOVRATCCUXML tmovratccu = new TMOVRATCCUXML("7", "001.001.013", "Tecnologia da Informação", "667,00");
+			TMOVRATCCUXML tmovratccu = new TMOVRATCCUXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto(), ordemCompra.getSolicitacaoCompra().getCentroCusto(), "667,00");
 			
+			sw = new StringWriter();
 			context = JAXBContext.newInstance(TMOVRATCCUXML.class);
 			marshaller = context.createMarshaller();
 			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
 			marshaller.marshal(tmovratccu, sw);
 			xml.append(sw.toString());
 			
-			return xml.toString();
+			TITMMOVXML titmmov = new TITMMOVXML("7", "1", "3660", "02.001.0015", "TONERS/CARTUCHOS", "0137",
+					"2,00", "113,00", "226,00", "UN", "001.001.013", "2.226", "COMPRA DE TONERS  951XL COR MAGENTA", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmov, sw);
+			xml.append(sw.toString());
+
+			TITMMOVXML titmmov2 = new TITMMOVXML("7", "2", "3660", "02.001.0015", "TONERS/CARTUCHOS", "0137",
+					"3,00", "147,00", "441,00", "UN", "001.001.013", "2.226", "950 XL COR PRETA", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmov2, sw);
+			xml.append(sw.toString());
+			
+			TITMMOVRATCCUXML titmmovratccu = new TITMMOVRATCCUXML("7", "1", "001.001.013", "Tecnologia da Informação", "226,00");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVRATCCUXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmovratccu, sw);
+			xml.append(sw.toString());
+			
+			TITMMOVRATCCUXML titmmovratccu2 = new TITMMOVRATCCUXML("7", "2", "001.001.013", "Tecnologia da Informação", "441,00");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVRATCCUXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmovratccu2, sw);
+			xml.append(sw.toString());
+			
+			TMOVCOMPLXML tmovcompl = new TMOVCOMPLXML("7", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TMOVCOMPLXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(tmovcompl, sw);
+			xml.append(sw.toString());
+			
+			TITMMOVCOMPLXML titmmovcmpl = new TITMMOVCOMPLXML("7", "1", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVCOMPLXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmovcmpl, sw);
+			xml.append(sw.toString());
+			
+			TITMMOVCOMPLXML titmmovcmpl2 = new TITMMOVCOMPLXML("7", "2", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVCOMPLXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmovcmpl2, sw);
+			xml.append(sw.toString());
+			
+			TMOVTRANSPXML tmovtransp = new TMOVTRANSPXML("7", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TMOVTRANSPXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(tmovtransp, sw);
+			xml.append(sw.toString());
+			
+			TCTRCMOVXML tctrcmov = new TCTRCMOVXML("7", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TCTRCMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(tctrcmov, sw);
+			xml.append(sw.toString());
+
+			TTRBITMMOVXML ttrbitmmov = new TTRBITMMOVXML("7", "1", "ICMS", "226,00", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TTRBITMMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(ttrbitmmov, sw);
+			xml.append(sw.toString());
+			
+			TTRBITMMOVXML ttrbitmmov2 = new TTRBITMMOVXML("7", "1", "IPI", "226,00", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TTRBITMMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(ttrbitmmov2, sw);
+			xml.append(sw.toString());
+			
+			TTRBITMMOVXML ttrbitmmov3 = new TTRBITMMOVXML("7", "2", "ICMS", "441,00", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TTRBITMMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(ttrbitmmov3, sw);
+			xml.append(sw.toString());
+			
+			TTRBITMMOVXML ttrbitmmov4 = new TTRBITMMOVXML("7", "2", "IPI", "441,00", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TTRBITMMOVXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(ttrbitmmov4, sw);
+			xml.append(sw.toString());
+			
+			TITMMOVFISCALXML titmmovfiscal = new TITMMOVFISCALXML("7", "1", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVFISCALXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmovfiscal, sw);
+			xml.append(sw.toString());
+
+			TITMMOVFISCALXML titmmovfiscal2 = new TITMMOVFISCALXML("7", "2", "leonan");
+			
+			sw = new StringWriter();
+			context = JAXBContext.newInstance(TITMMOVFISCALXML.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+			marshaller.marshal(titmmovfiscal2, sw);
+			xml.append(sw.toString());
+			
+			
+			String xmlCompleto = "<MovMovimento>" + xml.toString() + "</MovMovimento>";
+			System.out.println(xmlCompleto);
+			return xmlCompleto;
 			
 //		} catch (ApplicationException e) {
 //			LOG.info(e.getMessage(), e);

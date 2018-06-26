@@ -9,18 +9,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.grupojcr.util.TreatDate;
 
-@XmlRootElement(name="TMOVFISCAL")
+@XmlRootElement(name="TCTRCMOV")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TMOVFISCALXML {
+public class TCTRCMOVXML {
 	
-	public TMOVFISCALXML(){}
+	public TCTRCMOVXML() {}
 	
-	public TMOVFISCALXML(String codColigada, String usuario) {
+	public TCTRCMOVXML(String codColigada, String usuario) {
 		this.CODCOLIGADA = codColigada;
 		this.IDMOV = "-1";
-		this.CONTRIBUINTECREDENCIADO = "0";
-		this.OPERACAOCONSUMIDORFINAL = "0";
-		this.OPERACAOPRESENCIAL = "0";
+		this.VALORNOTAS = "0,00";
+		this.VALORRATEADO = "0,00";
+		this.QUANTIDADENOTAS = "0";
+		this.QUANTIDADERATEADAS = "0";
 		this.RECCREATEDBY = usuario;
 		this.RECCREATEDON = TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", Calendar.getInstance().getTime());
 		this.RECMODIFIEDBY = usuario;
@@ -31,12 +32,14 @@ public class TMOVFISCALXML {
 	private String CODCOLIGADA;
 	@XmlElement(name = "IDMOV")
 	private String IDMOV;
-	@XmlElement(name = "CONTRIBUINTECREDENCIADO")
-	private String CONTRIBUINTECREDENCIADO;
-	@XmlElement(name = "OPERACAOCONSUMIDORFINAL")
-	private String OPERACAOCONSUMIDORFINAL;
-	@XmlElement(name = "OPERACAOPRESENCIAL")
-	private String OPERACAOPRESENCIAL;
+	@XmlElement(name = "VALORNOTAS")
+	private String VALORNOTAS;
+	@XmlElement(name = "VALORRATEADO")
+	private String VALORRATEADO;
+	@XmlElement(name = "QUANTIDADENOTAS")
+	private String QUANTIDADENOTAS;
+	@XmlElement(name = "QUANTIDADERATEADAS")
+	private String QUANTIDADERATEADAS;
 	@XmlElement(name = "RECCREATEDBY")
 	private String RECCREATEDBY;
 	@XmlElement(name = "RECCREATEDON")
@@ -45,6 +48,7 @@ public class TMOVFISCALXML {
 	private String RECMODIFIEDBY;
 	@XmlElement(name = "RECMODIFIEDON")
 	private String RECMODIFIEDON;
+	
 	public String getCODCOLIGADA() {
 		return CODCOLIGADA;
 	}
@@ -57,23 +61,29 @@ public class TMOVFISCALXML {
 	public void setIDMOV(String iDMOV) {
 		IDMOV = iDMOV;
 	}
-	public String getCONTRIBUINTECREDENCIADO() {
-		return CONTRIBUINTECREDENCIADO;
+	public String getVALORNOTAS() {
+		return VALORNOTAS;
 	}
-	public void setCONTRIBUINTECREDENCIADO(String cONTRIBUINTECREDENCIADO) {
-		CONTRIBUINTECREDENCIADO = cONTRIBUINTECREDENCIADO;
+	public void setVALORNOTAS(String vALORNOTAS) {
+		VALORNOTAS = vALORNOTAS;
 	}
-	public String getOPERACAOCONSUMIDORFINAL() {
-		return OPERACAOCONSUMIDORFINAL;
+	public String getVALORRATEADO() {
+		return VALORRATEADO;
 	}
-	public void setOPERACAOCONSUMIDORFINAL(String oPERACAOCONSUMIDORFINAL) {
-		OPERACAOCONSUMIDORFINAL = oPERACAOCONSUMIDORFINAL;
+	public void setVALORRATEADO(String vALORRATEADO) {
+		VALORRATEADO = vALORRATEADO;
 	}
-	public String getOPERACAOPRESENCIAL() {
-		return OPERACAOPRESENCIAL;
+	public String getQUANTIDADENOTAS() {
+		return QUANTIDADENOTAS;
 	}
-	public void setOPERACAOPRESENCIAL(String oPERACAOPRESENCIAL) {
-		OPERACAOPRESENCIAL = oPERACAOPRESENCIAL;
+	public void setQUANTIDADENOTAS(String qUANTIDADENOTAS) {
+		QUANTIDADENOTAS = qUANTIDADENOTAS;
+	}
+	public String getQUANTIDADERATEADAS() {
+		return QUANTIDADERATEADAS;
+	}
+	public void setQUANTIDADERATEADAS(String qUANTIDADERATEADAS) {
+		QUANTIDADERATEADAS = qUANTIDADERATEADAS;
 	}
 	public String getRECCREATEDBY() {
 		return RECCREATEDBY;

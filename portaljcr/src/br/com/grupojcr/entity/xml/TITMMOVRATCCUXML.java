@@ -5,15 +5,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="TMOVRATCCU")
+@XmlRootElement(name="TITMMOVRATCCU")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TMOVRATCCUXML {
+public class TITMMOVRATCCUXML {
 	
-	public TMOVRATCCUXML(){}
+	public TITMMOVRATCCUXML(){}
 	
-	public TMOVRATCCUXML(String codColigada, String codCentroCusto, String centroCusto, String valor) {
+	public TITMMOVRATCCUXML(String codColigada, String sequencial, String codCentroCusto, String centroCusto, String valor) {
 		this.CODCOLIGADA = codColigada;
 		this.IDMOV = "-1";
+		this.NSEQITMMOV = sequencial;
 		this.CODCCUSTO = codCentroCusto;
 		this.NOME = centroCusto;
 		this.VALOR = valor;
@@ -24,6 +25,8 @@ public class TMOVRATCCUXML {
 	private String CODCOLIGADA;
 	@XmlElement(name = "IDMOV")
 	private String IDMOV;
+	@XmlElement(name = "NSEQITMMOV")
+	private String NSEQITMMOV;
 	@XmlElement(name = "CODCCUSTO")
 	private String CODCCUSTO;
 	@XmlElement(name = "NOME")
@@ -44,6 +47,12 @@ public class TMOVRATCCUXML {
 	}
 	public void setIDMOV(String iDMOV) {
 		IDMOV = iDMOV;
+	}
+	public String getNSEQITMMOV() {
+		return NSEQITMMOV;
+	}
+	public void setNSEQITMMOV(String nSEQITMMOV) {
+		NSEQITMMOV = nSEQITMMOV;
 	}
 	public String getCODCCUSTO() {
 		return CODCCUSTO;
@@ -69,5 +78,6 @@ public class TMOVRATCCUXML {
 	public void setIDMOVRATCCU(String iDMOVRATCCU) {
 		IDMOVRATCCU = iDMOVRATCCU;
 	}
+	
 	
 }

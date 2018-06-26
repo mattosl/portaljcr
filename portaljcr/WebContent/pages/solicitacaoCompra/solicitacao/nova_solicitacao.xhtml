@@ -55,18 +55,6 @@
 									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
-											<label for="naturezaOrcamentaria">Natureza Orçamentária: *</label>
-										</div>
-	
-										<div class="col-sm-9 col-md-9">
-											<p:selectOneMenu id="naturezaOrcamentaria" value="#{solicitacaoCompraController.solicitacaoCompraDTO.naturezaOrcamentaria}" filter="true" filterMatchMode="contains">
-									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-									        	<f:selectItems value="#{solicitacaoCompraController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.codigoNaturezaOrcamentaria} - #{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
-									        </p:selectOneMenu>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-sm-3 col-md-3 control-label">
 											<label for="modalidade">Modalidade: *</label>
 										</div>
 	

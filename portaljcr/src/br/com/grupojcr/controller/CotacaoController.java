@@ -25,6 +25,7 @@ import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
+import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -51,6 +52,7 @@ public class CotacaoController implements Serializable {
 	private SolicitacaoCompra solicitacaoCompra;
 	private Cotacao cotacao;
 	private Usuario usuario;
+	private OrdemCompra ordemCompra;
 	
 	private Boolean exibirResultado;
 	private Boolean possuiMinimoCotacao;
@@ -337,14 +339,34 @@ public class CotacaoController implements Serializable {
 	
 	public String iniciarOrdemCompra() throws ApplicationException {
 		try {
-			solicitacaoCompraBusiness.montarXML(getSolicitacaoCompra());
+//			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=leonan", "leonan", "@careca123");
+//			System.out.println(retorno);
+			
+			setOrdemCompra(new OrdemCompra());
+			
+			if(Util.isNotNull(getSolicitacaoCompra())) {
+				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
+			}
+			
+			for(Cotacao cotacao : getSolicitacaoCompra().getCotacoes()) {
+				if(cotacao.getCotacaoPrincipal()) {
+					getOrdemCompra().setCotacao(cotacao);
+				}
+			}
+			
+			getOrdemCompra().setSolicitacaoCompra(getSolicitacaoCompra());
+			getOrdemCompra().setUsuario(getUsuario());
+			
+			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra());
+			System.out.println(xml);
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarCotacao" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarOrdemCompra" }, e);
 		}
 		return "/pages/solicitacaoCompra/cotacao/editar_ordemCompra.xhtml?faces-redirect=true";
 	}
@@ -694,6 +716,14 @@ public class CotacaoController implements Serializable {
 
 	public void setPossuiMinimoCotacao(Boolean possuiMinimoCotacao) {
 		this.possuiMinimoCotacao = possuiMinimoCotacao;
+	}
+
+	public OrdemCompra getOrdemCompra() {
+		return ordemCompra;
+	}
+
+	public void setOrdemCompra(OrdemCompra ordemCompra) {
+		this.ordemCompra = ordemCompra;
 	}
 	
 	

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.rm.CentroCustoRM;
+import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
@@ -62,6 +63,18 @@ public class RMBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarProdutosPorNome" }, e);
 		}
 	}
+
+	public List<FornecedorRM> listarFornecedorPorNome(String nome) throws ApplicationException {
+		try {
+			return daoRM.listarFornecedorPorNome(nome);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarFornecedorPorNome" }, e);
+		}
+	}
 	
 	public List<UnidadeRM> listarUnidade() throws ApplicationException {
 		try {
@@ -98,7 +111,7 @@ public class RMBusiness {
 		}
 	}
 	
-	public String saveRecordAuth(String dataServerName, String xml, String primaryKey, String contexto, String usuario, String senha) throws ApplicationException {
+	public String saveRecordAuth(String dataServerName, String xml, String contexto, String usuario, String senha) throws ApplicationException {
 		try {
 			WsDataServerSoapStub cliente = obterProxyWsDataServerSoapStub();
 			
