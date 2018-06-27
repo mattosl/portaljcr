@@ -24,8 +24,8 @@
 						<p:panel toggleable="false" id="painelStep" styleClass="box no-padding">
 							<p:steps activeIndex="#{gerarOrdemCompraController.passo}">
 								<p:menuitem value="Fornecedor" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 0 ? 'abaValidada' : ''} "  />
-								<p:menuitem value="Produto/Serviço" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 2 ? 'abaValidada' : ''}" />
-								<p:menuitem value="Resumo" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 3 ? 'abaValidada' : ''} " />
+								<p:menuitem value="Produto/Serviço" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 1 ? 'abaValidada' : ''}" />
+								<p:menuitem value="Resumo" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 2 ? 'abaValidada' : ''} " />
 							</p:steps>
 						</p:panel>
 						<p:panel toggleable="false" id="painelFornecedor" styleClass="box box-danger" rendered="#{gerarOrdemCompraController.passo eq 0}">
@@ -49,7 +49,9 @@
 										</div>
 	
 										<div class="col-sm-10 col-md-10">
-											<p:autoComplete id="fornecedorRM" value="#{gerarOrdemCompraController.ordemCompra.fornecedor}" var="forn" itemLabel="#{forn.fornecedorFormatado}" itemValue="#{forn}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteFornecedor}" converter="#{simpleStringEntityConverter}" minQueryLength="3" effect="fade" />
+											<p:autoComplete id="fornecedorRM" value="#{gerarOrdemCompraController.ordemCompra.fornecedor}" var="forn" itemLabel="#{forn.fornecedorFormatado}" itemValue="#{forn}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteFornecedor}" converter="#{simpleStringEntityConverter}" minQueryLength="3" effect="fade">
+												<p:ajax event="query" global="false" process="@this" />
+											</p:autoComplete>
 									        <p:watermark value="Escreva o nome do fornecedor (Minímo 3 caracteres)." for="fornecedorRM" />
 										</div>
 									</div>
@@ -58,43 +60,30 @@
 	            		</p:panel>
 	            		<p:panel toggleable="false" id="painelProdutoServico" styleClass="box box-danger" rendered="#{gerarOrdemCompraController.passo eq 1}">
 							<div class="box-header with-border">
-		             			<h3 class="box-title">Dados do Produto/Serviço</h3>
+		             			<h3 class="box-title">Dados dos Produtos/Serviços</h3>
 		            		</div>
 		            		<div class="form-horizontal">
 								<div class="box-body">
-									<ui:repeat var="item" value="#{gerarOrdemCompraController.ordemCompra.listaProduto}" varStatus="status">
-								 		<p:panel id="painelItem" toggleable="false" styleClass="box box-danger" >
-											<div class="box-header with-border">
-						             			<h3 class="box-title"><i class="fa fa-calculator"></i> Item #{status.index + 1}</h3>
-												<span class="users-list-date pull-right">
-													<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{item.cotacaoItem.naoPossui}" styleClass="pull-right" itemLabel="Fornecedor não possui o produto." disabled="true" />
-												</span>
-						            		</div>
-						            		<div class="form-horizontal">
-												<div class="box-body">
-										 			<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
-															<label for="produtoServico"> Produto/Serviço: </label>
-														</div>
-														
-														<div class="col-sm-9 col-md-9">
-															<p:outputLabel id="produtoServico" value="#{item.cotacaoItem.solicitacaoCompraItem.descricaoProduto}" styleClass="control-label font-normal" />
-														</div>
-													</div>
-													<div class="form-group">
-														<div class="col-sm-3 col-md-3 control-label">
-															<label for="produtoServicoRM"> Produto/Serviço no RM: </label>
-														</div>
-														
-														<div class="col-sm-9 col-md-9">
-															<p:autoComplete id="produtoServicoRM" value="#{item.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" />
-													        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produtoServicoRM" />
-														</div>
-													</div>
-												</div>
-											</div>
-								 		</p:panel>
-								 	</ui:repeat>
+									<p:dataTable var="item" id="tableItens" widgetVar="widgetTabelaItens"
+										value="#{gerarOrdemCompraController.ordemCompra.listaProduto}" 
+										tableStyle="table-layout: auto; word-break: keep-all;">
+										
+									  	<p:column headerText="Produto/Serviço" style="text-align:center;font-size:12px;">
+									        <h:outputText value="#{item.cotacaoItem.solicitacaoCompraItem.descricaoProduto}" />
+									    </p:column>
+									    
+									    <p:column headerText="Produto no RM" style="text-align:center;font-size:12px;" width="15%">
+									        <h:outputText value="#{item.produto eq null ? 'NÃO' : 'SIM'}" />
+									    </p:column>
+									    
+									    
+									    <p:column headerText="Cadastrar" style="text-align: center;font-size:12px;" width="15%">
+											<p:commandLink ajax="true" process="@this" action="#{cotacaoController.iniciarCotacao()}" >
+												<h:outputText value="" title="Cadastrar Produto" styleClass="fa fa-pencil" />
+												<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
+											</p:commandLink>
+										</p:column>
+									</p:dataTable>
 								</div>
 							</div>
 	            		</p:panel>
@@ -129,11 +118,11 @@
 										icon="fa fa-arrow-right"
 										value="Próximo"
 										id="btn_proximo"
-										process="@form"
+										process="@form, @form:painelProdutoServico"
 										action="#{gerarOrdemCompraController.proximo()}"
 										update="@form"
 										ajax="false"
-										rendered="#{gerarOrdemCompraController.passo ne 3}" />
+										rendered="#{gerarOrdemCompraController.passo ne 2}" />
 									<p:commandButton
 										styleClass="btn-verde"
 										icon="fa fa-dollar"
@@ -143,7 +132,7 @@
 										action="#{gerarOrdemCompraController.proximo()}"
 										update="@form"
 										ajax="false"
-										rendered="#{gerarOrdemCompraController.passo eq 3}" />
+										rendered="#{gerarOrdemCompraController.passo eq 2}" />
 								</div>
 							</div>
 	            		</p:panel>

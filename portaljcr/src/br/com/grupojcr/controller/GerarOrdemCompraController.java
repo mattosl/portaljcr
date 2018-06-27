@@ -89,7 +89,7 @@ public class GerarOrdemCompraController implements Serializable {
 					getOrdemCompra().setCotacao(cotacao);
 					getOrdemCompra().setListaProduto(new ArrayList<ProdutoDTO>());
 					for(CotacaoItem item : cotacao.getItens()) {
-						if(Util.isNull(item.getSolicitacaoCompraItem().getIdProduto())) {
+						if(!item.getNaoPossui() ) {
 							ProdutoDTO dto = new ProdutoDTO();
 							dto.setCotacaoItem(item);
 							getOrdemCompra().getListaProduto().add(dto);
@@ -118,8 +118,16 @@ public class GerarOrdemCompraController implements Serializable {
 			
 			if(getPasso().equals(0)) {
 				if(Util.isNull(getOrdemCompra().getFornecedor())) {
-					throw new ApplicationException("message.empty", new String[] {"Favor selecionar um fornecedor do RM."}, FacesMessage.SEVERITY_WARN);
+					throw new ApplicationException("message.empty", new String[] {"Favor preencher com um fornecedor cadastrado no RM."}, FacesMessage.SEVERITY_WARN);
 				}
+			} else if(getPasso().equals(1)) {
+//				for(ProdutoDTO produto : getListaProduto()) {
+//					if(Util.isNull(produto.getProduto())) {
+//						throw new ApplicationException("message.empty", new String[] {"Favor preencher com um produto cadastrado RM."}, FacesMessage.SEVERITY_WARN);
+//					}
+//				}
+//				
+//				getOrdemCompra().setListaProduto(getListaProduto());
 			}
 			setPasso(getPasso() + 1);
 			
