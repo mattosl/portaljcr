@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -43,7 +42,7 @@ public class GerarOrdemCompraController implements Serializable {
 	private OrdemCompraDTO ordemCompra;
 	private FiltroSolicitacaoCompra filtro;
 	private Usuario usuario;
-	private Integer passo;
+	private ProdutoDTO produtoDTO;
 	
 	private List<SolicitacaoCompra> listaSolicitacao;
 	
@@ -76,7 +75,6 @@ public class GerarOrdemCompraController implements Serializable {
 //			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=leonan", "leonan", "@careca123");
 //			System.out.println(retorno);
 			
-			setPasso(0);
 			setOrdemCompra(new OrdemCompraDTO());
 			
 			if(Util.isNotNull(getSolicitacaoCompra())) {
@@ -111,45 +109,6 @@ public class GerarOrdemCompraController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarOrdemCompra" }, e);
 		}
 		return "/pages/solicitacaoCompra/cotacao/editar_ordemCompra.xhtml?faces-redirect=true";
-	}
-	
-	public void proximo() throws ApplicationException {
-		try {
-			
-			if(getPasso().equals(0)) {
-				if(Util.isNull(getOrdemCompra().getFornecedor())) {
-					throw new ApplicationException("message.empty", new String[] {"Favor preencher com um fornecedor cadastrado no RM."}, FacesMessage.SEVERITY_WARN);
-				}
-			} else if(getPasso().equals(1)) {
-//				for(ProdutoDTO produto : getListaProduto()) {
-//					if(Util.isNull(produto.getProduto())) {
-//						throw new ApplicationException("message.empty", new String[] {"Favor preencher com um produto cadastrado RM."}, FacesMessage.SEVERITY_WARN);
-//					}
-//				}
-//				
-//				getOrdemCompra().setListaProduto(getListaProduto());
-			}
-			setPasso(getPasso() + 1);
-			
-		} catch (ApplicationException e) {
-			LOG.info(e.getMessage(), e);
-			throw e;
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "proximo" }, e);
-		}
-	}
-	
-	public void anterior() throws ApplicationException {
-		try {
-			setPasso(getPasso() - 1);
-//		} catch (ApplicationException e) {
-//			LOG.info(e.getMessage(), e);
-//			throw e;
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "anterior" }, e);
-		}
 	}
 	
 	public List<FornecedorRM> autocompleteFornecedor(String nome) throws ApplicationException {
@@ -225,12 +184,12 @@ public class GerarOrdemCompraController implements Serializable {
 		this.listaSolicitacao = listaSolicitacao;
 	}
 
-	public Integer getPasso() {
-		return passo;
+	public ProdutoDTO getProdutoDTO() {
+		return produtoDTO;
 	}
 
-	public void setPasso(Integer passo) {
-		this.passo = passo;
+	public void setProdutoDTO(ProdutoDTO produtoDTO) {
+		this.produtoDTO = produtoDTO;
 	}
 
 }

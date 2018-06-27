@@ -21,44 +21,62 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="ordemCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<p:panel toggleable="false" id="painelStep" styleClass="box no-padding">
-							<p:steps activeIndex="#{gerarOrdemCompraController.passo}">
-								<p:menuitem value="Fornecedor" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 0 ? 'abaValidada' : ''} "  />
-								<p:menuitem value="Produto/Serviço" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 1 ? 'abaValidada' : ''}" />
-								<p:menuitem value="Resumo" containerStyleClass="steps col-sm-4 col-md-4 col-xs-4 #{gerarOrdemCompraController.passo > 2 ? 'abaValidada' : ''} " />
-							</p:steps>
-						</p:panel>
-						<p:panel toggleable="false" id="painelFornecedor" styleClass="box box-danger" rendered="#{gerarOrdemCompraController.passo eq 0}">
+						<p:panel toggleable="false" id="painelGerarOrdemCompra" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Dados da Ordem de Compra</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="condPagamento">Condição de Pagamento: </label>
+										</div>
+	
+										<div class="col-sm-5 col-md-5 col-xs-11">
+											<p:selectOneMenu id="selectPrioridade" value="#{chamadoController.chamadoDTO.prioridade}">
+									        </p:selectOneMenu>
+										</div>
+										
+										<div class="col-sm-1 col-md-1 col-xs-1" style="padding-top: 7px;">
+									        <span style="border-radius: 10px;" class="label label-success"><i class="fa fa-check"></i></span>
+										</div>
+									</div>
+								</div>
+							</div>
 							<div class="box-header with-border">
 		             			<h3 class="box-title">Dados do Fornecedor</h3>
 		            		</div>
 		            		<div class="form-horizontal">
 								<div class="box-body">
 									<div class="form-group">
-										<div class="col-sm-2 col-md-2 control-label">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
 											<label for="fornecedor">Fornecedor da Cotação: </label>
 										</div>
 	
-										<div class="col-sm-10 col-md-10">
+										<div class="col-sm-9 col-md-9 col-xs-12">
 											<p:outputLabel id="fornecedor" value="#{gerarOrdemCompraController.ordemCompra.cotacao.fornecedor.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="col-sm-2 col-md-2 control-label">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
 											<label for="fornecedorRM">Fornecedor no RM: </label>
 										</div>
 	
-										<div class="col-sm-10 col-md-10">
-											<p:autoComplete id="fornecedorRM" value="#{gerarOrdemCompraController.ordemCompra.fornecedor}" var="forn" itemLabel="#{forn.fornecedorFormatado}" itemValue="#{forn}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteFornecedor}" converter="#{simpleStringEntityConverter}" minQueryLength="3" effect="fade">
+										<div class="col-sm-8 col-md-8 col-xs-11">
+											<p:autoComplete id="fornecedorRM" value="#{gerarOrdemCompraController.ordemCompra.fornecedor}" var="forn" itemLabel="#{forn.fornecedorFormatado}" itemValue="#{forn}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteFornecedor}" converter="#{simpleStringEntityConverter}" minQueryLength="3" effect="fade" >
 												<p:ajax event="query" global="false" process="@this" />
+												<p:ajax event="itemSelect" global="false" update="@form:checkFornecedor" />
 											</p:autoComplete>
 									        <p:watermark value="Escreva o nome do fornecedor (Minímo 3 caracteres)." for="fornecedorRM" />
 										</div>
+										<p:outputPanel id="checkFornecedor">
+											<div class="col-sm-1 col-md-1 col-xs-1" style="padding-top: 5px;">
+										        <span style="border-radius: 10px;" class="label label-#{gerarOrdemCompraController.ordemCompra.fornecedor eq null ? 'danger' : 'success'}"><i class="#{gerarOrdemCompraController.ordemCompra.fornecedor eq null ? 'fa fa-times' : 'fa fa-check'}"></i></span>
+											</div>
+										</p:outputPanel>
 									</div>
 								</div>
 							</div>
-	            		</p:panel>
-	            		<p:panel toggleable="false" id="painelProdutoServico" styleClass="box box-danger" rendered="#{gerarOrdemCompraController.passo eq 1}">
 							<div class="box-header with-border">
 		             			<h3 class="box-title">Dados dos Produtos/Serviços</h3>
 		            		</div>
@@ -68,21 +86,28 @@
 										value="#{gerarOrdemCompraController.ordemCompra.listaProduto}" 
 										tableStyle="table-layout: auto; word-break: keep-all;">
 										
-									  	<p:column headerText="Produto/Serviço" style="text-align:center;font-size:12px;">
+									  	<p:column headerText="Produto/Serviço" style="text-align:center;">
 									        <h:outputText value="#{item.cotacaoItem.solicitacaoCompraItem.descricaoProduto}" />
 									    </p:column>
 									    
-									    <p:column headerText="Produto no RM" style="text-align:center;font-size:12px;" width="15%">
-									        <h:outputText value="#{item.produto eq null ? 'NÃO' : 'SIM'}" />
+									    <p:column headerText="Valor" style="text-align:center;">
+									        <h:outputText value="#{item.cotacaoItem.valorTotal}">
+									        	<f:convertNumber type="currency" currencySymbol="R$"/>
+									        </h:outputText>
+									    </p:column>
+									    
+									    <p:column headerText="Vincular Produto RM" style="text-align: center;" width="15%">
+											<p:commandLink ajax="true" process="@this" oncomplete="PF('modalProduto').show();">
+												<h:outputText value="" title="Vincular Produto" styleClass="fa fa-pencil" />
+												<f:setPropertyActionListener value="#{item}" target="#{gerarOrdemCompraController.produtoDTO}" />
+											</p:commandLink>
+										</p:column>
+										
+									    <p:column headerText="Vinculado" style="text-align:center;" width="5%">
+									        <span style="border-radius: 10px;" class="label label-#{item.produto eq null ? 'danger' : 'success'}"><i class="fa #{item.produto eq null ? 'fa-times' : 'fa-check'}"></i></span>
 									    </p:column>
 									    
 									    
-									    <p:column headerText="Cadastrar" style="text-align: center;font-size:12px;" width="15%">
-											<p:commandLink ajax="true" process="@this" action="#{cotacaoController.iniciarCotacao()}" >
-												<h:outputText value="" title="Cadastrar Produto" styleClass="fa fa-pencil" />
-												<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
-											</p:commandLink>
-										</p:column>
 									</p:dataTable>
 								</div>
 							</div>
@@ -98,31 +123,9 @@
 										process="@this"
 										immediate="true"
 										action="#{gerarOrdemCompraController.voltar()}"
-										ajax="false"
-										rendered="#{gerarOrdemCompraController.passo eq 0}" />
-									<p:commandButton
-										styleClass="btn-vermelho"
-										icon="fa fa-arrow-left"
-										value="Anterior"
-										id="btn_anterior"
-										process="@form"
-										immediate="true"
-										action="#{gerarOrdemCompraController.anterior()}"
-										update="@form"
-										ajax="false"
-										rendered="#{gerarOrdemCompraController.passo ne 0}" />
+										ajax="false" />
 								</div>
 								<div class="col-sm-3 col-md-3 pull-right" >
-									<p:commandButton
-										styleClass="btn-vermelho"
-										icon="fa fa-arrow-right"
-										value="Próximo"
-										id="btn_proximo"
-										process="@form, @form:painelProdutoServico"
-										action="#{gerarOrdemCompraController.proximo()}"
-										update="@form"
-										ajax="false"
-										rendered="#{gerarOrdemCompraController.passo ne 2}" />
 									<p:commandButton
 										styleClass="btn-verde"
 										icon="fa fa-dollar"
@@ -131,12 +134,60 @@
 										process="@form"
 										action="#{gerarOrdemCompraController.proximo()}"
 										update="@form"
-										ajax="false"
-										rendered="#{gerarOrdemCompraController.passo eq 2}" />
+										ajax="false"/>
 								</div>
 							</div>
 	            		</p:panel>
 					</f:validateBean>
+					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+						id="modalProduto"
+						widgetVar="modalProduto" 
+						header="Vincular Produto RM"
+						resizable="false" 
+						responsive="true"
+						width="50%"
+						closable="false"
+						draggable="false"
+						modal="true">
+						<p:messages id="mensagemModal" showDetail="true" closable="true" />
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="produto">Produto/Serviço: *</label>
+									</div>
+
+									<div class="col-sm-9 col-md-9">
+								        <p:autoComplete id="produto" value="#{gerarOrdemCompraController.produtoDTO.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade"/>
+								        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produto" />
+									</div>
+								</div>
+							</div>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left" >
+									<p:commandButton
+										styleClass="btn-vermelho"
+										icon="fa fa-times"
+										value="Cancelar"
+										id="btn_cancelar"
+										immediate="true"
+										onclick="PF('modalProduto').hide();"
+										ajax="true" />
+								</div>
+								<div class="col-sm-3 col-md-3 pull-right">
+									<p:commandButton
+										styleClass="btn-verde"
+										icon="fa fa-check"
+										value="Salvar"
+										id="btn_salvar"
+										process="@form:modalProduto"
+										update="@form:mensagemModal"
+										action="#{chamadoController.solucionarChamado()}"
+										ajax="true" />
+								</div>
+							</div>
+						</div>
+					</p:dialog>
 				</h:form>
 			</div>
 		</ui:define>
