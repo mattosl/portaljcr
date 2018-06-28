@@ -133,6 +133,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	
 	@OneToMany(mappedBy = "solicitacaoCompra", fetch = FetchType.LAZY)
 	private Set<Cotacao> cotacoes;
+	
+	@OneToMany(mappedBy = "solicitacaoCompra", fetch = FetchType.LAZY)
+	private Set<OrdemCompra> ordensCompra;
 
 	public Long getId() {
 		return id;
@@ -358,8 +361,15 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	public void setJustificativa(String justificativa) {
 		this.justificativa = justificativa;
 	}
+	
+	public Set<OrdemCompra> getOrdensCompra() {
+		return ordensCompra;
+	}
 
-
+	public void setOrdensCompra(Set<OrdemCompra> ordensCompra) {
+		this.ordensCompra = ordensCompra;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

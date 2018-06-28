@@ -40,6 +40,27 @@ public class CotacaoDAO extends GenericDAO<Cotacao> {
 			throw new ApplicationException("message.default.erro", new String[] { "listarCotacoesPorSolicitacao" }, e);
 		}
 	}
+
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Cotacao obterCotacao(Long idCotacao) throws ApplicationException {
+		try{
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT cotacao FROM Cotacao cotacao ");
+			sb.append("LEFT JOIN FETCH cotacao.usuarioCotacao usuarioCotacao ");
+			sb.append("LEFT JOIN FETCH cotacao.itens item ");
+			sb.append("LEFT JOIN FETCH item.solicitacaoCompraItem itemSolicitacao ");
+			sb.append("WHERE cotacao.id = :idCotacao ");
+			
+			TypedQuery<Cotacao> query = manager.createQuery(sb.toString(), Cotacao.class);
+			query.setParameter("idCotacao", idCotacao);
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterCotacao" }, e);
+		}
+	}
 	
 	
 }

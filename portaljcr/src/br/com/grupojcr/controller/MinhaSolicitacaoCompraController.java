@@ -20,6 +20,7 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.entity.Coligada;
+import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -144,6 +145,7 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 		try {
 			if(Util.isNotNull(getSolicitacaoCompra())) {
 				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setOrdensCompra(new HashSet<OrdemCompra>(solicitacaoCompraBusiness.listarOrdemCompraPorSolicitacao(getSolicitacaoCompra().getId())));
 			}
 			return "/pages/solicitacaoCompra/solicitacao/exibir_solicitacao.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {

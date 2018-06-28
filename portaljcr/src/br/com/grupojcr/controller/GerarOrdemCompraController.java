@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -75,13 +76,9 @@ public class GerarOrdemCompraController implements Serializable {
 	
 	public void vincularProduto() throws ApplicationException {
 		try {
-			getProdutoDTO().getCotacaoItem().setIdProdutoRM(getProdutoDTO().getProduto().getIdProduto());
-			getProdutoDTO().getCotacaoItem().setCodigoProdutoRM(getProdutoDTO().getProduto().getCodigoProduto());
-			getProdutoDTO().getCotacaoItem().setDescricaoProdutoRM(getProdutoDTO().getDescricaoProduto());
 			getProdutoDTO().getCotacaoItem().getSolicitacaoCompraItem().setIdProduto(getProdutoDTO().getProduto().getIdProduto());
 			getProdutoDTO().getCotacaoItem().getSolicitacaoCompraItem().setCodigoProduto(getProdutoDTO().getProduto().getCodigoProduto());
 			getProdutoDTO().getCotacaoItem().getSolicitacaoCompraItem().setDescricaoProduto(getProdutoDTO().getProduto().getProduto());
-			setProdutoDTO(null);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "vincularProduto" }, e);
@@ -90,9 +87,6 @@ public class GerarOrdemCompraController implements Serializable {
 	
 	public String iniciarOrdemCompra() throws ApplicationException {
 		try {
-//			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=leonan", "leonan", "@careca123");
-//			System.out.println(retorno);
-			
 			setOrdemCompra(new OrdemCompraDTO());
 			setProdutoDTO(new ProdutoDTO());
 			
@@ -118,8 +112,6 @@ public class GerarOrdemCompraController implements Serializable {
 			getOrdemCompra().setSolicitacaoCompra(getSolicitacaoCompra());
 			
 			setListaCondicaoPagamento(rmBusiness.listarCondicaoPagamento(getSolicitacaoCompra().getColigada().getId()));
-//			String xml = solicitacaoCompraBusiness.montarXML(new OrdemCompra());
-//			System.out.println(xml);
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -133,17 +125,36 @@ public class GerarOrdemCompraController implements Serializable {
 	
 	public String gerarOrdemCompra() throws ApplicationException {
 		try {
-			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra());
-			System.out.println(xml);
+			if(Util.isNull(getOrdemCompra().getCondicaoPagamento())) {
+				throw new ApplicationException("message.empty", new String[] {"Favor preencher a condição de pagamento."}, FacesMessage.SEVERITY_WARN);
+			}
 			
-			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=mestre", "leonan", "@careca123");
-			System.out.println(retorno);
+			if(Util.isNull(getOrdemCompra().getFornecedor())) {
+				throw new ApplicationException("message.empty", new String[] {"Favor preencher o Fornecedor do RM."}, FacesMessage.SEVERITY_WARN);
+			}
+			
+			for(ProdutoDTO produto : getOrdemCompra().getListaProduto()) {
+				if(Util.isNull(produto.getCotacaoItem().getSolicitacaoCompraItem().getId())) {
+					throw new ApplicationException("message.empty", new String[] {"Favor vincular todos os produtos/serviços com o RM."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
+			
+			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra());
+			
+			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=" + getOrdemCompra().getSolicitacaoCompra().getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
 			
 			String [] arrayRetorno = retorno.split(";");
 			
-			rmBusiness.atualizaCampoLivre(arrayRetorno[0], arrayRetorno[1]);
+			if(arrayRetorno.length == 2) {
+				rmBusiness.atualizaCampoLivre(arrayRetorno[0], arrayRetorno[1]);
+			} else {
+				throw new ApplicationException("message.empty", new String[] {arrayRetorno[0]}, FacesMessage.SEVERITY_WARN);
+			}
 			
-			Message.setMessage("message.empty", new String[] {"Movimento Nº " + arrayRetorno[1] + " inserido com sucesso no RM." });
+			solicitacaoCompraBusiness.encerrar(getOrdemCompra(), arrayRetorno[1], getUsuario());
+			
+			Message.setMessage("gerar.ordem.compra.sucesso", new String[] {arrayRetorno[1], getOrdemCompra().getSolicitacaoCompra().getColigada().getRazaoSocial()});
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);

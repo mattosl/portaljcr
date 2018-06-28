@@ -26,6 +26,9 @@ public class AprovadorCentroCusto implements Serializable {
 	@Column(name = "NIVEL", nullable = false)
 	private Integer nivel;
 
+	@Column(name = "CODCOLIGADA", nullable = false)
+	private Integer codigoColigada;
+
 	public String getCodigoCentroCusto() {
 		return codigoCentroCusto;
 	}
@@ -56,6 +59,14 @@ public class AprovadorCentroCusto implements Serializable {
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
+	}
+
+	public Integer getCodigoColigada() {
+		return codigoColigada;
+	}
+
+	public void setCodigoColigada(Integer codigoColigada) {
+		this.codigoColigada = codigoColigada;
 	}
 	
 }

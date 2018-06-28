@@ -29,6 +29,12 @@ public class OrdemCompra implements Serializable {
 	@Column(name = "IDENTIFICADOR_RM", length = 50, nullable = false)
 	private String identificadorRM;
 	
+	@Column(name = "CODCPG", length = 5)
+	private String codigoCondicaoPagamento;
+
+	@Column(name = "CONDICAO_PAGAMENTO", length = 100)
+	private String condicaoPagamento;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_ORDEM_COMPRA", nullable = false)
 	private Date dtOrdemCompra;
@@ -92,6 +98,22 @@ public class OrdemCompra implements Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+	
+	public String getCodigoCondicaoPagamento() {
+		return codigoCondicaoPagamento;
+	}
+
+	public void setCodigoCondicaoPagamento(String codigoCondicaoPagamento) {
+		this.codigoCondicaoPagamento = codigoCondicaoPagamento;
+	}
+
+	public String getCondicaoPagamento() {
+		return condicaoPagamento;
+	}
+
+	public void setCondicaoPagamento(String condicaoPagamento) {
+		this.condicaoPagamento = condicaoPagamento;
+	}
 
 	@Override
 	public int hashCode() {
@@ -117,7 +139,5 @@ public class OrdemCompra implements Serializable {
 			return false;
 		return true;
 	}
-
-
 
 }

@@ -16,15 +16,18 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.AprovadorCentroCustoDAO;
 import br.com.grupojcr.dao.CotacaoDAO;
+import br.com.grupojcr.dao.OrdemCompraDAO;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraItemDAO;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.OrdemCompraDTO;
+import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.entity.AprovadorCentroCusto;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
+import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -45,6 +48,7 @@ import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.util.TreatNumber;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -62,6 +66,9 @@ public class SolicitacaoCompraBusiness {
 
 	@EJB
 	private CotacaoDAO daoCotacao;
+	
+	@EJB
+	private OrdemCompraDAO daoOrdemCompra;
 	
 	@EJB
 	private AprovadorCentroCustoDAO daoAprovadorCentroCusto;
@@ -88,6 +95,8 @@ public class SolicitacaoCompraBusiness {
 			solicitacao.setColigada(dto.getColigada());
 			if(dto.getPossuiGrupoCotacao()) {
 				solicitacao.setGrupoCotacao(dto.getGrupoCotacao());
+			} else {
+				solicitacao.setUsuarioCotacao(usuario);
 			}
 			
 			Calendar prazo = Calendar.getInstance();
@@ -107,21 +116,21 @@ public class SolicitacaoCompraBusiness {
 			
 			Integer nivel = 0;
 			Boolean mesmoAprovador = Boolean.FALSE;
-			AprovadorCentroCusto aprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getCodigoCentroCusto(), nivel);
+			AprovadorCentroCusto aprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getColigada().getId(), solicitacao.getCodigoCentroCusto(), nivel);
 			if(Util.isNotNull(aprovador)) {
 				while(solicitacao.getUsuarioSolicitante().getUsuario().equals(aprovador.getUsuario())) {
-					AprovadorCentroCusto novoAprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getCodigoCentroCusto(), ++nivel);
+					AprovadorCentroCusto novoAprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getColigada().getId(), solicitacao.getCodigoCentroCusto(), ++nivel);
 					if(Util.isNull(novoAprovador)) {
-//						solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
-//						solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
-//						mesmoAprovador = Boolean.TRUE; //TODO DESCOMENTAR
+						solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
+						solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
+						mesmoAprovador = Boolean.TRUE;
 						break;
 					}
 				}
 				solicitacao.setUsuarioAprovacaoFluig(aprovador.getAprovador());
 				
 			} else {
-				throw new ApplicationException("message.empty", new String[] {"Centro de Custo não possui aprovador, solicite o cadastro dos aprovadores."}, FacesMessage.SEVERITY_ERROR);
+				throw new ApplicationException("message.empty", new String[] {"Centro de Custo não possui aprovador nesta coligada, solicite o cadastro dos aprovadores."}, FacesMessage.SEVERITY_ERROR);
 			}
 			
 			daoSolicitacaoCompra.incluir(solicitacao);
@@ -289,6 +298,18 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
+	public List<OrdemCompra> listarOrdemCompraPorSolicitacao(Long idSolicitacao) throws ApplicationException {
+		try {
+			return daoOrdemCompra.listarOrdemCompraPorSolicitacao(idSolicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarOrdemCompraPorSolicitacao" }, e);
+		}
+	}
+	
 	public void cancelar(SolicitacaoCompra solicitacao, Usuario usuario) throws ApplicationException {
 		try {
 			solicitacao.setUsuarioCancelamento(usuario);
@@ -349,6 +370,53 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "concluir" }, e);
+		}
+	}
+
+	public void encerrar(OrdemCompraDTO dto, String identificadorRM, Usuario usuario) throws ApplicationException {
+		try {
+			SolicitacaoCompra sc = daoSolicitacaoCompra.obterSolicitacao(dto.getSolicitacaoCompra().getId());
+			sc.setSituacao(SituacaoSolicitacaoCompra.FINALIZADA);
+			sc.setDtFechamento(Calendar.getInstance().getTime());
+			
+			daoSolicitacaoCompra.alterar(sc);
+			
+			Cotacao cotacaoPrincipal = daoCotacao.obterCotacao(dto.getCotacao().getId());
+			cotacaoPrincipal.setCodigoFornecedor(dto.getFornecedor().getCodigoFornecedor());
+			cotacaoPrincipal.setFornecedor(dto.getFornecedor().getFornecedor());
+			
+			daoCotacao.alterar(cotacaoPrincipal);
+			
+			List<SolicitacaoCompraItem> listaItemSolicitacao = daoSolicitacaoCompraItem.listarItemPorSolicitacao(sc.getId());
+			for(SolicitacaoCompraItem sci : listaItemSolicitacao) {
+				for(ProdutoDTO produtoDTO : dto.getListaProduto()) {
+					if(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getId().equals(sci.getId())) {
+						if(TreatString.isNotBlank(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getCodigoProduto())) {
+							sci.setCodigoProduto(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getCodigoProduto());
+							sci.setDescricaoProduto(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getDescricaoProduto());
+						}
+						daoSolicitacaoCompraItem.alterar(sci);
+					}
+				}
+			}
+			
+			OrdemCompra ordemCompra = new OrdemCompra();
+			ordemCompra.setSolicitacaoCompra(sc);
+			ordemCompra.setCotacao(cotacaoPrincipal);
+			ordemCompra.setUsuario(usuario);
+			ordemCompra.setIdentificadorRM(identificadorRM);
+			ordemCompra.setDtOrdemCompra(Calendar.getInstance().getTime());
+			ordemCompra.setCodigoCondicaoPagamento(dto.getCondicaoPagamento().getCodigoCondicaoPagamento());
+			ordemCompra.setCondicaoPagamento(dto.getCondicaoPagamento().getCondicaoPagamento());
+			
+			daoOrdemCompra.incluir(ordemCompra);
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrar" }, e);
 		}
 	}
 	
@@ -459,7 +527,7 @@ public class SolicitacaoCompraBusiness {
 			StringWriter sw = new StringWriter();
 			JAXBContext context = null;
 			Marshaller marshaller = null;
-			String usuario = "mestre";
+			String usuario = "portaljcr";
 			
 			TMOVXML tmov = new TMOVXML();
 			
@@ -470,9 +538,8 @@ public class SolicitacaoCompraBusiness {
 				tmov.setCODTMV("1.1.04");
 			} else if(ordemCompra.getSolicitacaoCompra().getModalidade().equals(Modalidade.SERVICO)) {
 				tmov.setCODTMV("1.1.17");
-			} else {
-				tmov.setCODTMV("1.1.04");
 			}
+			
 			tmov.setCODCPG(ordemCompra.getCondicaoPagamento().getCodigoCondicaoPagamento());
 			tmov.setCODCFOAUX(ordemCompra.getFornecedor().getCodigoFornecedor());
 			tmov.setCODCCUSTO(ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto());
@@ -526,12 +593,15 @@ public class SolicitacaoCompraBusiness {
 				String quantidade = TreatNumber.formatMoney(item.getQuantidade());
 				String valorUnitario = TreatNumber.formatMoney(item.getValor());
 				String valorTotal = TreatNumber.formatMoney(item.getValorTotal());
-				String codigoUnidade = "UN";
+				String codigoUnidade = item.getCodigoUnidade();
 				String codigoCentroCusto = ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto();
 				String centroCusto = ordemCompra.getSolicitacaoCompra().getCentroCusto();
 				String codigoNatureza = produtoRM.getCodigoNatureza();
 				String observacaoItem = item.getObservacao();
 				
+				if(TreatString.isBlank(codigoNatureza)) {
+					throw new ApplicationException("message.empty", new String[] {"Produto sem Natureza Orçamentária, cadastre uma natureza para o produto: " + descricaoProduto}, FacesMessage.SEVERITY_WARN);
+				}
 				
 				TITMMOVXML titmmov = new TITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), 
 						idProduto, codigoProduto, descricaoProduto, codigoReduzido, quantidade, valorUnitario, valorTotal, codigoUnidade, codigoCentroCusto, codigoNatureza, observacaoItem, usuario);
@@ -626,9 +696,9 @@ public class SolicitacaoCompraBusiness {
 			System.out.println(xmlCompleto);
 			return xmlCompleto;
 			
-//		} catch (ApplicationException e) {
-//			LOG.info(e.getMessage(), e);
-//			throw e;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "montarXML" }, e);

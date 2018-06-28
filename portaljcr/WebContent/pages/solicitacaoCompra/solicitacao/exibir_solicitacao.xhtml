@@ -110,7 +110,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9">
-											<p:outputLabel id="motivoCompra" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="control-label font-normal" />
+											<h:inputTextarea id="motivoCompra" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCompra.toUpperCase()}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
 										</div>
 									</div>
 									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.sugestaoFornecedor != null}">
@@ -168,6 +168,37 @@
 												    
 												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.observacao}" />
+												    </p:column>
+												    
+												</p:dataTable>
+											</div>
+										</div>
+									</div>
+								</p:panel>
+								<p:panel toggleable="false" id="painelOrdem" style="border: 0px !important" rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.ordensCompra.size() > 0}">
+									<div class="box-header with-border">
+				             			<h3 class="box-title">Ordem de Compra</h3>
+				            		</div>
+				            		<div class="form-horizontal">
+										<div class="box-body">
+											<div class="row">
+												<p:dataTable var="ordemCompra" id="tableOrdem"
+													value="#{minhaSolicitacaoCompraController.solicitacaoCompra.ordensCompra}" 
+													tableStyle="table-layout: auto; word-break: keep-all;"
+													binding="#{dataTableUtil.lazyDataTable}" emptyMessage="Nenhuma O.C cadastrada.">
+													
+													<p:column headerText="Identificador RM" style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{ordemCompra.identificadorRM}" />
+												    </p:column>
+												    
+												    <p:column headerText="Data da Ordem de Compra" style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{ordemCompra.dtOrdemCompra}">
+												        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+												        </h:outputText>
+												    </p:column>
+												    
+												    <p:column headerText="Valor" style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{ordemCompra.cotacao.valorTotalFormatado}" />
 												    </p:column>
 												    
 												</p:dataTable>

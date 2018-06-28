@@ -147,7 +147,7 @@
 						</p:column>
 						
 						<p:column headerText="Cotação" style="text-align: center;font-size:12px;" width="8%">
-							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}" rendered="#{solicitacao.situacao eq 'AGUARDANDO_APRV_COTACAO' or solicitacao.situacao eq 'LIBERADO_ORDEM_COMPRA'}">
+							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}" rendered="#{solicitacao.situacao eq 'AGUARDANDO_APRV_COTACAO' or solicitacao.situacao eq 'LIBERADO_ORDEM_COMPRA' or solicitacao.situacao eq 'FINALIZADA'}">
 								<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-calculator" />
 								<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
 								<f:setPropertyActionListener value="MINHA_SOLICITACAO" target="#{cotacaoController.origem}" />

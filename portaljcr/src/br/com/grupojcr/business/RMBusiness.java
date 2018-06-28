@@ -101,6 +101,18 @@ public class RMBusiness {
 		}
 	}
 	
+	public Boolean existeUsuario(String nomeUsuario) throws ApplicationException {
+		try {
+			return daoRM.existeUsuario(nomeUsuario.trim());
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "existeUsuario" }, e);
+		}
+	}
+	
 	public void atualizaCampoLivre(String idColigada, String idMov) throws ApplicationException {
 		try {
 			daoRM.atualizarCampoLivre(idColigada, idMov);

@@ -17,16 +17,18 @@ public class AprovadorCentroCustoDAO extends GenericDAO<AprovadorCentroCustoDAO>
 	private static Logger log = Logger.getLogger(AprovadorCentroCustoDAO.class);
 	
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public AprovadorCentroCusto obterAprovadorCentroCusto(String codigoCentroCusto, Integer nivel) throws ApplicationException {
+	public AprovadorCentroCusto obterAprovadorCentroCusto(Long idColigada, String codigoCentroCusto, Integer nivel) throws ApplicationException {
 		try {
 			
 			StringBuilder sb = new StringBuilder("SELECT aprovador FROM AprovadorCentroCusto aprovador ");
 			sb.append("WHERE aprovador.codigoCentroCusto like :codigoCentroCusto ");
 			sb.append("AND aprovador.nivel = :nivel ");
+			sb.append("AND aprovador.codigoColigada = :idColigada ");
 			
 			TypedQuery<AprovadorCentroCusto> query = manager.createQuery(sb.toString(), AprovadorCentroCusto.class);
 			query.setParameter("codigoCentroCusto", codigoCentroCusto);
 			query.setParameter("nivel", nivel);
+			query.setParameter("idColigada", idColigada.intValue());
 			
 			return query.getSingleResult();
 		} catch (NoResultException nR) {

@@ -57,7 +57,7 @@
 				</ul>
 			</li>
 			
-			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
+			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO', 'ADMINISTRATIVO'])}">
 				<a href="#"> 
 					<i class="fa fa-pencil-square-o"></i> <span>Cotação</span>
 					 <span class="pull-right-container">
@@ -65,19 +65,19 @@
 	                 </span>
 				</a>
 				<ul class="treeview-menu">
-					<li class="#{activeSubmenu eq 'cotacoesPendentes' ? 'active' : ''}">
+					<li class="#{activeSubmenu eq 'cotacoesPendentes' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml" ajax="false">
 							<i class="fa fa-paste"></i>
 							<span>Solicitações Pendentes</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'minhasCotacoes' ? 'active' : ''}">
+					<li class="#{activeSubmenu eq 'minhasCotacoes' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
 							<i class="fa fa-calculator"></i>
 							<span>Cotações</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'gerarOrdemCompra' ? 'active' : ''}">
+					<li class="#{activeSubmenu eq 'gerarOrdemCompra' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'ADMINISTRATIVO'])}">
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_ordemCompra.xhtml" ajax="false">
 							<i class="fa fa-dollar"></i>
 							<span>Gerar Ordem de Compra</span>

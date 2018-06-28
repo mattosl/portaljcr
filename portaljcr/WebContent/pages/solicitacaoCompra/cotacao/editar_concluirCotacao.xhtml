@@ -21,11 +21,11 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<div class="alert alert-success alert-dismissible">
-							<h4><i class="icon fa fa-info"></i> Critérios para a Melhor Opção!</h4>
-							<p><i class="icon fa fa-caret-right"></i> 1. Possuir todos os produtos/serviços solicitados na cotação e com menor valor.</p>
-							<p><i class="icon fa fa-caret-right"></i> 2. Possuir parcialmente os produtos/serviços e com menor valor.</p>
-						</div>
+<!-- 						<div class="alert alert-success alert-dismissible"> -->
+<!-- 							<h4><i class="icon fa fa-info"></i> Critérios para a Melhor Opção!</h4> -->
+<!-- 							<p><i class="icon fa fa-caret-right"></i> 1. Possuir todos os produtos/serviços solicitados na cotação e com menor valor.</p> -->
+<!-- 							<p><i class="icon fa fa-caret-right"></i> 2. Possuir parcialmente os produtos/serviços e com menor valor.</p> -->
+<!-- 						</div> -->
 						<div class="alert alert-danger alert-dismissible" jsf:rendered="#{!cotacaoController.possuiMinimoCotacao}">
 							<h4><i class="icon fa fa-warning"></i> ATENÇÃO!</h4>
 							Você não efetuou <strong>3</strong> cotações, para concluir você deve preencher a <strong>justificativa</strong>.

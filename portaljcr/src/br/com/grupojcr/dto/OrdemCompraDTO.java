@@ -12,6 +12,7 @@ public class OrdemCompraDTO {
 	private CondicaoPagamentoRM condicaoPagamento;
 	private FornecedorRM fornecedor;
 	private SolicitacaoCompra solicitacaoCompra;
+	private String identificadorMovimento;
 	private Cotacao cotacao;
 	private List<ProdutoDTO> listaProduto;
 	
@@ -44,6 +45,12 @@ public class OrdemCompraDTO {
 	}
 	public void setCondicaoPagamento(CondicaoPagamentoRM condicaoPagamento) {
 		this.condicaoPagamento = condicaoPagamento;
+	}
+	public String getIdentificadorMovimento() {
+		return identificadorMovimento;
+	}
+	public void setIdentificadorMovimento(String identificadorMovimento) {
+		this.identificadorMovimento = identificadorMovimento;
 	}
 
 }

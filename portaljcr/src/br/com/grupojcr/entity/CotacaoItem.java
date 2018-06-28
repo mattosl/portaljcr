@@ -41,15 +41,6 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	@Column(name = "CODUNIDADE", length = 5)
 	private String codigoUnidade;
 	
-	@Column(name = "ID_PRD")
-	private Integer idProdutoRM;
-	
-	@Column(name = "CODPRD", length = 50)
-	private String codigoProdutoRM;
-	
-	@Column(name = "DESCRICAO_PRD", length = 100)
-	private String descricaoProdutoRM;
-	
 	@Column(name = "NAO_POSSUI", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean naoPossui;
@@ -137,29 +128,4 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	public void setCodigoUnidade(String codigoUnidade) {
 		this.codigoUnidade = codigoUnidade;
 	}
-
-	public Integer getIdProdutoRM() {
-		return idProdutoRM;
-	}
-
-	public void setIdProdutoRM(Integer idProdutoRM) {
-		this.idProdutoRM = idProdutoRM;
-	}
-
-	public String getCodigoProdutoRM() {
-		return codigoProdutoRM;
-	}
-
-	public void setCodigoProdutoRM(String codigoProdutoRM) {
-		this.codigoProdutoRM = codigoProdutoRM;
-	}
-
-	public String getDescricaoProdutoRM() {
-		return descricaoProdutoRM;
-	}
-
-	public void setDescricaoProdutoRM(String descricaoProdutoRM) {
-		this.descricaoProdutoRM = descricaoProdutoRM;
-	}
-
 }

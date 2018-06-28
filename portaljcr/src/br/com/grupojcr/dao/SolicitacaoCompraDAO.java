@@ -219,8 +219,8 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			sb.append("LEFT JOIN FETCH solicitacao.usuarioCotacao usuarioCotacao ");
 			sb.append("WHERE solicitacao.id != null ");
 			
-			sb.append("AND (usuarios.id = :idUsuarioLogado ");
-			sb.append("OR usuarioCotacao.id = :idUsuarioLogado) ");
+			sb.append("AND (usuarioCotacao.id = :idUsuarioLogado ");
+			sb.append("OR usuarios.id = :idUsuarioLogado) ");
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
 				sb.append("AND solicitacao.situacao = :situacao ");
@@ -242,6 +242,51 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ApplicationException("message.default.erro", new String[] { "listarSolicitacaoCompraPendente" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public SolicitacaoCompra obterSolicitacao(Long idSolicitacaoCompra) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT solicitacao FROM SolicitacaoCompra solicitacao ");
+			sb.append("LEFT JOIN FETCH solicitacao.coligada coligada ");
+			sb.append("LEFT JOIN FETCH solicitacao.grupoCotacao grupoCotacao ");
+			sb.append("LEFT JOIN FETCH grupoCotacao.usuarios usuarios ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioSolicitante usuarioSolicitante ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioCotacao usuarioCotacao ");
+			sb.append("WHERE solicitacao.id = :idSolicitacaoCompra ");
+			
+			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
+			query.setParameter("idSolicitacaoCompra", idSolicitacaoCompra);
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterSolicitacao" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public SolicitacaoCompra obterSolicitacaoPorIdFluig(Integer idFluig) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT solicitacao FROM SolicitacaoCompra solicitacao ");
+			sb.append("LEFT JOIN FETCH solicitacao.coligada coligada ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioSolicitante usuarioSolicitante ");
+			sb.append("WHERE solicitacao.identificadorFluig = :idFluig ");
+			
+			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
+			query.setParameter("idFluig", idFluig.longValue());
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterSolicitacao" }, e);
 		}
 	}
 	

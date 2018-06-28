@@ -323,6 +323,7 @@ public class CotacaoController implements Serializable {
 			if(Util.isNotNull(getSolicitacaoCompra())) {
 				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
 				getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setOrdensCompra(new HashSet<OrdemCompra>());
 			}
 			
 			Message.setMessage("solicitacao.compra.cotacao.iniciar", new String[] {getSolicitacaoCompra().getId().toString()});
@@ -372,6 +373,7 @@ public class CotacaoController implements Serializable {
 			if(Util.isNotNull(getSolicitacaoCompra())) {
 				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
 				getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setOrdensCompra(new HashSet<OrdemCompra>(solicitacaoCompraBusiness.listarOrdemCompraPorSolicitacao(getSolicitacaoCompra().getId())));
 			}
 			
 		} catch (ApplicationException e) {
@@ -389,6 +391,7 @@ public class CotacaoController implements Serializable {
 			if(Util.isNotNull(getSolicitacaoCompra())) {
 				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
 				getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
+				getSolicitacaoCompra().setOrdensCompra(new HashSet<OrdemCompra>(solicitacaoCompraBusiness.listarOrdemCompraPorSolicitacao(getSolicitacaoCompra().getId())));
 			}
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -475,7 +478,7 @@ public class CotacaoController implements Serializable {
 			
 			for(CotacaoItem item : getCotacao().getItens()) {
 				if(!item.getNaoPossui()) {
-					if(Util.isNull(item.getValorTotal()) || item.getValorTotal().equals(new Double(0))) {
+					if(Util.isNullOrZero(item.getValor())) {
 						throw new ApplicationException("message.empty", new String[] {"Itens com valor zerado. Favor inserir o valor total dos itens."}, FacesMessage.SEVERITY_WARN);
 					}
 					if(TreatString.isBlank(item.getCodigoUnidade())) {
