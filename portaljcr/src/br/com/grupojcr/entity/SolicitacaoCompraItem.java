@@ -1,5 +1,6 @@
 package br.com.grupojcr.entity;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,6 +18,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
+
+import br.com.grupojcr.util.TreatString;
 
 @Entity
 @Table(name = "TB_SOLICITACAO_COMPRA_ITEM")
@@ -171,6 +174,15 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 
 	public void setValorAproximado(BigDecimal valorAproximado) {
 		this.valorAproximado = valorAproximado;
+	}
+	
+	@Transient
+	public String getProdutoFormatado() {
+		if(TreatString.isNotBlank(codigoProduto)) {
+			return codigoProduto + " - " + descricaoProduto;  
+		} else {
+			return descricaoProduto;
+		}
 	}
 	
 }

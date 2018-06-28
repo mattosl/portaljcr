@@ -4,10 +4,12 @@ import java.util.List;
 
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.SolicitacaoCompra;
+import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
 
 public class OrdemCompraDTO {
-	
+
+	private CondicaoPagamentoRM condicaoPagamento;
 	private FornecedorRM fornecedor;
 	private SolicitacaoCompra solicitacaoCompra;
 	private Cotacao cotacao;
@@ -36,6 +38,12 @@ public class OrdemCompraDTO {
 	}
 	public void setListaProduto(List<ProdutoDTO> listaProduto) {
 		this.listaProduto = listaProduto;
+	}
+	public CondicaoPagamentoRM getCondicaoPagamento() {
+		return condicaoPagamento;
+	}
+	public void setCondicaoPagamento(CondicaoPagamentoRM condicaoPagamento) {
+		this.condicaoPagamento = condicaoPagamento;
 	}
 
 }

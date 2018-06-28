@@ -339,9 +339,6 @@ public class CotacaoController implements Serializable {
 	
 	public String iniciarOrdemCompra() throws ApplicationException {
 		try {
-//			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=leonan", "leonan", "@careca123");
-//			System.out.println(retorno);
-			
 			setOrdemCompra(new OrdemCompra());
 			
 			if(Util.isNotNull(getSolicitacaoCompra())) {
@@ -358,8 +355,6 @@ public class CotacaoController implements Serializable {
 			getOrdemCompra().setSolicitacaoCompra(getSolicitacaoCompra());
 			getOrdemCompra().setUsuario(getUsuario());
 			
-			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra());
-			System.out.println(xml);
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -493,6 +488,8 @@ public class CotacaoController implements Serializable {
 						if(item.getObservacao().length() > 300) {
 							throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a observação dos itens."}, FacesMessage.SEVERITY_WARN);
 						}
+					} else {
+						throw new ApplicationException("message.empty", new String[] {"Itens sem observação. Favor inserir a observação dos itens."}, FacesMessage.SEVERITY_WARN);
 					}
 				}
 			}

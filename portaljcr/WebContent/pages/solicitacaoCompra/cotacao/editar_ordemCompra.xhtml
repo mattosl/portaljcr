@@ -33,13 +33,20 @@
 										</div>
 	
 										<div class="col-sm-5 col-md-5 col-xs-11">
-											<p:selectOneMenu id="selectPrioridade" value="#{chamadoController.chamadoDTO.prioridade}">
+											<p:selectOneMenu id="condPagamento" value="#{gerarOrdemCompraController.ordemCompra.condicaoPagamento}">
+												<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+												<f:selectItems value="#{gerarOrdemCompraController.listaCondicaoPagamento}" var="cond" itemLabel="#{cond.codigoCondicaoPagamento} - #{cond.condicaoPagamento}" itemValue="#{cond}" />
+												<p:ajax event="change" process="@this" global="false" update="@form:checkCondicaoPagamento"  />
 									        </p:selectOneMenu>
 										</div>
-										
-										<div class="col-sm-1 col-md-1 col-xs-1" style="padding-top: 7px;">
-									        <span style="border-radius: 10px;" class="label label-success"><i class="fa fa-check"></i></span>
-										</div>
+										<p:outputPanel id="checkCondicaoPagamento">
+											<div class="col-sm-1 col-md-1 col-xs-1" style="padding-top: 6px;text-align: center;">
+												<p:outputLabel id="condPagamentoLabel">
+											        <i class="fa fa-#{gerarOrdemCompraController.ordemCompra.condicaoPagamento eq null ? 'exclamation-circle text-vermelho' : 'check-circle text-success'}" style="font-size:24px;"></i>
+												</p:outputLabel>
+												<p:tooltip for="condPagamentoLabel" value="#{gerarOrdemCompraController.ordemCompra.condicaoPagamento eq null ? 'Selecione uma condição de pagamento.' : 'OK'}" escape="false" position="top" />
+											</div>
+										</p:outputPanel>
 									</div>
 								</div>
 							</div>
@@ -66,12 +73,16 @@
 											<p:autoComplete id="fornecedorRM" value="#{gerarOrdemCompraController.ordemCompra.fornecedor}" var="forn" itemLabel="#{forn.fornecedorFormatado}" itemValue="#{forn}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteFornecedor}" converter="#{simpleStringEntityConverter}" minQueryLength="3" effect="fade" >
 												<p:ajax event="query" global="false" process="@this" />
 												<p:ajax event="itemSelect" global="false" update="@form:checkFornecedor" />
+												<p:ajax event="change" global="false" process="@this" update="@form:checkFornecedor" />
 											</p:autoComplete>
 									        <p:watermark value="Escreva o nome do fornecedor (Minímo 3 caracteres)." for="fornecedorRM" />
 										</div>
 										<p:outputPanel id="checkFornecedor">
-											<div class="col-sm-1 col-md-1 col-xs-1" style="padding-top: 5px;">
-										        <span style="border-radius: 10px;" class="label label-#{gerarOrdemCompraController.ordemCompra.fornecedor eq null ? 'danger' : 'success'}"><i class="#{gerarOrdemCompraController.ordemCompra.fornecedor eq null ? 'fa fa-times' : 'fa fa-check'}"></i></span>
+											<div class="col-sm-1 col-md-1 col-xs-1" style="padding-top: 6px; text-align: center;">
+												<p:outputLabel id="fornecedorLabel">
+											        <i class="fa fa-#{gerarOrdemCompraController.ordemCompra.fornecedor eq null ? 'exclamation-circle text-vermelho' : 'check-circle text-success'}" style="font-size:24px;"></i>
+												</p:outputLabel>
+										        <p:tooltip for="fornecedorLabel" value="#{gerarOrdemCompraController.ordemCompra.fornecedor eq null ? 'Selecione um fornecedor.' : 'OK'}" escape="false" position="top" />
 											</div>
 										</p:outputPanel>
 									</div>
@@ -87,7 +98,7 @@
 										tableStyle="table-layout: auto; word-break: keep-all;">
 										
 									  	<p:column headerText="Produto/Serviço" style="text-align:center;">
-									        <h:outputText value="#{item.cotacaoItem.solicitacaoCompraItem.descricaoProduto}" />
+									        <h:outputText value="#{item.cotacaoItem.solicitacaoCompraItem.produtoFormatado}" />
 									    </p:column>
 									    
 									    <p:column headerText="Valor" style="text-align:center;">
@@ -96,15 +107,18 @@
 									        </h:outputText>
 									    </p:column>
 									    
-									    <p:column headerText="Vincular Produto RM" style="text-align: center;" width="15%">
-											<p:commandLink ajax="true" process="@this" oncomplete="PF('modalProduto').show();">
-												<h:outputText value="" title="Vincular Produto" styleClass="fa fa-pencil" />
+									    <p:column headerText="Editar" style="text-align: center;" width="15%">
+											<p:commandLink ajax="true" process="@this" oncomplete="PF('modalProduto').show();" update="@form:modalProduto">
+												<h:outputText value="" title="Vincular Produto" styleClass="fa fa-edit" />
 												<f:setPropertyActionListener value="#{item}" target="#{gerarOrdemCompraController.produtoDTO}" />
 											</p:commandLink>
 										</p:column>
 										
 									    <p:column headerText="Vinculado" style="text-align:center;" width="5%">
-									        <span style="border-radius: 10px;" class="label label-#{item.produto eq null ? 'danger' : 'success'}"><i class="fa #{item.produto eq null ? 'fa-times' : 'fa-check'}"></i></span>
+									    	<p:outputLabel id="vinculoLabel" style="padding-top:3px;">
+									    		<i class="fa fa-#{item.cotacaoItem.solicitacaoCompraItem.idProduto eq null ? 'exclamation-circle text-vermelho' : 'check-circle text-success'}" style="font-size:24px;"></i>
+									    	</p:outputLabel>
+									    	<p:tooltip for="vinculoLabel" value="#{item.cotacaoItem.solicitacaoCompraItem.idProduto eq null ? 'Vincule um Produto.' : 'OK'}" escape="false" position="top" />
 									    </p:column>
 									    
 									    
@@ -132,9 +146,9 @@
 										value="Gerar Ordem de Compra"
 										id="btn_gerar_ordem_compra"
 										process="@form"
-										action="#{gerarOrdemCompraController.proximo()}"
+										action="#{gerarOrdemCompraController.gerarOrdemCompra()}"
 										update="@form"
-										ajax="false"/>
+										ajax="true"/>
 								</div>
 							</div>
 	            		</p:panel>
@@ -154,12 +168,23 @@
 							<div class="box-body">
 								<div class="form-group">
 									<div class="col-sm-3 col-md-3 control-label">
-										<label for="produto">Produto/Serviço: *</label>
+										<label for="produto">Produto/Serviço: </label>
 									</div>
 
 									<div class="col-sm-9 col-md-9">
-								        <p:autoComplete id="produto" value="#{gerarOrdemCompraController.produtoDTO.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade"/>
-								        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produto" />
+								        <p:outputLabel id="produto" value="#{gerarOrdemCompraController.produtoDTO.cotacaoItem.solicitacaoCompraItem.produtoFormatado}" styleClass="control-label font-normal" />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="produtoRM">Vincular:</label>
+									</div>
+
+									<div class="col-sm-9 col-md-9">
+								        <p:autoComplete id="produtoRM" value="#{gerarOrdemCompraController.produtoDTO.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{gerarOrdemCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade">
+								        	<p:ajax event="query" global="false" />
+								        </p:autoComplete>
+								        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produtoRM" />
 									</div>
 								</div>
 							</div>
@@ -181,8 +206,9 @@
 										value="Salvar"
 										id="btn_salvar"
 										process="@form:modalProduto"
-										update="@form:mensagemModal"
-										action="#{chamadoController.solucionarChamado()}"
+										action="#{gerarOrdemCompraController.vincularProduto()}"
+										update="@form:mensagemModal, @form:modalProduto, @form:tableItens"
+										oncomplete="PF('modalProduto').hide();"
 										ajax="true" />
 								</div>
 							</div>

@@ -23,11 +23,13 @@ import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
+import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewAccessScoped
@@ -45,6 +47,7 @@ public class GerarOrdemCompraController implements Serializable {
 	private ProdutoDTO produtoDTO;
 	
 	private List<SolicitacaoCompra> listaSolicitacao;
+	private List<CondicaoPagamentoRM> listaCondicaoPagamento;
 	
 	@EJB
 	private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
@@ -70,12 +73,28 @@ public class GerarOrdemCompraController implements Serializable {
 		}
 	}
 	
+	public void vincularProduto() throws ApplicationException {
+		try {
+			getProdutoDTO().getCotacaoItem().setIdProdutoRM(getProdutoDTO().getProduto().getIdProduto());
+			getProdutoDTO().getCotacaoItem().setCodigoProdutoRM(getProdutoDTO().getProduto().getCodigoProduto());
+			getProdutoDTO().getCotacaoItem().setDescricaoProdutoRM(getProdutoDTO().getDescricaoProduto());
+			getProdutoDTO().getCotacaoItem().getSolicitacaoCompraItem().setIdProduto(getProdutoDTO().getProduto().getIdProduto());
+			getProdutoDTO().getCotacaoItem().getSolicitacaoCompraItem().setCodigoProduto(getProdutoDTO().getProduto().getCodigoProduto());
+			getProdutoDTO().getCotacaoItem().getSolicitacaoCompraItem().setDescricaoProduto(getProdutoDTO().getProduto().getProduto());
+			setProdutoDTO(null);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "vincularProduto" }, e);
+		}
+	}
+	
 	public String iniciarOrdemCompra() throws ApplicationException {
 		try {
 //			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=leonan", "leonan", "@careca123");
 //			System.out.println(retorno);
 			
 			setOrdemCompra(new OrdemCompraDTO());
+			setProdutoDTO(new ProdutoDTO());
 			
 			if(Util.isNotNull(getSolicitacaoCompra())) {
 				getSolicitacaoCompra().setItens(new HashSet<SolicitacaoCompraItem>(solicitacaoCompraBusiness.listarItensPorSolicitacao(getSolicitacaoCompra().getId())));
@@ -98,6 +117,7 @@ public class GerarOrdemCompraController implements Serializable {
 			
 			getOrdemCompra().setSolicitacaoCompra(getSolicitacaoCompra());
 			
+			setListaCondicaoPagamento(rmBusiness.listarCondicaoPagamento(getSolicitacaoCompra().getColigada().getId()));
 //			String xml = solicitacaoCompraBusiness.montarXML(new OrdemCompra());
 //			System.out.println(xml);
 			
@@ -109,6 +129,30 @@ public class GerarOrdemCompraController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarOrdemCompra" }, e);
 		}
 		return "/pages/solicitacaoCompra/cotacao/editar_ordemCompra.xhtml?faces-redirect=true";
+	}
+	
+	public String gerarOrdemCompra() throws ApplicationException {
+		try {
+			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra());
+			System.out.println(xml);
+			
+			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=7;CODSISTEMA=T;CODUSUARIO=mestre", "leonan", "@careca123");
+			System.out.println(retorno);
+			
+			String [] arrayRetorno = retorno.split(";");
+			
+			rmBusiness.atualizaCampoLivre(arrayRetorno[0], arrayRetorno[1]);
+			
+			Message.setMessage("message.empty", new String[] {"Movimento Nº " + arrayRetorno[1] + " inserido com sucesso no RM." });
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "gerarOrdemCompra" }, e);
+		}
+		return "/pages/solicitacaoCompra/cotacao/listar_ordemCompra.xhtml?faces-redirect=true";
 	}
 	
 	public List<FornecedorRM> autocompleteFornecedor(String nome) throws ApplicationException {
@@ -190,6 +234,14 @@ public class GerarOrdemCompraController implements Serializable {
 
 	public void setProdutoDTO(ProdutoDTO produtoDTO) {
 		this.produtoDTO = produtoDTO;
+	}
+
+	public List<CondicaoPagamentoRM> getListaCondicaoPagamento() {
+		return listaCondicaoPagamento;
+	}
+
+	public void setListaCondicaoPagamento(List<CondicaoPagamentoRM> listaCondicaoPagamento) {
+		this.listaCondicaoPagamento = listaCondicaoPagamento;
 	}
 
 }

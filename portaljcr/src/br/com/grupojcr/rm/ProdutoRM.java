@@ -12,6 +12,8 @@ public class ProdutoRM implements BaseIntegerEntity, Serializable {
 	private Integer idProduto;
 	private String codigoProduto;
 	private String produto;
+	private String codigoReduzido;
+	private String codigoNatureza;
 	
 	public ProdutoRM() {}
 
@@ -52,6 +54,22 @@ public class ProdutoRM implements BaseIntegerEntity, Serializable {
 	
 	public String getProdutoFormatado() {
 		return codigoProduto + " - " + produto;
+	}
+
+	public String getCodigoReduzido() {
+		return codigoReduzido;
+	}
+
+	public void setCodigoReduzido(String codigoReduzido) {
+		this.codigoReduzido = codigoReduzido;
+	}
+
+	public String getCodigoNatureza() {
+		return codigoNatureza;
+	}
+
+	public void setCodigoNatureza(String codigoNatureza) {
+		this.codigoNatureza = codigoNatureza;
 	}
 
 }

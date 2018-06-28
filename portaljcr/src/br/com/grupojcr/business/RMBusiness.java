@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.rm.CentroCustoRM;
+import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
@@ -85,6 +86,30 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUnidades" }, e);
+		}
+	}
+	
+	public List<CondicaoPagamentoRM> listarCondicaoPagamento(Long idColigada) throws ApplicationException {
+		try {
+			return daoRM.listarCondicaoPagamento(idColigada);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarCondicaoPagamento" }, e);
+		}
+	}
+	
+	public void atualizaCampoLivre(String idColigada, String idMov) throws ApplicationException {
+		try {
+			daoRM.atualizarCampoLivre(idColigada, idMov);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizaCampoLivre" }, e);
 		}
 	}
 	

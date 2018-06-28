@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.rm.CentroCustoRM;
+import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
@@ -388,5 +389,180 @@ public class RMDAO {
 		}
 		return listaUnidade;
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<CondicaoPagamentoRM> listarCondicaoPagamento(Long idColigada) throws ApplicationException {
+		/**
+		 * SELECT CODCPG, NOME FROM TCPG
+		 * WHERE CODCOLIGADA = ?
+		 * AND INATIVO IS NULL
+		 * ORDER BY CODCPG ASC
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<CondicaoPagamentoRM> listaCondicaoPagamento = new ArrayList<CondicaoPagamentoRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODCPG, NOME FROM TCPG ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND INATIVO IS NULL ")
+			.append("ORDER BY CODCPG ASC ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				CondicaoPagamentoRM condPagamento = new CondicaoPagamentoRM();
+				condPagamento.setCodigoCondicaoPagamento(set.getString("CODCPG"));
+				condPagamento.setCondicaoPagamento(set.getString("NOME"));
+				
+				listaCondicaoPagamento.add(condPagamento);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarCondicaoPagamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaCondicaoPagamento;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public ProdutoRM obterProduto(Integer idProduto) throws ApplicationException {
+		/**
+		 * SELECT PRODUTO.IDPRD, PRODUTO.CODIGOPRD, PRODUTO.NOMEFANTASIA, PRODUTO.CODIGOREDUZIDO, PRODUTODEF.CODTBORCAMENTO FROM CorporeRM.dbo.TPRODUTO AS PRODUTO
+		 * LEFT JOIN CorporeRM.dbo.TPRODUTODEF AS PRODUTODEF ON (PRODUTO.IDPRD = PRODUTODEF.IDPRD) 
+		 * WHERE PRODUTO.IDPRD = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT PRODUTO.IDPRD, PRODUTO.CODIGOPRD, PRODUTO.NOMEFANTASIA, PRODUTO.CODIGOREDUZIDO, PRODUTODEF.CODTBORCAMENTO FROM CorporeRM.dbo.TPRODUTO AS PRODUTO ")
+			.append("LEFT JOIN CorporeRM.dbo.TPRODUTODEF AS PRODUTODEF ON (PRODUTO.IDPRD = PRODUTODEF.IDPRD) ")
+			.append("WHERE PRODUTO.IDPRD = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idProduto);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				ProdutoRM produto = new ProdutoRM();
+				produto.setIdProduto(set.getInt("IDPRD"));
+				produto.setCodigoProduto(set.getString("CODIGOPRD"));
+				produto.setProduto(set.getString("NOMEFANTASIA"));
+				produto.setCodigoReduzido(set.getString("CODIGOREDUZIDO"));
+				produto.setCodigoNatureza(set.getString("CODTBORCAMENTO"));
+				
+				return produto;
+				
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterProduto" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void atualizarCampoLivre(String idColigada, String idMovimento) throws ApplicationException {
+		/**
+		 * UPDATE TMOV
+		 * SET CAMPOLIVRE1 = ?
+		 * WHERE CODCOLIGADA = ?
+		 * AND IDMOV = ?"
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("UPDATE TMOV ")
+			.append("SET CAMPOLIVRE1 = ? ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND IDMOV = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, idMovimento);
+			ps.setString(2, idColigada);
+			ps.setString(3, idMovimento);
+			
+			ps.execute();
+			
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizarCampoLivre" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+	}
+
 
 }
