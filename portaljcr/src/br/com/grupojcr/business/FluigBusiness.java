@@ -161,9 +161,9 @@ public class FluigBusiness {
 				}
 				
 				if(qtdSolicitacaoCompra > 0) {
-					solicitacao.setClasseCSSContratos("badge-danger");
+					solicitacao.setClasseCSSSolicitacaoCompra("badge-danger");
 				} else {
-					solicitacao.setClasseCSSContratos("");
+					solicitacao.setClasseCSSSolicitacaoCompra("");
 				}
 				
 				if(qtdOrdemCompra > 0) {
