@@ -12,7 +12,7 @@
 		<ui:param name="activeSubmenu" value="gerarOrdemCompra"/>
     	<ui:param name="activeMenu" value="cotacao"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-calculator fa-1x cor-padrao"></i> Solicitação de Compra Nº #{gerarOrdemCompraController.solicitacaoCompra.id}</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-dollar fa-1x cor-padrao"></i> ORDEM DE COMPRA</ui:define>
 		<ui:define name="breadcrumb">
 			<li><i class="fa fa-pencil-square-o"></i> Cotação</li>
 	    	<li class="active"><i class="fa fa-dollar"></i> Gerar Ordem de Compra</li>
@@ -22,11 +22,71 @@
 				<h:form id="ordemCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
 						<p:panel toggleable="false" id="painelGerarOrdemCompra" styleClass="box box-danger">
+							<div class="alert alert-info alert-dismissible">
+								<i class="icon fa fa-info"></i> 
+								Preencha os campos obrigatórios para inclusão no <strong>RM</strong>. Caso não encontre seu <strong>produto/serviço</strong> ou <strong>fornecedor</strong>, você deve incluir ele no RM.
+							</div>
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Dados da Solicitação de Compra</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="numeroSolicitacao">Nº da Solicitação: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="numeroSolicitacao" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.id}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="dtSolicitacao">Data da Solicitação: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="dtSolicitacao" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.dtSolicitacao}" styleClass="control-label font-normal">
+												<f:convertDateTime pattern="dd/MM/yyyy"/>
+											</p:outputLabel>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="solicitante">Solicitante: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="solicitante" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.usuarioSolicitante.nome.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+								</div>
+							</div>
 							<div class="box-header with-border">
 		             			<h3 class="box-title">Dados da Ordem de Compra</h3>
 		            		</div>
 		            		<div class="form-horizontal">
 								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="tipoMovimento">Tipo de Movimento: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="tipoMovimento" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.modalidade eq 'MATERIAL' ? '1.1.04 - Aprovação de Compras' : '1.1.17 - Aprovação de Serviços'}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="centroCusto">Centro de Custo: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="centroCusto" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.codigoCentroCusto} - #{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.centroCusto.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
 											<label for="condPagamento">Condição de Pagamento: </label>
@@ -121,6 +181,12 @@
 									    	<p:tooltip for="vinculoLabel" value="#{item.cotacaoItem.solicitacaoCompraItem.idProduto eq null ? 'Vincule um Produto.' : 'OK'}" escape="false" position="top" />
 									    </p:column>
 									    
+									    <p:columnGroup type="footer">
+										    <p:row >
+										    	<p:column colspan="4" style="font-weight: bold;" footerText="Valor Total: #{gerarOrdemCompraController.ordemCompra.cotacao.valorTotalFormatado}" />
+										    </p:row>
+									    </p:columnGroup>
+									    
 									    
 									</p:dataTable>
 								</div>
@@ -148,7 +214,7 @@
 										process="@form"
 										action="#{gerarOrdemCompraController.gerarOrdemCompra()}"
 										update="@form"
-										ajax="true"/>
+										ajax="false" />
 								</div>
 							</div>
 	            		</p:panel>

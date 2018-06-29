@@ -215,6 +215,12 @@
 								</div>
 								<div class="active tab-pane" id="cotacoes">
 									<p:panel toggleable="false" id="painelCotacao" style="border: 0px;">
+										<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.justificativa ne null and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" >
+											<div class="alert alert-danger alert-dismissible">
+												<i class="icon fa fa-info"></i> 
+												<label for="justificativaCotacao"><strong>Foram realizadas menos de 3 cotações para a sua solicitação. <p:commandLink onclick="PF('modalJustificativa').show();"> Clique aqui para ver a justificativa.</p:commandLink></strong> </label>
+											</div>
+										</p:outputPanel>
 										<div class="row" style="padding:0px;">
 											<div class="col-sm-3 col-md-3">
 												<p:commandButton
@@ -340,6 +346,38 @@
 						    </p:confirmDialog>
 						</div>
 					</f:validateBean>
+					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+						id="modalJustificativa"
+						widgetVar="modalJustificativa" 
+						header="Justificativa"
+						resizable="false" 
+						responsive="true"
+						closable="false"
+						width="40%"
+						draggable="false"
+						modal="true">
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<div class="col-sm-12 col-md-12">
+										<h:inputTextarea value="#{cotacaoController.solicitacaoCompra.justificativa}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-footer">
+							<div class="col-sm-12 col-md-12">
+								<p:commandButton
+									styleClass="btn-azul"
+									icon="fa fa-times"
+									value="Fechar"
+									id="btn_fechar_justf"
+									ajax="true"
+									immediate="true"
+									onclick="PF('modalJustificativa').hide();" />
+							</div>
+						</div>
+					</p:dialog>
 				</h:form>
 			</div>
 		</ui:define>
