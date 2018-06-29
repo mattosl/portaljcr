@@ -2,9 +2,11 @@ package br.com.grupojcr.business;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
@@ -16,6 +18,8 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.AprovadorCentroCustoDAO;
 import br.com.grupojcr.dao.CotacaoDAO;
+import br.com.grupojcr.dao.GrupoCotacaoDAO;
+import br.com.grupojcr.dao.GrupoDAO;
 import br.com.grupojcr.dao.OrdemCompraDAO;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
@@ -24,9 +28,12 @@ import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.OrdemCompraDTO;
 import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
+import br.com.grupojcr.email.EmailSolicitacaoCompra;
 import br.com.grupojcr.entity.AprovadorCentroCusto;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
+import br.com.grupojcr.entity.Grupo;
+import br.com.grupojcr.entity.GrupoCotacao;
 import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
@@ -75,6 +82,12 @@ public class SolicitacaoCompraBusiness {
 	
 	@EJB
 	private FluigBusiness fluigBusiness;
+	
+	@EJB
+	private GrupoCotacaoDAO daoGrupoCotacao;
+	
+	@EJB
+	private GrupoDAO daoGrupo;
 	
 	@EJB
 	private RMDAO daoRM;
@@ -168,7 +181,7 @@ public class SolicitacaoCompraBusiness {
 				};
 				
 				// Inicia processo do Fluig
-				String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitação de Compra", aprovador.getAprovador(), 9, parametros);
+				String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", aprovador.getAprovador(), 9, parametros);
 	
 				for(int i = 0; i < resultado.length; i++) {
 					for(int j = 0; j < resultado[i].length; j++) {
@@ -196,7 +209,7 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
-	public void aprovar(Long idSolicitacao) throws ApplicationException {
+	public SolicitacaoCompra aprovar(Long idSolicitacao) throws ApplicationException {
 		try {
 			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
 			if(Util.isNotNull(solicitacao)) {
@@ -204,12 +217,119 @@ public class SolicitacaoCompraBusiness {
 				solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
 				daoSolicitacaoCompra.alterar(solicitacao);
 			}
+			
+			return solicitacao;
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "aprovar" }, e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailAprovacao(SolicitacaoCompra sol) throws ApplicationException {
+		try {
+			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obterSolicitacao(sol.getId());
+			List<String> emails = new ArrayList<String>();
+			if(Util.isNotNull(solicitacao.getGrupoCotacao())) {
+				GrupoCotacao grupoCotacao = daoGrupoCotacao.obterGrupoCotacao(solicitacao.getGrupoCotacao().getId());
+				for(Usuario usuario : grupoCotacao.getUsuarios()) {
+					emails.add(usuario.getEmail());
+				}
+			} else {
+				emails.add(solicitacao.getUsuarioCotacao().getEmail());
+			}
+			EmailSolicitacaoCompra emailSolicitacao = new EmailSolicitacaoCompra();
+			if(CollectionUtils.isNotEmpty(emails)) {
+				emailSolicitacao.novaSolicitacaoCompra("[PORTAL JCR] Nova Solicitação de Compra", emails , solicitacao);
+			}
+			emailSolicitacao.solicitacaoAprovada("[PORTAL JCR] Solicitação de Compra Aprovada para Cotação", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailRecusar(SolicitacaoCompra sol) throws ApplicationException {
+		try {
+			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obterSolicitacao(sol.getId());
+			EmailSolicitacaoCompra emailSolicitacao = new EmailSolicitacaoCompra();
+			emailSolicitacao.solicitacaoRecusada("[PORTAL JCR] Solicitação de Compra Recusada para Cotação", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailConcluir(SolicitacaoCompra solicitacao) throws ApplicationException {
+		try {
+			EmailSolicitacaoCompra emailSolicitacao = new EmailSolicitacaoCompra();
+			emailSolicitacao.cotacaoConcluida("[PORTAL JCR] Cotação Finalizada", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailLiberacao(SolicitacaoCompra solicitacao, Cotacao cotacao) throws ApplicationException {
+		try {
+			List<String> emails = new ArrayList<String>();
+			Grupo grupoAdministrativo = daoGrupo.obterGrupo("ADMINISTRATIVO");
+			
+			if(Util.isNotNull(grupoAdministrativo)) {
+				if(CollectionUtils.isNotEmpty(grupoAdministrativo.getUsuarios())) {
+					for(Usuario usuario : grupoAdministrativo.getUsuarios()) {
+						emails.add(usuario.getEmail());
+					}
+				}
+			}
+			if(CollectionUtils.isNotEmpty(emails)) {
+				EmailSolicitacaoCompra emailSolicitacao = new EmailSolicitacaoCompra();
+				emailSolicitacao.ordemCompraDisponivel("[PORTAL JCR] Nova Solicitação de Ordem de Compra Disponível", emails , solicitacao, cotacao);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+	
+	@Asynchronous
+	public void enviarEmailOrdemCompra(OrdemCompra oc) throws ApplicationException {
+		try {
+			List<String> emails = new ArrayList<String>();
+			Grupo grupoAdministrativo = daoGrupo.obterGrupo("ADMINISTRATIVO");
+			
+			if(Util.isNotNull(grupoAdministrativo)) {
+				if(CollectionUtils.isNotEmpty(grupoAdministrativo.getUsuarios())) {
+					for(Usuario usuario : grupoAdministrativo.getUsuarios()) {
+						emails.add(usuario.getEmail());
+					}
+				}
+			}
+			
+			if(Util.isNotNull(oc.getSolicitacaoCompra().getUsuarioSolicitante().getEmail())) {
+				emails.add(oc.getSolicitacaoCompra().getUsuarioSolicitante().getEmail());
+			}
+			
+			
+			if(CollectionUtils.isNotEmpty(emails)) {
+				EmailSolicitacaoCompra emailSolicitacao = new EmailSolicitacaoCompra();
+				emailSolicitacao.ordemCompraGerada("[PORTAL JCR] Solicitação de Ordem de Compra Gerada", emails , oc);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
 		}
 	}
 	
@@ -232,7 +352,7 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 
-	public void recusar(Long idSolicitacao, String motivo) throws ApplicationException {
+	public SolicitacaoCompra recusar(Long idSolicitacao, String motivo) throws ApplicationException {
 		try {
 			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
 			if(Util.isNotNull(solicitacao)) {
@@ -241,6 +361,8 @@ public class SolicitacaoCompraBusiness {
 				solicitacao.setDtCancelamento(Calendar.getInstance().getTime());
 				daoSolicitacaoCompra.alterar(solicitacao);
 			}
+			
+			return solicitacao;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -373,7 +495,7 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 
-	public void encerrar(OrdemCompraDTO dto, String identificadorRM, Usuario usuario) throws ApplicationException {
+	public OrdemCompra encerrar(OrdemCompraDTO dto, String identificadorRM, Usuario usuario) throws ApplicationException {
 		try {
 			SolicitacaoCompra sc = daoSolicitacaoCompra.obterSolicitacao(dto.getSolicitacaoCompra().getId());
 			sc.setSituacao(SituacaoSolicitacaoCompra.FINALIZADA);
@@ -411,6 +533,7 @@ public class SolicitacaoCompraBusiness {
 			
 			daoOrdemCompra.incluir(ordemCompra);
 			
+			return ordemCompra;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -420,12 +543,20 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
-	public void liberar(SolicitacaoCompra solicitacao) throws ApplicationException {
+	public void liberar(SolicitacaoCompra solicitacao, Cotacao cotacao) throws ApplicationException {
 		try {
 			solicitacao.setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
-			
 			daoSolicitacaoCompra.alterar(solicitacao);
 			
+			List<Cotacao> cotacoes = daoCotacao.listarCotacoesPorSolicitacao(solicitacao.getId());
+			for(Cotacao cot : cotacoes) {
+				if(cot.getId().equals(cotacao.getId())) {
+					cot.setCotacaoPrincipal(Boolean.TRUE);
+				} else {
+					cot.setCotacaoPrincipal(Boolean.FALSE);
+				}
+				daoCotacao.alterar(cotacao);
+			}
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

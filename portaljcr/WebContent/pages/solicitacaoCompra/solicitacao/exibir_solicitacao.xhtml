@@ -135,6 +135,17 @@
 											</div>
 										</div>
 									</p:outputPanel>
+									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCancelamento != null}">
+										<div class="form-group">
+											<div class="col-sm-3 col-md-3 control-label">
+												<label for="motivoCancelamento">Motivo do Cancelamento: </label>
+											</div>
+		
+											<div class="col-sm-9 col-md-9">
+												<h:inputTextarea id="motivoCancelamento" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCancelamento.toUpperCase()}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
+											</div>
+										</div>
+									</p:outputPanel>
 								</div>
 								<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
 									<div class="box-header with-border">

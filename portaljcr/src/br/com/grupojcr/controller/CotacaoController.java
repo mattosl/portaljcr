@@ -181,7 +181,8 @@ public class CotacaoController implements Serializable {
 			for(Cotacao cotacao : getSolicitacaoCompra().getCotacoes()) {
 				if(cotacao.getCotacaoPrincipal()) {
 					selecionadoPrincipal = Boolean.TRUE;
-					solicitacaoCompraBusiness.liberar(getSolicitacaoCompra());
+					solicitacaoCompraBusiness.liberar(getSolicitacaoCompra(), cotacao);
+					solicitacaoCompraBusiness.enviarEmailLiberacao(getSolicitacaoCompra(), cotacao);
 					break;
 				}
 			}
@@ -246,6 +247,7 @@ public class CotacaoController implements Serializable {
 			}
 			
 			solicitacaoCompraBusiness.concluir(getSolicitacaoCompra());
+			solicitacaoCompraBusiness.enviarEmailConcluir(getSolicitacaoCompra());
 			
 			Message.setMessage("cotacao.concluida");
 		} catch (ApplicationException e) {

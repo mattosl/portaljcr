@@ -20,6 +20,7 @@ import br.com.grupojcr.dto.OrdemCompraDTO;
 import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
+import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
@@ -152,7 +153,9 @@ public class GerarOrdemCompraController implements Serializable {
 				throw new ApplicationException("message.empty", new String[] {arrayRetorno[0]}, FacesMessage.SEVERITY_WARN);
 			}
 			
-			solicitacaoCompraBusiness.encerrar(getOrdemCompra(), arrayRetorno[1], getUsuario());
+			OrdemCompra oc = solicitacaoCompraBusiness.encerrar(getOrdemCompra(), arrayRetorno[1], getUsuario());
+			solicitacaoCompraBusiness.enviarEmailOrdemCompra(oc);
+			
 			
 			Message.setMessage("gerar.ordem.compra.sucesso", new String[] {arrayRetorno[1], getOrdemCompra().getSolicitacaoCompra().getColigada().getRazaoSocial()});
 			

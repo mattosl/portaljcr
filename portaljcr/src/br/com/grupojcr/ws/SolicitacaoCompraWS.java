@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
+import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.serialize.SolicitacaoCompraSerialize;
 import br.com.grupojcr.util.Util;
 
@@ -33,7 +34,10 @@ public class SolicitacaoCompraWS {
 		try {
 			SolicitacaoCompraSerialize solicitacao = (SolicitacaoCompraSerialize) new Gson().fromJson(data, SolicitacaoCompraSerialize.class);
 			if (Util.isNotNull(solicitacao.getIdSolicitacao())) {
-				solicitacaoCompraBusiness.aprovar(solicitacao.getIdSolicitacao());
+				SolicitacaoCompra solicitacaoCompra = solicitacaoCompraBusiness.aprovar(solicitacao.getIdSolicitacao());
+				if(Util.isNotNull(solicitacaoCompra)) {
+					solicitacaoCompraBusiness.enviarEmailAprovacao(solicitacaoCompra);
+				}
 				return Response.status(200).build();
 			}
 		} catch (Exception e) {
@@ -50,7 +54,10 @@ public class SolicitacaoCompraWS {
 		try {
 			SolicitacaoCompraSerialize solicitacao = (SolicitacaoCompraSerialize) new Gson().fromJson(data, SolicitacaoCompraSerialize.class);
 			if (Util.isNotNull(solicitacao.getIdSolicitacao())) {
-				solicitacaoCompraBusiness.recusar(solicitacao.getIdSolicitacao(), solicitacao.getMotivo());
+				SolicitacaoCompra solicitacaoCompra = solicitacaoCompraBusiness.recusar(solicitacao.getIdSolicitacao(), solicitacao.getMotivo());
+				if(Util.isNotNull(solicitacaoCompra)) {
+					solicitacaoCompraBusiness.enviarEmailRecusar(solicitacaoCompra);
+				}
 				return Response.status(200).build();
 			}
 		} catch (Exception e) {
