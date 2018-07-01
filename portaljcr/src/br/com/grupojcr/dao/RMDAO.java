@@ -23,6 +23,7 @@ import br.com.grupojcr.dto.AprovacaoOrdemCompraDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
+import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
@@ -819,7 +820,7 @@ public class RMDAO {
 	public ProdutoRM obterProduto(Integer idProduto) throws ApplicationException {
 		/**
 		 * SELECT PRODUTO.IDPRD, PRODUTO.CODIGOPRD, PRODUTO.NOMEFANTASIA, PRODUTO.CODIGOREDUZIDO, PRODUTODEF.CODTBORCAMENTO FROM TPRODUTO AS PRODUTO
-		 * LEFT JOIN CorporeRM.dbo.TPRODUTODEF AS PRODUTODEF ON (PRODUTO.IDPRD = PRODUTODEF.IDPRD) 
+		 * LEFT JOIN TPRODUTODEF AS PRODUTODEF ON (PRODUTO.IDPRD = PRODUTODEF.IDPRD) 
 		 * WHERE PRODUTO.IDPRD = ?
 		 */
 		Connection conn = null;
@@ -979,6 +980,176 @@ public class RMDAO {
 			}
 		}
 		return Boolean.FALSE;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public String obterLotacaoCentroCusto(String centroCusto, Long idColigada) throws ApplicationException {
+		/**
+		 * SELECT LOTACAO FROM CCUSTOCOMPL
+		 * WHERE CODCCUSTO LIKE ?
+		 * AND CODCOLIGADA = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT LOTACAO FROM CCUSTOCOMPL ")
+			.append("WHERE CODCCUSTO LIKE ? ")
+			.append("AND CODCOLIGADA = ? ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, centroCusto);
+			ps.setLong(2, idColigada);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if(set.next()) {
+				return set.getString("LOTACAO");
+			}
+			
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterLotacaoCentroCusto" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<AprovadorRM> listarPrimeiroAprovador(String lotacao) throws ApplicationException {
+		/**
+		 * SELECT APROVADOR.USRAPROV, APROVADOR.VALORDEMOV, APROVADOR.VALORATEMOV FROM ZMDAPROVADOR AS APROVADOR
+		 * WHERE APROVADOR.CODCCUSTO LIKE ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<AprovadorRM> listaAprovador = new ArrayList<AprovadorRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT APROVADOR.USRAPROV, APROVADOR.VALORDEMOV, APROVADOR.VALORATEMOV FROM ZMDAPROVADOR AS APROVADOR ")
+			.append("WHERE APROVADOR.CODCCUSTO LIKE ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, lotacao);
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				AprovadorRM aprovador = new AprovadorRM();
+				aprovador.setAprovador(set.getString("USRAPROV"));
+				aprovador.setValorMovimentoDe(set.getBigDecimal("VALORDEMOV"));
+				aprovador.setValorMovimentoAte(set.getBigDecimal("VALORATEMOV"));
+				
+				listaAprovador.add(aprovador);
+				
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarPrimeiroAprovador" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaAprovador;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<AprovadorRM> listarSegundoAprovador(String lotacao) throws ApplicationException {
+		/**
+		 * SELECT APROVADOR.USRAPROV, APROVADOR.VALORDEMOV, APROVADOR.VALORATEMOV FROM ZMDSEGUNDOAPROV AS APROVADOR
+		 * WHERE APROVADOR.CODCCUSTO LIKE ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<AprovadorRM> listaAprovador = new ArrayList<AprovadorRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT APROVADOR.USRAPROV, APROVADOR.VALORDEMOV, APROVADOR.VALORATEMOV FROM ZMDSEGUNDOAPROV AS APROVADOR ")
+			.append("WHERE APROVADOR.CODCCUSTO LIKE ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, lotacao);
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				AprovadorRM aprovador = new AprovadorRM();
+				aprovador.setAprovador(set.getString("USRAPROV"));
+				aprovador.setValorMovimentoDe(set.getBigDecimal("VALORDEMOV"));
+				aprovador.setValorMovimentoAte(set.getBigDecimal("VALORATEMOV"));
+				
+				listaAprovador.add(aprovador);
+				
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarSegundoAprovador" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaAprovador;
 	}
 
 

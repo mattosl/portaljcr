@@ -47,6 +47,9 @@ public class Cotacao implements BaseEntity, Serializable {
 	@Column(name = "FORNECEDOR", length = 100, nullable = false)
 	private String fornecedor;
 
+	@Column(name = "NOME_CONTATO", length = 100, nullable = false)
+	private String nomeContato;
+	
 	@Column(name = "CONTATO_FORNECEDOR", length = 15)
 	private String contatoFornecedor;
 
@@ -180,6 +183,14 @@ public class Cotacao implements BaseEntity, Serializable {
 
 	public void setFrete(BigDecimal frete) {
 		this.frete = frete;
+	}
+	
+	public String getNomeContato() {
+		return nomeContato;
+	}
+
+	public void setNomeContato(String nomeContato) {
+		this.nomeContato = nomeContato;
 	}
 
 	@Override

@@ -242,6 +242,10 @@ public class SolicitacaoCompraController implements Serializable {
 			if (Util.isNull(getSolicitacaoCompraDTO().getProduto().getUnidade())) {
 				camposObrigatorios = Boolean.TRUE;
 			}
+			
+			if(Util.isNullOrZero(getSolicitacaoCompraDTO().getProduto().getValorAproximado())) {
+				camposObrigatorios = Boolean.TRUE;
+			}
 
 			if (camposObrigatorios) {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);

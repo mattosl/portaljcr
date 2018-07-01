@@ -39,7 +39,16 @@
 									</div>
 									<div class="form-group">
 										<div class="col-sm-2 col-md-2 control-label">
-											<label for="contatoFornecedor"> Contato: </label>
+											<label for="nomeContato"> Nome do Contato: *</label>
+										</div>
+										
+										<div class="col-sm-6 col-md-6">
+											<h:inputText id="nomeContato" value="#{cotacaoController.cotacao.nomeContato}" styleClass="form-control" maxlength="100" style="text-transform: uppercase;" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2 control-label">
+											<label for="contatoFornecedor"> Contato: *</label>
 										</div>
 										
 										<div class="col-sm-3 col-md-3">
