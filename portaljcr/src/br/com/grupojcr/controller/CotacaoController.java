@@ -461,6 +461,12 @@ public class CotacaoController implements Serializable {
 			if(TreatString.isBlank(getCotacao().getFornecedor())) {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
 			}
+			if(TreatString.isBlank(getCotacao().getNomeContato())) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			}
+			if(TreatString.isBlank(getCotacao().getContatoFornecedor())) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			}
 			if(TreatString.isNotBlank(getCotacao().getObservacao())) {
 				if(getCotacao().getObservacao().length() > 300) {
 					throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a observação."}, FacesMessage.SEVERITY_WARN);

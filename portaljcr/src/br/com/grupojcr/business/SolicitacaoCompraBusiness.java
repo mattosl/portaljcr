@@ -1,6 +1,7 @@
 package br.com.grupojcr.business;
 
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -16,7 +17,6 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
-import br.com.grupojcr.dao.AprovadorCentroCustoDAO;
 import br.com.grupojcr.dao.CotacaoDAO;
 import br.com.grupojcr.dao.GrupoCotacaoDAO;
 import br.com.grupojcr.dao.GrupoDAO;
@@ -29,7 +29,6 @@ import br.com.grupojcr.dto.OrdemCompraDTO;
 import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.email.EmailSolicitacaoCompra;
-import br.com.grupojcr.entity.AprovadorCentroCusto;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.Grupo;
@@ -53,6 +52,7 @@ import br.com.grupojcr.entity.xml.TTRBITMMOVXML;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
+import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
@@ -76,9 +76,6 @@ public class SolicitacaoCompraBusiness {
 	
 	@EJB
 	private OrdemCompraDAO daoOrdemCompra;
-	
-	@EJB
-	private AprovadorCentroCustoDAO daoAprovadorCentroCusto;
 	
 	@EJB
 	private FluigBusiness fluigBusiness;
@@ -127,23 +124,45 @@ public class SolicitacaoCompraBusiness {
 			}
 			solicitacao.setDtPrazo(prazo.getTime());
 			
-			Integer nivel = 0;
-			Boolean mesmoAprovador = Boolean.FALSE;
-			AprovadorCentroCusto aprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getColigada().getId(), solicitacao.getCodigoCentroCusto(), nivel);
-			if(Util.isNotNull(aprovador)) {
-				while(solicitacao.getUsuarioSolicitante().getUsuario().equals(aprovador.getUsuario())) {
-					AprovadorCentroCusto novoAprovador = daoAprovadorCentroCusto.obterAprovadorCentroCusto(solicitacao.getColigada().getId(), solicitacao.getCodigoCentroCusto(), ++nivel);
-					if(Util.isNull(novoAprovador)) {
-						solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
-						solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
-						mesmoAprovador = Boolean.TRUE;
-						break;
-					}
+			BigDecimal valorAproximado = new BigDecimal(0);
+			for(SolicitacaoCompraItem sci : dto.getItens()) {
+				valorAproximado	= valorAproximado.add(sci.getValorAproximado());
+			}
+			
+			solicitacao.setValorTotalAproximado(valorAproximado);
+			
+			String lotacao = daoRM.obterLotacaoCentroCusto(solicitacao.getCodigoCentroCusto(), solicitacao.getColigada().getId());
+			if(TreatString.isBlank(lotacao)) {
+				throw new ApplicationException("message.empty", new String[] {"Centro de Custo não possui lotação cadastrada, solicite o cadastro da Lotação para a equipe de TI."}, FacesMessage.SEVERITY_ERROR);
+			}
+			AprovadorRM primeiroAprovador = null;
+			AprovadorRM segundoAprovador = null;
+			
+			List<AprovadorRM> listaPrimeiroAprovador = daoRM.listarPrimeiroAprovador(lotacao);
+			List<AprovadorRM> listaSegundoAprovador = daoRM.listarSegundoAprovador(lotacao);
+			
+			for(AprovadorRM aprov : listaPrimeiroAprovador) {
+				if(solicitacao.getValorTotalAproximado().compareTo(aprov.getValorMovimentoDe()) == 1 
+						&& solicitacao.getValorTotalAproximado().compareTo(aprov.getValorMovimentoAte()) != 1) {
+					primeiroAprovador = aprov;
 				}
-				solicitacao.setUsuarioAprovacaoFluig(aprovador.getAprovador());
-				
+			}
+			
+			for(AprovadorRM aprov : listaSegundoAprovador) {
+				if(solicitacao.getValorTotalAproximado().compareTo(aprov.getValorMovimentoDe()) == 1 
+						&& solicitacao.getValorTotalAproximado().compareTo(aprov.getValorMovimentoAte()) != 1) {
+					segundoAprovador = aprov;
+				}
+			}
+			
+			if(Util.isNull(primeiroAprovador) || Util.isNull(segundoAprovador)) {
+				throw new ApplicationException("message.empty", new String[] {"Cadastro de Aprovadores no RM incorreto, solicite a equipe de TI para verificar. "}, FacesMessage.SEVERITY_ERROR);
+			}
+			
+			if(usuario.getUsuario().equals(segundoAprovador)) {
+				solicitacao.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
 			} else {
-				throw new ApplicationException("message.empty", new String[] {"Centro de Custo não possui aprovador nesta coligada, solicite o cadastro dos aprovadores."}, FacesMessage.SEVERITY_ERROR);
+				solicitacao.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
 			}
 			
 			daoSolicitacaoCompra.incluir(solicitacao);
@@ -153,6 +172,7 @@ public class SolicitacaoCompraBusiness {
 			
 			for(SolicitacaoCompraItem sci : dto.getItens()) {
 				sci.setSolicitacaoCompra(solicitacao);
+				
 				daoSolicitacaoCompraItem.incluir(sci);
 				
 				
@@ -161,40 +181,39 @@ public class SolicitacaoCompraBusiness {
 				}
 				itens.append("{\"produto\": \"" + sci.getDescricaoProduto().toUpperCase() + 
 						"\", \"quantidade\": \"" + sci.getQuantidade() + 
-						"\", \"unidade\": \"" + sci.getUnidade() + 
+						"\", \"unidade\": \"" + sci.getUnidade() +
+						"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(sci.getValorAproximado()) + 
 						"\", \"observacao\": \"" + sci.getObservacao().toUpperCase() +
 						"\"}");
 			}
 			
 			itens.append("]}");
 			
-			if(!mesmoAprovador) {
-				
-				String [][] parametros = new String[][] { 
-					{ "idSolicitacao", solicitacao.getId().toString()}, 
-					{ "empresa", solicitacao.getColigada().getRazaoSocial().toUpperCase()},
-					{"descricaoPadrao", "SOLICITAÇÃO Nº " + solicitacao.getId().toString()},
-					{ "solicitante", solicitacao.getUsuarioSolicitante().getNome().toUpperCase()}, 
-					{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
-					{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
-					{ "itens", itens.toString()} 
-				};
-				
-				// Inicia processo do Fluig
-				String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", aprovador.getAprovador(), 9, parametros);
-	
-				for(int i = 0; i < resultado.length; i++) {
-					for(int j = 0; j < resultado[i].length; j++) {
-						if(resultado[i][j].equals("iProcess")) {
-							try {
-								Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
-								solicitacao.setIdentificadorFluig(idFluig);
-								
-								daoSolicitacaoCompra.alterar(solicitacao);
-								break;
-							} catch(NumberFormatException e) {
-								solicitacao.setIdentificadorFluig(null);
-							}
+			String [][] parametros = new String[][] { 
+				{ "idSolicitacao", solicitacao.getId().toString()}, 
+				{ "empresa", solicitacao.getColigada().getRazaoSocial().toUpperCase()},
+				{ "descricaoPadrao", "SOLICITAÇÃO Nº " + solicitacao.getId().toString()},
+				{ "solicitante", solicitacao.getUsuarioSolicitante().getNome().toUpperCase()}, 
+				{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
+				{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
+				{ "motivoCompra", solicitacao.getMotivoCompra()},
+				{ "itens", itens.toString()} 
+			};
+			
+			// Inicia processo do Fluig
+			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", /*solicitacao.getUsuarioAprovacaoFluig()*/ "leonan", 9, parametros);
+
+			for(int i = 0; i < resultado.length; i++) {
+				for(int j = 0; j < resultado[i].length; j++) {
+					if(resultado[i][j].equals("iProcess")) {
+						try {
+							Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
+							solicitacao.setIdentificadorFluig(idFluig);
+							
+							daoSolicitacaoCompra.alterar(solicitacao);
+							break;
+						} catch(NumberFormatException e) {
+							solicitacao.setIdentificadorFluig(null);
 						}
 					}
 				}
@@ -208,6 +227,7 @@ public class SolicitacaoCompraBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvar" }, e);
 		}
 	}
+	
 	
 	public SolicitacaoCompra aprovar(Long idSolicitacao) throws ApplicationException {
 		try {
