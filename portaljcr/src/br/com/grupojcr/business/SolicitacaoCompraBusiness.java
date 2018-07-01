@@ -181,7 +181,7 @@ public class SolicitacaoCompraBusiness {
 				};
 				
 				// Inicia processo do Fluig
-				String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitação de Compra", aprovador.getAprovador(), 9, parametros);
+				String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", aprovador.getAprovador(), 9, parametros);
 	
 				for(int i = 0; i < resultado.length; i++) {
 					for(int j = 0; j < resultado[i].length; j++) {
