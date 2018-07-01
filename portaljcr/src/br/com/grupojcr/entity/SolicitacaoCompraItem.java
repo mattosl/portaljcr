@@ -61,7 +61,7 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 	@Column(name = "DT_INCLUSAO", nullable = false)
 	private Date dtInclusao;
 	
-	@Column(name = "VLR_APROXIMADO", precision = 10, scale = 2)
+	@Column(name = "VLR_APROXIMADO", precision = 38, scale = 2)
 	private BigDecimal valorAproximado;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
