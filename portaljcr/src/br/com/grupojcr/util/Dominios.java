@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Dominios {
 	
-	public static final String PATH_URL = "http://localhost:8080/portaljcr";
+	public static final String PATH_URL = "http://portal.grupojcr.com.br/portaljcr";
 	
 	public static final String ENCODING_ISO_8859_1 = "ISO-8859-1";
 

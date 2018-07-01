@@ -140,6 +140,7 @@ public class CategoriaChamadoController implements Serializable {
 	
 	public String iniciarEditar() throws ApplicationException {
 		try {
+			setSubCategoria(new SubCategoriaChamado());
 			return "/pages/administrador/suporte/categoriaChamado/editar_categoriaChamado.xhtml?faces-redirect=true";
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
