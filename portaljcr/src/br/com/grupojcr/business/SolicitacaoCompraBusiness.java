@@ -183,7 +183,7 @@ public class SolicitacaoCompraBusiness {
 						"\", \"quantidade\": \"" + sci.getQuantidade() + 
 						"\", \"unidade\": \"" + sci.getUnidade() +
 						"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(sci.getValorAproximado()) + 
-						"\", \"observacao\": \"" + sci.getObservacao().toUpperCase() +
+						"\", \"observacao\": \"" + sci.getObservacao().toUpperCase().replaceAll("(\r\n|\n)", "&#010;") +
 						"\"}");
 			}
 			
@@ -201,7 +201,7 @@ public class SolicitacaoCompraBusiness {
 			};
 			
 			// Inicia processo do Fluig
-			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitacao de Compra", /*solicitacao.getUsuarioAprovacaoFluig()*/ "leonan", 9, parametros);
+			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitação de Compra", solicitacao.getUsuarioAprovacaoFluig(), 9, parametros);
 
 			for(int i = 0; i < resultado.length; i++) {
 				for(int j = 0; j < resultado[i].length; j++) {
@@ -229,11 +229,12 @@ public class SolicitacaoCompraBusiness {
 	}
 	
 	
-	public SolicitacaoCompra aprovar(Long idSolicitacao) throws ApplicationException {
+	public SolicitacaoCompra aprovar(Long idSolicitacao, String observacao) throws ApplicationException {
 		try {
 			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
 			if(Util.isNotNull(solicitacao)) {
 				solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
+				solicitacao.setObservacaoAprovador(observacao);
 				solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
 				daoSolicitacaoCompra.alterar(solicitacao);
 			}

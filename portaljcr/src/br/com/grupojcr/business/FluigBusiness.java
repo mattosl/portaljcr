@@ -22,6 +22,7 @@ import br.com.grupojcr.dto.AprovacaoSolicitacaoCompraDTO;
 import br.com.grupojcr.dto.SolicitacaoAprovacaoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
 import br.com.grupojcr.entity.SolicitacaoCompra;
+import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
@@ -140,6 +141,7 @@ public class FluigBusiness {
 								solicitacaoCompraDTO.setCentroCusto(solicitacaoCompra.getCentroCusto());
 								solicitacaoCompraDTO.setNomeColigada(solicitacaoCompra.getColigada().getRazaoSocial());
 								solicitacaoCompraDTO.setRequisitante(solicitacaoCompra.getUsuarioSolicitante().getNome());
+								solicitacaoCompraDTO.setValorAproximado(TreatNumber.formatMoneyCurrency(solicitacaoCompra.getValorTotalAproximado()));
 								solicitacaoCompraDTO.setIdFluig(solicitacoes[i].getProcessInstanceId());
 								solicitacaoCompraDTO.setTipo(solicitacoes[i].getStateDescription());
 								solicitacaoCompraDTO.setSequenciaMovimento(solicitacoes[i].getMovementSequence());

@@ -9,6 +9,7 @@ public class AprovacaoSolicitacaoCompraDTO {
 	private String codigoCentroCusto;
 	private String centroCusto;
 	private String requisitante;
+	private String valorAproximado;
 	private Integer sequenciaMovimento;
 	
 	public String getNomeColigada() {
@@ -58,6 +59,12 @@ public class AprovacaoSolicitacaoCompraDTO {
 	}
 	public void setNumeroSolicitacao(Long numeroSolicitacao) {
 		this.numeroSolicitacao = numeroSolicitacao;
+	}
+	public String getValorAproximado() {
+		return valorAproximado;
+	}
+	public void setValorAproximado(String valorAproximado) {
+		this.valorAproximado = valorAproximado;
 	}
 	
 

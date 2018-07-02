@@ -34,7 +34,7 @@ public class SolicitacaoCompraWS {
 		try {
 			SolicitacaoCompraSerialize solicitacao = (SolicitacaoCompraSerialize) new Gson().fromJson(data, SolicitacaoCompraSerialize.class);
 			if (Util.isNotNull(solicitacao.getIdSolicitacao())) {
-				SolicitacaoCompra solicitacaoCompra = solicitacaoCompraBusiness.aprovar(solicitacao.getIdSolicitacao());
+				SolicitacaoCompra solicitacaoCompra = solicitacaoCompraBusiness.aprovar(solicitacao.getIdSolicitacao(), solicitacao.getObservacao());
 				if(Util.isNotNull(solicitacaoCompra)) {
 					solicitacaoCompraBusiness.enviarEmailAprovacao(solicitacaoCompra);
 				}

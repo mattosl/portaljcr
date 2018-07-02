@@ -145,10 +145,6 @@
 												        </h:outputText>
 												    </p:column>
 												    
-												    <p:column headerText="Observação" style="text-align:center; font-size:12px;">
-												        <h:outputText value="#{item.observacao}" />
-												    </p:column>
-												    
 												    <p:column headerText="Excluir" style="text-align: center; font-size:12px;" width="8%">
 														<p:commandLink ajax="true" process="@this" action="#{solicitacaoCompraController.excluirItem(item)}" update="@form:tableItens">
 															<h:outputText value="" title="Excluir" styleClass="fa fa-times" />

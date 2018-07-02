@@ -70,6 +70,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	
 	@Column(name = "JUSTIFICATIVA", length = 300)
 	private String justificativa;
+
+	@Column(name = "OBS_APROVADOR", length = 300)
+	private String observacaoAprovador;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_CANCELAMENTO")
@@ -380,6 +383,14 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 
 	public void setValorTotalAproximado(BigDecimal valorTotalAproximado) {
 		this.valorTotalAproximado = valorTotalAproximado;
+	}
+	
+	public String getObservacaoAprovador() {
+		return observacaoAprovador;
+	}
+
+	public void setObservacaoAprovador(String observacaoAprovador) {
+		this.observacaoAprovador = observacaoAprovador;
 	}
 
 	

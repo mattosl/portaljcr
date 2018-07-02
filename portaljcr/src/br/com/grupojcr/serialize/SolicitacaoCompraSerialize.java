@@ -8,6 +8,8 @@ public class SolicitacaoCompraSerialize {
 	private Long idSolicitacao;
 	@SerializedName("motivo")
 	private String motivo;
+	@SerializedName("observacao")
+	private String observacao;
 	
 	public String getMotivo() {
 		return motivo;
@@ -20,6 +22,12 @@ public class SolicitacaoCompraSerialize {
 	}
 	public void setIdSolicitacao(Long idSolicitacao) {
 		this.idSolicitacao = idSolicitacao;
+	}
+	public String getObservacao() {
+		return observacao;
+	}
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 }
