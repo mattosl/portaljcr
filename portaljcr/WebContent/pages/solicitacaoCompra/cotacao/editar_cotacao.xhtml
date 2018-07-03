@@ -231,7 +231,7 @@
 													process="@this"
 													action="#{cotacaoController.novaCotacao()}"
 													ajax="true"
-													rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}">
+													rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO' and cotacaoController.solicitacaoCompra.usuarioCotacao eq usuario}">
 												</p:commandButton>
 											</div>
 										</div>
@@ -302,6 +302,19 @@
 											action="#{cotacaoController.voltar()}"
 											ajax="false" />
 									</div>
+									<div class="col-sm-3 col-md-3 pull-left">
+										<p:commandButton
+											styleClass="btn-azul"
+											icon="fa fa-pencil-square-o"
+											value="Atribuir para mim"
+											id="btn_atribuir_para_mim"
+											process="@this"
+											immediate="true"
+											update="@form"
+											action="#{cotacaoController.atribuirParaMim()}"
+											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO' and cotacaoController.solicitacaoCompra.usuarioCotacao ne usuario}"
+											ajax="false" />
+									</div>
 									<div class="col-sm-3 col-md-3 pull-right">
 										<p:commandButton
 											styleClass="btn-vermelho"
@@ -312,7 +325,7 @@
 											immediate="true"
 											action="#{cotacaoController.concluirCotacao()}"
 											ajax="true"
-											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO'}" />
+											rendered="#{cotacaoController.solicitacaoCompra.situacao eq 'EM_COTACAO' and cotacaoController.solicitacaoCompra.usuarioCotacao eq usuario}" />
 										<p:commandButton
 											styleClass="btn-verde"
 											icon="fa fa-dollar"

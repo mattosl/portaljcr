@@ -27,6 +27,7 @@ import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.util.BrasilUtils;
 import br.com.grupojcr.util.TreatDate;
+import br.com.grupojcr.util.Util;
 
 @Stateless
 public class EmailSolicitacaoCompra {
@@ -81,7 +82,7 @@ public class EmailSolicitacaoCompra {
 	
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public void solicitacaoAprovada(String assunto, List<String> destinatariosPara, SolicitacaoCompra solicitacao) throws Exception {
+	public void solicitacaoAprovada(String assunto, List<String> destinatariosPara, SolicitacaoCompra solicitacao, String nomeAprovador) throws Exception {
 		try {
 			InitialContext ic = new InitialContext();
 			session = ((Session) ic.lookup("java:jboss/mail/MailChamadoService"));
@@ -104,6 +105,11 @@ public class EmailSolicitacaoCompra {
 					new InputStreamReader(getClass().getResourceAsStream("/email/solicitacaoCompra/email.solicitacaoCompraAprovada.html")));
 			String bodyEmail = IOUtils.toString(fis);
 			bodyEmail = bodyEmail.replace("${numeroSolicitacao}", solicitacao.getId().toString());
+			String textoAprovador = "Sua solicitação foi aprovada e foi encaminhada para cotação.";
+			if(Util.isNotNull(nomeAprovador)) {
+				textoAprovador = "Sua solicitação foi aprovada por " + nomeAprovador + " e foi encaminhada para cotação.";
+			}
+			bodyEmail = bodyEmail.replace("${textoAprovador}", textoAprovador);
 			bodyEmail = bodyEmail.replace("${dtSolicitacao}", TreatDate.format("dd/MM/yyyy", solicitacao.getDtSolicitacao()));
 			bodyEmail = bodyEmail.replace("${prioridade}", solicitacao.getPrioridade().getDescricao().toUpperCase());
 			bodyEmail = bodyEmail.replace("${modalidade}", solicitacao.getModalidade().getDescricao().toUpperCase());
@@ -121,7 +127,7 @@ public class EmailSolicitacaoCompra {
 	
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public void solicitacaoRecusada(String assunto, List<String> destinatariosPara, SolicitacaoCompra solicitacao) throws Exception {
+	public void solicitacaoRecusada(String assunto, List<String> destinatariosPara, SolicitacaoCompra solicitacao, String nomeAprovador) throws Exception {
 		try {
 			InitialContext ic = new InitialContext();
 			session = ((Session) ic.lookup("java:jboss/mail/MailChamadoService"));
@@ -144,6 +150,11 @@ public class EmailSolicitacaoCompra {
 					new InputStreamReader(getClass().getResourceAsStream("/email/solicitacaoCompra/email.solicitacaoCompraRecusada.html")));
 			String bodyEmail = IOUtils.toString(fis);
 			bodyEmail = bodyEmail.replace("${numeroSolicitacao}", solicitacao.getId().toString());
+			String textoAprovador = "Sua solicitação foi recusada.";
+			if(Util.isNotNull(nomeAprovador)) {
+				textoAprovador = "Sua solicitação foi recusada por " + nomeAprovador + ".";
+			}
+			bodyEmail = bodyEmail.replace("${textoAprovador}", textoAprovador);
 			bodyEmail = bodyEmail.replace("${motivoRecusa}", solicitacao.getMotivoCancelamento());
 			bodyEmail = bodyEmail.replace("${dtSolicitacao}", TreatDate.format("dd/MM/yyyy", solicitacao.getDtSolicitacao()));
 			bodyEmail = bodyEmail.replace("${prioridade}", solicitacao.getPrioridade().getDescricao().toUpperCase());

@@ -24,6 +24,7 @@ import br.com.grupojcr.dao.OrdemCompraDAO;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraItemDAO;
+import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.OrdemCompraDTO;
 import br.com.grupojcr.dto.ProdutoDTO;
@@ -85,6 +86,9 @@ public class SolicitacaoCompraBusiness {
 	
 	@EJB
 	private GrupoDAO daoGrupo;
+	
+	@EJB
+	private UsuarioDAO daoUsuario;
 	
 	@EJB
 	private RMDAO daoRM;
@@ -267,7 +271,13 @@ public class SolicitacaoCompraBusiness {
 			if(CollectionUtils.isNotEmpty(emails)) {
 				emailSolicitacao.novaSolicitacaoCompra("[PORTAL JCR] Nova Solicitação de Compra", emails , solicitacao);
 			}
-			emailSolicitacao.solicitacaoAprovada("[PORTAL JCR] Solicitação de Compra Aprovada para Cotação", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao);
+			
+			String nomeAprovador = null;
+			Usuario usuario = daoUsuario.obterUsuario(solicitacao.getUsuarioAprovacaoFluig());
+			if(Util.isNotNull(usuario)) {
+				nomeAprovador = usuario.getNome();
+			}
+			emailSolicitacao.solicitacaoAprovada("[PORTAL JCR] Solicitação de Compra Aprovada para Cotação", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao, nomeAprovador);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 		} catch (Exception e) {
@@ -280,7 +290,12 @@ public class SolicitacaoCompraBusiness {
 		try {
 			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obterSolicitacao(sol.getId());
 			EmailSolicitacaoCompra emailSolicitacao = new EmailSolicitacaoCompra();
-			emailSolicitacao.solicitacaoRecusada("[PORTAL JCR] Solicitação de Compra Recusada para Cotação", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao);
+			String nomeAprovador = null;
+			Usuario usuario = daoUsuario.obterUsuario(solicitacao.getUsuarioAprovacaoFluig());
+			if(Util.isNotNull(usuario)) {
+				nomeAprovador = usuario.getNome();
+			}
+			emailSolicitacao.solicitacaoRecusada("[PORTAL JCR] Solicitação de Compra Recusada para Cotação", new ArrayList<String>(Arrays.asList(solicitacao.getUsuarioSolicitante().getEmail())) , solicitacao, nomeAprovador);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 		} catch (Exception e) {
@@ -854,6 +869,20 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "montarXML" }, e);
+		}
+	}
+	
+	public SolicitacaoCompra atribuir(SolicitacaoCompra solicitacao, Usuario usuario) throws ApplicationException {
+		try {
+			solicitacao.setUsuarioCotacao(usuario);
+			daoSolicitacaoCompra.alterar(solicitacao);
+			return solicitacao;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
 		}
 	}
 	
