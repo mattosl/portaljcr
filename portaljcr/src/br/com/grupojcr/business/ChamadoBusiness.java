@@ -74,6 +74,10 @@ public class ChamadoBusiness {
 			}
 			if(TreatString.isBlank(dto.getDescricao())) {
 				throw new ApplicationException("message.empty", new String[] {"Favor preencher os campos obrigatórios (*)"}, FacesMessage.SEVERITY_WARN);
+			} else {
+				if(dto.getDescricao().length() > 500) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 500 caracteres para a descrição do chamado."}, FacesMessage.SEVERITY_WARN);
+				}
 			}
 			
 			Chamado chamado = new Chamado();

@@ -1152,5 +1152,180 @@ public class RMDAO {
 		return listaAprovador;
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Integer obterPeriodoOrcamentoColigada(Long codColigada) throws ApplicationException {
+		/**
+		 *	SELECT IDPERIODO FROM TPERIODOORCAMENTO
+		 *	WHERE STATUS = 0
+		 *	AND GETDATE() BETWEEN DATAINICIO AND DATAFIM
+		 *	AND CODCOLIGADA = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT IDPERIODO FROM TPERIODOORCAMENTO ")
+			.append("WHERE STATUS = 0 ")
+			.append("AND GETDATE() BETWEEN DATAINICIO AND DATAFIM ")
+			.append("AND CODCOLIGADA = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, codColigada);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getInt("IDPERIODO");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterPeriodoOrcamentoColigada" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Integer obterOrcamento(Integer periodo, Long codColigada, String idNatureza, String idCentroCusto) throws ApplicationException {
+		/**
+		 *	SELECT IDORCAMENTO FROM TORCAMENTO
+		 * 	WHERE CODCOLIGADA = ?
+		 * 	AND CODTBORCAMENTO LIKE ?
+		 * 	AND IDPERIODO = ?
+		 * 	AND CODCCUSTO LIKE ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT IDORCAMENTO FROM TORCAMENTO ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CODTBORCAMENTO LIKE ? ")
+			.append("AND IDPERIODO = ? ")
+			.append("AND CODCCUSTO LIKE ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, codColigada);
+			ps.setString(2, idNatureza);
+			ps.setInt(3, periodo);
+			ps.setString(4, idCentroCusto);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getInt("IDORCAMENTO");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterOrcamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public BigDecimal obterSaldoDisponivelOrcamento(Integer periodo, Long codColigada, Integer idOrcamento, Integer mes) throws ApplicationException {
+		/**
+		 *	SELECT ((VALORORCADO - (VALORREAL + VALORCEDIDO)) + VALORRECEBIDO) AS SALDO FROM TITMORCAMENTO
+		 *	WHERE CODCOLIGADA = ?
+		 *	AND IDORCAMENTO = ?
+		 *	AND IDPERIODO = ?
+		 *	AND IDITMPERIODO = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT ((VALORORCADO - (VALORREAL + VALORCEDIDO)) + VALORRECEBIDO) AS SALDO FROM TITMORCAMENTO ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND IDORCAMENTO = ? ")
+			.append("AND IDPERIODO = ? ")
+			.append("AND IDITMPERIODO = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, codColigada);
+			ps.setInt(2, idOrcamento);
+			ps.setInt(3, periodo);
+			ps.setInt(4, mes);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getBigDecimal("SALDO");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSaldoDisponivelOrcamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
 
 }
