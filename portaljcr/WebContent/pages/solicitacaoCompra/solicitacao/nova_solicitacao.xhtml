@@ -202,7 +202,10 @@
 									<p:outputPanel id="descricaoProdutoPanel">
 										<div class="col-sm-9 col-md-9">
 											<h:inputText id="produtoDescricao" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.descricaoProduto}" rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
-									        <p:autoComplete id="produto" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" rendered="#{!solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
+									        <p:autoComplete id="produto" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" rendered="#{!solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}">
+									        	<p:ajax event="query" global="false" process="@this" />
+												<p:ajax event="itemSelect" global="false" process="@this" />
+									        </p:autoComplete>
 	<!-- 								        <p:watermark value="01.001.0005 - SERVIÇO DE TELEFONIA" for="produto" /> -->
 									        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produto" />
 										</div>
@@ -216,7 +219,7 @@
 									<div class="col-sm-2 col-md-2">
 								        <h:inputText id="qtd" maxlength="9" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" onkeyup="filterNumberOnly(this);" />
 									</div>
-									<div class="col-sm-7 col-md-7">
+									<div class="col-sm-7 col-md-7" style="display:none;">
 										<span class="users-list-date pull-right">
 											<p:selectBooleanCheckbox id="naoEncontreiProdutoCheck" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" styleClass="pull-right" itemLabel="Não encontrei meu produto.">
 												<p:ajax event="change" process="@this" global="false" update="@form:descricaoProdutoPanel" />

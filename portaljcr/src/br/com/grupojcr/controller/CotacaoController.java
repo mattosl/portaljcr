@@ -189,12 +189,27 @@ public class CotacaoController implements Serializable {
 	
 	public String liberar() throws ApplicationException {
 		try {
+			String justificativa = getSolicitacaoCompra().getJustificativaLiberacao();
 			Boolean selecionadoPrincipal = Boolean.FALSE;
 			for(Cotacao cotacao : getSolicitacaoCompra().getCotacoes()) {
 				if(cotacao.getCotacaoPrincipal()) {
 					selecionadoPrincipal = Boolean.TRUE;
-					solicitacaoCompraBusiness.liberar(getSolicitacaoCompra(), cotacao);
-					solicitacaoCompraBusiness.enviarEmailLiberacao(getSolicitacaoCompra(), cotacao);
+					if(!(cotacao.getCotacaoPrincipal() && cotacao.getMelhorOpcao())) {
+						if(TreatString.isBlank(justificativa)) {
+							throw new ApplicationException("message.empty", new String[] {"A melhor opção não foi selecionada, justifique."}, FacesMessage.SEVERITY_WARN);
+						} else {
+							if(justificativa.length() > 300) {
+								throw new ApplicationException("message.empty", new String[] {"Máximo 300 caracteres para a justificativa."}, FacesMessage.SEVERITY_WARN);
+							}
+						}
+					}
+					Boolean reenviar = solicitacaoCompraBusiness.liberar(getSolicitacaoCompra(), cotacao, justificativa);
+					if(!reenviar) {
+						Message.setMessage("cotacao.aprovada");
+						solicitacaoCompraBusiness.enviarEmailLiberacao(getSolicitacaoCompra(), cotacao);
+					} else {
+						Message.setMessage("cotacao.reenviada");
+					}
 					break;
 				}
 			}
@@ -203,7 +218,6 @@ public class CotacaoController implements Serializable {
 				throw new ApplicationException("cotacao.selecionada", FacesMessage.SEVERITY_WARN);
 			}
 			
-			Message.setMessage("cotacao.aprovada");
 			return "/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);

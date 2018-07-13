@@ -70,6 +70,9 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	
 	@Column(name = "JUSTIFICATIVA", length = 300)
 	private String justificativa;
+	
+	@Column(name = "JUSTIFICATIVA_LIBERACAO", length = 300)
+	private String justificativaLiberacao;
 
 	@Column(name = "OBS_APROVADOR", length = 300)
 	private String observacaoAprovador;
@@ -422,6 +425,14 @@ public class SolicitacaoCompra implements BaseEntity, Serializable {
 	@Transient
 	public List<Cotacao> getCotacoesList() {
 		return new ArrayList<Cotacao>(cotacoes);
+	}
+
+	public String getJustificativaLiberacao() {
+		return justificativaLiberacao;
+	}
+
+	public void setJustificativaLiberacao(String justificativaLiberacao) {
+		this.justificativaLiberacao = justificativaLiberacao;
 	}
 
 }

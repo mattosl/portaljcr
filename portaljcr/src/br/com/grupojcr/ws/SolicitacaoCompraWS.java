@@ -1,5 +1,7 @@
 package br.com.grupojcr.ws;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -13,7 +15,9 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
+import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.SolicitacaoCompra;
+import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.serialize.SolicitacaoCompraSerialize;
 import br.com.grupojcr.util.Util;
 
@@ -36,7 +40,21 @@ public class SolicitacaoCompraWS {
 			if (Util.isNotNull(solicitacao.getIdSolicitacao())) {
 				SolicitacaoCompra solicitacaoCompra = solicitacaoCompraBusiness.aprovar(solicitacao.getIdSolicitacao(), solicitacao.getObservacao());
 				if(Util.isNotNull(solicitacaoCompra)) {
-					solicitacaoCompraBusiness.enviarEmailAprovacao(solicitacaoCompra);
+					if(solicitacaoCompra.getSituacao().equals(SituacaoSolicitacaoCompra.APROVADA_COTACAO)) {
+						solicitacaoCompraBusiness.enviarEmailAprovacao(solicitacaoCompra);
+					} else {
+						solicitacaoCompra = solicitacaoCompraBusiness.obterSolicitacao(solicitacaoCompra.getId());
+						List<Cotacao> cotacoes = solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(solicitacaoCompra.getId());
+						Cotacao cotacaoPrincipal = null;
+						for(Cotacao cotacao : cotacoes) {
+							if(cotacao.getCotacaoPrincipal()) {
+								cotacaoPrincipal = cotacao;
+							}
+						}
+						if(cotacaoPrincipal != null) {
+							solicitacaoCompraBusiness.enviarEmailLiberacao(solicitacaoCompra, cotacaoPrincipal);
+						}
+					}
 				}
 				return Response.status(200).build();
 			}

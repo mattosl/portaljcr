@@ -33,6 +33,15 @@
 								<div class="box-body">
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="empresa">Empresa: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="empresa" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.coligada.razaoSocial.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
 											<label for="numeroSolicitacao">Nº da Solicitação: </label>
 										</div>
 	
@@ -62,6 +71,28 @@
 											<p:outputLabel id="solicitante" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.usuarioSolicitante.nome.toUpperCase()}" styleClass="control-label font-normal" />
 										</div>
 									</div>
+									
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+											<label for="cotador">Cotador: </label>
+										</div>
+	
+										<div class="col-sm-9 col-md-9 col-xs-12">
+											<p:outputLabel id="cotador" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.usuarioCotacao.nome.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									
+									<p:outputPanel rendered="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.justificativaLiberacao ne null}">
+										<div class="form-group">
+											<div class="col-sm-3 col-md-3 col-xs-12 control-label">
+												<label for="justSolicitante">Justificativa do Solicitante: </label>
+											</div>
+		
+											<div class="col-sm-9 col-md-9 col-xs-12">
+												<h:inputTextarea id="justSolicitante" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.justificativaLiberacao}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
+											</div>
+										</div>
+									</p:outputPanel>
 								</div>
 							</div>
 							<div class="box-header with-border">
@@ -168,7 +199,7 @@
 									    </p:column>
 									    
 									    <p:column headerText="Editar" style="text-align: center;" width="15%">
-											<p:commandLink ajax="true" process="@this" oncomplete="PF('modalProduto').show();" update="@form:modalProduto">
+											<p:commandLink ajax="true" process="@this" oncomplete="PF('modalProduto').show();PF('modalProduto').initPosition();" update="@form:modalProduto">
 												<h:outputText value="" title="Vincular Produto" styleClass="fa fa-edit" />
 												<f:setPropertyActionListener value="#{item}" target="#{gerarOrdemCompraController.produtoDTO}" />
 											</p:commandLink>
@@ -211,13 +242,18 @@
 										icon="fa fa-dollar"
 										value="Gerar Ordem de Compra"
 										id="btn_gerar_ordem_compra"
-										process="@form"
+										process="@this, @form:tableItens"
 										action="#{gerarOrdemCompraController.gerarOrdemCompra()}"
-										update="@form"
-										ajax="false" />
+										ajax="true">
+										<p:confirm header="Confirmação!" message="Deseja gerar a aprovação para a ordem de compra?" icon="fa fa-warning" />
+									</p:commandButton>
 								</div>
 							</div>
 	            		</p:panel>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+				        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+				        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+				    </p:confirmDialog>
 					</f:validateBean>
 					<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
 						id="modalProduto"

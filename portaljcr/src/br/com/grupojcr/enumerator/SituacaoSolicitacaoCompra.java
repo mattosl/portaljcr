@@ -10,7 +10,8 @@ public enum SituacaoSolicitacaoCompra {
 	AGUARDANDO_APRV_COTACAO(3, "Cotação para Aprovação"),
 	LIBERADO_ORDEM_COMPRA(4, "Liberado Ordem de Compra"),
 	FINALIZADA(5, "Finalizada"),
-	CANCELADA(6, "Cancelada");
+	CANCELADA(6, "Cancelada"),
+	AGUARDANDO_NV_APRV(7, "Aguardando Nova Aprovação");
 	
 	private Integer id;
 	private String descricao;

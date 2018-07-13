@@ -199,7 +199,8 @@ public class SolicitacaoCompraController implements Serializable {
 			if (!validado) {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
 			}
-
+			
+			solicitacaoCompraBusiness.validarOrcamentoSolicitacaoCompra(getSolicitacaoCompraDTO());
 			solicitacaoCompraBusiness.salvar(getSolicitacaoCompraDTO(), getUsuario());
 
 			Message.setMessage("solicitacao.compra.sucesso");

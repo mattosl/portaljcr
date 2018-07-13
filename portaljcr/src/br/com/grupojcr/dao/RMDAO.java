@@ -717,7 +717,7 @@ public class RMDAO {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT CODUND, DESCRICAO FROM TUND ")
-			.append("ORDER BY DESCRICAO ASC ");
+			.append("ORDER BY CODUND ASC ");
 			
 			ps = conn.prepareStatement(sb.toString());
 			

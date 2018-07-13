@@ -135,13 +135,17 @@ public class GerarOrdemCompraController implements Serializable {
 			}
 			
 			for(ProdutoDTO produto : getOrdemCompra().getListaProduto()) {
-				if(Util.isNull(produto.getCotacaoItem().getSolicitacaoCompraItem().getId())) {
+				if(Util.isNull(produto.getCotacaoItem().getSolicitacaoCompraItem().getCodigoProduto())) {
 					throw new ApplicationException("message.empty", new String[] {"Favor vincular todos os produtos/serviços com o RM."}, FacesMessage.SEVERITY_WARN);
 				}
 			}
 			
+			/** Validação de Orçamento */
+			solicitacaoCompraBusiness.validarOrcamentoOrdemCompra(getOrdemCompra());
 			
-			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra());
+			Boolean existeUsuario = rmBusiness.existeUsuario(getUsuario().getUsuario().toLowerCase());
+			
+			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra(), existeUsuario ? getUsuario().getUsuario().toLowerCase() : "portaljcr");
 			
 			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=" + getOrdemCompra().getSolicitacaoCompra().getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
 			

@@ -17,6 +17,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.dao.ControleOrcamentoDAO;
 import br.com.grupojcr.dao.CotacaoDAO;
 import br.com.grupojcr.dao.GrupoCotacaoDAO;
 import br.com.grupojcr.dao.GrupoDAO;
@@ -30,6 +31,7 @@ import br.com.grupojcr.dto.OrdemCompraDTO;
 import br.com.grupojcr.dto.ProdutoDTO;
 import br.com.grupojcr.dto.SolicitacaoCompraDTO;
 import br.com.grupojcr.email.EmailSolicitacaoCompra;
+import br.com.grupojcr.entity.ControleOrcamento;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.Grupo;
@@ -65,6 +67,7 @@ public class SolicitacaoCompraBusiness {
 	
 	private static Logger LOG = Logger.getLogger(ChamadoBusiness.class);
 	private final static String KEY_MENSAGEM_PADRAO = "message.default.erro";
+	private final static String PROCESSO_SOLICITACAO_COMPRA = "Solicitação de Compra";
 	
 	@EJB
 	private SolicitacaoCompraDAO daoSolicitacaoCompra;
@@ -89,6 +92,9 @@ public class SolicitacaoCompraBusiness {
 	
 	@EJB
 	private UsuarioDAO daoUsuario;
+	
+	@EJB
+	private ControleOrcamentoDAO daoControleOrcamento;
 	
 	@EJB
 	private RMDAO daoRM;
@@ -132,7 +138,6 @@ public class SolicitacaoCompraBusiness {
 			for(SolicitacaoCompraItem sci : dto.getItens()) {
 				valorAproximado	= valorAproximado.add(sci.getValorAproximado());
 			}
-			
 			solicitacao.setValorTotalAproximado(valorAproximado);
 			
 			String lotacao = daoRM.obterLotacaoCentroCusto(solicitacao.getCodigoCentroCusto(), solicitacao.getColigada().getId());
@@ -163,7 +168,7 @@ public class SolicitacaoCompraBusiness {
 				throw new ApplicationException("message.empty", new String[] {"Cadastro de Aprovadores no RM incorreto, solicite a equipe de TI para verificar. "}, FacesMessage.SEVERITY_ERROR);
 			}
 			
-			if(usuario.getUsuario().equals(segundoAprovador)) {
+			if(usuario.getUsuario().equalsIgnoreCase(segundoAprovador.getAprovador())) {
 				solicitacao.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
 			} else {
 				solicitacao.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
@@ -205,7 +210,7 @@ public class SolicitacaoCompraBusiness {
 			};
 			
 			// Inicia processo do Fluig
-			String[][] resultado = fluigBusiness.iniciarProcessoFluig("Solicitação de Compra", solicitacao.getUsuarioAprovacaoFluig(), 9, parametros);
+			String[][] resultado = fluigBusiness.iniciarProcessoFluig(PROCESSO_SOLICITACAO_COMPRA, solicitacao.getUsuarioAprovacaoFluig(), 9, parametros);
 
 			for(int i = 0; i < resultado.length; i++) {
 				for(int j = 0; j < resultado[i].length; j++) {
@@ -237,8 +242,14 @@ public class SolicitacaoCompraBusiness {
 		try {
 			SolicitacaoCompra solicitacao = daoSolicitacaoCompra.obter(idSolicitacao);
 			if(Util.isNotNull(solicitacao)) {
-				solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
-				solicitacao.setObservacaoAprovador(observacao);
+				if(solicitacao.getSituacao().equals(SituacaoSolicitacaoCompra.AGUARDANDO_NV_APRV)) {
+					solicitacao.setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
+				} else {
+					solicitacao.setSituacao(SituacaoSolicitacaoCompra.APROVADA_COTACAO);
+				}
+				if(TreatString.isNotBlank(observacao)) {
+					solicitacao.setObservacaoAprovador(observacao);
+				}
 				solicitacao.setDtAprovacao(Calendar.getInstance().getTime());
 				daoSolicitacaoCompra.alterar(solicitacao);
 			}
@@ -578,27 +589,220 @@ public class SolicitacaoCompraBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrar" }, e);
 		}
 	}
-	
-	public void liberar(SolicitacaoCompra solicitacao, Cotacao cotacao) throws ApplicationException {
+
+	public void validarOrcamentoOrdemCompra(OrdemCompraDTO dto) throws ApplicationException {
 		try {
-			solicitacao.setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
-			daoSolicitacaoCompra.alterar(solicitacao);
-			
-			List<Cotacao> cotacoes = daoCotacao.listarCotacoesPorSolicitacao(solicitacao.getId());
-			for(Cotacao cot : cotacoes) {
-				if(cot.getId().equals(cotacao.getId())) {
-					cot.setCotacaoPrincipal(Boolean.TRUE);
-				} else {
-					cot.setCotacaoPrincipal(Boolean.FALSE);
+			ControleOrcamento controle = daoControleOrcamento.obterControleOrcamento(dto.getSolicitacaoCompra().getColigada().getId(), dto.getSolicitacaoCompra().getCodigoCentroCusto());
+			if(Util.isNotNull(controle)) {
+				if(controle.getSituacao()) {
+		 			Integer periodo = daoRM.obterPeriodoOrcamentoColigada(dto.getSolicitacaoCompra().getColigada().getId());
+					if(Util.isNotNull(periodo)) {
+						for(CotacaoItem item : dto.getCotacao().getItens()) {
+							ProdutoRM produtoRM = daoRM.obterProduto(item.getSolicitacaoCompraItem().getIdProduto());
+							Integer idOrcamento = daoRM.obterOrcamento(periodo, dto.getSolicitacaoCompra().getColigada().getId(), produtoRM.getCodigoNatureza(), dto.getSolicitacaoCompra().getCodigoCentroCusto());
+							if(Util.isNotNull(idOrcamento)) {
+								BigDecimal saldo = daoRM.obterSaldoDisponivelOrcamento(periodo, dto.getSolicitacaoCompra().getColigada().getId(), idOrcamento, (Calendar.getInstance().get(Calendar.MONTH) + 1));
+								
+								if(Util.isNotNull(saldo)) {
+									if(!(dto.getCotacao().getValorTotal().compareTo(saldo) != 1)) {
+										throw new ApplicationException("gerar.ordem.compra.saldo.orcamento", new String[] {produtoRM.getProduto(), TreatNumber.formatMoneyCurrency(saldo)}, FacesMessage.SEVERITY_FATAL);
+									}
+								} else {
+									throw new ApplicationException("gerar.ordem.compra.sem.orcamento", new String[] {produtoRM.getProduto()}, FacesMessage.SEVERITY_ERROR);
+								}
+							} else {
+								throw new ApplicationException("gerar.ordem.compra.sem.orcamento", new String[] {produtoRM.getProduto()}, FacesMessage.SEVERITY_ERROR);
+							}
+							
+						}
+					} else {
+						throw new ApplicationException("message.empty", new String[] {"Empresa não possui Orçamento."}, FacesMessage.SEVERITY_ERROR);
+					}
 				}
-				daoCotacao.alterar(cotacao);
 			}
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "validarOrcamento" }, e);
+		}
+	}
+
+	public void validarOrcamentoSolicitacaoCompra(SolicitacaoCompraDTO dto) throws ApplicationException {
+		try {
+			ControleOrcamento controle = daoControleOrcamento.obterControleOrcamento(dto.getColigada().getId(), dto.getCentroCusto().getCodigoCentroCusto());
+			if(Util.isNotNull(controle)) {
+				if(controle.getSituacao()) {
+					Integer periodo = daoRM.obterPeriodoOrcamentoColigada(dto.getColigada().getId());
+					if(Util.isNotNull(periodo)) {
+						for(SolicitacaoCompraItem item : dto.getItens()) {
+							ProdutoRM produtoRM = daoRM.obterProduto(item.getIdProduto());
+							Integer idOrcamento = daoRM.obterOrcamento(periodo, dto.getColigada().getId(), produtoRM.getCodigoNatureza(), dto.getCentroCusto().getCodigoCentroCusto());
+							if(Util.isNotNull(idOrcamento)) {
+								BigDecimal saldo = daoRM.obterSaldoDisponivelOrcamento(periodo, dto.getColigada().getId(), idOrcamento, (Calendar.getInstance().get(Calendar.MONTH) + 1));
+								
+								if(Util.isNotNull(saldo)) {
+									if(!(item.getValorAproximado().compareTo(saldo) != 1)) {
+										throw new ApplicationException("gerar.ordem.compra.saldo.orcamento", new String[] {produtoRM.getProduto(), TreatNumber.formatMoneyCurrency(saldo)}, FacesMessage.SEVERITY_FATAL);
+									}
+								} else {
+									throw new ApplicationException("gerar.ordem.compra.sem.orcamento", new String[] {produtoRM.getProduto()}, FacesMessage.SEVERITY_FATAL);
+								}
+							} else {
+								throw new ApplicationException("gerar.ordem.compra.sem.orcamento", new String[] {produtoRM.getProduto()}, FacesMessage.SEVERITY_FATAL);
+							}
+							
+						}
+					} else {
+						throw new ApplicationException("message.empty", new String[] {"Empresa não possui Orçamento."}, FacesMessage.SEVERITY_FATAL);
+					}
+				}
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "validarOrcamentoSolicitacaoCompra" }, e);
+		}
+	}
+	
+	public Boolean liberar(SolicitacaoCompra solicitacao, Cotacao cotacao, String justificativa) throws ApplicationException {
+		try {
+			List<Cotacao> cotacoes = daoCotacao.listarCotacoesPorSolicitacao(solicitacao.getId());
+			for(Cotacao cot : cotacoes) {
+				if(cot.getId().equals(cotacao.getId())) {
+					cot.setCotacaoPrincipal(Boolean.TRUE);
+				} else { 
+					cot.setCotacaoPrincipal(Boolean.FALSE);
+				}
+				daoCotacao.alterar(cotacao);
+			}
+			
+			Boolean reenviar = verificarReenvio(solicitacao, cotacao);
+			
+			solicitacao = daoSolicitacaoCompra.obterSolicitacao(solicitacao.getId());
+			if(!reenviar) {
+				solicitacao.setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
+			} else {
+				solicitacao.setSituacao(SituacaoSolicitacaoCompra.AGUARDANDO_NV_APRV);
+			}
+			solicitacao.setJustificativaLiberacao(justificativa);
+			daoSolicitacaoCompra.alterar(solicitacao);
+			
+			return reenviar;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "liberar" }, e);
+		}
+	}
+	
+	public Boolean verificarReenvio(SolicitacaoCompra solicitacao, Cotacao cotacao) throws ApplicationException {
+		try {
+			Boolean reenviar = Boolean.FALSE;
+			SolicitacaoCompra scBanco = daoSolicitacaoCompra.obterSolicitacao(solicitacao.getId());
+			BigDecimal totalCotacao = new BigDecimal(0);
+			for(CotacaoItem itemCotacao : cotacao.getItens()) {
+				totalCotacao = totalCotacao.add(itemCotacao.getValorTotal());
+			}
+			
+			String lotacao = daoRM.obterLotacaoCentroCusto(scBanco.getCodigoCentroCusto(), scBanco.getColigada().getId());
+			if(TreatString.isBlank(lotacao)) {
+				throw new ApplicationException("message.empty", new String[] {"Centro de Custo não possui lotação cadastrada, solicite o cadastro da Lotação para a equipe de TI."}, FacesMessage.SEVERITY_ERROR);
+			}
+			AprovadorRM primeiroAprovador = null;
+			AprovadorRM segundoAprovador = null;
+			
+			List<AprovadorRM> listaPrimeiroAprovador = daoRM.listarPrimeiroAprovador(lotacao);
+			List<AprovadorRM> listaSegundoAprovador = daoRM.listarSegundoAprovador(lotacao);
+			
+			for(AprovadorRM aprov : listaPrimeiroAprovador) {
+				if(totalCotacao.compareTo(aprov.getValorMovimentoDe()) == 1 
+						&& totalCotacao.compareTo(aprov.getValorMovimentoAte()) != 1) {
+					primeiroAprovador = aprov;
+				}
+			}
+			
+			for(AprovadorRM aprov : listaSegundoAprovador) {
+				if(totalCotacao.compareTo(aprov.getValorMovimentoDe()) == 1 
+						&& totalCotacao.compareTo(aprov.getValorMovimentoAte()) != 1) {
+					segundoAprovador = aprov;
+				}
+			}
+			
+			if(Util.isNull(primeiroAprovador) || Util.isNull(segundoAprovador)) {
+				throw new ApplicationException("message.empty", new String[] {"Cadastro de Aprovadores no RM incorreto, solicite a equipe de TI para verificar. "}, FacesMessage.SEVERITY_ERROR);
+			}
+			
+			if(!scBanco.getUsuarioAprovacaoFluig().equalsIgnoreCase(segundoAprovador.getAprovador())) {
+				
+				reenviar = Boolean.TRUE;
+				
+				if(scBanco.getUsuarioSolicitante().getUsuario().equalsIgnoreCase(segundoAprovador.getAprovador())) {
+					scBanco.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
+				} else {
+					scBanco.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
+				}
+				
+				StringBuilder itens = new StringBuilder("{\"itens\": [");
+				int tamanho = itens.length();
+				
+				for(CotacaoItem cotacaoItem : cotacao.getItens()) {
+					
+					if(itens.length() > tamanho) {
+						itens.append(",");
+					}
+					itens.append("{\"produto\": \"" + cotacaoItem.getSolicitacaoCompraItem().getDescricaoProduto().toUpperCase() + 
+							"\", \"quantidade\": \"" + cotacaoItem.getQuantidade() + 
+							"\", \"unidade\": \"" + cotacaoItem.getCodigoUnidade() +
+							"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(cotacaoItem.getValorTotal()) + 
+							"\", \"observacao\": \"" + cotacaoItem.getObservacao().toUpperCase().replaceAll("(\r\n|\n)", "&#010;") +
+							"\"}");
+				}
+				
+				itens.append("]}");
+				
+				String [][] parametros = new String[][] { 
+					{ "idSolicitacao", scBanco.getId().toString()}, 
+					{ "empresa", scBanco.getColigada().getRazaoSocial().toUpperCase()},
+					{ "descricaoPadrao", "SOLICITAÇÃO Nº " + scBanco.getId().toString()},
+					{ "solicitante", scBanco.getUsuarioSolicitante().getNome().toUpperCase()}, 
+					{ "centroCusto", scBanco.getCodigoCentroCusto() + " - " + scBanco.getCentroCusto().toUpperCase()},
+					{ "modalidade", scBanco.getModalidade().getDescricao().toUpperCase()},
+					{ "motivoCompra", scBanco.getMotivoCompra()},
+					{ "itens", itens.toString()} 
+				};
+				
+				// Inicia processo do Fluig
+				String[][] resultado = fluigBusiness.iniciarProcessoFluig(PROCESSO_SOLICITACAO_COMPRA, scBanco.getUsuarioAprovacaoFluig(), 9, parametros);
+
+				for(int i = 0; i < resultado.length; i++) {
+					for(int j = 0; j < resultado[i].length; j++) {
+						if(resultado[i][j].equals("iProcess")) {
+							try {
+								Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
+								scBanco.setIdentificadorFluig(idFluig);
+								
+								daoSolicitacaoCompra.alterar(scBanco);
+								break;
+							} catch(NumberFormatException e) {
+								scBanco.setIdentificadorFluig(null);
+							}
+						}
+					}
+				}
+			}
+			return reenviar;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "verificarReenvio" }, e);
 		}
 	}
 	
@@ -688,13 +892,13 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
-	public String montarXML(OrdemCompraDTO ordemCompra) throws ApplicationException {
+	public String montarXML(OrdemCompraDTO ordemCompra, String user) throws ApplicationException {
 		try {
 			StringBuilder xml = new StringBuilder();
 			StringWriter sw = new StringWriter();
 			JAXBContext context = null;
 			Marshaller marshaller = null;
-			String usuario = "portaljcr";
+			String usuario = user;
 			
 			TMOVXML tmov = new TMOVXML();
 			
@@ -883,6 +1087,18 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
+		}
+	}
+	
+	public SolicitacaoCompra obterSolicitacao(Long id) throws ApplicationException {
+		try {
+			return daoSolicitacaoCompra.obterSolicitacao(id);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSolicitacao" }, e);
 		}
 	}
 	

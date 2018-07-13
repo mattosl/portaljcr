@@ -29,6 +29,15 @@
 								<div class="box-body">
 									<div class="form-group">
 										<div class="col-sm-3 col-md-3 control-label">
+											<label for="empresa"> Empresa: </label>
+										</div>
+										
+										<div class="col-sm-9 col-md-9">
+											<p:outputLabel id="empresa" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.coligada.razaoSocial.toUpperCase()}" styleClass="control-label font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3 col-md-3 control-label">
 											<label for="solicitante"> Solicitante: </label>
 										</div>
 										
@@ -143,6 +152,17 @@
 		
 											<div class="col-sm-9 col-md-9">
 												<h:inputTextarea id="motivoCancelamento" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.motivoCancelamento.toUpperCase()}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
+											</div>
+										</div>
+									</p:outputPanel>
+									<p:outputPanel rendered="#{minhaSolicitacaoCompraController.solicitacaoCompra.observacaoAprovador != null}">
+										<div class="form-group">
+											<div class="col-sm-3 col-md-3 control-label">
+												<label for="obsAprovador">Observação do Aprovador: </label>
+											</div>
+		
+											<div class="col-sm-9 col-md-9">
+												<h:inputTextarea id="obsAprovador" value="#{minhaSolicitacaoCompraController.solicitacaoCompra.observacaoAprovador}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
 											</div>
 										</div>
 									</p:outputPanel>

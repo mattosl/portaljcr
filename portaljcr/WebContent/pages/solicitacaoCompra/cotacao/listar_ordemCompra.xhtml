@@ -57,6 +57,10 @@
 								        <h:outputText value="#{solicitacao.usuarioSolicitante.nome}" />
 								    </p:column>
 								    
+								    <p:column headerText="Cotador" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{solicitacao.usuarioCotacao.nome}" />
+								    </p:column>
+								    
 								    <p:column headerText="Gerar Ordem de Compra" style="text-align: center;font-size:12px;" width="15%">
 										<p:commandLink ajax="true" process="@this" action="#{gerarOrdemCompraController.iniciarOrdemCompra()}" >
 											<h4><h:outputText value="" title="Gerar Ordem de Compra" styleClass="fa fa-list-alt" /></h4>

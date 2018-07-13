@@ -33,6 +33,15 @@
 											<div class="box-body">
 												<div class="form-group">
 													<div class="col-sm-3 col-md-3 control-label">
+														<label for="empresa"> Empresa: </label>
+													</div>
+													
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="empresa" value="#{cotacaoController.solicitacaoCompra.coligada.razaoSocial.toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
 														<label for="solicitante"> Solicitante: </label>
 													</div>
 													
@@ -139,6 +148,17 @@
 														</div>
 													</div>
 												</p:outputPanel>
+												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.observacaoAprovador != null}">
+													<div class="form-group">
+														<div class="col-sm-3 col-md-3 control-label">
+															<label for="obsAprovador">Observação do Aprovador: </label>
+														</div>
+					
+														<div class="col-sm-9 col-md-9">
+															<h:inputTextarea id="obsAprovador" value="#{cotacaoController.solicitacaoCompra.observacaoAprovador}" styleClass="form-control" rows="3" readonly="true" style="background-color: #FFF;"/>
+														</div>
+													</div>
+												</p:outputPanel>
 											</div>
 											<p:panel toggleable="false" id="painelItens" style="border: 0px !important">
 												<div class="box-header with-border">
@@ -215,7 +235,7 @@
 								</div>
 								<div class="active tab-pane" id="cotacoes">
 									<p:panel toggleable="false" id="painelCotacao" style="border: 0px;">
-										<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.justificativa ne null and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" >
+										<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.justificativa ne null and cotacaoController.solicitacaoCompra.cotacoes.size() lt 3 and cotacaoController.solicitacaoCompra.usuarioSolicitante eq usuario}" >
 											<div class="alert alert-danger alert-dismissible">
 												<i class="icon fa fa-info"></i> 
 												<label for="justificativaCotacao"><strong>Foram realizadas menos de 3 cotações para a sua solicitação. <p:commandLink onclick="PF('modalJustificativa').show();"> Clique aqui para ver a justificativa.</p:commandLink></strong> </label>
