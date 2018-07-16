@@ -119,6 +119,7 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			sb.append("LEFT JOIN FETCH solicitacao.grupoCotacao grupoCotacao ");
 			sb.append("LEFT JOIN FETCH grupoCotacao.usuarios usuarios ");
 			sb.append("LEFT JOIN FETCH solicitacao.usuarioSolicitante usuarioSolicitante ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioCotacao usuarioCotacao ");
 			sb.append("WHERE solicitacao.id != null ");
 			
 			if(Util.isNotNull(filtro.getSituacao())) {

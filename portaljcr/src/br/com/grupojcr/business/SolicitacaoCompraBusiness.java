@@ -917,7 +917,7 @@ public class SolicitacaoCompraBusiness {
 			tmov.preencherValores(TreatNumber.formatMoney(ordemCompra.getCotacao().getValorTotal()));
 			tmov.preencherUsuario(usuario);
 			tmov.setCODCOLIGADA1(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString());
-			tmov.setHISTORICOLONGO(ordemCompra.getSolicitacaoCompra().getMotivoCompra());
+			tmov.setHISTORICOLONGO(ordemCompra.getSolicitacaoCompra().getMotivoCompra().toUpperCase());
 			
 			
 			context = JAXBContext.newInstance(TMOVXML.class);
@@ -968,7 +968,7 @@ public class SolicitacaoCompraBusiness {
 				String codigoCentroCusto = ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto();
 				String centroCusto = ordemCompra.getSolicitacaoCompra().getCentroCusto();
 				String codigoNatureza = produtoRM.getCodigoNatureza();
-				String observacaoItem = item.getObservacao();
+				String observacaoItem = item.getObservacao().toUpperCase();
 				
 				if(TreatString.isBlank(codigoNatureza)) {
 					throw new ApplicationException("message.empty", new String[] {"Produto sem Natureza Orçamentária, cadastre uma natureza para o produto: " + descricaoProduto}, FacesMessage.SEVERITY_WARN);

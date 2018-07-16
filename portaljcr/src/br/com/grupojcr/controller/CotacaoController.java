@@ -554,6 +554,8 @@ public class CotacaoController implements Serializable {
 			
 			getSolicitacaoCompra().setCotacoes(new HashSet<Cotacao>(solicitacaoCompraBusiness.listarCotacoesPorSolicitacao(getSolicitacaoCompra().getId())));
 			
+			solicitacaoCompraBusiness.calcularMelhorOpcao(getSolicitacaoCompra());
+			
 			Message.setMessage("cotacao.excluida");
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);

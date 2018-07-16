@@ -85,9 +85,15 @@
 											id="btn_concluir_cotação"
 											process="@form"
 											action="#{cotacaoController.concluir()}"
-											ajax="false" />
+											ajax="true">
+											<p:confirm header="Confirmação!" message="Tem certeza que deseja concluir a cotação?" icon="fa fa-warning" />
+										</p:commandButton>
 									</div>
 								</div>
+								<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+							        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+							        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+							    </p:confirmDialog>
 							</div>
 						</p:panel>
 					</f:validateBean>
