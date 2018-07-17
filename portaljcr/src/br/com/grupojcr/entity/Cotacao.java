@@ -232,6 +232,14 @@ public class Cotacao implements BaseEntity, Serializable {
 	}
 	
 	@Transient
+	public String getFreteFormatado() {
+		if(frete != null) {
+			return TreatNumber.formatMoney(frete);
+		}
+		return null;
+	}
+	
+	@Transient
 	public String getDataCotacaoFormatado() {
 		if(dtCotacao != null) {
 			return TreatDate.format("dd/MM/yyyy", dtCotacao);

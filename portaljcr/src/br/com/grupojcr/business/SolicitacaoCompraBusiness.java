@@ -911,10 +911,13 @@ public class SolicitacaoCompraBusiness {
 				tmov.setCODTMV("1.1.17");
 			}
 			
+			BigDecimal valorReal = ordemCompra.getCotacao().getValorTotal().subtract(ordemCompra.getCotacao().getFrete());
+			
 			tmov.setCODCPG(ordemCompra.getCondicaoPagamento().getCodigoCondicaoPagamento());
 			tmov.setCODCFOAUX(ordemCompra.getFornecedor().getCodigoFornecedor());
 			tmov.setCODCCUSTO(ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto());
-			tmov.preencherValores(TreatNumber.formatMoney(ordemCompra.getCotacao().getValorTotal()));
+			tmov.setVALORFRETE(ordemCompra.getCotacao().getFrete() != null ? ordemCompra.getCotacao().getFreteFormatado() : "0,00");
+			tmov.preencherValores(TreatNumber.formatMoney(valorReal));
 			tmov.preencherUsuario(usuario);
 			tmov.setCODCOLIGADA1(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString());
 			tmov.setHISTORICOLONGO(ordemCompra.getSolicitacaoCompra().getMotivoCompra().toUpperCase());
@@ -944,7 +947,7 @@ public class SolicitacaoCompraBusiness {
 			marshaller.marshal(tmovfiscal, sw);
 			xml.append(sw.toString());
 			
-			TMOVRATCCUXML tmovratccu = new TMOVRATCCUXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto(), ordemCompra.getSolicitacaoCompra().getCentroCusto(), TreatNumber.formatMoney(ordemCompra.getCotacao().getValorTotal()));
+			TMOVRATCCUXML tmovratccu = new TMOVRATCCUXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto(), ordemCompra.getSolicitacaoCompra().getCentroCusto(), TreatNumber.formatMoney(valorReal));
 			
 			sw = new StringWriter();
 			context = JAXBContext.newInstance(TMOVRATCCUXML.class);

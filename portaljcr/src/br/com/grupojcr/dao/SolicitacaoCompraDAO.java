@@ -220,8 +220,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			sb.append("LEFT JOIN FETCH solicitacao.usuarioCotacao usuarioCotacao ");
 			sb.append("WHERE solicitacao.id != null ");
 			
-			sb.append("AND (usuarioCotacao.id = :idUsuarioLogado ");
-			sb.append("OR usuarios.id = :idUsuarioLogado) ");
+			if(Util.isNotNull(filtro.getUsuarioLogado())) {
+				sb.append("AND (usuarioCotacao.id = :idUsuarioLogado ");
+				sb.append("OR usuarios.id = :idUsuarioLogado) ");
+			}
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
 				sb.append("AND solicitacao.situacao = :situacao ");
@@ -231,7 +233,9 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			
 			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
 			
-			query.setParameter("idUsuarioLogado", filtro.getUsuarioLogado().getId());
+			if(Util.isNotNull(filtro.getUsuarioLogado())) {
+				query.setParameter("idUsuarioLogado", filtro.getUsuarioLogado().getId());
+			}
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
 				query.setParameter("situacao", filtro.getSituacao());

@@ -62,7 +62,6 @@ public class GerarOrdemCompraController implements Serializable {
 			setFiltro(new FiltroSolicitacaoCompra());
 			getFiltro().setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
-			getFiltro().setUsuarioLogado(getUsuario());
 			
 			setListaSolicitacao(solicitacaoCompraBusiness.listarSolicitacaoCompraPendente(filtro));
 		

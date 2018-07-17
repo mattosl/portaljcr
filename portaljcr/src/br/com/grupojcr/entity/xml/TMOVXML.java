@@ -35,7 +35,7 @@ public class TMOVXML {
 //		this.VALORLIQUIDO = vALORLIQUIDO;
 //		this.VALOROUTROS = vALOROUTROS;
 		this.PERCENTUALFRETE = "0,00";
-		this.VALORFRETE = "0,00";
+//		this.VALORFRETE = "0,00";
 		this.PERCENTUALSEGURO = "0,00";
 		this.VALORSEGURO = "0,00";
 		this.PERCENTUALDESC = "0,00";
