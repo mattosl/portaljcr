@@ -23,6 +23,7 @@ import br.com.grupojcr.dto.AprovacaoOrdemCompraDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
+import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
@@ -32,6 +33,7 @@ import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -579,16 +581,18 @@ public class RMDAO {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome) throws ApplicationException {
+	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome, Modalidade modalidade) throws ApplicationException {
 		/**
 		 * SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO
 		 * WHERE CODCOLPRD = ?
 		 * AND INATIVO = 0
 		 * AND LEN(CODIGOPRD) > 6
 		 * AND NOMEFANTASIA LIKE ?
+		 * AND (CODIGOPRD LIKE '02.%' OR CODIGOPRD LIKE '90.001%')
 		 * ORDER BY CODIGOPRD ASC
 		 * OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY
 		 */
+		
 		Connection conn = null;
 		PreparedStatement ps = null;
 		List<ProdutoRM> listaProduto = new ArrayList<ProdutoRM>();
@@ -601,8 +605,17 @@ public class RMDAO {
 			.append("WHERE CODCOLPRD = ? ")
 			.append("AND INATIVO = 0 ")
 			.append("AND LEN(CODIGOPRD) > 6 ")
-			.append("AND NOMEFANTASIA LIKE ? ")
-			.append("ORDER BY CODIGOPRD ASC ")
+			.append("AND NOMEFANTASIA LIKE ? ");
+			
+			if(Util.isNotNull(modalidade)) {
+				if(modalidade.equals(Modalidade.MATERIAL)) {
+					sb.append("AND (CODIGOPRD LIKE '02.%' OR CODIGOPRD LIKE '90.001%') ");
+				} else if (modalidade.equals(Modalidade.SERVICO)) {
+					sb.append("AND (CODIGOPRD LIKE '01.%' OR CODIGOPRD LIKE '90.002%') ");
+				}
+			}
+			
+			sb.append("ORDER BY CODIGOPRD ASC ")
 			.append("OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY ");
 
 			ps = conn.prepareStatement(sb.toString());
@@ -878,7 +891,7 @@ public class RMDAO {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void atualizarCampoLivre(String idColigada, String idMovimento) throws ApplicationException {
+	public void atualizarMovimento(String idColigada, String idMovimento, String usuario) throws ApplicationException {
 		/**
 		 * UPDATE TMOV
 		 * SET CAMPOLIVRE1 = ?
@@ -893,21 +906,22 @@ public class RMDAO {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("UPDATE TMOV ")
-			.append("SET CAMPOLIVRE1 = ? ")
+			.append("SET CAMPOLIVRE1 = ?, CODUSUARIO = ? ")
 			.append("WHERE CODCOLIGADA = ? ")
 			.append("AND IDMOV = ? ");
 			
 			
 			ps = conn.prepareStatement(sb.toString());
 			ps.setString(1, idMovimento);
-			ps.setString(2, idColigada);
-			ps.setString(3, idMovimento);
+			ps.setString(2, usuario);
+			ps.setString(3, idColigada);
+			ps.setString(4, idMovimento);
 			
 			ps.execute();
 			
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizarCampoLivre" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizarMovimento" }, e);
 		} finally {
 			if (ps != null) {
 				try {
@@ -1304,6 +1318,57 @@ public class RMDAO {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSaldoDisponivelOrcamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Integer obterIdFluig(Long idMovimento) throws ApplicationException {
+		/**
+		 * SELECT IDFLUIG FROM ZMDRMFLUIG
+		 * WHERE IDMOV = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT IDFLUIG FROM ZMDRMFLUIG ")
+			.append("WHERE IDMOV = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idMovimento);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getInt("IDFLUIG");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterIdFluig" }, e);
 		} finally {
 			if (ps != null) {
 				try {

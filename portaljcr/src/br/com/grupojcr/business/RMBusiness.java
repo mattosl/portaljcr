@@ -9,6 +9,7 @@ import javax.xml.rpc.ServiceException;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.RMDAO;
+import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
@@ -53,9 +54,9 @@ public class RMBusiness {
 		}
 	}
 	
-	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome) throws ApplicationException {
+	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome, Modalidade modalidade) throws ApplicationException {
 		try {
-			return daoRM.listarProdutosPorNome(idColigada, nome);
+			return daoRM.listarProdutosPorNome(idColigada, nome, modalidade);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -113,15 +114,15 @@ public class RMBusiness {
 		}
 	}
 	
-	public void atualizaCampoLivre(String idColigada, String idMov) throws ApplicationException {
+	public void atualizaCampos(String idColigada, String idMov, String usuario) throws ApplicationException {
 		try {
-			daoRM.atualizarCampoLivre(idColigada, idMov);
+			daoRM.atualizarMovimento(idColigada, idMov, usuario);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizaCampoLivre" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizaCampos" }, e);
 		}
 	}
 	
@@ -156,6 +157,15 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "saveRecordAuth" }, e);
+		}
+	}
+	
+	public Integer obterIdFluig(Long idColigada, Long idMovimento) throws ApplicationException {
+		try {
+			return daoRM.obterIdFluig(idMovimento);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterIdFluig" }, e);
 		}
 	}
 

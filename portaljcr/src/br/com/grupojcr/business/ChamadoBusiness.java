@@ -89,6 +89,11 @@ public class ChamadoBusiness {
 			chamado.setSituacao(SituacaoChamado.ABERTO);
 			chamado.setLocalizacao(dto.getLocalizacao().getDescricao());
 			Calendar calendario = Calendar.getInstance();
+			
+			while(calendario.get(Calendar.DAY_OF_WEEK) == 1 || calendario.get(Calendar.DAY_OF_WEEK) == 7) {
+				calendario.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
 			chamado.setDtAbertura(calendario.getTime());
 			
 			if(dto.getPrioridade().equals(PrioridadeChamado.ALTA)) {

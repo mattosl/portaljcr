@@ -235,6 +235,14 @@
 			<!-- 				                <p:dataExporter type="xls" target="tabelaChamado" fileName="relatorio_chamados" preProcessor="#{relatorioChamadoController.postProcessXLS}" /> -->
 			<!-- 				            </h:commandLink> -->
 			<!-- 				        </f:facet> -->
+			
+									<p:column headerText="Exibir" style="text-align: center;font-size:12px;">
+										<p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}" >
+											<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
+											<f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />
+											<f:setPropertyActionListener value="LISTAR_RELATORIO" target="#{chamadoController.origem}" />
+										</p:commandLink>
+									</p:column>
 									
 								  	<p:column headerText="ID" style="text-align:center;font-size:12px;">
 								        <h:outputText value="#{chamado.id}" />

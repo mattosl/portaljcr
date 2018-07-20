@@ -110,5 +110,45 @@ public class UsuarioBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "alterar" }, e);
 		}
 	}
+	
+	/**
+	 * Método responsavel por alterar usuário
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 21/05/2018
+	 * @param usuario : Usuario
+	 * @throws ApplicationException
+	 */
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Usuario obter(Long id) throws ApplicationException {
+		try {
+			return daoUsuario.obterUsuarioPorId(id);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obter" }, e);
+		}
+	}
+	
+	/**
+	 * Método responsavel por obter usuário
+	 * @author Leonan Mattos <leonan.mattos@grupojcr.com.br>
+	 * @since 21/05/2018
+	 * @param usuario : Usuario
+	 * @throws ApplicationException
+	 */
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public Usuario obterPorUsuario(String usuario) throws ApplicationException {
+		try {
+			return daoUsuario.obterUsuario(usuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterPorUsuario" }, e);
+		}
+	}
 
 }

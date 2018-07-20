@@ -1,6 +1,7 @@
 package br.com.grupojcr.controller;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,9 +11,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 
+import com.totvs.technology.ecm.dm.ws.CardFieldDto;
+
+import br.com.grupojcr.business.FluigBusiness;
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
@@ -24,6 +29,7 @@ import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.entity.SolicitacaoCompraItem;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
@@ -56,6 +62,9 @@ public class GerarOrdemCompraController implements Serializable {
 	
 	@EJB
 	private RMBusiness rmBusiness;
+	
+	@EJB
+	private FluigBusiness fluigBusiness;
 	
 	public void iniciarProcesso() throws ApplicationException {
 		try {
@@ -143,24 +152,91 @@ public class GerarOrdemCompraController implements Serializable {
 			solicitacaoCompraBusiness.validarOrcamentoOrdemCompra(getOrdemCompra());
 			
 			Boolean existeUsuario = rmBusiness.existeUsuario(getUsuario().getUsuario().toLowerCase());
+			String usuario = existeUsuario ? getUsuario().getUsuario().toLowerCase() : "portaljcr";
 			
-			String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra(), existeUsuario ? getUsuario().getUsuario().toLowerCase() : "portaljcr");
 			
-			String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=" + getOrdemCompra().getSolicitacaoCompra().getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
-			
-			String [] arrayRetorno = retorno.split(";");
-			
-			if(arrayRetorno.length == 2) {
-				rmBusiness.atualizaCampoLivre(arrayRetorno[0], arrayRetorno[1]);
+			if(getOrdemCompra().getSolicitacaoCompra().getModalidade().equals(Modalidade.MATERIAL_SERVICO)) {
+				List<String> xmls = new ArrayList<String>();
+				List<String> identificadores = new ArrayList<String>();
+				List<CotacaoItem> itensMaterial = solicitacaoCompraBusiness.obterItensMaterial(getOrdemCompra());
+				List<CotacaoItem> itensServico = solicitacaoCompraBusiness.obterItensServico(getOrdemCompra());
+				
+				if(CollectionUtils.isNotEmpty(itensMaterial)) {
+					
+					OrdemCompraDTO material = new OrdemCompraDTO();
+					material.setCondicaoPagamento(getOrdemCompra().getCondicaoPagamento());
+					material.setCotacao(getOrdemCompra().getCotacao());
+					material.setFornecedor(getOrdemCompra().getFornecedor());
+					material.setSolicitacaoCompra(getOrdemCompra().getSolicitacaoCompra());
+					material.getCotacao().setItens(new HashSet<CotacaoItem>(itensMaterial));
+					
+					BigDecimal valorTotal = new BigDecimal(0);
+					for(CotacaoItem itemCotacao : material.getCotacao().getItens()) {
+						valorTotal = valorTotal.add(itemCotacao.getValorTotal());
+					}
+					material.getCotacao().setValorTotal(valorTotal);
+					
+					String xml = solicitacaoCompraBusiness.montarXML(material, usuario, Modalidade.MATERIAL);
+					
+					xmls.add(xml);
+				}
+				
+				if(CollectionUtils.isNotEmpty(itensServico)) {
+					OrdemCompraDTO servico = new OrdemCompraDTO();
+					servico.setCondicaoPagamento(getOrdemCompra().getCondicaoPagamento());
+					servico.setCotacao(getOrdemCompra().getCotacao());
+					servico.setFornecedor(getOrdemCompra().getFornecedor());
+					servico.setSolicitacaoCompra(getOrdemCompra().getSolicitacaoCompra());
+					servico.getCotacao().setItens(new HashSet<CotacaoItem>(itensServico));
+					servico.getCotacao().setFrete(new BigDecimal(0));
+					
+					BigDecimal valorTotal = new BigDecimal(0);
+					for(CotacaoItem itemCotacao : servico.getCotacao().getItens()) {
+						valorTotal = valorTotal.add(itemCotacao.getValorTotal());
+					}
+					servico.getCotacao().setValorTotal(valorTotal);
+					
+					String xml = solicitacaoCompraBusiness.montarXML(servico, usuario, Modalidade.SERVICO);
+					
+					xmls.add(xml);
+				}
+				
+				if(CollectionUtils.isNotEmpty(xmls)) {
+					for(String xml : xmls) {
+						String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=" + getOrdemCompra().getSolicitacaoCompra().getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
+						
+						String [] arrayRetorno = retorno.split(";");
+						
+						salvarXml(arrayRetorno, usuario);
+						
+						identificadores.add(arrayRetorno[1]);
+					}
+				}
+				
+				if(CollectionUtils.isNotEmpty(identificadores)) {
+					for(String identificador : identificadores) {
+						solicitacaoCompraBusiness.criarOrdemCompra(getOrdemCompra(), identificador, getUsuario());
+					}
+					solicitacaoCompraBusiness.encerrarSolicitacao(getOrdemCompra());
+					
+					Message.setMessage("gerar.ordem.compras.sucesso", new String[] {identificadores.get(0) + " e " + identificadores.get(1), getOrdemCompra().getSolicitacaoCompra().getColigada().getRazaoSocial()});
+				}
+				
 			} else {
-				throw new ApplicationException("message.empty", new String[] {arrayRetorno[0]}, FacesMessage.SEVERITY_WARN);
+				
+				String xml = solicitacaoCompraBusiness.montarXML(getOrdemCompra(), usuario, getOrdemCompra().getSolicitacaoCompra().getModalidade());
+				
+				String retorno = rmBusiness.saveRecordAuth("MovMovimentoTBCData", xml, "CODCOLIGADA=" + getOrdemCompra().getSolicitacaoCompra().getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
+				
+				String [] arrayRetorno = retorno.split(";");
+				
+				salvarXml(arrayRetorno, usuario);
+				
+				OrdemCompra oc = solicitacaoCompraBusiness.encerrar(getOrdemCompra(), arrayRetorno[1], getUsuario());
+				solicitacaoCompraBusiness.enviarEmailOrdemCompra(oc);
+				
+				Message.setMessage("gerar.ordem.compra.sucesso", new String[] {arrayRetorno[1], getOrdemCompra().getSolicitacaoCompra().getColigada().getRazaoSocial()});
 			}
-			
-			OrdemCompra oc = solicitacaoCompraBusiness.encerrar(getOrdemCompra(), arrayRetorno[1], getUsuario());
-			solicitacaoCompraBusiness.enviarEmailOrdemCompra(oc);
-			
-			
-			Message.setMessage("gerar.ordem.compra.sucesso", new String[] {arrayRetorno[1], getOrdemCompra().getSolicitacaoCompra().getColigada().getRazaoSocial()});
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -170,6 +246,46 @@ public class GerarOrdemCompraController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "gerarOrdemCompra" }, e);
 		}
 		return "/pages/solicitacaoCompra/cotacao/listar_ordemCompra.xhtml?faces-redirect=true";
+	}
+	
+	public void salvarXml(String [] arrayRetorno, String usuario) throws ApplicationException {
+		try {
+			
+			if(arrayRetorno.length == 2) {
+				rmBusiness.atualizaCampos(arrayRetorno[0], arrayRetorno[1], usuario);
+				
+				Long idMovimento = Long.valueOf(arrayRetorno[1]);
+				Integer idFluig = rmBusiness.obterIdFluig(getOrdemCompra().getSolicitacaoCompra().getColigada().getId(), idMovimento);
+				Integer idFormulario = null;
+				if(Util.isNotNull(idFluig)) {
+					String[][] dadosFormulario = fluigBusiness.getInstanceCardData(idFluig);
+					for(int i = 0; i < dadosFormulario.length; i++) {
+						for(int j = 0; j < dadosFormulario[i].length; j++) {
+							if(dadosFormulario[i][j].equals("documentid")) {
+								try {
+									idFormulario = Integer.parseInt((dadosFormulario[i][j + 1]).toString());
+									break;
+								} catch(NumberFormatException e) {
+									break;
+								}
+							}
+						}
+					}
+					if(Util.isNotNull(idFormulario)) {
+						CardFieldDto [] dto = new CardFieldDto[] {new CardFieldDto("solicitante", getOrdemCompra().getSolicitacaoCompra().getUsuarioSolicitante().getNome().toUpperCase())};
+						fluigBusiness.updateCardData(idFormulario, dto);
+					}
+				}
+			} else {
+				throw new ApplicationException("message.empty", new String[] {arrayRetorno[0]}, FacesMessage.SEVERITY_WARN);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvarXml" }, e);
+		}
 	}
 	
 	public List<FornecedorRM> autocompleteFornecedor(String nome) throws ApplicationException {
@@ -186,7 +302,7 @@ public class GerarOrdemCompraController implements Serializable {
 	
 	public List<ProdutoRM> autocompleteProduto(String nome) throws ApplicationException {
 		try {
-			return rmBusiness.listarProdutosPorNome(getOrdemCompra().getSolicitacaoCompra().getColigada().getId(), nome);
+			return rmBusiness.listarProdutosPorNome(getOrdemCompra().getSolicitacaoCompra().getColigada().getId(), nome, getOrdemCompra().getSolicitacaoCompra().getModalidade());
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

@@ -252,16 +252,16 @@ public class SolicitacaoCompraController implements Serializable {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
 			}
 
-			if (!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
-				for (SolicitacaoCompraItem item : getSolicitacaoCompraDTO().getItens()) {
-					if (!item.getProdutoNaoEncontrado()) {
-						if (item.getIdProduto().equals(getSolicitacaoCompraDTO().getProduto().getProduto().getId())) {
-							throw new ApplicationException("message.empty",
-									new String[] { "Este produto ja foi incluído." }, FacesMessage.SEVERITY_WARN);
-						}
-					}
-				}
-			}
+//			if (!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
+//				for (SolicitacaoCompraItem item : getSolicitacaoCompraDTO().getItens()) {
+//					if (!item.getProdutoNaoEncontrado()) {
+//						if (item.getIdProduto().equals(getSolicitacaoCompraDTO().getProduto().getProduto().getId())) {
+//							throw new ApplicationException("message.empty",
+//									new String[] { "Este produto ja foi incluído." }, FacesMessage.SEVERITY_WARN);
+//						}
+//					}
+//				}
+//			}
 
 			SolicitacaoCompraItem item = new SolicitacaoCompraItem();
 			if (!getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {
@@ -392,10 +392,19 @@ public class SolicitacaoCompraController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarEdicaoItem" }, e);
 		}
 	}
+	
+	public void limparProdutos() throws ApplicationException {
+		try {
+			getSolicitacaoCompraDTO().setItens(new ArrayList<SolicitacaoCompraItem>());
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "limparProdutos" }, e);
+		}
+	}
 
 	public List<ProdutoRM> autocompleteProduto(String nome) throws ApplicationException {
 		try {
-			return rmBusiness.listarProdutosPorNome(getSolicitacaoCompraDTO().getColigada().getId(), nome);
+			return rmBusiness.listarProdutosPorNome(getSolicitacaoCompraDTO().getColigada().getId(), nome, getSolicitacaoCompraDTO().getModalidade());
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

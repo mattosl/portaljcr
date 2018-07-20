@@ -569,6 +569,57 @@ public class SolicitacaoCompraBusiness {
 				}
 			}
 			
+			return criarOrdemCompra(dto, identificadorRM, usuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrar" }, e);
+		}
+	}
+	
+	public void encerrarSolicitacao(OrdemCompraDTO dto) throws ApplicationException {
+		try {
+			SolicitacaoCompra sc = daoSolicitacaoCompra.obterSolicitacao(dto.getSolicitacaoCompra().getId());
+			sc.setSituacao(SituacaoSolicitacaoCompra.FINALIZADA);
+			sc.setDtFechamento(Calendar.getInstance().getTime());
+			
+			daoSolicitacaoCompra.alterar(sc);
+			
+			Cotacao cotacaoPrincipal = daoCotacao.obterCotacao(dto.getCotacao().getId());
+			cotacaoPrincipal.setCodigoFornecedor(dto.getFornecedor().getCodigoFornecedor());
+			cotacaoPrincipal.setFornecedor(dto.getFornecedor().getFornecedor());
+			
+			daoCotacao.alterar(cotacaoPrincipal);
+			
+			List<SolicitacaoCompraItem> listaItemSolicitacao = daoSolicitacaoCompraItem.listarItemPorSolicitacao(sc.getId());
+			for(SolicitacaoCompraItem sci : listaItemSolicitacao) {
+				for(ProdutoDTO produtoDTO : dto.getListaProduto()) {
+					if(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getId().equals(sci.getId())) {
+						if(TreatString.isNotBlank(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getCodigoProduto())) {
+							sci.setCodigoProduto(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getCodigoProduto());
+							sci.setDescricaoProduto(produtoDTO.getCotacaoItem().getSolicitacaoCompraItem().getDescricaoProduto());
+						}
+						daoSolicitacaoCompraItem.alterar(sci);
+					}
+				}
+			}
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrarSolicitacao" }, e);
+		}
+	}
+	public OrdemCompra criarOrdemCompra(OrdemCompraDTO dto, String identificadorRM, Usuario usuario) throws ApplicationException {
+		try {
+			
+			SolicitacaoCompra sc = daoSolicitacaoCompra.obterSolicitacao(dto.getSolicitacaoCompra().getId());
+			Cotacao cotacaoPrincipal = daoCotacao.obterCotacao(dto.getCotacao().getId());
+			
 			OrdemCompra ordemCompra = new OrdemCompra();
 			ordemCompra.setSolicitacaoCompra(sc);
 			ordemCompra.setCotacao(cotacaoPrincipal);
@@ -586,7 +637,7 @@ public class SolicitacaoCompraBusiness {
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "encerrar" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "criarOrdemCompra" }, e);
 		}
 	}
 
@@ -892,7 +943,7 @@ public class SolicitacaoCompraBusiness {
 		}
 	}
 	
-	public String montarXML(OrdemCompraDTO ordemCompra, String user) throws ApplicationException {
+	public String montarXML(OrdemCompraDTO ordemCompra, String user, Modalidade modalidade) throws ApplicationException {
 		try {
 			StringBuilder xml = new StringBuilder();
 			StringWriter sw = new StringWriter();
@@ -905,9 +956,9 @@ public class SolicitacaoCompraBusiness {
 			tmov.setCODCOLIGADA(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString());
 			tmov.setCODCFO(ordemCompra.getFornecedor().getCodigoFornecedor());
 			
-			if(ordemCompra.getSolicitacaoCompra().getModalidade().equals(Modalidade.MATERIAL)) {
+			if(modalidade.equals(Modalidade.MATERIAL)) {
 				tmov.setCODTMV("1.1.04");
-			} else if(ordemCompra.getSolicitacaoCompra().getModalidade().equals(Modalidade.SERVICO)) {
+			} else if(modalidade.equals(Modalidade.SERVICO)) {
 				tmov.setCODTMV("1.1.17");
 			}
 			
@@ -1102,6 +1153,38 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSolicitacao" }, e);
+		}
+	}
+	
+	public List<CotacaoItem> obterItensMaterial(OrdemCompraDTO ordemCompra) throws ApplicationException {
+		try {
+			List<CotacaoItem> itensMaterial = new ArrayList<CotacaoItem>();
+			for(CotacaoItem item : ordemCompra.getCotacao().getItens()) {
+				if(item.getSolicitacaoCompraItem().getCodigoProduto().startsWith("02") 
+						|| item.getSolicitacaoCompraItem().getCodigoProduto().startsWith("90.001")) {
+					itensMaterial.add(item);
+				}
+			}
+			return itensMaterial;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterItensMaterial" }, e);
+		}
+	}
+	
+	public List<CotacaoItem> obterItensServico(OrdemCompraDTO ordemCompra) throws ApplicationException {
+		try {
+			List<CotacaoItem> itensServico = new ArrayList<CotacaoItem>();
+			for(CotacaoItem item : ordemCompra.getCotacao().getItens()) {
+				if(item.getSolicitacaoCompraItem().getCodigoProduto().startsWith("01") 
+						|| item.getSolicitacaoCompraItem().getCodigoProduto().startsWith("90.002")) {
+					itensServico.add(item);
+				}
+			}
+			return itensServico;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterItensServico" }, e);
 		}
 	}
 	

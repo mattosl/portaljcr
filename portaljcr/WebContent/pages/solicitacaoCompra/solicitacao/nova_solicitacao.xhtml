@@ -61,6 +61,7 @@
 										<div class="col-sm-9 col-md-9">
 											<p:selectOneRadio id="modalidade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.modalidade}" styleClass="radio alinharRadio" layout="responsive" columns="3">
 											   <f:selectItems value="#{solicitacaoCompraController.listaModalidade}" var="modalidade" itemLabel="#{modalidade.descricao}" itemValue="#{modalidade}" />
+											   <p:ajax event="change" global="false" process="@this" listener="#{solicitacaoCompraController.limparProdutos()}" update="@form:painelItens" />
 											</p:selectOneRadio>
 										</div>
 									</div>

@@ -8,6 +8,9 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
 
+import com.totvs.technology.ecm.dm.ws.CardFieldDto;
+import com.totvs.technology.ecm.dm.ws.ECMCardServiceServiceLocator;
+import com.totvs.technology.ecm.dm.ws.ECMCardServiceServiceSoapBindingStub;
 import com.totvs.technology.ecm.dm.ws.ECMDashBoardServiceServiceLocator;
 import com.totvs.technology.ecm.dm.ws.ECMDashBoardServiceServiceSoapBindingStub;
 import com.totvs.technology.ecm.dm.ws.WorkflowProcessDto;
@@ -61,6 +64,18 @@ public class FluigBusiness {
 			return cliente;
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace());
+			throw e;
+		}
+	}
+	
+	private ECMCardServiceServiceSoapBindingStub obterProxyECMCardService() throws ServiceException {
+		try {
+			ECMCardServiceServiceLocator locator = new ECMCardServiceServiceLocator();
+			ECMCardServiceServiceSoapBindingStub cliente = (ECMCardServiceServiceSoapBindingStub) locator
+					.getCardServicePort();
+			return cliente;
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
 			throw e;
 		}
 	}
@@ -180,6 +195,28 @@ public class FluigBusiness {
 			LOG.error(e.getStackTrace());
 		}
 		return null;
+	}
+	
+	public String[][] getInstanceCardData(int numeroSolicitacao) throws ApplicationException {
+		try {
+			ECMWorkflowEngineServiceServiceSoapBindingStub cliente = obterProxyECMWorkFlowEngineService();
+			
+			return cliente.getInstanceCardData("fluig_admin", "Flu1g@dm1m", 1, "fluig_admin", numeroSolicitacao);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "getInstanceCardData" }, e);
+		}
+	}
+	
+	public void updateCardData(int numeroFormulario, CardFieldDto[] cardData) throws ApplicationException {
+		try {
+			ECMCardServiceServiceSoapBindingStub cliente = obterProxyECMCardService();
+			cliente.updateCardData(1, "fluig_admin", "Flu1g@dm1m", numeroFormulario, cardData);
+			
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "getInstanceCardData" }, e);
+		}
 	}
 
 }

@@ -26,6 +26,7 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.grupojcr.business.CategoriaChamadoBusiness;
 import br.com.grupojcr.business.ChamadoBusiness;
+import br.com.grupojcr.business.UsuarioBusiness;
 import br.com.grupojcr.dto.ArquivoDTO;
 import br.com.grupojcr.dto.ChamadoDTO;
 import br.com.grupojcr.entity.AnexoChamado;
@@ -72,6 +73,9 @@ public class ChamadoController implements Serializable {
 	
 	@EJB
 	private ChamadoBusiness chamadoBusiness;
+	
+	@EJB
+	private UsuarioBusiness usuarioBusiness;
 	
 	@Inject
 	private LoginController loginController;
@@ -248,6 +252,26 @@ public class ChamadoController implements Serializable {
 			Message.setMessage("chamado.atribuido");
 			
 			adicionarMensagem("Olá, vou atender o seu chamado e a partir de agora sou responsável por ele!");
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atribuir" }, e);
+		}
+	}
+	
+	public void atribuirGustavo() throws ApplicationException {
+		try {
+			Usuario usuario = usuarioBusiness.obterPorUsuario("scarping");
+			Chamado chamado = chamadoBusiness.atribuir(getChamado(), usuario);
+			
+			chamadoBusiness.enviarEmailAtribuido(chamado);
+			
+			Message.setMessage("chamado.atribuido.para", new String[] {usuario.getNome().toUpperCase()});
+			
+			adicionarMensagemGustavo("Olá, vou atender o seu chamado e a partir de agora sou responsável por ele!", usuario);
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -437,6 +461,20 @@ public class ChamadoController implements Serializable {
 		}
 	}
 	
+	private void adicionarMensagemGustavo(String mensagem, Usuario usuario) throws ApplicationException {
+		try {
+			chamadoBusiness.enviarMensagem(mensagem, usuario, getChamado());
+			
+			getChamado().setMensagens(new HashSet<ChamadoAcompanhamento>(chamadoBusiness.listarAcompanhamentoChamado(getChamado().getId())));
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarMensagem" }, e);
+		}
+	}
+	
 	public void iniciarFeedback() throws ApplicationException {
 		try {
 			getChamado().setChamadoSolucionado(Boolean.TRUE);
@@ -465,6 +503,9 @@ public class ChamadoController implements Serializable {
 			if(TreatString.isNotBlank(origem)) {
 				if(origem.equals("PAINEL")) {
 					return "/pages/suporte/painel_chamado.xhtml?faces-redirect=true";
+				}
+				if(origem.equals("LISTAR_RELATORIO")) {
+					return "/pages/suporte/listar_relatorioChamado.xhtml?faces-redirect=true";
 				}
 			}
 			return "/pages/suporte/listar_chamado.xhtml?faces-redirect=true";
