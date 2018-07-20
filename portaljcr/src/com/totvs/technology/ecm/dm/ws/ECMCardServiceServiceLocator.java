@@ -7,6 +7,9 @@
 
 package com.totvs.technology.ecm.dm.ws;
 
+import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.Preferencias.Propriedades;
+
 public class ECMCardServiceServiceLocator extends org.apache.axis.client.Service implements com.totvs.technology.ecm.dm.ws.ECMCardServiceService {
 
     public ECMCardServiceServiceLocator() {
@@ -22,7 +25,7 @@ public class ECMCardServiceServiceLocator extends org.apache.axis.client.Service
     }
 
     // Use to get a proxy class for CardServicePort
-    private java.lang.String CardServicePort_address = "http://10.0.0.62:8180/webdesk/ECMCardService";
+    private java.lang.String CardServicePort_address = Preferencias.get(Propriedades.AMBIENTE_FLUIG) + "/webdesk/ECMCardService";
 
     public java.lang.String getCardServicePortAddress() {
         return CardServicePort_address;

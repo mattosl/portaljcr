@@ -3,9 +3,11 @@ package br.com.grupojcr.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.grupojcr.util.Preferencias.Propriedades;
+
 public class Dominios {
 	
-	public static final String PATH_URL = "http://portal.grupojcr.com.br/portaljcr";
+	public static final String PATH_URL = Preferencias.get(Propriedades.URL_PORTAL);
 	
 	public static final String ENCODING_ISO_8859_1 = "ISO-8859-1";
 

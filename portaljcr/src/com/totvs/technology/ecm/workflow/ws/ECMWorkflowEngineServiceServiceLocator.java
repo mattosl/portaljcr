@@ -7,6 +7,9 @@
 
 package com.totvs.technology.ecm.workflow.ws;
 
+import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.Preferencias.Propriedades;
+
 public class ECMWorkflowEngineServiceServiceLocator extends org.apache.axis.client.Service implements com.totvs.technology.ecm.workflow.ws.ECMWorkflowEngineServiceService {
 
     public ECMWorkflowEngineServiceServiceLocator() {
@@ -22,7 +25,7 @@ public class ECMWorkflowEngineServiceServiceLocator extends org.apache.axis.clie
     }
 
     // Use to get a proxy class for WorkflowEngineServicePort
-    private java.lang.String WorkflowEngineServicePort_address = "http://10.0.0.62:8180/webdesk/ECMWorkflowEngineService";
+    private java.lang.String WorkflowEngineServicePort_address = Preferencias.get(Propriedades.AMBIENTE_FLUIG) + "/webdesk/ECMWorkflowEngineService";
 
     public java.lang.String getWorkflowEngineServicePortAddress() {
         return WorkflowEngineServicePort_address;

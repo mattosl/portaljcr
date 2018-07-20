@@ -7,6 +7,9 @@
 
 package com.totvs.technology.ecm.dm.ws;
 
+import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.Preferencias.Propriedades;
+
 public class ECMDashBoardServiceServiceLocator extends org.apache.axis.client.Service implements com.totvs.technology.ecm.dm.ws.ECMDashBoardServiceService {
 
     public ECMDashBoardServiceServiceLocator() {
@@ -22,7 +25,7 @@ public class ECMDashBoardServiceServiceLocator extends org.apache.axis.client.Se
     }
 
     // Use to get a proxy class for DashBoardServicePort
-    private java.lang.String DashBoardServicePort_address = "http://10.0.0.62:8180/webdesk/ECMDashBoardService";
+    private java.lang.String DashBoardServicePort_address = Preferencias.get(Propriedades.AMBIENTE_FLUIG) + "/webdesk/ECMDashBoardService";
 
     public java.lang.String getDashBoardServicePortAddress() {
         return DashBoardServicePort_address;

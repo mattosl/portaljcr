@@ -57,9 +57,11 @@ import br.com.grupojcr.enumerator.PrioridadeSolicitacaoCompra;
 import br.com.grupojcr.enumerator.SituacaoSolicitacaoCompra;
 import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.ProdutoRM;
+import br.com.grupojcr.util.Preferencias;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
+import br.com.grupojcr.util.Preferencias.Propriedades;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -67,7 +69,7 @@ public class SolicitacaoCompraBusiness {
 	
 	private static Logger LOG = Logger.getLogger(ChamadoBusiness.class);
 	private final static String KEY_MENSAGEM_PADRAO = "message.default.erro";
-	private final static String PROCESSO_SOLICITACAO_COMPRA = "Solicitação de Compra";
+	private final static String PROCESSO_SOLICITACAO_COMPRA = Preferencias.get(Propriedades.FLUIG_SOLICITACAO_COMPRA);
 	
 	@EJB
 	private SolicitacaoCompraDAO daoSolicitacaoCompra;

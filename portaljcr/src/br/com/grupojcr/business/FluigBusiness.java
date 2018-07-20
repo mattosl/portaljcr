@@ -25,6 +25,8 @@ import br.com.grupojcr.dto.AprovacaoSolicitacaoCompraDTO;
 import br.com.grupojcr.dto.SolicitacaoAprovacaoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
 import br.com.grupojcr.entity.SolicitacaoCompra;
+import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.Preferencias.Propriedades;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
@@ -84,7 +86,7 @@ public class FluigBusiness {
 		try {
 			ECMWorkflowEngineServiceServiceSoapBindingStub cliente = obterProxyECMWorkFlowEngineService();
 			
-			return cliente.startProcess("fluig_admin", "Flu1g@dm1m", 1, nomeProcesso, idAtividade,
+			return cliente.startProcess(Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), 1, nomeProcesso, idAtividade,
 					new String[] { usrAprova }, null, "fluig_admin", true, null,
 					parametros,
 					null, false);
@@ -100,7 +102,7 @@ public class FluigBusiness {
 			
 			String textoCancelamento = "SOLICITAÇÃO DE COMPRA Nº " + idSolicitacao + " cancelada por: " + nomeUsuario + " [MOTIVO: " + motivoCancelamento + "]";
 			
-			cliente.cancelInstance("fluig_admin", "Flu1g@dm1m", 1, idProcesso.intValue(), "fluig_admin", textoCancelamento);
+			cliente.cancelInstance(Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), 1, idProcesso.intValue(), "fluig_admin", textoCancelamento);
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "cancelarProcessoFluig" }, e);
@@ -111,7 +113,7 @@ public class FluigBusiness {
 		try {
 			if(TreatString.isNotBlank(usuario)) {
 				ECMDashBoardServiceServiceSoapBindingStub cliente = obterProxyECMDashBoardService();
-				WorkflowProcessDto[] solicitacoes = cliente.findWorkflowTasks("fluig_admin", "Flu1g@dm1m", 1, usuario);
+				WorkflowProcessDto[] solicitacoes = cliente.findWorkflowTasks(Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), 1, usuario);
 				
 				SolicitacaoAprovacaoDTO solicitacao = new SolicitacaoAprovacaoDTO();
 				solicitacao.setContratos(new ArrayList<AprovacaoContratoDTO>());
@@ -201,7 +203,7 @@ public class FluigBusiness {
 		try {
 			ECMWorkflowEngineServiceServiceSoapBindingStub cliente = obterProxyECMWorkFlowEngineService();
 			
-			return cliente.getInstanceCardData("fluig_admin", "Flu1g@dm1m", 1, "fluig_admin", numeroSolicitacao);
+			return cliente.getInstanceCardData(Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), 1, Preferencias.get(Propriedades.USUARIO_FLUIG), numeroSolicitacao);
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "getInstanceCardData" }, e);
@@ -211,7 +213,7 @@ public class FluigBusiness {
 	public void updateCardData(int numeroFormulario, CardFieldDto[] cardData) throws ApplicationException {
 		try {
 			ECMCardServiceServiceSoapBindingStub cliente = obterProxyECMCardService();
-			cliente.updateCardData(1, "fluig_admin", "Flu1g@dm1m", numeroFormulario, cardData);
+			cliente.updateCardData(1, Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), numeroFormulario, cardData);
 			
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);

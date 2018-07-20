@@ -7,6 +7,9 @@
 
 package br.com.totvs.www.br;
 
+import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.Preferencias.Propriedades;
+
 public class WsDataServerLocator extends org.apache.axis.client.Service implements br.com.totvs.www.br.WsDataServer {
 
 /**
@@ -30,7 +33,7 @@ public class WsDataServerLocator extends org.apache.axis.client.Service implemen
     }
 
     // Use to get a proxy class for wsDataServerSoap
-    private java.lang.String wsDataServerSoap_address = "http://10.0.0.48/TOTVSBusinessConnect/wsDataServer.asmx";
+    private java.lang.String wsDataServerSoap_address = Preferencias.get(Propriedades.AMBIENTE_RM) + "/TOTVSBusinessConnect/wsDataServer.asmx";
 
     public java.lang.String getwsDataServerSoapAddress() {
         return wsDataServerSoap_address;
