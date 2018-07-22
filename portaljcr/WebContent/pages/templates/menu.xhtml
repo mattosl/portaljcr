@@ -85,6 +85,23 @@
 					</li>
 				</ul>
 			</li>
+			
+			<li class="treeview #{activeMenu eq 'orcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+				<a href="#"> 
+					<i class="fa fa-dollar"></i> <span>Orçamento</span>
+					 <span class="pull-right-container">
+	                 	<i class="fa fa-angle-left pull-right"></i>
+	                 </span>
+				</a>
+				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'orcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+						<p:link href="/pages/suporte/painel_chamado.xhtml" ajax="false">
+							<i class="fa fa-sliders"></i>
+							<span>Ajuste Orçamentário</span>
+						</p:link>
+					</li>
+				</ul>
+			</li>
 
 			<li class="treeview #{activeMenu eq 'suporte' ? 'active' : ''}">
 				<a href="#"> 
@@ -149,7 +166,7 @@
 							<span>Grupos de Cotação</span>
 						</p:link>
 					</li>
-					<li class="treeview #{activeSubmenu eq 'suporte' ? 'active' : ''}">
+					<li class="treeview #{activeSubmenu eq 'suporte' ? 'active' : ''}" style="font-family: 'Roboto', sans-serif !important;">
 						<a href="#"> 
 							<i class="fa fa-wrench"></i> <span>Chamados</span>
 							 <span class="pull-right-container">
