@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="ajusteOrcamentario"/>
+    	<ui:param name="activeMenu" value="orcamento"/>
+    	
+    	<f:metadata>
+			<f:viewAction action="#{ajusteOrcamentarioController.iniciarProcesso()}" />
+		</f:metadata>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-sliders fa-1x cor-padrao"></i> Ajuste Orçamentário</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-dollar"></i> Orçamento</li>
+	    	<li class="active"><i class="fa fa-sliders"></i> Ajuste Orçamentário</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="solicitacaoCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Consulta</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa:</label>
+	
+										<div class="col-sm-10 col-md-10">
+									        <p:selectOneMenu id="coligada" value="#{ajusteOrcamentarioController.filtro.coligada}">
+									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{ajusteOrcamentarioController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
+									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto()}" process="@this" update="@form:centroCusto" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="centroCusto" class="col-sm-2 col-md-2 control-label">Centro de Custo:</label>
+	
+										<div class="col-sm-10 col-md-10">
+									        <p:selectOneMenu id="centroCusto" value="#{ajusteOrcamentarioController.filtro.centroCusto}" disabled="#{ajusteOrcamentarioController.filtro.coligada eq null}" filter="true" filterMatchMode="contains">
+									        	<f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{ajusteOrcamentarioController.listaCentroCusto}" var="ccusto" itemLabel="#{ccusto.codigoCentroCusto} - #{ccusto.centroCusto.toUpperCase()}" itemValue="#{ccusto}" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn-vermelho"
+											icon="fa fa-search"
+											value="Pesquisar"
+											id="btn_pesquisar"
+											process="@form"
+											action="#{ajusteOrcamentarioController.pesquisar()}"
+											update="@this, :gridForm"
+											ajax="true">
+										</p:commandButton>
+									</div>
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn-verde"
+											icon="fa fa-dollar"
+											value="Novo Ajuste Orçamentário"
+											id="btn_novo_ajuste_orcamentario"
+											process="@this"
+											action="#{ajusteOrcamentarioController.iniciarAjusteOrcamentario()}"
+											immediate="true"
+											ajax="true">
+										</p:commandButton>
+									</div>
+								</div>
+							</div>
+		            	</p:panel>
+					</f:validateBean>
+				</h:form>
+				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:dataTable var="ajusteOrcamento" id="tableAjusteOrcamentario" widgetVar="widgetTabelaAjusteOrcamentario"
+						value="#{ajusteOrcamentarioController.dataModel}" 
+						tableStyle="table-layout: auto; word-break: keep-all;" 
+						rendered="#{ajusteOrcamentarioController.exibirResultado}"
+						binding="#{dataTableUtil.lazyDataTable}">
+						
+						<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
+							<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
+								<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
+								<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
+							</p:commandLink>
+						</p:column>
+						
+						<p:column headerText="Exportar Excel" style="text-align: center;font-size:12px;" width="8%">
+							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}" rendered="#{solicitacao.situacao eq 'AGUARDANDO_APRV_COTACAO' or solicitacao.situacao eq 'LIBERADO_ORDEM_COMPRA' or solicitacao.situacao eq 'FINALIZADA'}">
+								<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-file-excel-o" />
+								<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
+							</p:commandLink>
+						</p:column>
+						
+					    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{ajusteOrcamento.coligada.razaoSocial.toUpperCase()}" />
+					    </p:column>
+					    
+					    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{ajusteOrcamento.centroCusto.codigoCentroCusto}  -  #{ajusteOrcamento.centroCusto.centroCusto}" />
+					    </p:column>
+
+					    <p:column headerText="Data de Ajuste" style="text-align:center;font-size:12px;" >
+					        <h:outputText value="#{ajusteOrcamento.dtAjuste}" >
+					        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+					        </h:outputText>
+					    </p:column>
+					    
+					</p:dataTable>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>
