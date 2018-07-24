@@ -32,7 +32,7 @@
 	
 										<div class="col-sm-10 col-md-10">
 									        <p:selectOneMenu id="coligada" value="#{ajusteOrcamentarioController.filtro.coligada}">
-									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{ajusteOrcamentarioController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
 									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto()}" process="@this" update="@form:centroCusto" />
 									        </p:selectOneMenu>
@@ -43,207 +43,199 @@
 	
 										<div class="col-sm-10 col-md-10">
 									        <p:selectOneMenu id="centroCusto" value="#{ajusteOrcamentarioController.filtro.centroCusto}" disabled="#{ajusteOrcamentarioController.filtro.coligada eq null}" filter="true" filterMatchMode="contains">
-									        	<f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="false" />
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{ajusteOrcamentarioController.listaCentroCusto}" var="ccusto" itemLabel="#{ccusto.codigoCentroCusto} - #{ccusto.centroCusto.toUpperCase()}" itemValue="#{ccusto}" />
 									        </p:selectOneMenu>
 										</div>
 									</div>
 								</div>
 							</div>
+							<div class="box-footer"></div>
+							<div class="form-horizontal no-padding">
+			            		<div class="box-body no-padding">
+					            	<p:outputPanel styleClass="col-sm-6 col-md-6">
+						            	<p:panel toggleable="false" id="painelOrigem" styleClass="box box-info">
+											<div class="box-header with-border">
+												<i class="fa fa-dollar"></i>
+						             			<h3 class="box-title">Origem</h3>
+												<i class="fa fa-arrow-circle-o-up pull-right" style="color: #00c0ef !important;"></i>
+						            		</div> 
+						            		<div class="form-horizontal">
+												<div class="box-body">
+													<div class="form-group">
+														<label for="naturezaOrigem" class="col-sm-12 col-md-12" style="font-size: 12px;">Natureza Orçamentária: *</label>
+					
+														<div class="col-sm-12 col-md-12">
+															<p:selectOneMenu id="naturezaOrigem" value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" filter="true" filterMatchMode="contains">
+													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+													        	<f:selectItems value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
+													        </p:selectOneMenu>
+														</div>
+													</div>
+													<div class="form-group">
+														<label for="mesOrigem" class="col-sm-12 col-md-12" style="font-size: 12px;">Mês: *</label>
+					
+														<div class="col-sm-6 col-md-6">
+															<p:selectOneMenu id="mesOrigem" value="#{ajusteOrcamentarioController.itemAjuste.mesOrigem}" >
+													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+													        	<f:selectItem itemLabel="Janeiro" itemValue="1" />
+													        	<f:selectItem itemLabel="Fevereiro" itemValue="2" />
+													        	<f:selectItem itemLabel="Março" itemValue="3" />
+													        	<f:selectItem itemLabel="Abril" itemValue="4" />
+													        	<f:selectItem itemLabel="Maio" itemValue="5" />
+													        	<f:selectItem itemLabel="Junho" itemValue="6" />
+													        	<f:selectItem itemLabel="Julho" itemValue="7" />
+													        	<f:selectItem itemLabel="Agosto" itemValue="8" />
+													        	<f:selectItem itemLabel="Setembro" itemValue="9" />
+													        	<f:selectItem itemLabel="Outubro" itemValue="10" />
+													        	<f:selectItem itemLabel="Novembro" itemValue="11" />
+													        	<f:selectItem itemLabel="Dezembro" itemValue="12" />
+													        </p:selectOneMenu>
+														</div>
+													</div>
+													<hr />
+													<div class="col-sm-4 col-md-4 no-padding">
+														<div class="form-group">
+															<label for="valorOrcadoOrigem" class="col-sm-12 col-md-12" style="font-size: 12px;">Valor Orçado: </label>
+						
+															<div class="col-sm-11 col-md-11">
+																<div class="input-group">
+														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
+						           									<h:inputText id="valorOrcadoOrigem" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+														        </div>
+															</div>
+															
+														</div>
+													</div>
+													<div class="col-sm-4 col-md-4 no-padding">
+														<div class="form-group">
+															<label for="saldoOrigem" class="col-sm-12 col-md-12" style="font-size: 12px;">Saldo Disponível: </label>
+						
+															<div class="col-sm-11 col-md-11">
+																<div class="input-group">
+														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
+						           									<h:inputText id="saldoOrigem" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+														        </div>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4 col-md-4 no-padding">
+														<div class="form-group">
+															<label for="valorCedido" class="col-sm-12 col-md-12" style="font-size: 12px;">Valor a Transferir: </label>
+						
+															<div class="col-sm-11 col-md-11">
+																<div class="input-group">
+														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
+						           									<p:inputNumber id="valorCedido" value="0" style="font-size: 12px;"  decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," styleClass="valorTotalVerde" />
+														        </div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+						            	</p:panel>
+					            	</p:outputPanel>
+					            	<p:outputPanel styleClass="col-sm-6 col-md-6">
+					            		<p:panel toggleable="false" id="painelDestino" styleClass="box box-success">
+											<div class="box-header with-border">
+												<i class="fa fa-dollar"></i>
+						             			<h3 class="box-title">Destino</h3>
+												<i class="fa fa-arrow-circle-o-down pull-right" style="color: #00a65a !important;"></i>
+						            		</div>
+						            		<div class="form-horizontal">
+												<div class="box-body">
+													<div class="form-group">
+														<label for="naturezaDestino" class="col-sm-12 col-md-12" style="font-size:12px;">Natureza Orçamentária: *</label>
+					
+														<div class="col-sm-12 col-md-12">
+															<p:selectOneMenu id="naturezaDestino" value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" filter="true" filterMatchMode="contains">
+													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+													        	<f:selectItems value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
+													        </p:selectOneMenu>
+														</div>
+													</div>
+													<div class="form-group">
+														<label for="mesDestino" class="col-sm-12 col-md-12" style="font-size:12px;">Mês: *</label>
+					
+														<div class="col-sm-6 col-md-6">
+															<p:selectOneMenu id="mesDestino" value="#{ajusteOrcamentarioController.itemAjuste.mesDestino}" >
+													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+													        	<f:selectItem itemLabel="Janeiro" itemValue="1" />
+													        	<f:selectItem itemLabel="Fevereiro" itemValue="2" />
+													        	<f:selectItem itemLabel="Março" itemValue="3" />
+													        	<f:selectItem itemLabel="Abril" itemValue="4" />
+													        	<f:selectItem itemLabel="Maio" itemValue="5" />
+													        	<f:selectItem itemLabel="Junho" itemValue="6" />
+													        	<f:selectItem itemLabel="Julho" itemValue="7" />
+													        	<f:selectItem itemLabel="Agosto" itemValue="8" />
+													        	<f:selectItem itemLabel="Setembro" itemValue="9" />
+													        	<f:selectItem itemLabel="Outubro" itemValue="10" />
+													        	<f:selectItem itemLabel="Novembro" itemValue="11" />
+													        	<f:selectItem itemLabel="Dezembro" itemValue="12" />
+													        </p:selectOneMenu>
+														</div>
+													</div>
+													<hr />
+													<div class="col-sm-4 col-md-4 no-padding">
+														<div class="form-group">
+															<label for="valorOrcadoDestino" class="col-sm-12 col-md-12" style="font-size: 12px;">Valor Orçado: </label>
+						
+															<div class="col-sm-11 col-md-11">
+																<div class="input-group">
+																	<span class="input-group-addon" style="font-size: 12px;">R$</span>
+						           									<h:inputText id="valorOrcadoDestino" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+														        </div>
+															</div>
+															
+														</div>
+													</div>
+													<div class="col-sm-4 col-md-4 no-padding">
+														<div class="form-group">
+															<label for="saldoDestino" class="col-sm-12 col-md-12" style="font-size: 12px;">Saldo: </label>
+							
+															<div class="col-sm-11 col-md-11">
+																<div class="input-group">
+																	<span class="input-group-addon" style="font-size: 12px;">R$</span>
+						           									<h:inputText id="saldoDestino" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+														        </div>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4 col-md-4 no-padding">
+														<div class="form-group">
+															<label for="novoSaldo" class="col-sm-12 col-md-12" style="font-size: 12px;">Novo Saldo: </label>
+						
+															<div class="col-sm-11 col-md-11">
+																<div class="input-group">
+														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
+						           									<h:inputText id="novoSaldo" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+														        </div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+						            	</p:panel>
+					            	</p:outputPanel>
+			            		</div>
+			            	</div>
+			            	<div class="box-footer">
+			            		<div class="col-sm-4 col-md-4">
+			            		</div>
+								<div class="col-sm-4 col-md-4" >
+									<p:commandButton
+										styleClass="btn-verde"
+										icon="fa fa-plus"
+										value="Adicionar"
+										id="btn_salvar"
+										process="@form"
+										action="#{solicitacaoCompraController.salvar()}"
+										ajax="true" />
+								</div>
+								<div class="col-sm-4 col-md-4">
+			            		</div>
+							</div>
 		            	</p:panel>
-		            	<div class="form-horizontal">
-		            		<div class="box-body">
-				            	<p:outputPanel styleClass="col-sm-6 col-md-6 no-padding">
-					            	<p:panel toggleable="false" id="painelOrigem" styleClass="box box-warning">
-										<div class="box-header with-border">
-											<i class="fa fa-dollar"></i>
-					             			<h3 class="box-title">Origem</h3>
-											<i class="fa fa-arrow-circle-o-up pull-right" style="color: red !important;"></i>
-					            		</div> 
-					            		<div class="form-horizontal">
-											<div class="box-body">
-												<div class="form-group">
-													<label for="naturezaOrigem" class="col-sm-12 col-md-12">Natureza Orçamentária: *</label>
-				
-													<div class="col-sm-12 col-md-12">
-														<p:selectOneMenu id="naturezaOrigem" value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" filter="true" filterMatchMode="contains">
-												        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-												        	<f:selectItems value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
-												        </p:selectOneMenu>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="mesOrigem" class="col-sm-12 col-md-12">Mês: *</label>
-				
-													<div class="col-sm-6 col-md-6">
-														<p:selectOneMenu id="mesOrigem" value="#{ajusteOrcamentarioController.itemAjuste.mesOrigem}" >
-												        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-												        	<f:selectItem itemLabel="Janeiro" itemValue="1" />
-												        	<f:selectItem itemLabel="Fevereiro" itemValue="2" />
-												        	<f:selectItem itemLabel="Março" itemValue="3" />
-												        	<f:selectItem itemLabel="Abril" itemValue="4" />
-												        	<f:selectItem itemLabel="Maio" itemValue="5" />
-												        	<f:selectItem itemLabel="Junho" itemValue="6" />
-												        	<f:selectItem itemLabel="Julho" itemValue="7" />
-												        	<f:selectItem itemLabel="Agosto" itemValue="8" />
-												        	<f:selectItem itemLabel="Setembro" itemValue="9" />
-												        	<f:selectItem itemLabel="Outubro" itemValue="10" />
-												        	<f:selectItem itemLabel="Novembro" itemValue="11" />
-												        	<f:selectItem itemLabel="Dezembro" itemValue="12" />
-												        </p:selectOneMenu>
-													</div>
-												</div>
-												<hr />
-												<div class="form-group">
-													<label for="valorOrcadoOrigem" class="col-sm-2 col-md-2 control-label">Orçado: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorOrcadoOrigem" value="0"  decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-													
-													<label for="valorRealizadoOrigem" class="col-sm-2 col-md-2 control-label">Realizado: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorRealizadoOrigem" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="valorEmpenhadoOrigem" class="col-sm-2 col-md-2 control-label">Empenhado: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorEmpenhadoOrigem" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-													
-													<label for="saldoOrigem" class="col-sm-2 col-md-2 control-label">Saldo: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="saldoOrigem" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-												</div>
-												<hr />
-												<div class="form-group">
-													<label for="valorCedido" class="col-sm-5 col-md-5 control-label">Valor a Transferir: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorCedido" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," />
-												        </div>
-													</div>
-												</div>
-											</div>
-										</div>
-					            	</p:panel>
-				            	</p:outputPanel>
-				            	<p:outputPanel styleClass="col-sm-6 col-md-6 no-padding">
-				            		<p:panel toggleable="false" id="painelDestino" styleClass="box box-success">
-										<div class="box-header with-border">
-											<i class="fa fa-dollar"></i>
-					             			<h3 class="box-title">Destino</h3>
-											<i class="fa fa-arrow-circle-o-down pull-right" style="color: green !important;"></i>
-					            		</div>
-					            		<div class="form-horizontal">
-											<div class="box-body">
-												<div class="form-group">
-													<label for="naturezaDestino" class="col-sm-12 col-md-12">Natureza Orçamentária: *</label>
-				
-													<div class="col-sm-12 col-md-12">
-														<p:selectOneMenu id="naturezaDestino" value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" filter="true" filterMatchMode="contains">
-												        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-												        	<f:selectItems value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
-												        </p:selectOneMenu>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="mesDestino" class="col-sm-12 col-md-12">Mês: *</label>
-				
-													<div class="col-sm-6 col-md-6">
-														<p:selectOneMenu id="mesDestino" value="#{ajusteOrcamentarioController.itemAjuste.mesDestino}" >
-												        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-												        	<f:selectItem itemLabel="Janeiro" itemValue="1" />
-												        	<f:selectItem itemLabel="Fevereiro" itemValue="2" />
-												        	<f:selectItem itemLabel="Março" itemValue="3" />
-												        	<f:selectItem itemLabel="Abril" itemValue="4" />
-												        	<f:selectItem itemLabel="Maio" itemValue="5" />
-												        	<f:selectItem itemLabel="Junho" itemValue="6" />
-												        	<f:selectItem itemLabel="Julho" itemValue="7" />
-												        	<f:selectItem itemLabel="Agosto" itemValue="8" />
-												        	<f:selectItem itemLabel="Setembro" itemValue="9" />
-												        	<f:selectItem itemLabel="Outubro" itemValue="10" />
-												        	<f:selectItem itemLabel="Novembro" itemValue="11" />
-												        	<f:selectItem itemLabel="Dezembro" itemValue="12" />
-												        </p:selectOneMenu>
-													</div>
-												</div>
-												<hr /> 
-												<div class="form-group">
-													<label for="valorOrcadoDestino" class="col-sm-2 col-md-2 control-label">Orçado: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorOrcadoDestino" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-													
-													<label for="valorRealizadoDestino" class="col-sm-2 col-md-2 control-label">Realizado: </label>
-													
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorRealizadoDestino" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="valorEmpenhadoDestino" class="col-sm-2 col-md-2 control-label">Empenhado: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="valorEmpenhadoDestino" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-													
-													<label for="saldoDestino" class="col-sm-2 col-md-2 control-label">Saldo: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="saldoDestino" value="0"  decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-												</div>
-												<hr />
-												<div class="form-group">
-													<label for="novoSaldo" class="col-sm-5 col-md-5 control-label">Novo Saldo: </label>
-				
-													<div class="col-sm-4 col-md-4">
-														<div class="input-group">
-												            <span class="input-group-addon">R$</span>
-				           									<p:inputNumber id="novoSaldo" value="0"   decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," readonly="true" />
-												        </div>
-													</div>
-												</div>
-											</div>
-										</div>
-					            	</p:panel>
-				            	</p:outputPanel>
-		            		</div>
-		            	</div>
 					</f:validateBean>
 				</h:form>
 			</div>
