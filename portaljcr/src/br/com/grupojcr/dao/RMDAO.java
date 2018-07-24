@@ -22,6 +22,7 @@ import br.com.grupojcr.dto.AprovacaoContratoDTO;
 import br.com.grupojcr.dto.AprovacaoOrdemCompraDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
+import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.AprovadorRM;
@@ -1297,7 +1298,7 @@ public class RMDAO {
 			conn = datasource.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT ((VALORORCADO - (VALORREAL + VALORCEDIDO)) + VALORRECEBIDO) AS SALDO FROM TITMORCAMENTO ")
+			sb.append("SELECT ((COALESCE(VALORORCADO,0) - (COALESCE(VALORREAL,0) + COALESCE(VALORCEDIDO, 0) + COALESCE(VALOROPCIONAL1, 0))) + VALORRECEBIDO) AS SALDO FROM TITMORCAMENTO ")
 			.append("WHERE CODCOLIGADA = ? ")
 			.append("AND IDORCAMENTO = ? ")
 			.append("AND IDPERIODO = ? ")
@@ -1318,6 +1319,73 @@ public class RMDAO {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSaldoDisponivelOrcamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public OrcamentoDTO obterOrcamentoCompleto(Integer periodo, Long codColigada, Integer idOrcamento, Integer mes) throws ApplicationException {
+		/**
+		 *	SELECT VALORORCADO AS ORCADO, ((VALORORCADO - (VALORREAL + VALORCEDIDO)) + VALORRECEBIDO) AS SALDO FROM TITMORCAMENTO
+		 *	WHERE CODCOLIGADA = ?
+		 *	AND IDORCAMENTO = ?
+		 *	AND IDPERIODO = ?
+		 *	AND IDITMPERIODO = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT VALORORCADO AS ORCADO, VALORREAL AS REALIZADO, VALORCEDIDO AS CEDIDO, VALORRECEBIDO AS RECEBIDO, ((COALESCE(VALORORCADO,0) - (COALESCE(VALORREAL,0) + COALESCE(VALORCEDIDO, 0) + COALESCE(VALOROPCIONAL1, 0))) + VALORRECEBIDO) AS SALDO FROM TITMORCAMENTO ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND IDORCAMENTO = ? ")
+			.append("AND IDPERIODO = ? ")
+			.append("AND IDITMPERIODO = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, codColigada);
+			ps.setInt(2, idOrcamento);
+			ps.setInt(3, periodo);
+			ps.setInt(4, mes);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				OrcamentoDTO dto = new OrcamentoDTO();
+				dto.setValorOrcado(set.getBigDecimal("ORCADO"));
+				dto.setValorRealizado(set.getBigDecimal("REALIZADO"));
+				dto.setValorCedido(set.getBigDecimal("CEDIDO"));
+				dto.setValorRecebido(set.getBigDecimal("RECEBIDO"));
+				dto.setSaldo(set.getBigDecimal("SALDO"));
+				
+				return dto;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterOrcamentoCompleto" }, e);
 		} finally {
 			if (ps != null) {
 				try {

@@ -9,6 +9,9 @@ import javax.xml.rpc.ServiceException;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.RMDAO;
+import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
+import br.com.grupojcr.dto.OrcamentoDTO;
+import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
@@ -166,6 +169,42 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterIdFluig" }, e);
+		}
+	}
+	
+	public Integer obterPeriodoColigada(Long idColigada) throws ApplicationException {
+		try {
+			return daoRM.obterPeriodoOrcamentoColigada(idColigada);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterPeriodoColigada" }, e);
+		}
+	}
+	
+	public Integer obterOrcamento(Integer periodo, Long idColigada, String idNatureza, String idCentroCusto) throws ApplicationException {
+		try {
+			return daoRM.obterOrcamento(periodo, idColigada, idNatureza, idCentroCusto);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterOrcamento" }, e);
+		}
+	}
+
+	public OrcamentoDTO obterOrcamentoCompleto(Integer periodo, Long idColigada, Integer idOrcamento, Integer mes) throws ApplicationException {
+		try {
+			return daoRM.obterOrcamentoCompleto(periodo, idColigada, idOrcamento, mes);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterOrcamentoCompleto" }, e);
+		}
+	}
+	
+	public void ajustarOrcamento(AjusteOrcamentarioDTO ajuste, Usuario usuario) throws ApplicationException {
+		try {
+			
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ajustarOrcamento" }, e);
 		}
 	}
 

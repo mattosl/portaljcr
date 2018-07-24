@@ -365,3 +365,9 @@ ol.progress-meter li.todo:before {
 	color: red;
 }
 
+.wrapperCenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}

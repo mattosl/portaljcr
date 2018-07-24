@@ -38,7 +38,7 @@
 									        <p:selectOneMenu id="coligada" value="#{ajusteOrcamentarioController.filtro.coligada}">
 									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{ajusteOrcamentarioController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
-									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto()}" process="@this" update="@form:centroCusto" />
+									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto(false)}" process="@this" update="@form:centroCusto" />
 									        </p:selectOneMenu>
 										</div>
 									</div>

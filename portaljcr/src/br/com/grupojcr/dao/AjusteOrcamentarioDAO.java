@@ -60,7 +60,6 @@ public class AjusteOrcamentarioDAO extends GenericDAO<AjusteOrcamentario> {
 		try{
 			StringBuilder sb = new StringBuilder("SELECT ajuste FROM AjusteOrcamentario ajuste ");
 			sb.append("LEFT JOIN FETCH ajuste.coligada coligada ");
-			sb.append("LEFT JOIN FETCH ajuste.itens item ");
 			sb.append("WHERE ajuste.id is not null ");
 			
 			if(Util.isNotNull(filtro.getColigada())) {

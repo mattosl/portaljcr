@@ -23,38 +23,40 @@
 					<f:validateBean disabled="true" for="@form">
 						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
 							<div class="box-header with-border">
+								<i class="fa fa-plus"></i>
 		             			<h3 class="box-title">Novo Ajuste Orçamentário</h3>
+		             			<span class="users-list-date pull-right">(*) Campos Obrigatórios.</span>
 		            		</div>
 		            		<div class="form-horizontal">
 								<div class="box-body">
 									<div class="form-group">
-										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa:</label>
+										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa: *</label>
 	
 										<div class="col-sm-10 col-md-10">
-									        <p:selectOneMenu id="coligada" value="#{ajusteOrcamentarioController.filtro.coligada}">
+									        <p:selectOneMenu id="coligada" value="#{ajusteOrcamentarioController.ajuste.coligada}">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{ajusteOrcamentarioController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
-									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto()}" process="@this" update="@form:centroCusto" />
+									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto(true)}" process="@this, @form:centroCusto" update="@form:centroCusto, @form:panelOrigem, @form:panelDestino" global="false" />
 									        </p:selectOneMenu>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="centroCusto" class="col-sm-2 col-md-2 control-label">Centro de Custo:</label>
+										<label for="centroCusto" class="col-sm-2 col-md-2 control-label">Centro de Custo: *</label>
 	
 										<div class="col-sm-10 col-md-10">
-									        <p:selectOneMenu id="centroCusto" value="#{ajusteOrcamentarioController.filtro.centroCusto}" disabled="#{ajusteOrcamentarioController.filtro.coligada eq null}" filter="true" filterMatchMode="contains">
+									        <p:selectOneMenu id="centroCusto" value="#{ajusteOrcamentarioController.ajuste.centroCusto}" disabled="#{ajusteOrcamentarioController.ajuste.coligada eq null}" filter="true" filterMatchMode="contains">
 									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{ajusteOrcamentarioController.listaCentroCusto}" var="ccusto" itemLabel="#{ccusto.codigoCentroCusto} - #{ccusto.centroCusto.toUpperCase()}" itemValue="#{ccusto}" />
+									        	<p:ajax event="change" process="@this" update="@form:panelOrigem, @form:panelDestino" global="false" listener="#{ajusteOrcamentarioController.limparAjustes()}"  />
 									        </p:selectOneMenu>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="box-footer"></div>
-							<div class="form-horizontal no-padding">
-			            		<div class="box-body no-padding">
-					            	<p:outputPanel styleClass="col-sm-6 col-md-6">
-						            	<p:panel toggleable="false" id="painelOrigem" styleClass="box box-info">
+							<div class="form-horizontal">
+			            		<div class="box-body">
+					            	<p:outputPanel styleClass="col-sm-6 col-md-6" id="panelOrigem">
+						            	<p:panel toggleable="false" id="painelOrigem" styleClass="box box-info" rendered="#{ajusteOrcamentarioController.ajuste.centroCusto ne null}">
 											<div class="box-header with-border">
 												<i class="fa fa-dollar"></i>
 						             			<h3 class="box-title">Origem</h3>
@@ -66,9 +68,10 @@
 														<label for="naturezaOrigem" class="col-sm-12 col-md-12" style="font-size: 12px;">Natureza Orçamentária: *</label>
 					
 														<div class="col-sm-12 col-md-12">
-															<p:selectOneMenu id="naturezaOrigem" value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" filter="true" filterMatchMode="contains">
+															<p:selectOneMenu id="naturezaOrigem" value="#{ajusteOrcamentarioController.ajuste.naturezaOrigem}" filter="true" filterMatchMode="contains">
 													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 													        	<f:selectItems value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
+													        	<p:ajax event="change" process="@form:panelOrigem, @form:panelDestino" update="@form:panelOrigem, @form:panelDestino" global="false" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
 													        </p:selectOneMenu>
 														</div>
 													</div>
@@ -76,20 +79,10 @@
 														<label for="mesOrigem" class="col-sm-12 col-md-12" style="font-size: 12px;">Mês: *</label>
 					
 														<div class="col-sm-6 col-md-6">
-															<p:selectOneMenu id="mesOrigem" value="#{ajusteOrcamentarioController.itemAjuste.mesOrigem}" >
+															<p:selectOneMenu id="mesOrigem" value="#{ajusteOrcamentarioController.ajuste.mesOrigem}" >
 													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-													        	<f:selectItem itemLabel="Janeiro" itemValue="1" />
-													        	<f:selectItem itemLabel="Fevereiro" itemValue="2" />
-													        	<f:selectItem itemLabel="Março" itemValue="3" />
-													        	<f:selectItem itemLabel="Abril" itemValue="4" />
-													        	<f:selectItem itemLabel="Maio" itemValue="5" />
-													        	<f:selectItem itemLabel="Junho" itemValue="6" />
-													        	<f:selectItem itemLabel="Julho" itemValue="7" />
-													        	<f:selectItem itemLabel="Agosto" itemValue="8" />
-													        	<f:selectItem itemLabel="Setembro" itemValue="9" />
-													        	<f:selectItem itemLabel="Outubro" itemValue="10" />
-													        	<f:selectItem itemLabel="Novembro" itemValue="11" />
-													        	<f:selectItem itemLabel="Dezembro" itemValue="12" />
+													        	<f:selectItems value="#{ajusteOrcamentarioController.listaMes}" var="mes" itemLabel="#{mes.descricao}" itemValue="#{mes}" />
+													        	<p:ajax event="change" process="@form:panelOrigem, @form:panelDestino" update="@form:panelOrigem, @form:panelDestino" global="false" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
 													        </p:selectOneMenu>
 														</div>
 													</div>
@@ -101,7 +94,9 @@
 															<div class="col-sm-11 col-md-11">
 																<div class="input-group">
 														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
-						           									<h:inputText id="valorOrcadoOrigem" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+						           									<h:inputText id="valorOrcadoOrigem" value="#{ajusteOrcamentarioController.ajuste.valorOrcadoOrigem}" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;">
+						           										<f:convertNumber type="currency" currencySymbol="" />
+						           									</h:inputText>
 														        </div>
 															</div>
 															
@@ -114,19 +109,24 @@
 															<div class="col-sm-11 col-md-11">
 																<div class="input-group">
 														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
-						           									<h:inputText id="saldoOrigem" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+						           									<h:inputText id="saldoOrigem" value="#{ajusteOrcamentarioController.ajuste.valorSaldoOrigem}" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;">
+						           										<f:convertNumber type="currency" currencySymbol="" />
+						           									</h:inputText>
 														        </div>
 															</div>
 														</div>
 													</div>
 													<div class="col-sm-4 col-md-4 no-padding">
 														<div class="form-group">
-															<label for="valorCedido" class="col-sm-12 col-md-12" style="font-size: 12px;">Valor a Transferir: </label>
+															<label for="valorCedido" class="col-sm-12 col-md-12" style="font-size: 12px;">Valor a Transferir: *</label>
 						
 															<div class="col-sm-11 col-md-11">
 																<div class="input-group">
 														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
-						           									<p:inputNumber id="valorCedido" value="0" style="font-size: 12px;"  decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," styleClass="valorTotalVerde" />
+						           									<p:inputNumber id="valorCedido" value="#{ajusteOrcamentarioController.ajuste.valor}" style="font-size: 12px;"  decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," styleClass="valorTotalVerde">
+						           										<p:ajax global="false" process="@this" update="@form:panelOrigem, @form:panelDestino" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
+						           									</p:inputNumber>
+						           									<p:watermark value="0,00" for="valorCedido"></p:watermark>
 														        </div>
 															</div>
 														</div>
@@ -135,8 +135,8 @@
 											</div>
 						            	</p:panel>
 					            	</p:outputPanel>
-					            	<p:outputPanel styleClass="col-sm-6 col-md-6">
-					            		<p:panel toggleable="false" id="painelDestino" styleClass="box box-success">
+					            	<p:outputPanel styleClass="col-sm-6 col-md-6" id="panelDestino">
+					            		<p:panel toggleable="false" id="painelDestino" styleClass="box box-success" rendered="#{ajusteOrcamentarioController.ajuste.centroCusto ne null}">
 											<div class="box-header with-border">
 												<i class="fa fa-dollar"></i>
 						             			<h3 class="box-title">Destino</h3>
@@ -148,9 +148,10 @@
 														<label for="naturezaDestino" class="col-sm-12 col-md-12" style="font-size:12px;">Natureza Orçamentária: *</label>
 					
 														<div class="col-sm-12 col-md-12">
-															<p:selectOneMenu id="naturezaDestino" value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" filter="true" filterMatchMode="contains">
+															<p:selectOneMenu id="naturezaDestino" value="#{ajusteOrcamentarioController.ajuste.naturezaDestino}" filter="true" filterMatchMode="contains">
 													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
 													        	<f:selectItems value="#{ajusteOrcamentarioController.listaNaturezaOrcamentaria}" var="natureza" itemLabel="#{natureza.naturezaOrcamentaria.toUpperCase()}" itemValue="#{natureza}" />
+													        	<p:ajax event="change" process="@form:panelOrigem, @form:panelDestino" update="@form:panelOrigem, @form:panelDestino" global="false" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
 													        </p:selectOneMenu>
 														</div>
 													</div>
@@ -158,20 +159,10 @@
 														<label for="mesDestino" class="col-sm-12 col-md-12" style="font-size:12px;">Mês: *</label>
 					
 														<div class="col-sm-6 col-md-6">
-															<p:selectOneMenu id="mesDestino" value="#{ajusteOrcamentarioController.itemAjuste.mesDestino}" >
+															<p:selectOneMenu id="mesDestino" value="#{ajusteOrcamentarioController.ajuste.mesDestino}" >
 													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-													        	<f:selectItem itemLabel="Janeiro" itemValue="1" />
-													        	<f:selectItem itemLabel="Fevereiro" itemValue="2" />
-													        	<f:selectItem itemLabel="Março" itemValue="3" />
-													        	<f:selectItem itemLabel="Abril" itemValue="4" />
-													        	<f:selectItem itemLabel="Maio" itemValue="5" />
-													        	<f:selectItem itemLabel="Junho" itemValue="6" />
-													        	<f:selectItem itemLabel="Julho" itemValue="7" />
-													        	<f:selectItem itemLabel="Agosto" itemValue="8" />
-													        	<f:selectItem itemLabel="Setembro" itemValue="9" />
-													        	<f:selectItem itemLabel="Outubro" itemValue="10" />
-													        	<f:selectItem itemLabel="Novembro" itemValue="11" />
-													        	<f:selectItem itemLabel="Dezembro" itemValue="12" />
+													        	<f:selectItems value="#{ajusteOrcamentarioController.listaMes}" var="mes" itemLabel="#{mes.descricao}" itemValue="#{mes}" />
+													        	<p:ajax event="change" process="@form:panelOrigem, @form:panelDestino" update="@form:panelOrigem, @form:panelDestino" global="false" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
 													        </p:selectOneMenu>
 														</div>
 													</div>
@@ -183,7 +174,9 @@
 															<div class="col-sm-11 col-md-11">
 																<div class="input-group">
 																	<span class="input-group-addon" style="font-size: 12px;">R$</span>
-						           									<h:inputText id="valorOrcadoDestino" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+						           									<h:inputText id="valorOrcadoDestino" value="#{ajusteOrcamentarioController.ajuste.valorOrcadoDestino}" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;">
+						           										<f:convertNumber type="currency" currencySymbol="" />
+						           									</h:inputText>
 														        </div>
 															</div>
 															
@@ -191,12 +184,14 @@
 													</div>
 													<div class="col-sm-4 col-md-4 no-padding">
 														<div class="form-group">
-															<label for="saldoDestino" class="col-sm-12 col-md-12" style="font-size: 12px;">Saldo: </label>
+															<label for="saldoDestino" class="col-sm-12 col-md-12" style="font-size: 12px;">Saldo Atual: </label>
 							
 															<div class="col-sm-11 col-md-11">
 																<div class="input-group">
 																	<span class="input-group-addon" style="font-size: 12px;">R$</span>
-						           									<h:inputText id="saldoDestino" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+						           									<h:inputText id="saldoDestino" value="#{ajusteOrcamentarioController.ajuste.valorSaldoDestino}" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;">
+							           									<f:convertNumber type="currency" currencySymbol="" />
+						           									</h:inputText>
 														        </div>
 															</div>
 														</div>
@@ -208,7 +203,9 @@
 															<div class="col-sm-11 col-md-11">
 																<div class="input-group">
 														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
-						           									<h:inputText id="novoSaldo" value="0,00" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;"/>
+						           									<h:inputText id="novoSaldo" value="#{ajusteOrcamentarioController.ajuste.valorNovoSaldo}" maxlength="100" styleClass="form-control" disabled="true" style="font-size:12px;">
+						           										<f:convertNumber type="currency" currencySymbol="" />
+						           									</h:inputText>
 														        </div>
 															</div>
 														</div>
@@ -220,20 +217,25 @@
 			            		</div>
 			            	</div>
 			            	<div class="box-footer">
-			            		<div class="col-sm-4 col-md-4">
-			            		</div>
-								<div class="col-sm-4 col-md-4" >
+								<div class="col-sm-3 col-md-3 pull-left" >
 									<p:commandButton
-										styleClass="btn-verde"
-										icon="fa fa-plus"
-										value="Adicionar"
-										id="btn_salvar"
+										styleClass="btn-vermelho-claro"
+										icon="fa fa-times"
+										value="Cancelar"
+										id="btn_cancelar"
 										process="@form"
-										action="#{solicitacaoCompraController.salvar()}"
 										ajax="true" />
 								</div>
-								<div class="col-sm-4 col-md-4">
-			            		</div>
+								<div class="col-sm-3 col-md-3 pull-right" >
+									<p:commandButton
+										styleClass="btn-verde"
+										icon="fa fa-check"
+										value="Concluir"
+										id="btn_concluir"
+										process="@form"
+										action="#{ajusteOrcamentarioController.adicionarAjuste()}"
+										ajax="true" />
+								</div>
 							</div>
 		            	</p:panel>
 					</f:validateBean>
