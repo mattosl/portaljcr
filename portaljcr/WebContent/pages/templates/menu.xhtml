@@ -9,38 +9,19 @@
 	
 	<h:form>
 		<ul class="sidebar-menu tree" data-widget="tree">
-			<li class="#{activeMenu eq 'inicio' ? 'active' : ''}">
+			<li class="treeview #{activeMenu eq 'inicio' ? 'active' : ''}">
 				<p:link href="/pages/login/welcome.xhtml"> 
 					<i class="fa fa-home"></i>  <span>Página Inicial</span> 
 				</p:link>
 			</li>
 			
-<!-- 		####### CONFIGURAÇÃO DO MENU ###### -->
-
-<!-- 			<li class="#{activeMenu eq 'nfse' ? 'active' : ''}"> -->
-<!-- 				<p:link href="/pages/nfse/listar_nfse.xhtml" ajax="false" title="Solicitação de Compra"> -->
-<!-- 					<i class="fa fa-shopping-cart" title="Solicitação de Compra"></i>  -->
-<!-- 					<span>Solicitação de Compra</span> -->
-<!-- 				</p:link> -->
-<!-- 			</li> -->
-
-
-
-
-<!-- 			<li class="#{activeMenu eq 'nfse' ? 'active' : ''}"> -->
-<!-- 				<p:link href="/pages/nfse/listar_nfse.xhtml" ajax="false" title="NFS-e"> -->
-<!-- 					<i class="fa fa-file-text-o" title="NFS-e"></i>  -->
-<!-- 					<span>NFS-e</span> -->
-<!-- 				</p:link> -->
-<!-- 			</li> -->
-
 			<li class="treeview #{activeMenu eq 'solicitacaoCompra' ? 'active' : ''}" jsf:rendered="true">
-				<a href="#"> 
+				<p:link href="#">
 					<i class="fa fa-shopping-cart"></i> <span>Solicitação de Compra</span>
 					 <span class="pull-right-container">
 	                 	<i class="fa fa-angle-left pull-right"></i>
 	                 </span>
-				</a>
+				</p:link>
 				<ul class="treeview-menu">
 					<li class="#{activeSubmenu eq 'novaSolicitacao' ? 'active' : ''}">
 						<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml" ajax="false">
@@ -58,12 +39,12 @@
 			</li>
 			
 			<li class="treeview #{activeMenu eq 'cotacao' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO', 'ADMINISTRATIVO'])}">
-				<a href="#"> 
+				<p:link href="#">
 					<i class="fa fa-pencil-square-o"></i> <span>Cotação</span>
 					 <span class="pull-right-container">
 	                 	<i class="fa fa-angle-left pull-right"></i>
 	                 </span>
-				</a>
+				</p:link>
 				<ul class="treeview-menu">
 					<li class="#{activeSubmenu eq 'cotacoesPendentes' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml" ajax="false">
@@ -87,12 +68,12 @@
 			</li>
 			
 			<li class="treeview #{activeMenu eq 'orcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
-				<a href="#"> 
+				<p:link href="#">
 					<i class="fa fa-dollar"></i> <span>Orçamento</span>
 					 <span class="pull-right-container">
 	                 	<i class="fa fa-angle-left pull-right"></i>
 	                 </span>
-				</a>
+				</p:link>
 				<ul class="treeview-menu">
 					<li class="#{activeSubmenu eq 'ajusteOrcamentario' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
 						<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml" ajax="false">
@@ -104,12 +85,12 @@
 			</li>
 
 			<li class="treeview #{activeMenu eq 'suporte' ? 'active' : ''}">
-				<a href="#"> 
+				<p:link href="#">
 					<i class="fa fa-wrench"></i> <span>Suporte TI</span>
 					 <span class="pull-right-container">
 	                 	<i class="fa fa-angle-left pull-right"></i>
 	                 </span>
-				</a>
+				</p:link>
 				<ul class="treeview-menu">
 					<li class="#{activeSubmenu eq 'painelChamado' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'SUPORTE'])}">
 						<p:link href="/pages/suporte/painel_chamado.xhtml" ajax="false">
@@ -141,12 +122,12 @@
 
 
 			<li class="treeview #{activeMenu eq 'administrador' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
-				<a href="#"> 
+				<p:link href="#">
 					<i class="fa fa-gears"></i> <span>Configurações</span>
 					 <span class="pull-right-container">
 	                 	<i class="fa fa-angle-left pull-right"></i>
 	                 </span>
-				</a>
+				</p:link> 
 				<ul class="treeview-menu">
 					<li class="#{activeSubmenu eq 'usuarios' ? 'active' : ''}">
 						<p:link href="/pages/administrador/usuario/listar_usuario.xhtml" ajax="false">
@@ -167,12 +148,12 @@
 						</p:link>
 					</li>
 					<li class="treeview #{activeSubmenu eq 'suporte' ? 'active' : ''}" style="font-family: 'Roboto', sans-serif !important;">
-						<a href="#"> 
+						<p:link href="#">
 							<i class="fa fa-wrench"></i> <span>Chamados</span>
 							 <span class="pull-right-container">
 			                 	<i class="fa fa-angle-left pull-right"></i>
 			                 </span>
-						</a>
+						</p:link>
 						<ul class="treeview-menu">
 							<li class="#{activeSubmenu eq 'categoriaChamado' ? 'active' : ''}">
 								<p:link href="/pages/administrador/suporte/categoriaChamado/listar_categoriaChamado.xhtml" ajax="false">

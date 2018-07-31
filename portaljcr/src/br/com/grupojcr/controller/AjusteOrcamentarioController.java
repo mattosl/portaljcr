@@ -32,6 +32,7 @@ import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewAccessScoped
@@ -80,6 +81,7 @@ public class AjusteOrcamentarioController implements Serializable {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			getFiltro().setUsuarioLogado(usuario);
 			getFiltro().setDtAjuste(Calendar.getInstance().getTime());
+			carregarDatas();
 			
 			setListaColigada(new ArrayList<Coligada>());
 			if (Util.isNotNull(usuario.getColigadas())) {
@@ -109,6 +111,21 @@ public class AjusteOrcamentarioController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarProcesso" }, e);
+		}
+	}
+	
+	private void carregarDatas() throws ApplicationException {
+		try {
+			Calendar calendarioInicial = Calendar.getInstance();
+			calendarioInicial.set(Calendar.DAY_OF_MONTH, calendarioInicial.getActualMinimum(Calendar.DAY_OF_MONTH));
+			Calendar calendarioFinal = Calendar.getInstance();
+			calendarioFinal.set(Calendar.DAY_OF_MONTH, calendarioFinal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			
+			getFiltro().setPeriodoInicial(calendarioInicial.getTime());
+			getFiltro().setPeriodoFinal(calendarioFinal.getTime());
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarDatas" }, e);
 		}
 	}
 	
@@ -165,11 +182,13 @@ public class AjusteOrcamentarioController implements Serializable {
 						Integer idOrcamento = rmBusiness.obterOrcamento(getAjuste().getPeriodo(), getAjuste().getColigada().getId(), getAjuste().getNaturezaOrigem().getCodigoNaturezaOrcamentaria(), getAjuste().getCentroCusto().getCodigoCentroCusto());
 						if(Util.isNotNull(idOrcamento)) {
 							OrcamentoDTO dto = rmBusiness.obterOrcamentoCompleto(getAjuste().getPeriodo(), getAjuste().getColigada().getId(), idOrcamento, getAjuste().getMesOrigem().getId());
-							if(Util.isNotNull(dto.getValorOrcado())) {
-								getAjuste().setValorOrcadoOrigem(dto.getValorOrcado());
-							}
-							if(Util.isNotNull(dto.getSaldo())) {
-								getAjuste().setValorSaldoOrigem(dto.getSaldo());
+							if(Util.isNotNull(dto)) {
+								if(Util.isNotNull(dto.getValorOrcado())) {
+									getAjuste().setValorOrcadoOrigem(dto.getValorOrcado());
+								}
+								if(Util.isNotNull(dto.getSaldo())) {
+									getAjuste().setValorSaldoOrigem(dto.getSaldo());
+								}
 							}
 						}
 					}
@@ -178,20 +197,23 @@ public class AjusteOrcamentarioController implements Serializable {
 						Integer idOrcamento = rmBusiness.obterOrcamento(getAjuste().getPeriodo(), getAjuste().getColigada().getId(), getAjuste().getNaturezaDestino().getCodigoNaturezaOrcamentaria(), getAjuste().getCentroCusto().getCodigoCentroCusto());
 						if(Util.isNotNull(idOrcamento)) {
 							OrcamentoDTO dto = rmBusiness.obterOrcamentoCompleto(getAjuste().getPeriodo(), getAjuste().getColigada().getId(), idOrcamento, getAjuste().getMesDestino().getId());
-							if(Util.isNotNull(dto.getValorOrcado())) {
-								getAjuste().setValorOrcadoDestino(dto.getValorOrcado());
-							}
-							if(Util.isNotNull(dto.getSaldo())) {
-								getAjuste().setValorSaldoDestino(dto.getSaldo());
+							if(Util.isNotNull(dto)) {
+								if(Util.isNotNull(dto.getValorOrcado())) {
+									getAjuste().setValorOrcadoDestino(dto.getValorOrcado());
+								}
+								if(Util.isNotNull(dto.getSaldo())) {
+									getAjuste().setValorSaldoDestino(dto.getSaldo());
+								}
 							}
 							
-							if(Util.isNotNull(getAjuste().getValor())) {
-								getAjuste().setValorNovoSaldo(getAjuste().getValorSaldoDestino().add(getAjuste().getValor()));
-							} else {
-								getAjuste().setValorNovoSaldo(getAjuste().getValorSaldoDestino());
-							}
+						}
+						if(Util.isNotNull(getAjuste().getValor())) {
+							getAjuste().setValorNovoSaldo(getAjuste().getValorSaldoDestino().add(getAjuste().getValor()));
+						} else {
+							getAjuste().setValorNovoSaldo(getAjuste().getValorSaldoDestino());
 						}
 					}
+					
 				}
 			}
 			
@@ -204,7 +226,7 @@ public class AjusteOrcamentarioController implements Serializable {
 		}
 	}
 
-	public void adicionarAjuste() throws ApplicationException {
+	public String adicionarAjuste() throws ApplicationException {
 		try {
 			if(Util.isNull(getAjuste().getColigada())) {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
@@ -240,6 +262,8 @@ public class AjusteOrcamentarioController implements Serializable {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			ajusteOrcamentarioBusiness.salvar(getAjuste(), usuario);
 			
+			Message.setMessage("ajuste.realizado");
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -247,6 +271,7 @@ public class AjusteOrcamentarioController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarAjuste" }, e);
 		}
+		return voltar();
 	}
 	
 	public void zerarOrcamento() throws ApplicationException {
@@ -309,6 +334,15 @@ public class AjusteOrcamentarioController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "pesquisar" }, e);
+		}
+	}
+	
+	public String voltar() throws ApplicationException {
+		try {
+			return "/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml?faces-redirect=true";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "voltar" }, e);
 		}
 	}
 	

@@ -124,7 +124,7 @@
 																<div class="input-group">
 														            <span class="input-group-addon" style="font-size: 12px;">R$</span>
 						           									<p:inputNumber id="valorCedido" value="#{ajusteOrcamentarioController.ajuste.valor}" style="font-size: 12px;"  decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," styleClass="valorTotalVerde">
-						           										<p:ajax global="false" process="@this" update="@form:panelOrigem, @form:panelDestino" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
+						           										<p:ajax event="keyup" global="false" process="@this" delay="1000" update="@form:panelDestino" listener="#{ajusteOrcamentarioController.calcularOrcamento()}" />
 						           									</p:inputNumber>
 						           									<p:watermark value="0,00" for="valorCedido"></p:watermark>
 														        </div>
@@ -223,19 +223,27 @@
 										icon="fa fa-times"
 										value="Cancelar"
 										id="btn_cancelar"
-										process="@form"
-										ajax="true" />
+										process="@this"
+										immediate="true"
+										action="#{ajusteOrcamentarioController.voltar()}"
+										ajax="false" />
 								</div>
 								<div class="col-sm-3 col-md-3 pull-right" >
 									<p:commandButton
 										styleClass="btn-verde"
 										icon="fa fa-check"
-										value="Concluir"
+										value="Transferir"
 										id="btn_concluir"
 										process="@form"
 										action="#{ajusteOrcamentarioController.adicionarAjuste()}"
-										ajax="true" />
+										ajax="true">
+										<p:confirm header="Alerta!" message="Tem certeza que deseja realizar esta transferência?" icon="fa fa-warning" />
+									</p:commandButton>
 								</div>
+								<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes pull-right" icon="ui-icon-check" />
+							        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no pull-left" style="margin-left: 15px;" icon="ui-icon-close" />
+							    </p:confirmDialog>
 							</div>
 		            	</p:panel>
 					</f:validateBean>

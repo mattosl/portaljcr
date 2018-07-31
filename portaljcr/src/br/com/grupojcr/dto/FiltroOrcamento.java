@@ -11,6 +11,8 @@ public class FiltroOrcamento {
 	private Coligada coligada;
 	private CentroCustoRM centroCusto;
 	private Date dtAjuste;
+	private Date periodoInicial;
+	private Date periodoFinal;
 	private Usuario usuarioLogado;
 	
 	public Coligada getColigada() {
@@ -36,6 +38,18 @@ public class FiltroOrcamento {
 	}
 	public void setUsuarioLogado(Usuario usuarioLogado) {
 		this.usuarioLogado = usuarioLogado;
+	}
+	public Date getPeriodoInicial() {
+		return periodoInicial;
+	}
+	public void setPeriodoInicial(Date periodoInicial) {
+		this.periodoInicial = periodoInicial;
+	}
+	public Date getPeriodoFinal() {
+		return periodoFinal;
+	}
+	public void setPeriodoFinal(Date periodoFinal) {
+		this.periodoFinal = periodoFinal;
 	}
 	
 

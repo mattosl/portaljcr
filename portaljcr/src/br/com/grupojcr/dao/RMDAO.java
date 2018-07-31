@@ -1631,6 +1631,59 @@ public class RMDAO {
 			}
 		}
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public NaturezaOrcamentariaRM obterNaturezaOrcamentaria(String codigoNatureza) throws ApplicationException {
+		/**
+		 *	SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO
+		 *	WHERE CODTBORCAMENTO = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO ")
+			.append("WHERE CODTBORCAMENTO = ? ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, codigoNatureza);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				NaturezaOrcamentariaRM nat = new NaturezaOrcamentariaRM();
+				nat.setCodigoNaturezaOrcamentaria(set.getString("CODTBORCAMENTO"));
+				nat.setNaturezaOrcamentaria(set.getString("DESCRICAO"));
+				return nat;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterNaturezaOrcamentaria" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
 
 
 }

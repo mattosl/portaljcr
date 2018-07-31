@@ -10,9 +10,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.AjusteOrcamentarioDAO;
+import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.FiltroOrcamento;
 import br.com.grupojcr.entity.AjusteOrcamentario;
+import br.com.grupojcr.enumerator.Mes;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -24,6 +26,9 @@ public class OrcamentoBusiness {
 	
 	@EJB
 	private AjusteOrcamentarioDAO daoAjuste;
+	
+	@EJB
+	private RMDAO daoRM;
 
 	public Integer obterQtdAjusteOrcamentario(FiltroOrcamento filtro) throws ApplicationException {
 		try {
@@ -48,7 +53,13 @@ public class OrcamentoBusiness {
 					dto.setCentroCusto(new CentroCustoRM());
 					dto.getCentroCusto().setCodigoCentroCusto(ajuste.getCodigoCentroCusto());
 					dto.getCentroCusto().setCentroCusto(ajuste.getCentroCusto());
+					dto.setNaturezaOrigem(daoRM.obterNaturezaOrcamentaria(ajuste.getIdNaturezaOrigem()));
+					dto.setNaturezaDestino(daoRM.obterNaturezaOrcamentaria(ajuste.getIdNaturezaDestino()));
+					dto.setValor(ajuste.getValor());
+					dto.setMesOrigem(Mes.obterPorCodigo(ajuste.getMesOrigem()));
+					dto.setMesDestino(Mes.obterPorCodigo(ajuste.getMesDestino()));
 					dto.setDtAjuste(ajuste.getDtAjuste());
+					dto.setUsuario(ajuste.getUsuarioAjuste());
 					
 					listaDTO.add(dto);
 				}

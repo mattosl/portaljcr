@@ -32,13 +32,35 @@
 		            		<div class="form-horizontal">
 								<div class="box-body">
 									<div class="form-group">
+										<label for="dtInicio" class="col-sm-2 control-label">Período:</label>
+										<div class="row">
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtInicio" value="#{ajusteOrcamentarioController.filtro.periodoInicial}" readonlyInput="true" locale="pt_BR"/>
+								                </div>
+							                </div>
+							                <label for="dtFim" class="col-sm-1 col-md-1 col-lg-1 control-label" style="text-align:center;">até</label>
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtFim" value="#{ajusteOrcamentarioController.filtro.periodoFinal}" readonlyInput="true" locale="pt_BR"/>
+								                </div>
+							                </div>
+							            </div>
+									</div>
+									<div class="form-group">
 										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa:</label>
 	
 										<div class="col-sm-10 col-md-10">
 									        <p:selectOneMenu id="coligada" value="#{ajusteOrcamentarioController.filtro.coligada}">
 									        	<f:selectItem itemLabel="Todas" itemValue="" noSelectionOption="false" />
 									        	<f:selectItems value="#{ajusteOrcamentarioController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
-									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto(false)}" process="@this" update="@form:centroCusto" />
+									        	<p:ajax event="change" listener="#{ajusteOrcamentarioController.carregarCentroCusto(false)}" process="@this" update="@form:centroCusto" global="false" />
 									        </p:selectOneMenu>
 										</div>
 									</div>
@@ -84,41 +106,75 @@
 					</f:validateBean>
 				</h:form>
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<p:dataTable var="ajusteOrcamento" id="tableAjuste" widgetVar="widgetTabelaAjusteOrcamentario"
-						value="#{ajusteOrcamentarioController.dataModel}" 
-						tableStyle="table-layout: auto; word-break: keep-all;" 
-						rendered="#{ajusteOrcamentarioController.exibirResultado}"
-						binding="#{dataTableUtil.lazyDataTable}">
-						
-						<p:column headerText="Exibir" style="text-align: center;font-size:12px;" width="5%">
-							<p:commandLink ajax="true" process="@this" action="#{minhaSolicitacaoCompraController.exibir()}" >
-								<h:outputText value="" title="Exibir" styleClass="fa fa-file-text-o" />
-								<f:setPropertyActionListener value="#{solicitacao}" target="#{minhaSolicitacaoCompraController.solicitacaoCompra}" />
-							</p:commandLink>
-						</p:column>
-						
-						<p:column headerText="Exportar Excel" style="text-align: center;font-size:12px;" width="8%">
-							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}">
-								<h:outputText value="" title="Exportar Excel" styleClass="fa fa-file-excel-o" />
-								<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
-							</p:commandLink>
-						</p:column>
-						
-					    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{ajusteOrcamento.coligada.razaoSocial.toUpperCase()}" />
-					    </p:column>
-					    
-					    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
-					        <h:outputText value="#{ajusteOrcamento.centroCusto.codigoCentroCusto}  -  #{ajusteOrcamento.centroCusto.centroCusto}" />
-					    </p:column>
-
-					    <p:column headerText="Data de Ajuste" style="text-align:center;font-size:12px;" >
-					        <h:outputText value="#{ajusteOrcamento.dtAjuste}" >
-					        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-					        </h:outputText>
-					    </p:column>
-					    
-					</p:dataTable>
+					<div class="nav-tabs-custom-relatorio" jsf:rendered="#{ajusteOrcamentarioController.exibirResultado}">
+						<ul class="nav nav-tabs">
+							<li class="active" style="margin-bottom: 0px !important;">
+								<h:commandLink style="cursor:pointer;background-color: #f5f5f5;">
+					                <p:graphicImage name="/images/icon_excel.png" width="20"/>
+					                <p:dataExporter type="xls"  target="@form:tableAjuste" fileName="ajuste_orcamentario" />
+									&nbsp;Exportar
+					            </h:commandLink>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="active tab-pane" id="excel">
+								<p:dataTable var="ajusteOrcamento" id="tableAjuste" widgetVar="widgetTabelaAjusteOrcamentario"
+									value="#{ajusteOrcamentarioController.dataModel}" 
+									tableStyle="table-layout: auto; word-break: keep-all;" 
+									binding="#{dataTableUtil.lazyDataTable}">
+									
+								    <p:column headerText="Empresa" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.coligada.razaoSocial.toUpperCase()}" />
+								    </p:column>
+								    
+								    <p:column headerText="Centro de Custo" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.centroCusto.codigoCentroCusto}  -  #{ajusteOrcamento.centroCusto.centroCusto}" />
+								    </p:column>
+								    
+								    <p:column headerText="Código Nat. Orçamentária (Origem)" style="text-align:center;font-size:12px;display:none;">
+								        <h:outputText value="#{ajusteOrcamento.naturezaOrigem.codigoNaturezaOrcamentaria}" />
+								    </p:column>
+								    
+								    <p:column headerText="Nat. Orçamentária (Origem)" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.naturezaOrigem.naturezaOrcamentaria}" />
+								    </p:column>
+								    
+								    <p:column headerText="Mês (Origem)" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.mesOrigem.descricao}" />
+								    </p:column>
+								    
+								    <p:column headerText="Código Nat. Orçamentária (Destino)" style="text-align:center;font-size:12px;display:none;">
+								        <h:outputText value="#{ajusteOrcamento.naturezaDestino.codigoNaturezaOrcamentaria}" />
+								    </p:column>
+								    
+								    <p:column headerText="Nat. Orçamentária (Destino)" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.naturezaDestino.naturezaOrcamentaria}" />
+								    </p:column>
+								    
+								    <p:column headerText="Mês (Destino)" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.mesDestino.descricao}" />
+								    </p:column>
+			
+								    <p:column headerText="Data" style="text-align:center;font-size:12px;" >
+								        <h:outputText value="#{ajusteOrcamento.dtAjuste}" >
+								        	<f:convertDateTime pattern="dd/MM/yyyy"/>
+								        </h:outputText>
+								    </p:column>
+								    
+								     <p:column headerText="Valor(R$)" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.valor}">
+								        	<f:convertNumber currencySymbol="" type="currency"/>
+								        </h:outputText>
+								    </p:column>
+								    
+								    <p:column headerText="Usuário" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{ajusteOrcamento.usuario.nome}" />
+								    </p:column>
+								    
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
 				</h:form>
 			</div>
 		</ui:define>

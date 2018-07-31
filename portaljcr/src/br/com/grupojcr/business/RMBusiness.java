@@ -222,29 +222,30 @@ public class RMBusiness {
 				calendarioFinal.set(Calendar.MONTH, (ajuste.getMesOrigem().getId() - 1));
 				calendarioFinal.set(Calendar.DAY_OF_MONTH, calendarioFinal.getActualMaximum(Calendar.DAY_OF_MONTH));
 				
-				String xml = "<MovOrcamento>" +
-								"<TORCAMENTO>" +
-								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
-								    "<IDORCAMENTO>0</IDORCAMENTO>" +
-								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
-								    "<CODCCUSTO>" + ajuste.getCentroCusto().getCodigoCentroCusto() + "</CODCCUSTO>" +
-								    "<CODTBORCAMENTO>" + ajuste.getNaturezaOrigem().getCodigoNaturezaOrcamentaria() + "</CODTBORCAMENTO>" +
-							  "</TORCAMENTO>" +
-							  "<TITMORCAMENTO>" +
-								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
-								    "<IDORCAMENTO>0</IDORCAMENTO>" +
-								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
-								    "<IDITMPERIODO>" + ajuste.getMesOrigem().getId() + "</IDITMPERIODO>" +
-								    "<VALORORCADO>0,00</VALORORCADO>" +
-								    "<VALORREAL>0,00</VALORREAL>" +
-								    "<VALOROPCIONAL1>0,00</VALOROPCIONAL1>" +
-								    "<VALOROPCIONAL2>0,00</VALOROPCIONAL2>" +
-								    "<VALORRECEBIDO>0,00</VALORRECEBIDO>" +
-								    "<VALORCEDIDO>" + TreatNumber.formatMoney(ajuste.getValor()) + "</VALORCEDIDO>" +
-								    "<VALOREXCEDENTE>0,00</VALOREXCEDENTE>" +
-								    "<DATAINICIO>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioInicial.getTime()) + "</DATAINICIO>" +
-								    "<DATAFIM>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioFinal.getTime()) + "</DATAFIM>" +
-							  "</TITMORCAMENTO>";
+				String xml = 	"<MovOrcamento>" +
+									"<TORCAMENTO>" +
+									    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+									    "<IDORCAMENTO>0</IDORCAMENTO>" +
+									    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+									    "<CODCCUSTO>" + ajuste.getCentroCusto().getCodigoCentroCusto() + "</CODCCUSTO>" +
+									    "<CODTBORCAMENTO>" + ajuste.getNaturezaOrigem().getCodigoNaturezaOrcamentaria() + "</CODTBORCAMENTO>" +
+								    "</TORCAMENTO>" +
+								    "<TITMORCAMENTO>" +
+									    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+									    "<IDORCAMENTO>0</IDORCAMENTO>" +
+									    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+									    "<IDITMPERIODO>" + ajuste.getMesOrigem().getId() + "</IDITMPERIODO>" +
+									    "<VALORORCADO>0,00</VALORORCADO>" +
+									    "<VALORREAL>0,00</VALORREAL>" +
+									    "<VALOROPCIONAL1>0,00</VALOROPCIONAL1>" +
+									    "<VALOROPCIONAL2>0,00</VALOROPCIONAL2>" +
+									    "<VALORRECEBIDO>0,00</VALORRECEBIDO>" +
+									    "<VALORCEDIDO>" + TreatNumber.formatMoney(ajuste.getValor()) + "</VALORCEDIDO>" +
+									    "<VALOREXCEDENTE>0,00</VALOREXCEDENTE>" +
+									    "<DATAINICIO>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioInicial.getTime()) + "</DATAINICIO>" +
+									    "<DATAFIM>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioFinal.getTime()) + "</DATAFIM>" +
+								    "</TITMORCAMENTO>" +
+							    "</MovOrcamento>";
 				
 				String retorno = saveRecordAuth("MovOrcamentoData", xml, "CODCOLIGADA=" + ajuste.getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
 				String [] arrayRetorno = retorno.split(";");
@@ -270,29 +271,30 @@ public class RMBusiness {
 				calendarioFinal.set(Calendar.MONTH, (ajuste.getMesDestino().getId() - 1));
 				calendarioFinal.set(Calendar.DAY_OF_MONTH, calendarioFinal.getActualMaximum(Calendar.DAY_OF_MONTH));
 				
-				String xml = "<MovOrcamento>" +
-								"<TORCAMENTO>" +
-								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
-								    "<IDORCAMENTO>0</IDORCAMENTO>" +
-								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
-								    "<CODCCUSTO>" + ajuste.getCentroCusto().getCodigoCentroCusto() + "</CODCCUSTO>" +
-								    "<CODTBORCAMENTO>" + ajuste.getNaturezaDestino().getCodigoNaturezaOrcamentaria() + "</CODTBORCAMENTO>" +
-							  "</TORCAMENTO>" +
-							  "<TITMORCAMENTO>" +
-								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
-								    "<IDORCAMENTO>0</IDORCAMENTO>" +
-								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
-								    "<IDITMPERIODO>" + ajuste.getMesDestino().getId() + "</IDITMPERIODO>" +
-								    "<VALORORCADO>0,00</VALORORCADO>" +
-								    "<VALORREAL>0,00</VALORREAL>" +
-								    "<VALOROPCIONAL1>0,00</VALOROPCIONAL1>" +
-								    "<VALOROPCIONAL2>0,00</VALOROPCIONAL2>" +
-								    "<VALORRECEBIDO>" + TreatNumber.formatMoney(ajuste.getValor()) + "</VALORRECEBIDO>" +
-								    "<VALORCEDIDO>0,00</VALORCEDIDO>" +
-								    "<VALOREXCEDENTE>0,00</VALOREXCEDENTE>" +
-								    "<DATAINICIO>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioInicial.getTime()) + "</DATAINICIO>" +
-								    "<DATAFIM>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioFinal.getTime()) + "</DATAFIM>" +
-							  "</TITMORCAMENTO>";
+				String xml = 	"<MovOrcamento>" +
+							 		"<TORCAMENTO>" +
+									    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+									    "<IDORCAMENTO>0</IDORCAMENTO>" +
+									    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+									    "<CODCCUSTO>" + ajuste.getCentroCusto().getCodigoCentroCusto() + "</CODCCUSTO>" +
+									    "<CODTBORCAMENTO>" + ajuste.getNaturezaDestino().getCodigoNaturezaOrcamentaria() + "</CODTBORCAMENTO>" +
+								    "</TORCAMENTO>" +
+								    "<TITMORCAMENTO>" +
+									    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+									    "<IDORCAMENTO>0</IDORCAMENTO>" +
+									    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+									    "<IDITMPERIODO>" + ajuste.getMesDestino().getId() + "</IDITMPERIODO>" +
+									    "<VALORORCADO>0,00</VALORORCADO>" +
+									    "<VALORREAL>0,00</VALORREAL>" +
+									    "<VALOROPCIONAL1>0,00</VALOROPCIONAL1>" +
+									    "<VALOROPCIONAL2>0,00</VALOROPCIONAL2>" +
+									    "<VALORRECEBIDO>" + TreatNumber.formatMoney(ajuste.getValor()) + "</VALORRECEBIDO>" +
+									    "<VALORCEDIDO>0,00</VALORCEDIDO>" +
+									    "<VALOREXCEDENTE>0,00</VALOREXCEDENTE>" +
+									    "<DATAINICIO>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioInicial.getTime()) + "</DATAINICIO>" +
+									    "<DATAFIM>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioFinal.getTime()) + "</DATAFIM>" +
+								    "</TITMORCAMENTO>" +
+							    "</MovOrcamento>";
 				
 				String retorno = saveRecordAuth("MovOrcamentoData", xml, "CODCOLIGADA=" + ajuste.getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
 				

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.grupojcr.entity.Coligada;
+import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.Mes;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
@@ -19,6 +20,7 @@ public class AjusteOrcamentarioDTO implements Serializable {
 	private Date dtAjuste;
 	private String ano;
 	private String valorTotal;
+	private Usuario usuario;
 	
 	private NaturezaOrcamentariaRM naturezaOrigem;
 	private NaturezaOrcamentariaRM naturezaDestino;
@@ -147,6 +149,12 @@ public class AjusteOrcamentarioDTO implements Serializable {
 	}
 	public void setPeriodo(Integer periodo) {
 		this.periodo = periodo;
+	}
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 	
 }
