@@ -1,16 +1,19 @@
 package br.com.grupojcr.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.AjusteOrcamentarioDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.FiltroOrcamento;
 import br.com.grupojcr.entity.AjusteOrcamentario;
+import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -37,7 +40,21 @@ public class OrcamentoBusiness {
 	public List<AjusteOrcamentarioDTO> listarAjusteOrcamentarioPaginado(int first, int pageSize, FiltroOrcamento filtro) throws ApplicationException {
 		try {
 			List<AjusteOrcamentario> ajustesOrcamentario = daoAjuste.listarAjusteOrcamentarioPaginado(first, pageSize, filtro);
-			return null;
+			List<AjusteOrcamentarioDTO> listaDTO = new ArrayList<AjusteOrcamentarioDTO>();
+			if(CollectionUtils.isNotEmpty(ajustesOrcamentario)) {
+				for(AjusteOrcamentario ajuste : ajustesOrcamentario) {
+					AjusteOrcamentarioDTO dto = new AjusteOrcamentarioDTO();
+					dto.setColigada(ajuste.getColigada());
+					dto.setCentroCusto(new CentroCustoRM());
+					dto.getCentroCusto().setCodigoCentroCusto(ajuste.getCodigoCentroCusto());
+					dto.getCentroCusto().setCentroCusto(ajuste.getCentroCusto());
+					dto.setDtAjuste(ajuste.getDtAjuste());
+					
+					listaDTO.add(dto);
+				}
+			}
+			
+			return listaDTO;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

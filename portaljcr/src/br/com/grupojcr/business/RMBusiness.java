@@ -1,9 +1,11 @@
 package br.com.grupojcr.business;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
@@ -11,7 +13,6 @@ import org.apache.log4j.Logger;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
-import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
@@ -19,6 +20,9 @@ import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
+import br.com.grupojcr.util.TreatDate;
+import br.com.grupojcr.util.TreatNumber;
+import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.totvs.www.br.WsDataServerLocator;
 import br.com.totvs.www.br.WsDataServerSoapStub;
@@ -199,9 +203,110 @@ public class RMBusiness {
 		}
 	}
 	
-	public void ajustarOrcamento(AjusteOrcamentarioDTO ajuste, Usuario usuario) throws ApplicationException {
+	public void ajustarOrcamento(AjusteOrcamentarioDTO ajuste) throws ApplicationException {
 		try {
-			
+			Integer idOrcamentoOrigem = daoRM.obterOrcamento(ajuste.getPeriodo(), ajuste.getColigada().getId(), ajuste.getNaturezaOrigem().getCodigoNaturezaOrcamentaria(), ajuste.getCentroCusto().getCodigoCentroCusto());
+			if(Util.isNotNull(idOrcamentoOrigem)) {
+				OrcamentoDTO dto = daoRM.obterOrcamentoCompleto(ajuste.getPeriodo(), ajuste.getColigada().getId(), idOrcamentoOrigem, ajuste.getMesOrigem().getId());
+				if(Util.isNull(dto)) {
+					daoRM.incluirItemOrcamento(ajuste.getPeriodo(), ajuste.getColigada().getId(), idOrcamentoOrigem, ajuste.getMesOrigem().getId());
+				}
+				daoRM.cederValor(ajuste.getValor(), ajuste.getPeriodo(), ajuste.getColigada().getId(), idOrcamentoOrigem, ajuste.getMesOrigem().getId());
+				ajuste.setIdOrcamentoOrigem(idOrcamentoOrigem);
+				
+			} else {
+				Calendar calendarioInicial = Calendar.getInstance();
+				calendarioInicial.set(Calendar.MONTH, (ajuste.getMesOrigem().getId() - 1));
+				calendarioInicial.set(Calendar.DAY_OF_MONTH, calendarioInicial.getActualMinimum(Calendar.DAY_OF_MONTH));
+				Calendar calendarioFinal = Calendar.getInstance();
+				calendarioFinal.set(Calendar.MONTH, (ajuste.getMesOrigem().getId() - 1));
+				calendarioFinal.set(Calendar.DAY_OF_MONTH, calendarioFinal.getActualMaximum(Calendar.DAY_OF_MONTH));
+				
+				String xml = "<MovOrcamento>" +
+								"<TORCAMENTO>" +
+								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+								    "<IDORCAMENTO>0</IDORCAMENTO>" +
+								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+								    "<CODCCUSTO>" + ajuste.getCentroCusto().getCodigoCentroCusto() + "</CODCCUSTO>" +
+								    "<CODTBORCAMENTO>" + ajuste.getNaturezaOrigem().getCodigoNaturezaOrcamentaria() + "</CODTBORCAMENTO>" +
+							  "</TORCAMENTO>" +
+							  "<TITMORCAMENTO>" +
+								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+								    "<IDORCAMENTO>0</IDORCAMENTO>" +
+								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+								    "<IDITMPERIODO>" + ajuste.getMesOrigem().getId() + "</IDITMPERIODO>" +
+								    "<VALORORCADO>0,00</VALORORCADO>" +
+								    "<VALORREAL>0,00</VALORREAL>" +
+								    "<VALOROPCIONAL1>0,00</VALOROPCIONAL1>" +
+								    "<VALOROPCIONAL2>0,00</VALOROPCIONAL2>" +
+								    "<VALORRECEBIDO>0,00</VALORRECEBIDO>" +
+								    "<VALORCEDIDO>" + TreatNumber.formatMoney(ajuste.getValor()) + "</VALORCEDIDO>" +
+								    "<VALOREXCEDENTE>0,00</VALOREXCEDENTE>" +
+								    "<DATAINICIO>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioInicial.getTime()) + "</DATAINICIO>" +
+								    "<DATAFIM>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioFinal.getTime()) + "</DATAFIM>" +
+							  "</TITMORCAMENTO>";
+				
+				String retorno = saveRecordAuth("MovOrcamentoData", xml, "CODCOLIGADA=" + ajuste.getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
+				String [] arrayRetorno = retorno.split(";");
+				if(arrayRetorno.length == 2) {
+					ajuste.setIdOrcamentoOrigem(Integer.valueOf(arrayRetorno[1]));
+				} else {
+					throw new ApplicationException("message.empty", new String[] {arrayRetorno[0]}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			Integer idOrcamentoDestino = daoRM.obterOrcamento(ajuste.getPeriodo(), ajuste.getColigada().getId(), ajuste.getNaturezaDestino().getCodigoNaturezaOrcamentaria(), ajuste.getCentroCusto().getCodigoCentroCusto());
+			if(Util.isNotNull(idOrcamentoDestino)) {
+				OrcamentoDTO dto = daoRM.obterOrcamentoCompleto(ajuste.getPeriodo(), ajuste.getColigada().getId(), idOrcamentoDestino, ajuste.getMesDestino().getId());
+				if(Util.isNull(dto)) {
+					daoRM.incluirItemOrcamento(ajuste.getPeriodo(), ajuste.getColigada().getId(), idOrcamentoDestino, ajuste.getMesDestino().getId());
+				}
+				daoRM.receberValor(ajuste.getValor(), ajuste.getPeriodo(), ajuste.getColigada().getId(), idOrcamentoDestino, ajuste.getMesDestino().getId());
+				ajuste.setIdOrcamentoDestino(idOrcamentoDestino);
+			} else {
+				Calendar calendarioInicial = Calendar.getInstance();
+				calendarioInicial.set(Calendar.MONTH, (ajuste.getMesDestino().getId() - 1));
+				calendarioInicial.set(Calendar.DAY_OF_MONTH, calendarioInicial.getActualMinimum(Calendar.DAY_OF_MONTH));
+				Calendar calendarioFinal = Calendar.getInstance();
+				calendarioFinal.set(Calendar.MONTH, (ajuste.getMesDestino().getId() - 1));
+				calendarioFinal.set(Calendar.DAY_OF_MONTH, calendarioFinal.getActualMaximum(Calendar.DAY_OF_MONTH));
+				
+				String xml = "<MovOrcamento>" +
+								"<TORCAMENTO>" +
+								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+								    "<IDORCAMENTO>0</IDORCAMENTO>" +
+								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+								    "<CODCCUSTO>" + ajuste.getCentroCusto().getCodigoCentroCusto() + "</CODCCUSTO>" +
+								    "<CODTBORCAMENTO>" + ajuste.getNaturezaDestino().getCodigoNaturezaOrcamentaria() + "</CODTBORCAMENTO>" +
+							  "</TORCAMENTO>" +
+							  "<TITMORCAMENTO>" +
+								    "<CODCOLIGADA>" + ajuste.getColigada().getId() + "</CODCOLIGADA>" +
+								    "<IDORCAMENTO>0</IDORCAMENTO>" +
+								    "<IDPERIODO>" + ajuste.getPeriodo() + "</IDPERIODO>" +
+								    "<IDITMPERIODO>" + ajuste.getMesDestino().getId() + "</IDITMPERIODO>" +
+								    "<VALORORCADO>0,00</VALORORCADO>" +
+								    "<VALORREAL>0,00</VALORREAL>" +
+								    "<VALOROPCIONAL1>0,00</VALOROPCIONAL1>" +
+								    "<VALOROPCIONAL2>0,00</VALOROPCIONAL2>" +
+								    "<VALORRECEBIDO>" + TreatNumber.formatMoney(ajuste.getValor()) + "</VALORRECEBIDO>" +
+								    "<VALORCEDIDO>0,00</VALORCEDIDO>" +
+								    "<VALOREXCEDENTE>0,00</VALOREXCEDENTE>" +
+								    "<DATAINICIO>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioInicial.getTime()) + "</DATAINICIO>" +
+								    "<DATAFIM>" + TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", calendarioFinal.getTime()) + "</DATAFIM>" +
+							  "</TITMORCAMENTO>";
+				
+				String retorno = saveRecordAuth("MovOrcamentoData", xml, "CODCOLIGADA=" + ajuste.getColigada().getId() +";CODSISTEMA=T;CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
+				
+				String [] arrayRetorno = retorno.split(";");
+				if(arrayRetorno.length == 2) {
+					ajuste.setIdOrcamentoDestino(Integer.valueOf(arrayRetorno[1]));
+				} else {
+					throw new ApplicationException("message.empty", new String[] {arrayRetorno[0]}, FacesMessage.SEVERITY_WARN);
+				}
+				
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getStackTrace(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ajustarOrcamento" }, e);

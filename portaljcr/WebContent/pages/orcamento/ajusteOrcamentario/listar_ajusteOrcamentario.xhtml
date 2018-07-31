@@ -84,7 +84,7 @@
 					</f:validateBean>
 				</h:form>
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<p:dataTable var="ajusteOrcamento" id="tableAjusteOrcamentario" widgetVar="widgetTabelaAjusteOrcamentario"
+					<p:dataTable var="ajusteOrcamento" id="tableAjuste" widgetVar="widgetTabelaAjusteOrcamentario"
 						value="#{ajusteOrcamentarioController.dataModel}" 
 						tableStyle="table-layout: auto; word-break: keep-all;" 
 						rendered="#{ajusteOrcamentarioController.exibirResultado}"
@@ -98,8 +98,8 @@
 						</p:column>
 						
 						<p:column headerText="Exportar Excel" style="text-align: center;font-size:12px;" width="8%">
-							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}" rendered="#{solicitacao.situacao eq 'AGUARDANDO_APRV_COTACAO' or solicitacao.situacao eq 'LIBERADO_ORDEM_COMPRA' or solicitacao.situacao eq 'FINALIZADA'}">
-								<h:outputText value="" title="Iniciar Cotação" styleClass="fa fa-file-excel-o" />
+							<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}">
+								<h:outputText value="" title="Exportar Excel" styleClass="fa fa-file-excel-o" />
 								<f:setPropertyActionListener value="#{solicitacao}" target="#{cotacaoController.solicitacaoCompra}" />
 							</p:commandLink>
 						</p:column>

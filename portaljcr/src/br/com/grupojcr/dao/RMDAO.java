@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -1410,6 +1411,61 @@ public class RMDAO {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public OrcamentoDTO incluirItemOrcamento(Integer periodo, Long codColigada, Integer idOrcamento, Integer mes) throws ApplicationException {
+		/**
+		 *	INSERT INTO TITMORCAMENTO
+		 *	(CODCOLIGADA, IDORCAMENTO, IDPERIODO, IDITMPERIODO, VALORORCADO, VALORREAL, VALOROPCIONAL1, VALOROPCIONAL2, VALORRECEBIDO, VALORCEDIDO, VALOREXCEDENTE, RECCREATEDBY, RECCREATEDON, RECMODIFIEDBY, RECMODIFIEDON)
+		 *	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'mestre', ?, 'mestre', ?)
+		 *
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("INSERT INTO TITMORCAMENTO ")
+			.append("(CODCOLIGADA, IDORCAMENTO, IDPERIODO, IDITMPERIODO, VALORORCADO, VALORREAL, VALOROPCIONAL1, VALOROPCIONAL2, VALORRECEBIDO, VALORCEDIDO, VALOREXCEDENTE, RECCREATEDBY, RECCREATEDON, RECMODIFIEDBY, RECMODIFIEDON) ")
+			.append("VALUES(?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 'mestre', ?, 'mestre', ?) ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, codColigada);
+			ps.setInt(2, idOrcamento);
+			ps.setInt(3, periodo);
+			ps.setInt(4, mes);
+			ps.setTimestamp(5, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+			ps.setTimestamp(6, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+			
+			ps.executeUpdate();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "incluirItemOrcamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Integer obterIdFluig(Long idMovimento) throws ApplicationException {
 		/**
 		 * SELECT IDFLUIG FROM ZMDRMFLUIG
@@ -1458,6 +1514,122 @@ public class RMDAO {
 			}
 		}
 		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void cederValor(BigDecimal valorCedido, Integer periodo, Long codColigada, Integer idOrcamento, Integer mes) throws ApplicationException {
+		/**
+		 *	UPDATE TITMORCAMENTO
+		 *	SET VALORCEDIDO = (COALESCE(VALORCEDIDO, 0) + ?)
+		 *	WHERE CODCOLIGADA = ?
+		 *	AND IDORCAMENTO = ?
+		 *	AND IDPERIODO = ?
+		 *	AND IDITMPERIODO = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("UPDATE TITMORCAMENTO ")
+			.append("SET VALORCEDIDO = (COALESCE(VALORCEDIDO, 0) + ?) ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND IDORCAMENTO = ? ")
+			.append("AND IDPERIODO = ? ")
+			.append("AND IDITMPERIODO = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setBigDecimal(1, valorCedido);
+			ps.setLong(2, codColigada);
+			ps.setInt(3, idOrcamento);
+			ps.setInt(4, periodo);
+			ps.setInt(5, mes);
+			
+			ps.execute();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "cederValor" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void receberValor(BigDecimal valorRecebido, Integer periodo, Long codColigada, Integer idOrcamento, Integer mes) throws ApplicationException {
+		/**
+		 *	UPDATE TITMORCAMENTO
+		 *	SET VALORRECEBIDO = (COALESCE(VALORRECEBIDO, 0) + ?)
+		 *	WHERE CODCOLIGADA = ?
+		 *	AND IDORCAMENTO = ?
+		 *	AND IDPERIODO = ?
+		 *	AND IDITMPERIODO = ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("UPDATE TITMORCAMENTO ")
+			.append("SET VALORRECEBIDO = (COALESCE(VALORRECEBIDO, 0) + ?) ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND IDORCAMENTO = ? ")
+			.append("AND IDPERIODO = ? ")
+			.append("AND IDITMPERIODO = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setBigDecimal(1, valorRecebido);
+			ps.setLong(2, codColigada);
+			ps.setInt(3, idOrcamento);
+			ps.setInt(4, periodo);
+			ps.setInt(5, mes);
+			
+			ps.execute();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "cederValor" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
 	}
 
 
