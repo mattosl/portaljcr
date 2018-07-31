@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="gestaoOrcamento"/>
+    	<ui:param name="activeMenu" value="orcamento"/>
+    	
+    	<f:metadata>
+			<f:viewAction action="#{responsavelOrcamentoController.iniciarProcesso()}" />
+		</f:metadata>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-gavel fa-1x cor-padrao"></i> Responsáveis</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-dollar"></i> Orçamento</li>
+	    	<li class="active"><i class="fa fa-gavel"></i> Responsáveis</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="gestaoOrcamentoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Consulta</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<label for="coligada" class="col-sm-2 col-md-2 control-label">Empresa: *</label>
+	
+										<div class="col-sm-10 col-md-10">
+									        <p:selectOneMenu id="coligada" value="#{responsavelOrcamentoController.coligada}">
+									        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
+									        	<f:selectItems value="#{responsavelOrcamentoController.listaColigada}" var="coligada" itemLabel="#{coligada.razaoSocial}" itemValue="#{coligada}" />
+									        	<p:ajax event="change" listener="#{responsavelOrcamentoController.carregarCentroCusto()}" process="@this" update=":gridForm" global="true" />
+									        </p:selectOneMenu>
+										</div>
+									</div>
+								</div>
+							</div>
+		            	</p:panel>
+					</f:validateBean>
+				</h:form>
+				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:dataTable var="resp" value="#{responsavelOrcamentoController.listaResponsavel}"
+						rendered="#{responsavelOrcamentoController.exibirResultado}"
+						emptyMessage="Nenhum centro de custo cadastrado nesta empresa.">
+						<p:ajax event="rowToggle" global="false" process="@this" />
+				        <p:column width="5%" style="margin-left: auto; margin-right: auto;"  >
+				            <p:rowToggler  />
+				        </p:column>
+				        <p:column headerText="Centro de Custo">
+				            <h:outputText value="#{resp.centroCusto.codigoCentroCusto} - #{resp.centroCusto.centroCusto}" />
+				        </p:column>
+				 
+				        <p:rowExpansion>
+				        	<div class="box-header with-border">
+		             			<h3 class="box-title">Responsáveis</h3>
+								<div class="col-sm-3 col-md-3 pull-right">
+									<p:commandButton
+										styleClass="btn-azul"
+										icon="fa fa-users"
+										value="Adicionar Reponsável"
+										id="btn_add_responsavel"
+										process="@this"
+										action="#{cotacaoController.novaCotacao()}"
+										ajax="true">
+									</p:commandButton>
+								</div>
+		            		</div>
+		            		<p:dataTable var="usuario" value="#{resp.listaResponsavel}" 
+								emptyMessage="Nenhum responsável pelo orçamento neste centro de custo.">
+						        <p:column headerText="">
+						            <h:outputText value="#{usuario.nome}" />
+						        </p:column>
+						    </p:dataTable>
+				        </p:rowExpansion>
+				    </p:dataTable>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

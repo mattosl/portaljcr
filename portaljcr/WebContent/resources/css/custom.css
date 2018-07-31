@@ -371,3 +371,8 @@ ol.progress-meter li.todo:before {
     margin-right: auto;
     width: 100%;
 }
+
+.ui-row-toggler {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}

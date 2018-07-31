@@ -75,6 +75,12 @@
 	                 </span>
 				</p:link>
 				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'gestaoOrcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+						<p:link href="/pages/orcamento/responsaveis/listar_responsaveis.xhtml" ajax="false">
+							<i class="fa fa-gavel"></i>
+							<span>Responsáveis</span>
+						</p:link>
+					</li>
 					<li class="#{activeSubmenu eq 'ajusteOrcamentario' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
 						<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml" ajax="false">
 							<i class="fa fa-sliders"></i>
