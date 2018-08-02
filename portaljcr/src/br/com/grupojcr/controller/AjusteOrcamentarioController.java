@@ -83,13 +83,14 @@ public class AjusteOrcamentarioController implements Serializable {
 			setExibirResultado(Boolean.FALSE);
 			setFiltro(new FiltroOrcamento());
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
-			getFiltro().setUsuarioLogado(usuario);
 			getFiltro().setDtAjuste(Calendar.getInstance().getTime());
 			carregarDatas();
 			
 			if(loginController.hasGroup(Arrays.asList("ADMINISTRADOR","GESTOR DE ORCAMENTO"))) {
-				setListaColigada(coligadaBusiness.listarColigadas());
+				setListaColigada(coligadaBusiness.listarColigadasAtivas());
+				getFiltro().setUsuarioLogado(null);
 			} else {
+				getFiltro().setUsuarioLogado(usuario);
 				setListaColigada(orcamentoBusiness.listarColigadaResponsavel(usuario));
 			}
 			
@@ -256,6 +257,9 @@ public class AjusteOrcamentarioController implements Serializable {
 			if(Util.isNull(getAjuste().getMesDestino())) {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
 			}
+			if(Util.isNullOrZero(getAjuste().getValor())) {
+				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
+			}
 			if(getAjuste().getNaturezaOrigem().getCodigoNaturezaOrcamentaria().equals(getAjuste().getNaturezaDestino().getCodigoNaturezaOrcamentaria())
 					&& getAjuste().getMesOrigem().getId().equals(getAjuste().getMesDestino().getId())) {
 				throw new ApplicationException("ajuste.orcamentario.imcompativel", FacesMessage.SEVERITY_WARN);
@@ -303,7 +307,7 @@ public class AjusteOrcamentarioController implements Serializable {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			if(loginController.hasGroup(Arrays.asList("ADMINISTRADOR","GESTOR DE ORCAMENTO"))) {
-				setListaColigada(coligadaBusiness.listarColigadas());
+				setListaColigada(coligadaBusiness.listarColigadasAtivas());
 			} else {
 				setListaColigada(orcamentoBusiness.listarColigadaResponsavel(usuario));
 			}

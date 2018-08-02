@@ -78,5 +78,17 @@ public class ColigadaBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "inativar" }, e);
 		}
 	}
+	
+	public List<Coligada> listarColigadasAtivas() throws ApplicationException {
+		try {
+			return daoColigada.listarColigadasAtivas();
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarColigadasAtivas" }, e);
+		}
+	}
 
 }

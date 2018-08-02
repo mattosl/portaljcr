@@ -41,7 +41,7 @@ public class ColigadaDAO extends GenericDAO<Coligada> {
 	public List<Coligada> listarColigadasAtivas() throws ApplicationException {
 		try{
 			StringBuilder sb = new StringBuilder("SELECT coligada FROM Coligada coligada ");
-			sb.append("WHERE coligada.ativo = 1 ");
+			sb.append("WHERE coligada.situacao = 1 ");
 			sb.append("ORDER BY coligada.razaoSocial ASC ");
 			
 			TypedQuery<Coligada> query = manager.createQuery(sb.toString(), Coligada.class);

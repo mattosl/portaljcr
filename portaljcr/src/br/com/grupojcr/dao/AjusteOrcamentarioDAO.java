@@ -42,6 +42,10 @@ public class AjusteOrcamentarioDAO extends GenericDAO<AjusteOrcamentario> {
 				sb.append("AND ajuste.dtAjuste BETWEEN :dtInicio AND :dtFinal ");
 			}
 			
+			if(Util.isNotNull(filtro.getUsuarioLogado())) {
+				sb.append("AND ajuste.usuarioAjuste.id = :idUsuario ");
+			}
+			
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
 			
 			if(Util.isNotNull(filtro.getColigada())) {
@@ -65,6 +69,10 @@ public class AjusteOrcamentarioDAO extends GenericDAO<AjusteOrcamentario> {
 				fim.set(Calendar.MINUTE, 59);
 				fim.set(Calendar.SECOND, 59);
 				query.setParameter("dtFinal", fim.getTime());
+			}
+			
+			if(Util.isNotNull(filtro.getUsuarioLogado())) {
+				query.setParameter("idUsuario", filtro.getUsuarioLogado().getId());
 			}
 			
 			return query.getSingleResult().intValue();
@@ -96,6 +104,10 @@ public class AjusteOrcamentarioDAO extends GenericDAO<AjusteOrcamentario> {
 				sb.append("AND ajuste.dtAjuste BETWEEN :dtInicio AND :dtFinal ");
 			}
 			
+			if(Util.isNotNull(filtro.getUsuarioLogado())) {
+				sb.append("AND ajuste.usuarioAjuste.id = :idUsuario ");
+			}
+			
 			sb.append("ORDER BY ajuste.dtAjuste DESC ");
 			
 			TypedQuery<AjusteOrcamentario> query = manager.createQuery(sb.toString(), AjusteOrcamentario.class);
@@ -121,6 +133,10 @@ public class AjusteOrcamentarioDAO extends GenericDAO<AjusteOrcamentario> {
 				fim.set(Calendar.MINUTE, 59);
 				fim.set(Calendar.SECOND, 59);
 				query.setParameter("dtFinal", fim.getTime());
+			}
+			
+			if(Util.isNotNull(filtro.getUsuarioLogado())) {
+				query.setParameter("idUsuario", filtro.getUsuarioLogado().getId());
 			}
 			
 			return query.getResultList();

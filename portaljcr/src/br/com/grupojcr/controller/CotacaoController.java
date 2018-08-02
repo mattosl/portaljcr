@@ -95,7 +95,7 @@ public class CotacaoController implements Serializable {
 			getFiltro().setSituacaoIgnorar(new SituacaoSolicitacaoCompra[] {SituacaoSolicitacaoCompra.AGUARDANDO_APRV, SituacaoSolicitacaoCompra.APROVADA_COTACAO});
 			carregarDatas();
 			
-			setListaColigada(coligadaBusiness.listarColigadas());
+			setListaColigada(coligadaBusiness.listarColigadasAtivas());
 			
 			setListaSituacao(SituacaoSolicitacaoCompra.listarParaCotacao());
 			

@@ -61,7 +61,7 @@ public class ResponsavelOrcamentoDAO extends GenericDAO<ResponsavelOrcamento> {
 	public List<Coligada> listarColigadaResponsavel(Usuario usuario) throws ApplicationException {
 		try {
 			
-			StringBuilder sb = new StringBuilder("SELECT ro.coligada FROM ResponsavelOrcamento ro ");
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT ro.coligada FROM ResponsavelOrcamento ro ");
 			sb.append("LEFT JOIN ro.usuarioResponsavel responsavel ");
 			sb.append("WHERE ro.id is not null ");
 			

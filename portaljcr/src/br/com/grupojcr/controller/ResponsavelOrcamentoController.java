@@ -59,7 +59,7 @@ public class ResponsavelOrcamentoController implements Serializable {
 		try {
 			setColigada(null);
 			setExibirResultado(Boolean.FALSE);
-			setListaColigada(coligadaBusiness.listarColigadas());
+			setListaColigada(coligadaBusiness.listarColigadasAtivas());
 			
 			setListaResponsavel(new ArrayList<ResponsavelOrcamentoDTO>());
 			
