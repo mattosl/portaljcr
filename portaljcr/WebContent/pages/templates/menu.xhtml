@@ -67,7 +67,7 @@
 				</ul>
 			</li>
 			
-			<li class="treeview #{activeMenu eq 'orcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+			<li class="treeview #{activeMenu eq 'orcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
 				<p:link href="#">
 					<i class="fa fa-dollar"></i> <span>Orçamento</span>
 					 <span class="pull-right-container">
@@ -75,13 +75,13 @@
 	                 </span>
 				</p:link>
 				<ul class="treeview-menu">
-					<li class="#{activeSubmenu eq 'gestaoOrcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+					<li class="#{activeSubmenu eq 'gestaoOrcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO'])}">
 						<p:link href="/pages/orcamento/responsaveis/listar_responsaveis.xhtml" ajax="false">
 							<i class="fa fa-gavel"></i>
 							<span>Responsáveis</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'ajusteOrcamentario' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+					<li class="#{activeSubmenu eq 'ajusteOrcamentario' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
 						<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml" ajax="false">
 							<i class="fa fa-sliders"></i>
 							<span>Ajuste Orçamentário</span>

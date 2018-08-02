@@ -376,3 +376,7 @@ ol.progress-meter li.todo:before {
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
+
+.sem-header thead {
+	display: none;
+} 

@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
+import javax.faces.application.FacesMessage;
 import javax.inject.Named;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.business.ColigadaBusiness;
+import br.com.grupojcr.business.OrcamentoBusiness;
 import br.com.grupojcr.business.RMBusiness;
+import br.com.grupojcr.business.UsuarioBusiness;
 import br.com.grupojcr.dto.ResponsavelOrcamentoDTO;
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.Usuario;
@@ -20,6 +23,7 @@ import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewAccessScoped
@@ -35,23 +39,27 @@ public class ResponsavelOrcamentoController implements Serializable {
 	private Coligada coligada;
 	private List<ResponsavelOrcamentoDTO> listaResponsavel;
 	private List<Coligada> listaColigada;
+
+	private Usuario usuario;
+	private CentroCustoRM centroCusto;
 	
 	@EJB
 	private RMBusiness rmBusiness;
+	
+	@EJB
+	private OrcamentoBusiness orcamentoBusiness;
+	
+	@EJB
+	private ColigadaBusiness coligadaBusiness;
+	
+	@EJB
+	private UsuarioBusiness usuarioBusiness;
+	
 	public void iniciarProcesso() throws ApplicationException {
 		try {
 			setColigada(null);
 			setExibirResultado(Boolean.FALSE);
-			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
-			
-			setListaColigada(new ArrayList<Coligada>());
-			if (Util.isNotNull(usuario.getColigadas())) {
-				for (Coligada coligada : usuario.getColigadas()) {
-					if (coligada.getSituacao()) {
-						getListaColigada().add(coligada);
-					}
-				}
-			}
+			setListaColigada(coligadaBusiness.listarColigadas());
 			
 			setListaResponsavel(new ArrayList<ResponsavelOrcamentoDTO>());
 			
@@ -71,11 +79,7 @@ public class ResponsavelOrcamentoController implements Serializable {
 					for(CentroCustoRM cc : centrosCusto) {
 						ResponsavelOrcamentoDTO dto = new ResponsavelOrcamentoDTO();
 						dto.setCentroCusto(cc);
-						dto.setListaResponsavel(new ArrayList<Usuario>());
-						Usuario usuario = new Usuario();
-						usuario.setId(1L);
-						usuario.setNome("Leonan Yglecias Mattos");
-						dto.getListaResponsavel().add(usuario);
+						dto.setListaResponsavel(orcamentoBusiness.listarUsuarioResponsavel(cc.getCodigoCentroCusto(), getColigada().getId()));
 						getListaResponsavel().add(dto);
 					}
 				}
@@ -89,6 +93,88 @@ public class ResponsavelOrcamentoController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarCentroCusto" }, e);
+		}
+	}
+	
+	public void adicionarResponsavel() throws ApplicationException {
+		try {
+			setListaResponsavel(new ArrayList<ResponsavelOrcamentoDTO>());
+			if(Util.isNotNull(getColigada())) {
+				List<CentroCustoRM> centrosCusto = rmBusiness.listarCentroCustoPorColigada(getColigada().getId());
+				if(CollectionUtils.isNotEmpty(centrosCusto)) {
+					for(CentroCustoRM cc : centrosCusto) {
+						ResponsavelOrcamentoDTO dto = new ResponsavelOrcamentoDTO();
+						dto.setCentroCusto(cc);
+						dto.setListaResponsavel(orcamentoBusiness.listarUsuarioResponsavel(cc.getCodigoCentroCusto(), getColigada().getId()));
+						getListaResponsavel().add(dto);
+					}
+				}
+				setExibirResultado(Boolean.TRUE);
+			} else {
+				setExibirResultado(Boolean.FALSE);
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarCentroCusto" }, e);
+		}
+	}
+	
+	public void adicionarUsuario() throws ApplicationException {
+		try {
+			if(Util.isNull(getUsuario())) {
+				throw new ApplicationException("responsavel.orcamento", FacesMessage.SEVERITY_WARN);
+			}
+			
+			orcamentoBusiness.salvarResponsavel(getCentroCusto(), getUsuario(), getColigada());
+			
+			Message.setMessage("usuario.adicionado", new String[] {getUsuario().getNome(), getCentroCusto().getCentroCusto()});
+			
+			setUsuario(null);
+			setCentroCusto(null);
+			
+			adicionarResponsavel();
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarUsuario" }, e);
+		}
+	}
+	
+	public void excluirUsuario() throws ApplicationException {
+		try {
+			orcamentoBusiness.excluirResponsavel(getCentroCusto(), getUsuario(), getColigada());
+			
+			Message.setMessage("usuario.removido", new String[] {getUsuario().getNome(), getCentroCusto().getCentroCusto()});
+			
+			setUsuario(null);
+			setCentroCusto(null);
+			
+			adicionarResponsavel();
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluirUsuario" }, e);
+		}
+	}
+	
+	public List<Usuario> autocompleteUsuario(String nome) throws ApplicationException {
+		try {
+			return usuarioBusiness.listarUsuarioPorNome(nome);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "autocompleteUsuario" }, e);
 		}
 	}
 	
@@ -134,6 +220,25 @@ public class ResponsavelOrcamentoController implements Serializable {
 
 	public void setListaResponsavel(List<ResponsavelOrcamentoDTO> listaResponsavel) {
 		this.listaResponsavel = listaResponsavel;
+	}
+
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public CentroCustoRM getCentroCusto() {
+		return centroCusto;
+	}
+
+
+	public void setCentroCusto(CentroCustoRM centroCusto) {
+		this.centroCusto = centroCusto;
 	}
 
 

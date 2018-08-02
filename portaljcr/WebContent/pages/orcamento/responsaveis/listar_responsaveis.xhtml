@@ -48,40 +48,92 @@
 					</f:validateBean>
 				</h:form>
 				<h:form id="gridForm" acceptcharset="ISO-8859-1" lang="pt_BR">
-					<p:dataTable var="resp" value="#{responsavelOrcamentoController.listaResponsavel}"
-						rendered="#{responsavelOrcamentoController.exibirResultado}"
-						emptyMessage="Nenhum centro de custo cadastrado nesta empresa.">
-						<p:ajax event="rowToggle" global="false" process="@this" />
-				        <p:column width="5%" style="margin-left: auto; margin-right: auto;"  >
-				            <p:rowToggler  />
-				        </p:column>
-				        <p:column headerText="Centro de Custo">
-				            <h:outputText value="#{resp.centroCusto.codigoCentroCusto} - #{resp.centroCusto.centroCusto}" />
-				        </p:column>
-				 
-				        <p:rowExpansion>
-				        	<div class="box-header with-border">
-		             			<h3 class="box-title">Responsáveis</h3>
+					<p:outputPanel id="resultado">
+					    <p:repeat value="#{responsavelOrcamentoController.listaResponsavel}" var="resp"> 
+					    	<p:panel header="#{resp.centroCusto.codigoCentroCusto} - #{resp.centroCusto.centroCusto}" toggleable="true" collapsed="true" >
+			            		<div class="row" style="margin-bottom: 8px;">
+				            		<div class="col-sm-3 col-md-3 col-xs-12 pull-left">
+										<p:commandButton  
+											styleClass="btn-azul"
+											icon="fa fa-users"
+											value="Adicionar Responsável"
+											id="btn_add_responsavel"
+											process="@this"
+											oncomplete="PF('modalUsuario').show();"
+											update="@form:modalUsuario"
+											ajax="true">
+											<f:setPropertyActionListener value="#{resp.centroCusto}" target="#{responsavelOrcamentoController.centroCusto}" />
+										</p:commandButton>
+									</div>
+			            		</div>
+					    		<p:dataTable var="usuario" value="#{resp.listaResponsavel}"
+									emptyMessage="Nenhum responsável pelo orçamento neste centro de custo.">
+							        <p:column headerText="">
+							            <h:outputText value="#{usuario.nome}" />
+							        </p:column>
+							        <p:column headerText="Remover" style="text-align: center;font-size:12px;" width="8%">
+										<p:commandLink ajax="true" process="@this" action="#{responsavelOrcamentoController.excluirUsuario()}" update="@form:resultado" >
+											<h:outputText value="" title="Remover" styleClass="fa fa-times" />
+											<f:setPropertyActionListener value="#{resp.centroCusto}" target="#{responsavelOrcamentoController.centroCusto}" />
+											<f:setPropertyActionListener value="#{usuario}" target="#{responsavelOrcamentoController.usuario}" />
+										</p:commandLink>
+									</p:column>
+							    </p:dataTable>
+					    	</p:panel>
+					    </p:repeat>
+					</p:outputPanel>
+				    <p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+						id="modalUsuario"
+						widgetVar="modalUsuario" 
+						header="Novo Responsável"
+						resizable="false" 
+						responsive="true"
+						width="50%"
+						closable="false"
+						draggable="false"
+						modal="true">
+						<p:messages id="mensagemModal" showDetail="true" closable="true" />
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="usuario">Responsável:</label>
+									</div>
+
+									<div class="col-sm-9 col-md-9">
+								        <p:autoComplete id="usuario" value="#{responsavelOrcamentoController.usuario}" var="usr" itemLabel="#{usr.nome}" itemValue="#{usr}" forceSelection="true" completeMethod="#{responsavelOrcamentoController.autocompleteUsuario}" minQueryLength="3" effect="fade">
+								        	<p:ajax event="query" global="false" />
+								        </p:autoComplete>
+								        <p:watermark value="Escreva o nome do usuário (Minímo 3 caracteres)." for="usuario" />
+									</div>
+								</div>
+							</div>
+							<div class="box-footer">
+								<div class="col-sm-3 col-md-3 pull-left" >
+									<p:commandButton
+										styleClass="btn-vermelho"
+										icon="fa fa-times"
+										value="Cancelar"
+										id="btn_cancelar"
+										immediate="true"
+										onclick="PF('modalUsuario').hide();"
+										ajax="true" />
+								</div>
 								<div class="col-sm-3 col-md-3 pull-right">
 									<p:commandButton
-										styleClass="btn-azul"
-										icon="fa fa-users"
-										value="Adicionar Reponsável"
-										id="btn_add_responsavel"
-										process="@this"
-										action="#{cotacaoController.novaCotacao()}"
-										ajax="true">
-									</p:commandButton>
+										styleClass="btn-verde"
+										icon="fa fa-check"
+										value="Salvar"
+										id="btn_salvar"
+										process="@form:modalUsuario"
+										action="#{responsavelOrcamentoController.adicionarUsuario()}"
+										update="@form:mensagemModal, @form:modalUsuario, @form:resultado"
+										oncomplete="PF('modalUsuario').hide();"
+										ajax="true" />
 								</div>
-		            		</div>
-		            		<p:dataTable var="usuario" value="#{resp.listaResponsavel}" 
-								emptyMessage="Nenhum responsável pelo orçamento neste centro de custo.">
-						        <p:column headerText="">
-						            <h:outputText value="#{usuario.nome}" />
-						        </p:column>
-						    </p:dataTable>
-				        </p:rowExpansion>
-				    </p:dataTable>
+							</div>
+						</div>
+					</p:dialog>
 				</h:form>
 			</div>
 		</ui:define>

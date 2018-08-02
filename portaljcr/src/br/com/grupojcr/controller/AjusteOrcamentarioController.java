@@ -3,6 +3,7 @@ package br.com.grupojcr.controller;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -71,6 +72,9 @@ public class AjusteOrcamentarioController implements Serializable {
 	@EJB
 	private RMBusiness rmBusiness;
 	
+	@Inject
+	private LoginController loginController;
+	
 	@EJB
 	private AjusteOrcamentarioBusiness ajusteOrcamentarioBusiness;
 	
@@ -83,13 +87,10 @@ public class AjusteOrcamentarioController implements Serializable {
 			getFiltro().setDtAjuste(Calendar.getInstance().getTime());
 			carregarDatas();
 			
-			setListaColigada(new ArrayList<Coligada>());
-			if (Util.isNotNull(usuario.getColigadas())) {
-				for (Coligada coligada : usuario.getColigadas()) {
-					if (coligada.getSituacao()) {
-						getListaColigada().add(coligada);
-					}
-				}
+			if(loginController.hasGroup(Arrays.asList("ADMINISTRADOR","GESTOR DE ORCAMENTO"))) {
+				setListaColigada(coligadaBusiness.listarColigadas());
+			} else {
+				setListaColigada(orcamentoBusiness.listarColigadaResponsavel(usuario));
 			}
 			
 			setListaCentroCusto(new ArrayList<CentroCustoRM>());
@@ -131,10 +132,15 @@ public class AjusteOrcamentarioController implements Serializable {
 	
 	public void carregarCentroCusto(Boolean edicao) throws ApplicationException {
 		try {
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			if(edicao) {
 				if(Util.isNotNull(getAjuste().getColigada())) {
 					getAjuste().setPeriodo(rmBusiness.obterPeriodoColigada(getAjuste().getColigada().getId()));
-					setListaCentroCusto(rmBusiness.listarCentroCustoPorColigada(getAjuste().getColigada().getId()));
+					if(loginController.hasGroup(Arrays.asList("ADMINISTRADOR","GESTOR DE ORCAMENTO"))) {
+						setListaCentroCusto(rmBusiness.listarCentroCustoPorColigada(getAjuste().getColigada().getId()));
+					} else {
+						setListaCentroCusto(orcamentoBusiness.listarCentroCustoResponsavel(getAjuste().getColigada(), usuario));
+					}
 				} else {
 					getAjuste().setPeriodo(null);
 					setListaCentroCusto(new ArrayList<CentroCustoRM>());
@@ -144,7 +150,11 @@ public class AjusteOrcamentarioController implements Serializable {
 				zerarOrcamento();
 			} else {
 				if(Util.isNotNull(getFiltro().getColigada())) {
-					setListaCentroCusto(rmBusiness.listarCentroCustoPorColigada(getFiltro().getColigada().getId()));
+					if(loginController.hasGroup(Arrays.asList("ADMINISTRADOR","GESTOR DE ORCAMENTO"))) {
+						setListaCentroCusto(rmBusiness.listarCentroCustoPorColigada(getFiltro().getColigada().getId()));
+					} else {
+						setListaCentroCusto(orcamentoBusiness.listarCentroCustoResponsavel(getFiltro().getColigada(), usuario));
+					}
 				} else {
 					setListaCentroCusto(new ArrayList<CentroCustoRM>());
 				}
@@ -292,15 +302,11 @@ public class AjusteOrcamentarioController implements Serializable {
 	public String iniciarAjusteOrcamentario() throws ApplicationException {
 		try {
 			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
-			setListaColigada(new ArrayList<Coligada>());
-			if (Util.isNotNull(usuario.getColigadas())) {
-				for (Coligada coligada : usuario.getColigadas()) {
-					if (coligada.getSituacao()) {
-						getListaColigada().add(coligada);
-					}
-				}
+			if(loginController.hasGroup(Arrays.asList("ADMINISTRADOR","GESTOR DE ORCAMENTO"))) {
+				setListaColigada(coligadaBusiness.listarColigadas());
+			} else {
+				setListaColigada(orcamentoBusiness.listarColigadaResponsavel(usuario));
 			}
-			
 			setListaNaturezaOrcamentaria(rmBusiness.listarNaturezaOrcamentaria());
 			setListaMes(Mes.listarAPartir(6));
 			

@@ -791,15 +791,15 @@ public class SolicitacaoCompraBusiness {
 				throw new ApplicationException("message.empty", new String[] {"Cadastro de Aprovadores no RM incorreto, solicite a equipe de TI para verificar. "}, FacesMessage.SEVERITY_ERROR);
 			}
 			
-			if(!scBanco.getUsuarioAprovacaoFluig().equalsIgnoreCase(segundoAprovador.getAprovador())) {
+			if(scBanco.getUsuarioSolicitante().getUsuario().equalsIgnoreCase(segundoAprovador.getAprovador())) {
+				solicitacao.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
+			} else {
+				solicitacao.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
+			}
+			
+			if(!scBanco.getUsuarioAprovacaoFluig().equalsIgnoreCase(solicitacao.getUsuarioAprovacaoFluig())) {
 				
 				reenviar = Boolean.TRUE;
-				
-				if(scBanco.getUsuarioSolicitante().getUsuario().equalsIgnoreCase(segundoAprovador.getAprovador())) {
-					scBanco.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
-				} else {
-					scBanco.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
-				}
 				
 				StringBuilder itens = new StringBuilder("{\"itens\": [");
 				int tamanho = itens.length();
