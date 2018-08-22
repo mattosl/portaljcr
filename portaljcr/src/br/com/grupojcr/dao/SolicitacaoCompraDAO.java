@@ -10,6 +10,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
@@ -229,6 +230,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 				sb.append("AND solicitacao.situacao = :situacao ");
 			}
 			
+			if(CollectionUtils.isNotEmpty(filtro.getColigadasUsuario())) {
+				sb.append("AND solicitacao.coligada IN :coligadasUsuario ");
+			}
+			
 			sb.append("ORDER BY solicitacao.dtSolicitacao DESC ");
 			
 			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
@@ -239,6 +244,10 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 			
 			if(Util.isNotNull(filtro.getSituacao())) {
 				query.setParameter("situacao", filtro.getSituacao());
+			}
+			
+			if(CollectionUtils.isNotEmpty(filtro.getColigadasUsuario())) {
+				query.setParameter("coligadasUsuario", filtro.getColigadasUsuario());
 			}
 			
 			return query.getResultList();
@@ -292,6 +301,31 @@ public class SolicitacaoCompraDAO extends GenericDAO<SolicitacaoCompra> {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new ApplicationException("message.default.erro", new String[] { "obterSolicitacao" }, e);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public SolicitacaoCompra obterSolicitacaoPorColigadaMovimento(Long idColigada, Long idMovimento) throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT solicitacao FROM SolicitacaoCompra solicitacao ");
+			sb.append("LEFT JOIN FETCH solicitacao.coligada coligada ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioSolicitante usuarioSolicitante ");
+			sb.append("LEFT JOIN FETCH solicitacao.usuarioCotacao usuarioCotacao ");
+			sb.append("LEFT JOIN FETCH solicitacao.ordensCompra ordemCompra ");
+			sb.append("WHERE coligada.id = :idColigada ");
+			sb.append("AND ordemCompra.identificadorRM = :idMovimento ");
+			
+			TypedQuery<SolicitacaoCompra> query = manager.createQuery(sb.toString(), SolicitacaoCompra.class);
+			query.setParameter("idColigada", idColigada);
+			query.setParameter("idMovimento", idMovimento.toString());
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterSolicitacaoPorColigadaMovimento" }, e);
 		}
 	}
 	

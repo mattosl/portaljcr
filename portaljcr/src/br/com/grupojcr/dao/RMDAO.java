@@ -21,11 +21,16 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dto.AprovacaoContratoDTO;
 import br.com.grupojcr.dto.AprovacaoOrdemCompraDTO;
+import br.com.grupojcr.dto.ChapaDTO;
+import br.com.grupojcr.dto.HoleriteDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
+import br.com.grupojcr.entity.Coligada;
+import br.com.grupojcr.enumerator.Mes;
 import br.com.grupojcr.enumerator.Modalidade;
+import br.com.grupojcr.enumerator.PeriodoHolerite;
 import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
@@ -1683,6 +1688,181 @@ public class RMDAO {
 			}
 		}
 		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Integer obterCodigoPessoa(Long idColigada, String chapa) throws ApplicationException {
+		/**
+		 * SELECT CODPESSOA, CODCOLIGADA, CHAPA FROM PFUNC
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA LIKE ?
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODPESSOA, CODCOLIGADA, CHAPA FROM PFUNC ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA LIKE ? ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			ps.setString(2, chapa);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getInt("CODPESSOA");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterCodigoPessoa" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<ChapaDTO> listarChapaFuncionario(Integer codPessoa) throws ApplicationException {
+		/**
+		 * SELECT CODPESSOA, CODCOLIGADA, CHAPA FROM PFUNC
+		 * WHERE CODPESSOA = ?
+		 * ORDER BY RECCREATEDON DESC
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<ChapaDTO> chapas = new ArrayList<ChapaDTO>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT CODPESSOA, CODCOLIGADA, CHAPA FROM PFUNC ")
+			.append("WHERE CODPESSOA = ? ")
+			.append("ORDER BY RECCREATEDON DESC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, codPessoa);
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				ChapaDTO dto = new ChapaDTO();
+				dto.setIdColigada(set.getLong("CODCOLIGADA"));
+				dto.setChapa(set.getString("CHAPA"));
+				
+				chapas.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarChapaFuncionario" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return chapas;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<HoleriteDTO> listarHoleriteFuncionario(Long idColigada, String chapa) throws ApplicationException {
+		/**
+		 * SELECT DISTINCT CODCOLIGADA, ANOCOMP, MESCOMP, NROPERIODO FROM PFPERFF
+		 * WHERE CHAPA = ?
+		 * AND CODCOLIGADA = ?
+		 * ORDER BY ANOCOMP DESC, MESCOMP DESC
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<HoleriteDTO> holerites = new ArrayList<HoleriteDTO>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT DISTINCT CODCOLIGADA, ANOCOMP, MESCOMP, NROPERIODO FROM PFPERFF ")
+			.append("WHERE CHAPA = ? ")
+			.append("AND CODCOLIGADA = ? ")
+			.append("ORDER BY ANOCOMP DESC, MESCOMP DESC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, chapa);
+			ps.setLong(2, idColigada);
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				HoleriteDTO dto = new HoleriteDTO();
+				dto.setColigada(new Coligada());
+				dto.getColigada().setId(set.getLong("CODCOLIGADA"));
+				dto.setAno(set.getInt("ANOCOMP"));
+				dto.setMes(Mes.obterPorCodigo(set.getInt("MESCOMP")));
+				dto.setPeriodo(PeriodoHolerite.obterPorCodigo(set.getInt("NROPERIODO")));
+				
+				holerites.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarHoleriteFuncionario" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return holerites;
 	}
 
 

@@ -26,6 +26,8 @@ import br.com.grupojcr.entity.OrdemCompra;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.util.BrasilUtils;
+import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.Preferencias.Propriedades;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.Util;
 
@@ -73,7 +75,9 @@ public class EmailSolicitacaoCompra {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -118,7 +122,9 @@ public class EmailSolicitacaoCompra {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -164,7 +170,10 @@ public class EmailSolicitacaoCompra {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
+			
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -205,7 +214,10 @@ public class EmailSolicitacaoCompra {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
+			
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -248,7 +260,9 @@ public class EmailSolicitacaoCompra {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -294,7 +308,9 @@ public class EmailSolicitacaoCompra {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);

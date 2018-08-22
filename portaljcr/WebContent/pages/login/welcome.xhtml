@@ -78,14 +78,14 @@
 									</div>
 								</p:link>
 							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
-								<p:link href="#" disabled="true">
-									<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
+							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
+								<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+									<div class="info-box" style="background-color: #f8f8f8;">
 										<span class="info-box-icon bg-purple"><i
 											class="fa fa-sliders"></i></span>
 	
 										<div class="info-box-content">
-											<p:link href="#">
+											<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
 												<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
 											</p:link>
 										</div>

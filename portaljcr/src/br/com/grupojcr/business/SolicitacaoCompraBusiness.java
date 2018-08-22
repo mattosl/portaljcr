@@ -337,7 +337,9 @@ public class SolicitacaoCompraBusiness {
 			if(Util.isNotNull(grupoAdministrativo)) {
 				if(CollectionUtils.isNotEmpty(grupoAdministrativo.getUsuarios())) {
 					for(Usuario usuario : grupoAdministrativo.getUsuarios()) {
-						emails.add(usuario.getEmail());
+						if(usuario.getColigadas().contains(solicitacao.getColigada())) {
+							emails.add(usuario.getEmail());
+						}
 					}
 				}
 			}
@@ -361,7 +363,9 @@ public class SolicitacaoCompraBusiness {
 			if(Util.isNotNull(grupoAdministrativo)) {
 				if(CollectionUtils.isNotEmpty(grupoAdministrativo.getUsuarios())) {
 					for(Usuario usuario : grupoAdministrativo.getUsuarios()) {
-						emails.add(usuario.getEmail());
+						if(usuario.getColigadas().contains(oc.getSolicitacaoCompra().getColigada())) {
+							emails.add(usuario.getEmail());
+						}
 					}
 				}
 			}
@@ -1011,83 +1015,85 @@ public class SolicitacaoCompraBusiness {
 			
 			Integer idx = 1;
 			for(CotacaoItem item : ordemCompra.getCotacao().getItens()) {
-				ProdutoRM produtoRM = daoRM.obterProduto(item.getSolicitacaoCompraItem().getIdProduto());
-				
-				String idProduto = produtoRM.getIdProduto().toString();
-				String codigoProduto = produtoRM.getCodigoProduto();
-				String descricaoProduto = produtoRM.getProduto();
-				String codigoReduzido = produtoRM.getCodigoReduzido();
-				String quantidade = TreatNumber.formatMoney(item.getQuantidade());
-				String valorUnitario = TreatNumber.formatMoney(item.getValor());
-				String valorTotal = TreatNumber.formatMoney(item.getValorTotal());
-				String codigoUnidade = item.getCodigoUnidade();
-				String codigoCentroCusto = ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto();
-				String centroCusto = ordemCompra.getSolicitacaoCompra().getCentroCusto();
-				String codigoNatureza = produtoRM.getCodigoNatureza();
-				String observacaoItem = item.getObservacao().toUpperCase();
-				
-				if(TreatString.isBlank(codigoNatureza)) {
-					throw new ApplicationException("message.empty", new String[] {"Produto sem Natureza Orçamentária, cadastre uma natureza para o produto: " + descricaoProduto}, FacesMessage.SEVERITY_WARN);
+				if(!item.getNaoPossui()) {
+					ProdutoRM produtoRM = daoRM.obterProduto(item.getSolicitacaoCompraItem().getIdProduto());
+					
+					String idProduto = produtoRM.getIdProduto().toString();
+					String codigoProduto = produtoRM.getCodigoProduto();
+					String descricaoProduto = produtoRM.getProduto();
+					String codigoReduzido = produtoRM.getCodigoReduzido();
+					String quantidade = TreatNumber.formatMoney(item.getQuantidade());
+					String valorUnitario = TreatNumber.formatMoney(item.getValor());
+					String valorTotal = TreatNumber.formatMoney(item.getValorTotal());
+					String codigoUnidade = item.getCodigoUnidade();
+					String codigoCentroCusto = ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto();
+					String centroCusto = ordemCompra.getSolicitacaoCompra().getCentroCusto();
+					String codigoNatureza = produtoRM.getCodigoNatureza();
+					String observacaoItem = item.getObservacao().toUpperCase();
+					
+					if(TreatString.isBlank(codigoNatureza)) {
+						throw new ApplicationException("message.empty", new String[] {"Produto sem Natureza Orçamentária, cadastre uma natureza para o produto: " + descricaoProduto}, FacesMessage.SEVERITY_WARN);
+					}
+					
+					TITMMOVXML titmmov = new TITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), 
+							idProduto, codigoProduto, descricaoProduto, codigoReduzido, quantidade, valorUnitario, valorTotal, codigoUnidade, codigoCentroCusto, codigoNatureza, observacaoItem, usuario);
+					
+					sw = new StringWriter();
+					context = JAXBContext.newInstance(TITMMOVXML.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+					marshaller.marshal(titmmov, sw);
+					xml.append(sw.toString());
+	
+					TITMMOVRATCCUXML titmmovratccu = new TITMMOVRATCCUXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(),
+							codigoCentroCusto, centroCusto , valorTotal);
+					
+					sw = new StringWriter();
+					context = JAXBContext.newInstance(TITMMOVRATCCUXML.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+					marshaller.marshal(titmmovratccu, sw);
+					xml.append(sw.toString());
+					
+					TITMMOVCOMPLXML titmmovcmpl = new TITMMOVCOMPLXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), usuario);
+					
+					sw = new StringWriter();
+					context = JAXBContext.newInstance(TITMMOVCOMPLXML.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+					marshaller.marshal(titmmovcmpl, sw);
+					xml.append(sw.toString());
+					
+					TTRBITMMOVXML ttrbitmmovICMS = new TTRBITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), "ICMS", valorTotal, usuario);
+					
+					sw = new StringWriter();
+					context = JAXBContext.newInstance(TTRBITMMOVXML.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+					marshaller.marshal(ttrbitmmovICMS, sw);
+					xml.append(sw.toString());
+					
+					TTRBITMMOVXML ttrbitmmovIPI = new TTRBITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), "IPI", valorTotal, usuario);
+					
+					sw = new StringWriter();
+					context = JAXBContext.newInstance(TTRBITMMOVXML.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+					marshaller.marshal(ttrbitmmovIPI, sw);
+					xml.append(sw.toString());
+					
+					TITMMOVFISCALXML titmmovfiscal = new TITMMOVFISCALXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), usuario);
+					
+					sw = new StringWriter();
+					context = JAXBContext.newInstance(TITMMOVFISCALXML.class);
+					marshaller = context.createMarshaller();
+					marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+					marshaller.marshal(titmmovfiscal, sw);
+					xml.append(sw.toString());
+					
+					idx++;
+
 				}
-				
-				TITMMOVXML titmmov = new TITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), 
-						idProduto, codigoProduto, descricaoProduto, codigoReduzido, quantidade, valorUnitario, valorTotal, codigoUnidade, codigoCentroCusto, codigoNatureza, observacaoItem, usuario);
-				
-				sw = new StringWriter();
-				context = JAXBContext.newInstance(TITMMOVXML.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-				marshaller.marshal(titmmov, sw);
-				xml.append(sw.toString());
-
-				TITMMOVRATCCUXML titmmovratccu = new TITMMOVRATCCUXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(),
-						codigoCentroCusto, centroCusto , valorTotal);
-				
-				sw = new StringWriter();
-				context = JAXBContext.newInstance(TITMMOVRATCCUXML.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-				marshaller.marshal(titmmovratccu, sw);
-				xml.append(sw.toString());
-				
-				TITMMOVCOMPLXML titmmovcmpl = new TITMMOVCOMPLXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), usuario);
-				
-				sw = new StringWriter();
-				context = JAXBContext.newInstance(TITMMOVCOMPLXML.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-				marshaller.marshal(titmmovcmpl, sw);
-				xml.append(sw.toString());
-				
-				TTRBITMMOVXML ttrbitmmovICMS = new TTRBITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), "ICMS", valorTotal, usuario);
-				
-				sw = new StringWriter();
-				context = JAXBContext.newInstance(TTRBITMMOVXML.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-				marshaller.marshal(ttrbitmmovICMS, sw);
-				xml.append(sw.toString());
-				
-				TTRBITMMOVXML ttrbitmmovIPI = new TTRBITMMOVXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), "IPI", valorTotal, usuario);
-				
-				sw = new StringWriter();
-				context = JAXBContext.newInstance(TTRBITMMOVXML.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-				marshaller.marshal(ttrbitmmovIPI, sw);
-				xml.append(sw.toString());
-				
-				TITMMOVFISCALXML titmmovfiscal = new TITMMOVFISCALXML(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString(), idx.toString(), usuario);
-				
-				sw = new StringWriter();
-				context = JAXBContext.newInstance(TITMMOVFISCALXML.class);
-				marshaller = context.createMarshaller();
-				marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-				marshaller.marshal(titmmovfiscal, sw);
-				xml.append(sw.toString());
-				
-				idx++;
-
 			}
 			
 			
@@ -1155,6 +1161,18 @@ public class SolicitacaoCompraBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSolicitacao" }, e);
+		}
+	}
+	
+	public SolicitacaoCompra obterSolicitacaoPorColigadaMovimento(Long idColigada, Long idMovimento) throws ApplicationException {
+		try {
+			return daoSolicitacaoCompra.obterSolicitacaoPorColigadaMovimento(idColigada, idMovimento);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterSolicitacaoPorColigadaMovimento" }, e);
 		}
 	}
 	

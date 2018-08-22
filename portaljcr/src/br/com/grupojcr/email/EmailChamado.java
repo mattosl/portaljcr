@@ -25,7 +25,9 @@ import br.com.grupojcr.entity.Chamado;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.util.BrasilUtils;
 import br.com.grupojcr.util.Dominios;
+import br.com.grupojcr.util.Preferencias;
 import br.com.grupojcr.util.TreatDate;
+import br.com.grupojcr.util.Preferencias.Propriedades;
 
 @Stateless
 public class EmailChamado {
@@ -76,7 +78,9 @@ public class EmailChamado {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -122,7 +126,9 @@ public class EmailChamado {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -169,7 +175,9 @@ public class EmailChamado {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);
@@ -216,7 +224,9 @@ public class EmailChamado {
 			
 			message.setContent(BrasilUtils.converterCaracteresEspeciaisHTML(bodyEmail), "text/html");
 
-			Transport.send(message);
+			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
 			throw new RuntimeException(e);

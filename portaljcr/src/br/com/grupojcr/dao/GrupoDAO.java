@@ -20,8 +20,9 @@ public class GrupoDAO extends GenericDAO<Grupo> {
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Grupo obterGrupo(String nomeGrupo) throws ApplicationException {
 		try{
-			StringBuilder sb = new StringBuilder("SELECT grupo FROM Grupo grupo ");
-			sb.append("LEFT JOIN FETCH grupo.usuarios ");
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT grupo FROM Grupo grupo ");
+			sb.append("LEFT JOIN FETCH grupo.usuarios usuario ");
+			sb.append("LEFT JOIN FETCH usuario.coligadas coligada ");
 			sb.append("WHERE grupo.nome like :nomeGrupo ");
 			
 			TypedQuery<Grupo> query = manager.createQuery(sb.toString(), Grupo.class);

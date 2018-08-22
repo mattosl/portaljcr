@@ -12,6 +12,7 @@ public class Preferencias implements Serializable {
 
 	public enum Propriedades {
 		
+		AMBIENTE					("ambiente"),
 		URL_PORTAL					("url.portal"),
 		AMBIENTE_FLUIG				("ambiente.fluig"),
 		AMBIENTE_RM					("ambiente.rm"),

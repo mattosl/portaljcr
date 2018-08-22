@@ -47,6 +47,7 @@ public class TMOVXML {
 		this.PESOBRUTO = "0,00";
 		this.CODMOEVALORLIQUIDO = "R$";
 		this.DATAMOVIMENTO = TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", Calendar.getInstance().getTime());
+		this.DATAENTREGA = TreatDate.format("yyyy-MM-dd'T'HH:mm:ss", Calendar.getInstance().getTime());
 		this.GEROUFATURA = "0";
 		this.FRETECIFOUFOB = "1";
 //		this.CODCFOAUX = "";
@@ -127,6 +128,8 @@ public class TMOVXML {
 	private String FATIMPRESSA;
 	@XmlElement(name = "DATAEMISSAO")
 	private String DATAEMISSAO;
+	@XmlElement(name = "DATAENTREGA")
+	private String DATAENTREGA;
 	@XmlElement(name = "COMISSAOREPRES")
 	private String COMISSAOREPRES;
 	@XmlElement(name = "CODCPG")
@@ -748,6 +751,13 @@ public class TMOVXML {
 	public void setCODCOLCFO(String cODCOLCFO) {
 		CODCOLCFO = cODCOLCFO;
 	}
+	public String getDATAENTREGA() {
+		return DATAENTREGA;
+	}
+	public void setDATAENTREGA(String dATAENTREGA) {
+		DATAENTREGA = dATAENTREGA;
+	}
+	
 	
 	public void preencherValores(String valor) {
 		this.VALORBRUTO = valor;
@@ -766,5 +776,4 @@ public class TMOVXML {
 		this.RECCREATEDBY = usuario;
 		this.RECMODIFIEDBY = usuario;
 	}
-	
 }

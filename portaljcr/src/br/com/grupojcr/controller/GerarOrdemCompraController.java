@@ -23,6 +23,7 @@ import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.dto.OrdemCompraDTO;
 import br.com.grupojcr.dto.ProdutoDTO;
+import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.Cotacao;
 import br.com.grupojcr.entity.CotacaoItem;
 import br.com.grupojcr.entity.OrdemCompra;
@@ -71,6 +72,15 @@ public class GerarOrdemCompraController implements Serializable {
 			setFiltro(new FiltroSolicitacaoCompra());
 			getFiltro().setSituacao(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA);
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
+			
+			getFiltro().setColigadasUsuario(new ArrayList<Coligada>());
+			if (Util.isNotNull(getUsuario().getColigadas())) {
+				for (Coligada coligada : getUsuario().getColigadas()) {
+					if (coligada.getSituacao()) {
+						getFiltro().getColigadasUsuario().add(coligada);
+					}
+				}
+			}
 			
 			setListaSolicitacao(solicitacaoCompraBusiness.listarSolicitacaoCompraPendente(filtro));
 		

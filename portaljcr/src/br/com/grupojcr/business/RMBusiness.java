@@ -167,6 +167,17 @@ public class RMBusiness {
 		}
 	}
 	
+	public String autenticarUsuario(String usr, String chave) throws ApplicationException {
+		try {
+			WsDataServerSoapStub cliente = obterProxyWsDataServerSoapStub();
+			
+			return cliente.autenticaAcessoAuth(usr, chave);
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "autenticarUsuario" }, e);
+		}
+	}
+	
 	public Integer obterIdFluig(Long idColigada, Long idMovimento) throws ApplicationException {
 		try {
 			return daoRM.obterIdFluig(idMovimento);

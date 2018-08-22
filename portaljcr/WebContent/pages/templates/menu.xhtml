@@ -9,12 +9,12 @@
 	
 	<h:form>
 		<ul class="sidebar-menu tree" data-widget="tree">
-			<li class="treeview #{activeMenu eq 'inicio' ? 'active' : ''}">
-				<p:link href="/pages/login/welcome.xhtml"> 
-					<i class="fa fa-home"></i>  <span>Página Inicial</span> 
+			<li class="#{activeMenu eq 'inicio' ? 'active' : ''}">
+				<p:link href="/pages/login/welcome.xhtml" ajax="false">
+					<i class="fa fa-home"></i>
+					<span>Página Inicial</span>
 				</p:link>
 			</li>
-			
 			<li class="treeview #{activeMenu eq 'solicitacaoCompra' ? 'active' : ''}" jsf:rendered="true">
 				<p:link href="#">
 					<i class="fa fa-shopping-cart"></i> <span>Solicitação de Compra</span>
@@ -62,6 +62,23 @@
 						<p:link href="/pages/solicitacaoCompra/cotacao/listar_ordemCompra.xhtml" ajax="false">
 							<i class="fa fa-dollar"></i>
 							<span>Gerar Ordem de Compra</span>
+						</p:link>
+					</li>
+				</ul>
+			</li>
+
+			<li class="treeview #{activeMenu eq 'rh' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+				<p:link href="#">
+					<i class="fa fa-users"></i> <span>Recursos Humanos</span>
+					 <span class="pull-right-container">
+	                 	<i class="fa fa-angle-left pull-right"></i>
+	                 </span>
+				</p:link>
+				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'holerite' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+						<p:link href="/pages/recursosHumanos/holerite/autenticar_holerite.xhtml" ajax="false">
+							<i class="fa fa-envelope"></i>
+							<span>Holerite</span>
 						</p:link>
 					</li>
 				</ul>

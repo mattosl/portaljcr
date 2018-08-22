@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.faces.application.FacesMessage;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -144,29 +143,27 @@ public class OrcamentoBusiness {
 	public ResponsavelOrcamento salvarResponsavel(CentroCustoRM centroCusto, Usuario usuario, Coligada coligada) throws ApplicationException {
 		try {
 			ResponsavelOrcamento roExiste = daoResponsavelOrcamento.obterResponsavel(centroCusto.getCodigoCentroCusto(), coligada, usuario);
-			if(Util.isNotNull(roExiste)) {
-				throw new ApplicationException("responsavel.existe", FacesMessage.SEVERITY_WARN);
-			}
-			
-			ResponsavelOrcamento responsavelOrcamento = new ResponsavelOrcamento();
-			responsavelOrcamento.setColigada(coligada);
-			responsavelOrcamento.setCodigoCentroCusto(centroCusto.getCodigoCentroCusto());
-			responsavelOrcamento.setCentroCusto(centroCusto.getCentroCusto());
-			responsavelOrcamento.setDtInclusao(Calendar.getInstance().getTime());
-			responsavelOrcamento.setUsuarioResponsavel(usuario);
-			
-			daoResponsavelOrcamento.incluir(responsavelOrcamento);
-			
-			Grupo grupo = daoGrupo.obterGrupo(GRUPO_RESPONSAVEL);
-			Usuario usr = daoUsuario.obterUsuarioPorId(usuario.getId());
-			if(Util.isNotNull(grupo)) {
-				if(!usr.getGrupos().contains(grupo)) {
-					usr.getGrupos().add(grupo);
-					daoUsuario.alterar(usr);
+			if(Util.isNull(roExiste)) {
+				ResponsavelOrcamento responsavelOrcamento = new ResponsavelOrcamento();
+				responsavelOrcamento.setColigada(coligada);
+				responsavelOrcamento.setCodigoCentroCusto(centroCusto.getCodigoCentroCusto());
+				responsavelOrcamento.setCentroCusto(centroCusto.getCentroCusto());
+				responsavelOrcamento.setDtInclusao(Calendar.getInstance().getTime());
+				responsavelOrcamento.setUsuarioResponsavel(usuario);
+				
+				daoResponsavelOrcamento.incluir(responsavelOrcamento);
+				Grupo grupo = daoGrupo.obterGrupo(GRUPO_RESPONSAVEL);
+				Usuario usr = daoUsuario.obterUsuarioPorId(usuario.getId());
+				if(Util.isNotNull(grupo)) {
+					if(!usr.getGrupos().contains(grupo)) {
+						usr.getGrupos().add(grupo);
+						daoUsuario.alterar(usr);
+					}
 				}
+				return responsavelOrcamento;
 			}
 			
-			return responsavelOrcamento;
+			return null;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

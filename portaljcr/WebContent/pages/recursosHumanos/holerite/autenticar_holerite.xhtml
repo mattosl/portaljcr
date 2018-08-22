@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="holerite"/>
+    	<ui:param name="activeMenu" value="rh"/>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-envelope fa-1x cor-padrao"></i> Holerite</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-users"></i> Recursos Humanos</li>
+	    	<li class="active"><i class="fa fa-envelope"></i> Holerite</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p class="text-muted well well-sm no-shadow"><i class="fa fa-info-circle"></i> Para consultar os seus holerites, você deve se autenticar com usuário e senha do <strong>Portal RH</strong>.</p>
+						<p:panel toggleable="false" id="painelAutenticacao" styleClass="box box-info">
+							<div class="box-header" style="text-align:center;">
+								<div style="text-align: center;">
+									<img  src="../../../resources/images/totvs_logo.png" alt="TOTVS RM" height="80" width="80" />
+								</div>
+								<br />
+		             			<h3 class="box-title ui-widget">Autenticação Portal RH</h3>
+		            		</div>
+							<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-5 col-md-5 col-xs-12 control-label">
+											<label for="chapa">Chapa: </label>
+										</div>
+	
+										<div class="col-sm-6 col-md-2 col-xs-12">
+											<h:inputText id="chapa" value="#{holeriteController.chapa}" maxlength="10" styleClass="form-control" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-5 col-md-5 col-xs-12 control-label">
+											<label for="chave">Senha: </label>
+										</div>
+	
+										<div class="col-sm-6 col-md-2 col-xs-12">
+											<h:inputSecret id="chave" value="#{holeriteController.chave}" maxlength="50" styleClass="form-control" />
+<!-- 											<div class="col-sm-12 col-md-12 col-xs-12">  -->
+<!-- 												<div class="text-center"> -->
+<!-- 													<p:link styleClass="text-center" style="font-size:12px !important; color: #3c8dbc;">Esqueceu sua senha?</p:link> -->
+<!-- 												</div> -->
+<!-- 											</div> -->
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="box-footer">
+								<div class="col-sm-0 col-md-4"></div>
+								<div class="col-sm-4 col-md-4">
+									<p:commandButton
+										styleClass="btn-azul"
+										icon="fa fa-sign-in"
+										value="Autenticar"
+										id="btn_autenticar"
+										action="#{holeriteController.autenticarUsuario()}"
+										process="@form"
+										ajax="true" />
+								</div>
+								<div class="col-sm-0 col-md-4"></div>
+							</div>
+						</p:panel>
+					</f:validateBean>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

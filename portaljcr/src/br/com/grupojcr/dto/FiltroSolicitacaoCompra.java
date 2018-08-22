@@ -1,6 +1,7 @@
 package br.com.grupojcr.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.entity.Usuario;
@@ -16,6 +17,7 @@ public class FiltroSolicitacaoCompra {
 	private Usuario usuarioLogado;
 	private Usuario usuarioCotacao;
 	private Long numeroSolicitacao;
+	private List<Coligada> coligadasUsuario;
 	
 	public SituacaoSolicitacaoCompra getSituacao() {
 		return situacao;
@@ -64,6 +66,12 @@ public class FiltroSolicitacaoCompra {
 	}
 	public void setSituacaoIgnorar(SituacaoSolicitacaoCompra[] situacaoIgnorar) {
 		this.situacaoIgnorar = situacaoIgnorar;
+	}
+	public List<Coligada> getColigadasUsuario() {
+		return coligadasUsuario;
+	}
+	public void setColigadasUsuario(List<Coligada> coligadasUsuario) {
+		this.coligadasUsuario = coligadasUsuario;
 	}
 
 }

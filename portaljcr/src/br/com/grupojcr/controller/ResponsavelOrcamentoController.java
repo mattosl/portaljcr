@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.inject.Named;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleSelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 import br.com.grupojcr.business.ColigadaBusiness;
 import br.com.grupojcr.business.OrcamentoBusiness;
@@ -37,8 +39,11 @@ public class ResponsavelOrcamentoController implements Serializable {
 	private Boolean exibirResultado;
 	
 	private Coligada coligada;
+	
 	private List<ResponsavelOrcamentoDTO> listaResponsavel;
 	private List<Coligada> listaColigada;
+	private List<CentroCustoRM> listaCentroCusto;
+	private List<CentroCustoRM> listaCentroCustoSelecionado;
 
 	private Usuario usuario;
 	private CentroCustoRM centroCusto;
@@ -58,6 +63,7 @@ public class ResponsavelOrcamentoController implements Serializable {
 	public void iniciarProcesso() throws ApplicationException {
 		try {
 			setColigada(null);
+			setUsuario(null);
 			setExibirResultado(Boolean.FALSE);
 			setListaColigada(coligadaBusiness.listarColigadasAtivas());
 			
@@ -72,17 +78,11 @@ public class ResponsavelOrcamentoController implements Serializable {
 	
 	public void carregarCentroCusto() throws ApplicationException {
 		try {
-			setListaResponsavel(new ArrayList<ResponsavelOrcamentoDTO>());
-			if(Util.isNotNull(getColigada())) {
-				List<CentroCustoRM> centrosCusto = rmBusiness.listarCentroCustoPorColigada(getColigada().getId());
-				if(CollectionUtils.isNotEmpty(centrosCusto)) {
-					for(CentroCustoRM cc : centrosCusto) {
-						ResponsavelOrcamentoDTO dto = new ResponsavelOrcamentoDTO();
-						dto.setCentroCusto(cc);
-						dto.setListaResponsavel(orcamentoBusiness.listarUsuarioResponsavel(cc.getCodigoCentroCusto(), getColigada().getId()));
-						getListaResponsavel().add(dto);
-					}
-				}
+			setListaCentroCusto(new ArrayList<CentroCustoRM>());
+			setListaCentroCustoSelecionado(new ArrayList<CentroCustoRM>());
+			if(Util.isNotNull(getColigada()) && Util.isNotNull(getUsuario())) {
+				setListaCentroCusto(rmBusiness.listarCentroCustoPorColigada(getColigada().getId()));
+				setListaCentroCustoSelecionado(orcamentoBusiness.listarCentroCustoResponsavel(getColigada(), getUsuario()));
 				setExibirResultado(Boolean.TRUE);
 			} else {
 				setExibirResultado(Boolean.FALSE);
@@ -96,55 +96,67 @@ public class ResponsavelOrcamentoController implements Serializable {
 		}
 	}
 	
-	public void adicionarResponsavel() throws ApplicationException {
-		try {
-			setListaResponsavel(new ArrayList<ResponsavelOrcamentoDTO>());
-			if(Util.isNotNull(getColigada())) {
-				List<CentroCustoRM> centrosCusto = rmBusiness.listarCentroCustoPorColigada(getColigada().getId());
-				if(CollectionUtils.isNotEmpty(centrosCusto)) {
-					for(CentroCustoRM cc : centrosCusto) {
-						ResponsavelOrcamentoDTO dto = new ResponsavelOrcamentoDTO();
-						dto.setCentroCusto(cc);
-						dto.setListaResponsavel(orcamentoBusiness.listarUsuarioResponsavel(cc.getCodigoCentroCusto(), getColigada().getId()));
-						getListaResponsavel().add(dto);
-					}
-				}
-				setExibirResultado(Boolean.TRUE);
-			} else {
-				setExibirResultado(Boolean.FALSE);
-			}
-		} catch (ApplicationException e) {
-			LOG.info(e.getMessage(), e);
-			throw e;
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarCentroCusto" }, e);
-		}
-	}
-	
-	public void adicionarUsuario() throws ApplicationException {
+	public void limparTabela() throws ApplicationException {
 		try {
 			if(Util.isNull(getUsuario())) {
-				throw new ApplicationException("responsavel.orcamento", FacesMessage.SEVERITY_WARN);
+				setExibirResultado(Boolean.FALSE);
 			}
-			
-			orcamentoBusiness.salvarResponsavel(getCentroCusto(), getUsuario(), getColigada());
-			
-			Message.setMessage("usuario.adicionado", new String[] {getUsuario().getNome(), getCentroCusto().getCentroCusto()});
-			
-			setUsuario(null);
-			setCentroCusto(null);
-			
-			adicionarResponsavel();
-			
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "limparTabela" }, e);
+		}
+	}
+	
+	public void adicionarResponsavel(SelectEvent event) throws ApplicationException {
+		try {
+			CentroCustoRM centroCusto = (CentroCustoRM) event.getObject();
+			orcamentoBusiness.salvarResponsavel(centroCusto, getUsuario(), getColigada());
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarUsuario" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "adicionarResponsavel" }, e);
 		}
 	}
+	
+	public void salvarTodosResponsavel(ToggleSelectEvent event) throws ApplicationException {
+		try {
+			if(event.isSelected()) {
+				if(CollectionUtils.isNotEmpty(getListaCentroCusto())) {
+					for(CentroCustoRM centroCusto : getListaCentroCusto()) {
+						orcamentoBusiness.salvarResponsavel(centroCusto, getUsuario(), getColigada());
+					}
+				}
+			} else {
+				if(CollectionUtils.isNotEmpty(getListaCentroCusto())) {
+					for(CentroCustoRM centroCusto : getListaCentroCusto()) {
+						orcamentoBusiness.excluirResponsavel(centroCusto, getUsuario(), getColigada());
+					}
+				}
+			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvarTodosResponsavel" }, e);
+		}
+	}
+
+	public void removerResponsavel(UnselectEvent event) throws ApplicationException {
+		try {
+			CentroCustoRM centroCusto = (CentroCustoRM) event.getObject();
+			orcamentoBusiness.excluirResponsavel(centroCusto, getUsuario(), getColigada());
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "removerResponsavel" }, e);
+		}
+	}
+	
 	
 	public void excluirUsuario() throws ApplicationException {
 		try {
@@ -154,8 +166,6 @@ public class ResponsavelOrcamentoController implements Serializable {
 			
 			setUsuario(null);
 			setCentroCusto(null);
-			
-			adicionarResponsavel();
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -168,6 +178,8 @@ public class ResponsavelOrcamentoController implements Serializable {
 	
 	public List<Usuario> autocompleteUsuario(String nome) throws ApplicationException {
 		try {
+			setUsuario(null);
+			setExibirResultado(Boolean.FALSE);
 			return usuarioBusiness.listarUsuarioPorNome(nome);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -239,6 +251,26 @@ public class ResponsavelOrcamentoController implements Serializable {
 
 	public void setCentroCusto(CentroCustoRM centroCusto) {
 		this.centroCusto = centroCusto;
+	}
+
+
+	public List<CentroCustoRM> getListaCentroCusto() {
+		return listaCentroCusto;
+	}
+
+
+	public void setListaCentroCusto(List<CentroCustoRM> listaCentroCusto) {
+		this.listaCentroCusto = listaCentroCusto;
+	}
+
+
+	public List<CentroCustoRM> getListaCentroCustoSelecionado() {
+		return listaCentroCustoSelecionado;
+	}
+
+
+	public void setListaCentroCustoSelecionado(List<CentroCustoRM> listaCentroCustoSelecionado) {
+		this.listaCentroCustoSelecionado = listaCentroCustoSelecionado;
 	}
 
 
