@@ -46,9 +46,10 @@
 									    </p:column>
 									    
 										
-										<p:column headerText="Visualizar" style="text-align: center;font-size:12px;" width="8%">
-											<p:commandLink ajax="true" process="@this" action="#{cotacaoController.cotar()}" >
-												<h:outputText value="" title="Download" styleClass="fa fa-file-pdf-o" />
+										<p:column headerText="Download" style="text-align: center;" width="8%">
+											<p:commandLink ajax="false" process="@this" update="@form" onclick="PrimeFaces.monitorDownload(start, stop);">
+												<h:outputText value="" title="Download" styleClass="fa fa-file-pdf-o" /> 
+												<p:fileDownload value="#{holeriteController.download()}" />
 											</p:commandLink>
 										</p:column>
 									    
@@ -58,6 +59,16 @@
 						</p:panel>
 					</f:validateBean>
 				</h:form>
+				<script type="text/javascript">
+
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
 			</div>
 		</ui:define>
 	</ui:composition>
