@@ -3,11 +3,9 @@ package br.com.grupojcr.enumerator;
 public enum PeriodoHolerite {
 	NENHUM(0, "NENHUM"),
 	ADIANTAMENTO(1, "ADIANTAMENTO"),
-	FOLHA_MENSAL(2, "FOLHA MENSAL"),
-	BENEFICIOS(3, "BENEFICIOS"),
-	DIRETORES(4, "DIRETORES - FOLHA MENSAL"),
-	FOLHA_MENSAL_HORISTA(5, "FOLHA MENSAL HORISTA"),
-	PREMIO_BONUS(6, "PREMIO/BONUS");
+	DECIMO_TERCEIRO(2, "13º SALÁRIO"),
+	FOLHA_MENSAL(3, "FOLHA MENSAL"),
+	PREMIO(4, "PRÊMIO");
 	
 	private Integer id;
 	private String descricao;

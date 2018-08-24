@@ -67,7 +67,7 @@
 				</ul>
 			</li>
 
-			<li class="treeview #{activeMenu eq 'rh' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+			<li class="treeview #{activeMenu eq 'rh' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
 				<p:link href="#">
 					<i class="fa fa-users"></i> <span>Recursos Humanos</span>
 					 <span class="pull-right-container">
@@ -75,7 +75,7 @@
 	                 </span>
 				</p:link>
 				<ul class="treeview-menu">
-					<li class="#{activeSubmenu eq 'holerite' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+					<li class="#{activeSubmenu eq 'holerite' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
 						<p:link href="/pages/recursosHumanos/holerite/autenticar_holerite.xhtml" ajax="false">
 							<i class="fa fa-envelope"></i>
 							<span>Holerite</span>

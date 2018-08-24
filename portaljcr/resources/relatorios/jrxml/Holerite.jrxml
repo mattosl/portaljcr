@@ -104,19 +104,19 @@
 		<band height="705" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<rectangle>
-				<reportElement x="335" y="192" width="135" height="32" uuid="076c49fe-2057-4bb4-80e3-eff07c587ecc"/>
+				<reportElement x="335" y="192" width="135" height="38" uuid="076c49fe-2057-4bb4-80e3-eff07c587ecc"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="210" y="192" width="125" height="32" uuid="6eaa9730-f2c1-420f-b6c2-a2a3ea25d3d9"/>
+				<reportElement x="210" y="192" width="125" height="38" uuid="6eaa9730-f2c1-420f-b6c2-a2a3ea25d3d9"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="105" y="192" width="105" height="32" uuid="e1f2b4fb-6fd7-4002-986e-1776cf789263"/>
+				<reportElement x="105" y="192" width="105" height="38" uuid="e1f2b4fb-6fd7-4002-986e-1776cf789263"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
@@ -157,7 +157,7 @@
 			<staticText>
 				<reportElement x="0" y="1" width="550" height="30" uuid="ddde0643-4e7c-4470-a323-8bf6166d021c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Double"/>
 				</textElement>
 				<text><![CDATA[DEMONSTRATIVO DE PAGAMENTO MENSAL]]></text>
@@ -165,7 +165,7 @@
 			<staticText>
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="33" width="410" height="15" uuid="852da878-2f4e-4717-a461-cd29b4f4bf20"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
-					<font fontName="Ebrima" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding=""/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<text><![CDATA[RAZÃO SOCIAL]]></text>
@@ -371,7 +371,7 @@
 				<text><![CDATA[DEP. IRRF]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="192" width="105" height="32" uuid="615f6dcc-a08c-43ee-ac4d-7ed21abbbf17"/>
+				<reportElement x="0" y="192" width="105" height="38" uuid="615f6dcc-a08c-43ee-ac4d-7ed21abbbf17"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
@@ -409,7 +409,7 @@
 				<text><![CDATA[AGÊNCIA]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="470" y="192" width="80" height="32" uuid="37dfc4f8-d904-460e-8a26-4394e747afb8"/>
+				<reportElement x="470" y="192" width="80" height="38" uuid="37dfc4f8-d904-460e-8a26-4394e747afb8"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
@@ -423,7 +423,7 @@
 				<text><![CDATA[CONTA]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="0" y="224" width="550" height="15" uuid="b501fe07-1f2c-4797-a066-a94bcfe0d9e7"/>
+				<reportElement x="0" y="230" width="550" height="9" uuid="b501fe07-1f2c-4797-a066-a94bcfe0d9e7"/>
 				<graphicElement>
 					<pen lineWidth="1.0"/>
 				</graphicElement>
@@ -576,7 +576,7 @@
 				<textFieldExpression><![CDATA[$F{depIRRF}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="207" width="104" height="15" uuid="f60d6af7-3ecc-4725-8f0c-45cb8c3119c4"/>
+				<reportElement x="1" y="207" width="104" height="23" uuid="f60d6af7-3ecc-4725-8f0c-45cb8c3119c4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 					<paragraph lineSpacing="Single" leftIndent="0"/>
@@ -584,7 +584,7 @@
 				<textFieldExpression><![CDATA[$F{salarioCalculo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="105" y="207" width="104" height="15" uuid="58c9c7fd-d501-4a9b-b8c8-1e0fd8200968"/>
+				<reportElement x="105" y="207" width="104" height="23" uuid="58c9c7fd-d501-4a9b-b8c8-1e0fd8200968"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 					<paragraph lineSpacing="Single" leftIndent="5"/>
@@ -592,7 +592,7 @@
 				<textFieldExpression><![CDATA[$F{dtPagamento}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="210" y="207" width="124" height="15" uuid="6d960ddd-6d4b-4e21-b049-57b797de19b7"/>
+				<reportElement x="210" y="207" width="124" height="23" uuid="6d960ddd-6d4b-4e21-b049-57b797de19b7"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 					<paragraph lineSpacing="Single" leftIndent="5"/>
@@ -600,7 +600,7 @@
 				<textFieldExpression><![CDATA[$F{banco}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="335" y="207" width="134" height="15" uuid="36208388-44f6-4f63-9fbb-fed73fb8dca5"/>
+				<reportElement x="335" y="207" width="134" height="23" uuid="36208388-44f6-4f63-9fbb-fed73fb8dca5"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 					<paragraph lineSpacing="Single" leftIndent="5"/>
@@ -608,7 +608,7 @@
 				<textFieldExpression><![CDATA[$F{agencia}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="470" y="207" width="80" height="15" uuid="77792913-f68f-4c06-884f-7a1e733cd73b"/>
+				<reportElement x="470" y="207" width="80" height="23" uuid="77792913-f68f-4c06-884f-7a1e733cd73b"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8"/>
 					<paragraph lineSpacing="Single" leftIndent="5"/>

@@ -17,11 +17,15 @@ import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
+import br.com.grupojcr.rm.FuncionarioHoleriteRM;
+import br.com.grupojcr.rm.FuncionarioRM;
+import br.com.grupojcr.rm.HoleriteItensRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.totvs.www.br.WsDataServerLocator;
@@ -323,6 +327,85 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "ajustarOrcamento" }, e);
+		}
+	}
+	
+	public FuncionarioRM obterDadosFuncionario(String chapa) throws ApplicationException {
+		try {
+			String chapaCompleta = TreatString.filterOnlyNumber(chapa);
+			
+			Long idColigada = null;
+			String chapaOriginal = null;
+			if(chapaCompleta.length() == 7) {
+				String coligada = chapaCompleta.substring(0, 1);
+				if(TreatString.isNotBlank(coligada)) {
+					idColigada = Long.parseLong(coligada);
+				}
+				chapaOriginal = chapaCompleta.substring(1, chapaCompleta.length());
+				
+			} else if(chapaCompleta.length() == 8) {
+				String coligada = chapaCompleta.substring(0, 2);
+				if(TreatString.isNotBlank(coligada)) {
+					idColigada = Long.parseLong(coligada);
+				}
+				chapaOriginal = chapaCompleta.substring(2, chapaCompleta.length());
+			}
+			
+			return daoRM.obterDadosFuncionario(idColigada, chapaOriginal);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterDadosFuncionario" }, e);
+		}
+	}
+
+	public FuncionarioHoleriteRM obterDadosHolerite(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
+		try {
+			return daoRM.obterDadosHoleriteFuncionario(idColigada, chapa, mes, ano, periodo);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterDadosHolerite" }, e);
+		}
+	}
+
+	public List<HoleriteItensRM> listarItensHolerite(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
+		try {
+			return daoRM.listarItensHolerite(idColigada, chapa, mes, ano, periodo);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarItensHolerite" }, e);
+		}
+	}
+	
+	public Integer obterQtdDepIRRF(Integer idColigada, String chapa) throws ApplicationException {
+		try {
+			return daoRM.obterQtdDependenteIRRF(idColigada, chapa);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDepIRRF" }, e);
+		}
+	}
+	
+	public Integer obterQtdDepSalFamilia(Integer idColigada, String chapa) throws ApplicationException {
+		try {
+			return daoRM.obterQtdDependenteSalFamilia(idColigada, chapa);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDepSalFamilia" }, e);
 		}
 	}
 

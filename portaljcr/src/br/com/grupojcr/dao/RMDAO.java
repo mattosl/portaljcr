@@ -35,6 +35,9 @@ import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
+import br.com.grupojcr.rm.FuncionarioHoleriteRM;
+import br.com.grupojcr.rm.FuncionarioRM;
+import br.com.grupojcr.rm.HoleriteItensRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
@@ -1865,4 +1868,401 @@ public class RMDAO {
 		return holerites;
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public FuncionarioRM obterDadosFuncionario(Long idColigada, String chapa) throws ApplicationException {
+		/**
+		 * SELECT
+		 * 		GCOLIGADA.CODCOLIGADA AS CODCOLIGADA,
+		 * 		GCOLIGADA.NOMEFANTASIA AS RAZAO_SOCIAL,
+		 *		GCOLIGADA.CGC AS CNPJ,
+		 * 		PFUNC.CHAPA AS CHAPA,
+		 * 		PFUNC.NOME AS NOME_FUNCIONARIO,
+		 * 		PFUNCAO.NOME AS FUNCAO,
+		 * 		PFUNC.DATAADMISSAO AS DATA_ADMISSAO,
+		 * 		PPESSOA.RUA AS RUA,
+		 * 		PPESSOA.NUMERO AS NUMERO_RUA,
+		 * 		PPESSOA.BAIRRO AS BAIRRO,
+		 * 		PPESSOA.CIDADE AS CIDADE,
+		 * 		PPESSOA.CEP AS CEP,
+		 * 		PPESSOA.ESTADO AS ESTADO,
+		 * 		PFUNC.PISPASEP AS PISPASEP,
+		 * 		PPESSOA.CPF AS CPF,
+		 * 		PPESSOA.CARTIDENTIDADE AS IDENTIDADE,
+		 * 		GBANCO.NOME AS BANCO,
+		 * 		GAGENCIA.NOME AS AGENCIA,
+		 * 		GAGENCIA.NUMAGENCIA AS NUMERO_AGENCIA,
+		 * 		PFUNC.CONTAPAGAMENTO AS NUMERO_CONTA
+		 * FROM PFUNC AS PFUNC
+		 * 		LEFT JOIN PPESSOA AS PPESSOA ON (PPESSOA.CODIGO = PFUNC.CODPESSOA)
+		 * 		LEFT JOIN PFUNCAO AS PFUNCAO ON (PFUNCAO.CODIGO = PFUNC.CODFUNCAO AND PFUNCAO.CODCOLIGADA = PFUNC.CODCOLIGADA)
+		 * 		LEFT JOIN GBANCO AS GBANCO ON (GBANCO.NUMBANCO = PFUNC.CODBANCOPAGTO)
+		 * 		LEFT JOIN GAGENCIA AS GAGENCIA ON (GAGENCIA.NUMBANCO = GBANCO.NUMBANCO AND GAGENCIA.NUMAGENCIA = PFUNC.CODAGENCIAPAGTO)
+		 * WHERE PFUNC.CODCOLIGADA = ?
+		 * AND PFUNC.CHAPA = ?
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT ")
+					.append("GCOLIGADA.CODCOLIGADA AS CODCOLIGADA, ")
+					.append("GCOLIGADA.NOMEFANTASIA AS RAZAO_SOCIAL, ")
+					.append("GCOLIGADA.CGC AS CNPJ, ")
+					.append("PFUNC.CHAPA AS CHAPA, ")
+					.append("PFUNC.NOME AS NOME_FUNCIONARIO, ")
+					.append("PFUNCAO.NOME AS FUNCAO, ")
+					.append("PFUNC.DATAADMISSAO AS DATA_ADMISSAO, ")
+					.append("PPESSOA.RUA AS RUA, ")
+					.append("PPESSOA.NUMERO AS NUMERO_RUA, ")
+					.append("PPESSOA.BAIRRO AS BAIRRO, ")
+					.append("PPESSOA.CIDADE AS CIDADE, ")
+					.append("PPESSOA.CEP AS CEP, ")
+					.append("PPESSOA.ESTADO AS ESTADO, ")
+					.append("PFUNC.PISPASEP AS PISPASEP, ")
+					.append("PPESSOA.CPF AS CPF, ")
+					.append("PPESSOA.CARTIDENTIDADE AS IDENTIDADE, ")
+					.append("GBANCO.NOME AS BANCO, ")
+					.append("GAGENCIA.NOME AS AGENCIA, ")
+					.append("GAGENCIA.NUMAGENCIA AS NUMERO_AGENCIA, ")
+					.append("PFUNC.CONTAPAGAMENTO AS NUMERO_CONTA ")
+			.append("FROM PFUNC AS PFUNC ")
+					.append("LEFT JOIN PPESSOA AS PPESSOA ON (PPESSOA.CODIGO = PFUNC.CODPESSOA) ")
+					.append("LEFT JOIN PFUNCAO AS PFUNCAO ON (PFUNCAO.CODIGO = PFUNC.CODFUNCAO AND PFUNCAO.CODCOLIGADA = PFUNC.CODCOLIGADA) ")
+					.append("LEFT JOIN GBANCO AS GBANCO ON (GBANCO.NUMBANCO = PFUNC.CODBANCOPAGTO) ")
+					.append("LEFT JOIN GAGENCIA AS GAGENCIA ON (GAGENCIA.NUMBANCO = GBANCO.NUMBANCO AND GAGENCIA.NUMAGENCIA = PFUNC.CODAGENCIAPAGTO) ")
+					.append("LEFT JOIN GCOLIGADA AS GCOLIGADA ON (GCOLIGADA.CODCOLIGADA = PFUNC.CODCOLIGADA) ")
+			.append("WHERE PFUNC.CODCOLIGADA = ? ")
+			.append("AND PFUNC.CHAPA = ? ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			ps.setString(2, chapa);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				FuncionarioRM funcionario = new FuncionarioRM();
+				funcionario.setCodColigada(set.getInt("CODCOLIGADA"));
+				funcionario.setEmpresa(set.getString("RAZAO_SOCIAL"));
+				funcionario.setCnpj(set.getString("CNPJ"));
+				funcionario.setChapa(set.getString("CHAPA"));
+				funcionario.setNomeFuncionario(set.getString("NOME_FUNCIONARIO"));
+				funcionario.setFuncao(set.getString("FUNCAO"));
+				funcionario.setDtAdmissao(set.getDate("DATA_ADMISSAO"));
+				funcionario.setRua(set.getString("RUA"));
+				funcionario.setNumero(set.getString("NUMERO_RUA"));
+				funcionario.setBairro(set.getString("BAIRRO"));
+				funcionario.setCidade(set.getString("CIDADE"));
+				funcionario.setCep(set.getString("CEP"));
+				funcionario.setEstado(set.getString("ESTADO"));
+				funcionario.setPispasep(set.getString("PISPASEP"));
+				funcionario.setCpf(set.getString("CPF"));
+				funcionario.setIdentidade(set.getString("IDENTIDADE"));
+				funcionario.setNomeBanco(set.getString("BANCO"));
+				funcionario.setAgencia(set.getString("AGENCIA"));
+				funcionario.setNumeroAgencia(set.getString("NUMERO_AGENCIA"));
+				funcionario.setNumeroConta(set.getString("NUMERO_CONTA"));
+				
+				return funcionario;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterDadosFuncionario" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public FuncionarioHoleriteRM obterDadosHoleriteFuncionario(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
+		/**
+		 * 
+		 * SELECT PFPERFF.BASEFGTS, PFPERFF.BASEFGTS13, PFPERFF.BASEIRRF, PFPERFF.BASEIRRF13, PFPERFF.BASEINSS, PFPERFF.BASEINSS13, PFPERFF.SALARIODECALCULO FROM PFPERFF AS PFPERFF
+		 * WHERE PFPERFF.CODCOLIGADA = ?
+		 * AND PFPERFF.CHAPA = ?
+		 * AND PFPERFF.MESCOMP = ?
+		 * AND PFPERFF.ANOCOMP = ?
+		 * AND PFPERFF.NROPERIODO = ?
+		 * 
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT PFPERFF.BASEFGTS, PFPERFF.BASEFGTS13, PFPERFF.BASEIRRF, PFPERFF.BASEIRRF13, PFPERFF.BASEINSS, PFPERFF.BASEINSS13, PFPERFF.SALARIODECALCULO FROM PFPERFF AS PFPERFF ")
+			.append("WHERE PFPERFF.CODCOLIGADA = ? ")
+			.append("AND PFPERFF.CHAPA = ? ")
+			.append("AND PFPERFF.MESCOMP = ? ")
+			.append("AND PFPERFF.ANOCOMP = ? ")
+			.append("AND PFPERFF.NROPERIODO = ? ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setInt(3, mes);
+			ps.setInt(4, ano);
+			ps.setInt(5, periodo);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				FuncionarioHoleriteRM funcionario = new FuncionarioHoleriteRM();
+				if(periodo.equals(2)) {
+					funcionario.setBaseFGTS(set.getBigDecimal("BASEFGTS13"));
+					funcionario.setBaseIRRF(set.getBigDecimal("BASEIRRF13"));
+					funcionario.setBaseINSS(set.getBigDecimal("BASEINSS13"));
+				} else {
+					funcionario.setBaseFGTS(set.getBigDecimal("BASEFGTS"));
+					funcionario.setBaseIRRF(set.getBigDecimal("BASEIRRF"));
+					funcionario.setBaseINSS(set.getBigDecimal("BASEINSS"));
+				}
+				funcionario.setSalarioCalculo(set.getBigDecimal("SALARIODECALCULO"));
+				
+				return funcionario;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterDadosHoleriteFuncionario" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<HoleriteItensRM> listarItensHolerite(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
+		/**
+		 * 
+		 * SELECT PFFINANC.DTPAGTO, PEVENTO.CODIGO, PEVENTO.DESCRICAO, PFFINANC.[REF], IIF(PEVENTO.PROVDESCBASE LIKE 'P', PFFINANC.VALOR, 0) AS PROVENTO, IIF(PEVENTO.PROVDESCBASE LIKE 'D', PFFINANC.VALOR, 0) AS DESCONTO FROM PFFINANC AS PFFINANC
+		 * LEFT JOIN PEVENTO AS PEVENTO ON (PEVENTO.CODIGO = PFFINANC.CODEVENTO AND PEVENTO.CODCOLIGADA = PFFINANC.CODCOLIGADA)
+		 * WHERE PFFINANC.CODCOLIGADA = ?
+		 * AND PFFINANC.CHAPA = ?
+		 * AND PFFINANC.ANOCOMP = ?
+		 * AND PFFINANC.MESCOMP = ?
+		 * AND PFFINANC.NROPERIODO = ?
+		 * AND (PEVENTO.PROVDESCBASE LIKE 'P' OR PEVENTO.PROVDESCBASE LIKE 'D')
+		 * 
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<HoleriteItensRM> listaItens = new ArrayList<HoleriteItensRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT PFFINANC.DTPAGTO, PEVENTO.CODIGO, PEVENTO.DESCRICAO, PFFINANC.[REF], IIF(PEVENTO.PROVDESCBASE LIKE 'P', PFFINANC.VALOR, 0) AS PROVENTO, IIF(PEVENTO.PROVDESCBASE LIKE 'D', PFFINANC.VALOR, 0) AS DESCONTO FROM PFFINANC AS PFFINANC ")
+			.append("LEFT JOIN PEVENTO AS PEVENTO ON (PEVENTO.CODIGO = PFFINANC.CODEVENTO AND PEVENTO.CODCOLIGADA = PFFINANC.CODCOLIGADA) ")
+			.append("WHERE PFFINANC.CODCOLIGADA = ? ")
+			.append("AND PFFINANC.CHAPA = ? ")
+			.append("AND PFFINANC.MESCOMP = ? ")
+			.append("AND PFFINANC.ANOCOMP = ? ")
+			.append("AND PFFINANC.NROPERIODO = ? ")
+			.append("AND (PEVENTO.PROVDESCBASE LIKE 'P' OR PEVENTO.PROVDESCBASE LIKE 'D') ")
+			.append("ORDER BY PEVENTO.PROVDESCBASE DESC, PEVENTO.CODIGO ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setInt(3, mes);
+			ps.setInt(4, ano);
+			ps.setInt(5, periodo);
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				HoleriteItensRM item = new HoleriteItensRM();
+				item.setDtPagamento(set.getDate("DTPAGTO"));
+				item.setCodigo(set.getString("CODIGO"));
+				item.setDescricao(set.getString("DESCRICAO"));
+				item.setReferencia(set.getBigDecimal("REF"));
+				item.setProvento(set.getBigDecimal("PROVENTO"));
+				item.setDesconto(set.getBigDecimal("DESCONTO"));
+				
+				listaItens.add(item);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarItensHolerite" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaItens;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Integer obterQtdDependenteIRRF(Integer idColigada, String chapa) throws ApplicationException {
+		/**
+		 * 
+		 * SELECT COUNT(*) AS QTD FROM PFDEPEND
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA = ?
+		 * AND INCIRRF = 1
+		 * 
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT COUNT(*) AS QTD FROM PFDEPEND ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND INCIRRF = 1 ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			ps.setString(2, chapa);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getInt("QTD");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDependenteIRRF" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Integer obterQtdDependenteSalFamilia(Integer idColigada, String chapa) throws ApplicationException {
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT (COUNT(*) + (SELECT COUNT(*) FROM PFDEPEND ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND INCSALFAM = 1)) AS QTD FROM PFDEPEND ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND DATEDIFF(YEAR, DTNASCIMENTO, GETDATE()) < 14 ")
+			.append("AND (GRAUPARENTESCO = '1' OR GRAUPARENTESCO = '3') ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setLong(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setLong(3, idColigada);
+			ps.setString(4, chapa);
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getInt("QTD");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDependenteSalFamilia" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
 }

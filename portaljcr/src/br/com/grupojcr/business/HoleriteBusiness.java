@@ -60,9 +60,6 @@ public class HoleriteBusiness {
 				throw new ApplicationException("holerite.chapa.nao.identificada", FacesMessage.SEVERITY_WARN);
 			}
 			
-			System.out.println(idColigada);
-			System.out.println(chapaOriginal);
-			
 			List<HoleriteDTO> listaHolerite = new ArrayList<HoleriteDTO>();
 			Integer codPessoa = daoRM.obterCodigoPessoa(idColigada, chapaOriginal);
 			if(Util.isNotNull(codPessoa)) {
