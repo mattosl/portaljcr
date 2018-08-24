@@ -2033,7 +2033,11 @@ public class RMDAO {
 			
 			if (set.next()) {
 				FuncionarioHoleriteRM funcionario = new FuncionarioHoleriteRM();
-				if(periodo.equals(2)) {
+				if(periodo.equals(1)) {
+					funcionario.setBaseFGTS(set.getBigDecimal("BASEFGTS13"));
+					funcionario.setBaseIRRF(set.getBigDecimal(0));
+					funcionario.setBaseINSS(set.getBigDecimal("BASEINSS13"));
+				} else if(periodo.equals(2)) {
 					funcionario.setBaseFGTS(set.getBigDecimal("BASEFGTS13"));
 					funcionario.setBaseIRRF(set.getBigDecimal("BASEIRRF13"));
 					funcionario.setBaseINSS(set.getBigDecimal("BASEINSS13"));

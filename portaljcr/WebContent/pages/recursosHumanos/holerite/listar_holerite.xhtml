@@ -47,7 +47,7 @@
 									    
 										
 										<p:column headerText="Visualizar" style="text-align: center;" width="8%">
-											<p:commandLink ajax="false" process="@this" update="@form" action="#{holeriteController.download()}" target="_blank">
+											<p:commandLink ajax="false" process="@this" update="@form" action="#{holeriteController.download()}" target="_blank" >
 												<h:outputText value="" title="Visualizar" styleClass="fa fa-file-pdf-o" /> 
 												<f:setPropertyActionListener value="#{holerite}" target="#{holeriteController.holerite}" />
 											</p:commandLink>
