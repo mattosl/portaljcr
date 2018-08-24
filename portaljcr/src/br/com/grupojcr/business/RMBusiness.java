@@ -1,11 +1,14 @@
 package br.com.grupojcr.business;
 
+import java.io.StringReader;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
@@ -13,6 +16,8 @@ import org.apache.log4j.Logger;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
+import br.com.grupojcr.entity.xml.FopEnvelopeXML;
+import br.com.grupojcr.entity.xml.PFPERFFXML;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
@@ -363,6 +368,16 @@ public class RMBusiness {
 
 	public FuncionarioHoleriteRM obterDadosHolerite(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
 		try {
+			
+			String retorno = readRecordAuth("FopEnvelopeData", idColigada + ";" + chapa + ";" + ano + ";" + mes + ";" + periodo, "CODSISTEMA=G;CODCOLIGADA="+idColigada+";CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
+			
+			JAXBContext context = null;
+			context = JAXBContext.newInstance(FopEnvelopeXML.class);
+			Unmarshaller unmarshaller = context.createUnmarshaller();
+			unmarshaller = context.createUnmarshaller();
+			StringReader reader = new StringReader(retorno);
+			FopEnvelopeXML fopEnvelope = (FopEnvelopeXML) unmarshaller.unmarshal(reader);
+			
 			return daoRM.obterDadosHoleriteFuncionario(idColigada, chapa, mes, ano, periodo);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
