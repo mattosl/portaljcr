@@ -18,147 +18,179 @@
 			<div class="row">
         		<div class="col-md-12">
 					<div class="box box-danger">
-						<div class="box-header with-border">
-			              <h3 class="box-title">Acesso Rápido</h3>
-			            </div>
 						<div class="box-body">
-							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="true">
-								<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
-									<div class="info-box" style="background-color: #f8f8f8;">
-										<span class="info-box-icon bg-red"><i
-											class="fa fa-shopping-cart"></i></span>
-	
-										<div class="info-box-content">
-											<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml" ajax="false">
-												<span class="info-box-text acessoRapidoBox">Solicitação de Compra</span> 
-											</p:link>
+							<div class="welcomePrincipal">
+								<div class="box-header with-border">
+									<h3 class="box-title">
+										<p:link href="#" style="color: black;">Acesso Rápido</p:link>
+									</h3>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="true">
+									<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-red"><i
+												class="fa fa-shopping-cart"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml" ajax="false">
+													<span class="info-box-text acessoRapidoBox">Solicitação de Compra</span> 
+												</p:link>
+											</div>
 										</div>
-									</div>
-								</p:link>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/suporte/novo_chamado.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-green"><i
+												class="fa fa-wrench"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
+													<span class="info-box-text acessoRapidoBox">Abrir Chamado</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
+									<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-yellow"><i
+												class="fa fa-pencil-square-o"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
+													<span class="info-box-text acessoRapidoBox">Cotações</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
+									<p:link href="#" disabled="true">
+										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
+											<span class="info-box-icon bg-light-blue"><i
+												class="fa fa-dollar"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="#" ajax="false">
+													<span class="info-box-text acessoRapidoBox">Solicitar Reembolso</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
+									<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-purple"><i
+												class="fa fa-sliders"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+													<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+									<p:link href="#" onclick="abrirRecursosHumanos()">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-aqua"><i
+												class="fa fa-users"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="#" onclick="abrirRecursosHumanos()">
+													<span class="info-box-text acessoRapidoBox">Recursos Humanos</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
+									<p:link href="#" disabled="true">
+										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
+											<span class="info-box-icon bg-purple" style="background-color: #00acdf !important"><i
+												class="fa fa-file-text-o"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="#" ajax="false">
+													<span class="info-box-text acessoRapidoBox">NFS-e</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
 							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12">
-								<p:link href="/pages/suporte/novo_chamado.xhtml">
-									<div class="info-box" style="background-color: #f8f8f8;">
-										<span class="info-box-icon bg-green"><i
-											class="fa fa-wrench"></i></span>
-	
-										<div class="info-box-content">
-											<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
-												<span class="info-box-text acessoRapidoBox">Abrir Chamado</span> 
-											</p:link>
+							<div class="welcomeRecursosHumanos" style="display: none;">
+								<div class="box-header with-border">
+									<h3 class="box-title">
+										<p:link href="#" onclick="voltarPaginaInicial()">Acesso Rápido</p:link>
+									</h3> > 
+									<h3 class="box-title">
+										<p:link href="#" style="color: black;">Recursos Humanos</p:link>
+									</h3>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+									<p:link href="/pages/recursosHumanos/welcome.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-aqua"><i
+												class="fa fa-envelope"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/recursosHumanos/holerite/autenticar_holerite.xhtml">
+													<span class="info-box-text acessoRapidoBox">Holerite</span> 
+												</p:link>
+											</div>
 										</div>
-									</div>
-								</p:link>
-							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
-								<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
-									<div class="info-box" style="background-color: #f8f8f8;">
-										<span class="info-box-icon bg-yellow"><i
-											class="fa fa-pencil-square-o"></i></span>
-	
-										<div class="info-box-content">
-											<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
-												<span class="info-box-text acessoRapidoBox">Cotações</span> 
-											</p:link>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+									<p:link href="#" disabled="true">
+										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
+											<span class="info-box-icon bg-aqua"><i
+												class="fa fa-pencil-square-o"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="#">
+													<span class="info-box-text acessoRapidoBox">Ajuste de Ponto</span> 
+												</p:link>
+											</div>
 										</div>
-									</div>
-								</p:link>
-							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
-								<p:link href="#" disabled="true">
-									<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
-										<span class="info-box-icon bg-light-blue"><i
-											class="fa fa-dollar"></i></span>
-	
-										<div class="info-box-content">
-											<p:link href="#" ajax="false">
-												<span class="info-box-text acessoRapidoBox">Solicitar Reembolso</span> 
-											</p:link>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+									<p:link href="#" disabled="true">
+										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
+											<span class="info-box-icon bg-aqua"><i
+												class="fa fa-headphones"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="#">
+													<span class="info-box-text acessoRapidoBox">Service Desk</span> 
+												</p:link>
+											</div>
 										</div>
-									</div>
-								</p:link>
-							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
-								<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
-									<div class="info-box" style="background-color: #f8f8f8;">
-										<span class="info-box-icon bg-purple"><i
-											class="fa fa-sliders"></i></span>
-	
-										<div class="info-box-content">
-											<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
-												<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
-											</p:link>
-										</div>
-									</div>
-								</p:link>
-							</div>
-							<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
-								<p:link href="#" disabled="true">
-									<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
-										<span class="info-box-icon bg-purple" style="background-color: #00acdf !important"><i
-											class="fa fa-file-text-o"></i></span>
-	
-										<div class="info-box-content">
-											<p:link href="#" ajax="false">
-												<span class="info-box-text acessoRapidoBox">NFS-e</span> 
-											</p:link>
-										</div>
-									</div>
-								</p:link>
+									</p:link>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-<!-- 				<div class="col-md-3"> -->
-<!-- 					<div class="box box-danger"> -->
-<!-- 						<div class="box-header with-border"> -->
-<!-- 		            		<h3 class="box-title">Links Externos</h3> -->
-<!-- 			            </div> -->
-<!-- 						<div class="box-body"> -->
-<!-- 							<div class="row"> -->
-<!-- 					        	<div class="col-md-6"> -->
-<!-- 					          		<div class="box box-danger"> -->
-<!-- 					            		<div class="box-body box-profile"> -->
-<!-- 					              			<img class="profile-user-img img-responsive img-circle" src="../../resources/images/totvs_logo.png" alt="TOTVS RM" /> -->
-<!-- 					              			<p class="text-muted text-center">TOTVS RM</p> -->
-<!-- 											<a target="_blank" href="http://portalrm.grupojcr.com.br" class="btn btn-danger btn-block"><b>Acessar</b></a> -->
-<!-- 					            		</div> -->
-<!-- 					            	</div> -->
-<!-- 					          	</div> -->
-<!-- 					          	<div class="col-md-6"> -->
-<!-- 					          		<div class="box box-danger"> -->
-<!-- 					            		<div class="box-body box-profile"> -->
-<!-- 					              			<img class="profile-user-img img-responsive img-circle" src="../../resources/images/fluig_logo.png" alt="FLUIG" /> -->
-<!-- 					              			<p class="text-muted text-center">Fluig</p> -->
-<!-- 											<a target="_blank" href="http://aprovacao.grupojcr.com.br" class="btn btn-danger btn-block"><b>Acessar</b></a> -->
-<!-- 					            		</div> -->
-<!-- 					            	</div> -->
-<!-- 					          	</div> -->
-<!-- 					        </div> -->
-<!-- 					        <div class="row"> -->
-<!-- 					        	<div class="col-md-6"> -->
-<!-- 					          		<div class="box box-danger"> -->
-<!-- 					            		<div class="box-body box-profile"> -->
-<!-- 					              			<img class="profile-user-img img-responsive img-circle" src="../../resources/images/qlik_logo.png" alt="QlikView" /> -->
-<!-- 					              			<p class="text-muted text-center">QlikView</p> -->
-<!-- 											<a target="_blank" href="http://bi.grupojcr.com.br" class="btn btn-danger btn-block"><b>Acessar</b></a> -->
-<!-- 					            		</div> -->
-<!-- 					            	</div> -->
-<!-- 					          	</div> -->
-<!-- 					          	<div class="col-md-6"> -->
-<!-- 					          		<div class="box box-danger"> -->
-<!-- 					            		<div class="box-body box-profile"> -->
-<!-- 					              			<img class="profile-user-img img-responsive img-circle" src="../../resources/images/jcr-logo.png" alt="Chamados" /> -->
-<!-- 					              			<p class="text-muted text-center">Suporte</p> -->
-<!-- 											<a target="_blank" href="http://suporte.grupojcr.com.br/glpi/" class="btn btn-danger btn-block"><b>Acessar</b></a> -->
-<!-- 					            		</div> -->
-<!-- 					            	</div> -->
-<!-- 					          	</div> -->
-<!-- 					        </div> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
-<!-- 				</div> -->
 			</div>
+			<script>
+
+				function voltarPaginaInicial() {
+					$(".welcomePrincipal").css("display", "");
+					$(".welcomeRecursosHumanos").css("display", "none");
+				}
+				function abrirRecursosHumanos() {
+					$(".welcomePrincipal").css("display", "none");
+					$(".welcomeRecursosHumanos").css("display", "");
+				}
+			</script>
 		</ui:define>
 	</ui:composition>
 </ui:component>
