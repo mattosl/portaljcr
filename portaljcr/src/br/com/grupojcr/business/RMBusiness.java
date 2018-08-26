@@ -17,12 +17,10 @@ import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
-import br.com.grupojcr.entity.xml.PFPERFFXML;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
-import br.com.grupojcr.rm.FuncionarioHoleriteRM;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.rm.HoleriteItensRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
@@ -366,7 +364,7 @@ public class RMBusiness {
 		}
 	}
 
-	public FuncionarioHoleriteRM obterDadosHolerite(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
+	public FopEnvelopeXML obterDadosHolerite(Integer idColigada, String chapa, Integer mes, Integer ano, Integer periodo) throws ApplicationException {
 		try {
 			
 			String retorno = readRecordAuth("FopEnvelopeData", idColigada + ";" + chapa + ";" + ano + ";" + mes + ";" + periodo, "CODSISTEMA=G;CODCOLIGADA="+idColigada+";CODUSUARIO=portaljcr", "portaljcr", "portaljcr-123");
@@ -378,7 +376,8 @@ public class RMBusiness {
 			StringReader reader = new StringReader(retorno);
 			FopEnvelopeXML fopEnvelope = (FopEnvelopeXML) unmarshaller.unmarshal(reader);
 			
-			return daoRM.obterDadosHoleriteFuncionario(idColigada, chapa, mes, ano, periodo);
+			return fopEnvelope;
+			// return daoRM.obterDadosHoleriteFuncionario(idColigada, chapa, mes, ano, periodo);
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

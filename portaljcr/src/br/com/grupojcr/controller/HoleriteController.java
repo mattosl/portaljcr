@@ -1,7 +1,6 @@
 package br.com.grupojcr.controller;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +23,7 @@ import br.com.grupojcr.business.HoleriteBusiness;
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.HoleriteDTO;
 import br.com.grupojcr.dto.RelatorioHoleriteDTO;
-import br.com.grupojcr.rm.FuncionarioHoleriteRM;
+import br.com.grupojcr.entity.xml.FopEnvelopeXML;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.rm.HoleriteItensRM;
 import br.com.grupojcr.util.RelatorioUtil;
@@ -88,10 +87,8 @@ public class HoleriteController implements Serializable {
 	public StreamedContent download() throws ApplicationException {
 		try {
 			FuncionarioRM dadosFuncionario = rmBusiness.obterDadosFuncionario(getChapa());
-			FuncionarioHoleriteRM dadosHolerite = rmBusiness.obterDadosHolerite(dadosFuncionario.getCodColigada(), dadosFuncionario.getChapa(), getHolerite().getMes().getId(), getHolerite().getAno(), getHolerite().getPeriodo().getId());
+			FopEnvelopeXML dadosHolerite = rmBusiness.obterDadosHolerite(dadosFuncionario.getCodColigada(), dadosFuncionario.getChapa(), getHolerite().getMes().getId(), getHolerite().getAno(), getHolerite().getPeriodo().getId());
 			List<HoleriteItensRM> dadosItensHolerite = rmBusiness.listarItensHolerite(dadosFuncionario.getCodColigada(), dadosFuncionario.getChapa(), getHolerite().getMes().getId(), getHolerite().getAno(), getHolerite().getPeriodo().getId());
-			Integer depIRRF = rmBusiness.obterQtdDepIRRF(dadosFuncionario.getCodColigada(), dadosFuncionario.getChapa());
-			Integer depSalFamilia = rmBusiness.obterQtdDepSalFamilia(dadosFuncionario.getCodColigada(), dadosFuncionario.getChapa());
 			
 			RelatorioHoleriteDTO dto = new RelatorioHoleriteDTO();
 			dto.setRazaoSocial(dadosFuncionario.getEmpresa().toUpperCase());
@@ -109,17 +106,15 @@ public class HoleriteController implements Serializable {
 			dto.setCpf(Util.formatarCPF(dadosFuncionario.getCpf()));
 			dto.setIdentidade(dadosFuncionario.getIdentidade());
 			dto.setCompetencia(getHolerite().getMes().getDescricao().toUpperCase() + "/" + getHolerite().getAno());
-			dto.setDepIRRF(depIRRF.toString());
-			dto.setDepSalarioFamilia(depSalFamilia.toString());
-			dto.setSalarioCalculo(TreatNumber.formatMoney(dadosHolerite.getSalarioCalculo()));
+			dto.setDepIRRF(dadosHolerite.getPfperff().getNroDepIrrf().toString());
+			dto.setDepSalarioFamilia(dadosHolerite.getPfperff().getNroDepSal().toString());
+			dto.setSalarioCalculo(TreatNumber.formatMoney(dadosHolerite.getPfperff().getSalarioCalculo()));
 			dto.setDtPagamento(TreatDate.format("dd/MM/yyyy", Calendar.getInstance().getTime()));
 			dto.setBanco(dadosFuncionario.getNomeBanco());
 			dto.setAgencia(dadosFuncionario.getAgencia() + " - " + dadosFuncionario.getNumeroAgencia());
 			dto.setConta(dadosFuncionario.getNumeroConta());
 			dto.setListaItens(new ArrayList<RelatorioHoleriteDTO>());
 	
-			BigDecimal totalProventos = new BigDecimal(0);
-			BigDecimal totalDescontos = new BigDecimal(0);
 			if(CollectionUtils.isNotEmpty(dadosItensHolerite)) {
 				dto.setDtPagamento(TreatDate.format("dd/MM/yyyy", dadosItensHolerite.get(0).getDtPagamento()));
 				for(HoleriteItensRM item : dadosItensHolerite) {
@@ -129,26 +124,30 @@ public class HoleriteController implements Serializable {
 					dtoItem.setReferencia(TreatNumber.formatMoney(item.getReferencia()));
 					if(TreatNumber.isNotNullOrZero(item.getProvento())) {
 						dtoItem.setProvento(TreatNumber.formatMoney(item.getProvento()));
-						totalProventos = totalProventos.add(item.getProvento());
 					}
 					if(TreatNumber.isNotNullOrZero(item.getDesconto())) {
 						dtoItem.setDesconto(TreatNumber.formatMoney(item.getDesconto()));
-						totalDescontos = totalDescontos.add(item.getDesconto());
 					}
 					
 					dto.getListaItens().add(dtoItem);
 				}
 			}
 			
-			dto.setBaseFGTS(TreatNumber.formatMoney(dadosHolerite.getBaseFGTS()));
-			dto.setBaseIRRF(TreatNumber.formatMoney(totalProventos));
-			dto.setSaldoContribuicaoINSS(TreatNumber.formatMoney(dadosHolerite.getBaseINSS()));
-			dto.setFgtsMes(TreatNumber.formatMoney(dadosHolerite.getBaseFGTS().multiply(new BigDecimal(0.08))));
-			dto.setTotalProventos(TreatNumber.formatMoney(totalProventos));
-			dto.setTotalDescontos(TreatNumber.formatMoney(totalDescontos));
+			if(getHolerite().getPeriodo().getId().equals(2)) {
+				dto.setBaseFGTS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseFgts13()));
+				dto.setBaseIRRF(TreatNumber.formatMoney(dadosHolerite.getPfperff().getIncRais()));
+				dto.setSaldoContribuicaoINSS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseInss13()));
+				dto.setFgtsMes(TreatNumber.formatMoney(dadosHolerite.getPfperff().getFgts13()));
+			} else {
+				dto.setBaseFGTS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseFgts()));
+				dto.setBaseIRRF(TreatNumber.formatMoney(dadosHolerite.getPfperff().getIncRais()));
+				dto.setSaldoContribuicaoINSS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseInss()));
+				dto.setFgtsMes(TreatNumber.formatMoney(dadosHolerite.getPfperff().getFgts()));
+			}
+			dto.setTotalProventos(TreatNumber.formatMoney(dadosHolerite.getPfperff().getTotalProventos()));
+			dto.setTotalDescontos(TreatNumber.formatMoney(dadosHolerite.getPfperff().getTotalDescontos()));
 			
-			BigDecimal liquidoReceber = totalProventos.subtract(totalDescontos);
-			dto.setLiquidoReceber(TreatNumber.formatMoney(liquidoReceber));
+			dto.setLiquidoReceber(TreatNumber.formatMoney(dadosHolerite.getPfperff().getLiquido()));
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			
 			byte [] relatorio = RelatorioUtil.gerarRelatorio("Holerite", Arrays.asList(dto), map);

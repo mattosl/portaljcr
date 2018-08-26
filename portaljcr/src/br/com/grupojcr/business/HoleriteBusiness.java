@@ -1,6 +1,7 @@
 package br.com.grupojcr.business;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -66,9 +67,14 @@ public class HoleriteBusiness {
 				List<ChapaDTO> listaChapas = daoRM.listarChapaFuncionario(codPessoa);
 				for(ChapaDTO dto : listaChapas) {
 					List<HoleriteDTO> holeritesChapa = daoRM.listarHoleriteFuncionario(dto.getIdColigada(), dto.getChapa());
+					Calendar dataAtual = Calendar.getInstance();
 					for(HoleriteDTO h : holeritesChapa) {
-						h.setColigada(daoColigada.obter(h.getColigada().getId()));
-						listaHolerite.add(h);
+						if(h.getMes().getId().equals(dataAtual.get(Calendar.MONTH) + 1) && h.getAno().equals(dataAtual.get(Calendar.YEAR)) ) {
+							continue;
+						} else {
+							h.setColigada(daoColigada.obter(h.getColigada().getId()));
+							listaHolerite.add(h);
+						}
 					}
 					
 				}
