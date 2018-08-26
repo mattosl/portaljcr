@@ -26,70 +26,14 @@
 									</h3>
 								</div>
 								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="true">
-									<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
+									<p:link href="#" onclick="abrirSolicitacaoCompra()">
 										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-red"><i
 												class="fa fa-shopping-cart"></i></span>
 		
 											<div class="info-box-content">
-												<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml" ajax="false">
+												<p:link href="#" onclick="abrirSolicitacaoCompra()" ajax="false">
 													<span class="info-box-text acessoRapidoBox">Solicitação de Compra</span> 
-												</p:link>
-											</div>
-										</div>
-									</p:link>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12">
-									<p:link href="/pages/suporte/novo_chamado.xhtml">
-										<div class="info-box" style="background-color: #f8f8f8;">
-											<span class="info-box-icon bg-green"><i
-												class="fa fa-wrench"></i></span>
-		
-											<div class="info-box-content">
-												<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
-													<span class="info-box-text acessoRapidoBox">Abrir Chamado</span> 
-												</p:link>
-											</div>
-										</div>
-									</p:link>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
-									<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
-										<div class="info-box" style="background-color: #f8f8f8;">
-											<span class="info-box-icon bg-yellow"><i
-												class="fa fa-pencil-square-o"></i></span>
-		
-											<div class="info-box-content">
-												<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
-													<span class="info-box-text acessoRapidoBox">Cotações</span> 
-												</p:link>
-											</div>
-										</div>
-									</p:link>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
-									<p:link href="#" disabled="true">
-										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
-											<span class="info-box-icon bg-light-blue"><i
-												class="fa fa-dollar"></i></span>
-		
-											<div class="info-box-content">
-												<p:link href="#" ajax="false">
-													<span class="info-box-text acessoRapidoBox">Solicitar Reembolso</span> 
-												</p:link>
-											</div>
-										</div>
-									</p:link>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
-									<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
-										<div class="info-box" style="background-color: #f8f8f8;">
-											<span class="info-box-icon bg-purple"><i
-												class="fa fa-sliders"></i></span>
-		
-											<div class="info-box-content">
-												<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
-													<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
 												</p:link>
 											</div>
 										</div>
@@ -109,15 +53,57 @@
 										</div>
 									</p:link>
 								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
+									<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-purple"><i
+												class="fa fa-sliders"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+													<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
+									<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-yellow"><i
+												class="fa fa-pencil-square-o"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
+													<span class="info-box-text acessoRapidoBox">Cotações</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/suporte/novo_chamado.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-green"><i
+												class="fa fa-wrench"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
+													<span class="info-box-text acessoRapidoBox">Abrir Chamado</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
 								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
 									<p:link href="#" disabled="true">
 										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
-											<span class="info-box-icon bg-purple" style="background-color: #00acdf !important"><i
-												class="fa fa-file-text-o"></i></span>
+											<span class="info-box-icon bg-light-blue"><i
+												class="fa fa-dollar"></i></span>
 		
 											<div class="info-box-content">
 												<p:link href="#" ajax="false">
-													<span class="info-box-text acessoRapidoBox">NFS-e</span> 
+													<span class="info-box-text acessoRapidoBox">Solicitar Reembolso</span> 
 												</p:link>
 											</div>
 										</div>
@@ -176,6 +162,44 @@
 									</p:link>
 								</div>
 							</div>
+							<div class="welcomeSolicitacaoCompra" style="display: none;">
+								<div class="box-header with-border">
+									<h3 class="box-title">
+										<p:link href="#" onclick="voltarPaginaInicial()">Acesso Rápido</p:link>
+									</h3> > 
+									<h3 class="box-title">
+										<p:link href="#" style="color: black;">Solicitação de Compra</p:link>
+									</h3>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-red"><i
+												class="fa fa-cart-plus"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
+													<span class="info-box-text acessoRapidoBox">Nova Solicitação</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-red"><i
+												class="fa fa-list-alt"></i></span>
+		
+											<div class="info-box-content">
+												<p:link href="/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml">
+													<span class="info-box-text acessoRapidoBox">Minhas Solicitações</span> 
+												</p:link>
+											</div>
+										</div>
+									</p:link>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -185,10 +209,15 @@
 				function voltarPaginaInicial() {
 					$(".welcomePrincipal").css("display", "");
 					$(".welcomeRecursosHumanos").css("display", "none");
+					$(".welcomeSolicitacaoCompra").css("display", "none");
 				}
 				function abrirRecursosHumanos() {
 					$(".welcomePrincipal").css("display", "none");
 					$(".welcomeRecursosHumanos").css("display", "");
+				}
+				function abrirSolicitacaoCompra() {
+					$(".welcomePrincipal").css("display", "none");
+					$(".welcomeSolicitacaoCompra").css("display", "");
 				}
 			</script>
 		</ui:define>
