@@ -12,10 +12,10 @@
 		<ui:param name="activeSubmenu" value="holerite"/>
     	<ui:param name="activeMenu" value="rh"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-envelope fa-1x cor-padrao"></i> Holerite</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-envelope fa-1x cor-padrao"></i> Ajustar Ponto</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-users"></i> Recursos Humanos</li>
-	    	<li class="active"><i class="fa fa-envelope"></i> Holerite</li>
+	    	<li class="active"><i class="fa fa-envelope"></i> Ajustar Ponto</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
@@ -38,7 +38,7 @@
 										</div>
 	
 										<div class="col-sm-6 col-md-2 col-xs-12">
-											<h:inputText id="chapa" value="#{holeriteController.chapa}" maxlength="10" styleClass="form-control" />
+											<h:inputText id="chapa" value="#{ajustarPontoController.chapa}" maxlength="10" styleClass="form-control" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -47,7 +47,7 @@
 										</div>
 	
 										<div class="col-sm-6 col-md-2 col-xs-12">
-											<h:inputSecret id="chave" value="#{holeriteController.chave}" maxlength="50" styleClass="form-control" />
+											<h:inputSecret id="chave" value="#{ajustarPontoController.chave}" maxlength="50" styleClass="form-control" />
 <!-- 											<div class="col-sm-12 col-md-12 col-xs-12">  -->
 <!-- 												<div class="text-center"> -->
 <!-- 													<p:link styleClass="text-center" style="font-size:12px !important; color: #3c8dbc;">Esqueceu sua senha?</p:link> -->
@@ -65,7 +65,7 @@
 										icon="fa fa-sign-in"
 										value="Autenticar"
 										id="btn_autenticar"
-										action="#{holeriteController.autenticarUsuario()}"
+										action="#{ajustarPontoController.autenticarUsuario()}"
 										process="@form"
 										update="@form"
 										ajax="true" />

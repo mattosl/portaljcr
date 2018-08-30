@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="holerite"/>
+    	<ui:param name="activeMenu" value="rh"/>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-envelope fa-1x cor-padrao"></i> Holerite</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-users"></i> Recursos Humanos</li>
+	    	<li class="active"><i class="fa fa-envelope"></i> Holerite</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelAutenticacao" styleClass="box box-danger">
+							<div class="form-horizontal">
+								<div class="box-body">
+									<p:dataTable var="holerite" id="tableHolerite" widgetVar="widgetTabelaHolerite"
+										value="#{holeriteController.listaHolerite}" 
+										tableStyle="table-layout: auto; word-break: keep-all;"
+										emptyMessage="Nenhum holerite disponível para o seu usuário.">
+										
+									  	<p:column headerText="Empresa" style="text-align:center;font-size:12px;">
+									        <h:outputText value="#{holerite.coligada.razaoSocial.toUpperCase()}" />
+									    </p:column>
+									    
+									    <p:column headerText="Ano" style="text-align:center;font-size:12px;">
+									        <h:outputText value="#{holerite.ano}" />
+									    </p:column>
+									    
+									    <p:column headerText="Mês" style="text-align:center;font-size:12px;">
+									        <h:outputText value="#{holerite.mes.descricao.toUpperCase()}" />
+									    </p:column>
+				
+									    <p:column headerText="Tipo" style="text-align:center;font-size:12px;" >
+									        <h:outputText value="#{holerite.periodo.descricao.toUpperCase()}" />
+									    </p:column>
+									    
+										
+										<p:column headerText="Visualizar" style="text-align: center;" width="8%">
+											<p:commandLink ajax="false" process="@this" update="@form" action="#{holeriteController.download()}" target="_blank" >
+												<h:outputText value="" title="Visualizar" styleClass="fa fa-file-pdf-o" /> 
+												<f:setPropertyActionListener value="#{holerite}" target="#{holeriteController.holerite}" />
+											</p:commandLink>
+										</p:column>
+									    
+									</p:dataTable>
+								</div>
+							</div>
+						</p:panel>
+					</f:validateBean>
+				</h:form>
+				<script type="text/javascript">
+
+					function start() {
+					    PF('statusDialog').show();
+					}
+					 
+					function stop() {
+					    PF('statusDialog').hide();
+					}
+				</script>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

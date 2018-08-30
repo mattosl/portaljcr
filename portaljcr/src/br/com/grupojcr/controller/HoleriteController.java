@@ -1,6 +1,7 @@
 package br.com.grupojcr.controller;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.HoleriteDTO;
 import br.com.grupojcr.dto.RelatorioHoleriteDTO;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
+import br.com.grupojcr.enumerator.PeriodoHolerite;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.rm.HoleriteItensRM;
 import br.com.grupojcr.util.RelatorioUtil;
@@ -76,6 +78,8 @@ public class HoleriteController implements Serializable {
 			
 			return "/pages/recursosHumanos/holerite/listar_holerite.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
+			setChapa(null);
+			setChave(null);
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
@@ -133,17 +137,22 @@ public class HoleriteController implements Serializable {
 				}
 			}
 			
-			if(getHolerite().getPeriodo().getId().equals(2)) {
-				dto.setBaseFGTS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseFgts13()));
-				dto.setBaseIRRF(TreatNumber.formatMoney(dadosHolerite.getPfperff().getIncRais()));
-				dto.setSaldoContribuicaoINSS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseInss13()));
-				dto.setFgtsMes(TreatNumber.formatMoney(dadosHolerite.getPfperff().getFgts13()));
+			BigDecimal baseFGTS = dadosHolerite.getPfperff().getBaseFgts().add(dadosHolerite.getPfperff().getBaseFgts13());
+			BigDecimal baseIRRF = new BigDecimal(0);
+			if(getHolerite().getPeriodo().getId().equals(PeriodoHolerite.DECIMO_TERCEIRO.getId())) {
+				baseIRRF = dadosHolerite.getPfperff().getBaseIrrf13();
+			} else if(getHolerite().getPeriodo().getId().equals(PeriodoHolerite.PREMIO.getId())) {
+				baseIRRF = dadosHolerite.getPfperff().getIncInformeRend();
 			} else {
-				dto.setBaseFGTS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseFgts()));
-				dto.setBaseIRRF(TreatNumber.formatMoney(dadosHolerite.getPfperff().getIncRais()));
-				dto.setSaldoContribuicaoINSS(TreatNumber.formatMoney(dadosHolerite.getPfperff().getBaseInss()));
-				dto.setFgtsMes(TreatNumber.formatMoney(dadosHolerite.getPfperff().getFgts()));
+				baseIRRF = dadosHolerite.getPfperff().getIncRais();
 			}
+			BigDecimal baseINSS = dadosHolerite.getPfperff().getBaseInss().add(dadosHolerite.getPfperff().getBaseInss13());
+			BigDecimal fgtsMes = dadosHolerite.getPfperff().getFgts().add(dadosHolerite.getPfperff().getFgts13());
+			
+			dto.setBaseFGTS(TreatNumber.formatMoney(baseFGTS));
+			dto.setBaseIRRF(TreatNumber.formatMoney(baseIRRF));
+			dto.setSaldoContribuicaoINSS(TreatNumber.formatMoney(baseINSS));
+			dto.setFgtsMes(TreatNumber.formatMoney(fgtsMes));
 			dto.setTotalProventos(TreatNumber.formatMoney(dadosHolerite.getPfperff().getTotalProventos()));
 			dto.setTotalDescontos(TreatNumber.formatMoney(dadosHolerite.getPfperff().getTotalDescontos()));
 			

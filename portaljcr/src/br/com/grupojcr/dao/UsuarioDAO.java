@@ -129,6 +129,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			sb.append("LEFT JOIN FETCH usuario.grupos ");
 			sb.append("LEFT JOIN FETCH usuario.coligadas ");
 			sb.append("WHERE usuario.nome != null ");
+			sb.append("ORDER BY usuario.nome ");
 			
 			if(Util.isNotNull(filtro.getNome())) {
 				sb.append("AND usuario.nome like :nome ");

@@ -65,6 +65,9 @@ public class PFPERFFXML {
 	@XmlElement(name = "NRODEPENDSALFAM")
 	private Integer nroDepSal;
 	
+	@XmlElement(name = "INCINFORMEREND")
+	private BigDecimal incInformeRend;
+	
 	public Integer getCodColigada() {
 		return codColigada;
 	}
@@ -199,6 +202,14 @@ public class PFPERFFXML {
 
 	public void setNroDepSal(Integer nroDepSal) {
 		this.nroDepSal = nroDepSal;
+	}
+
+	public BigDecimal getIncInformeRend() {
+		return incInformeRend;
+	}
+
+	public void setIncInformeRend(BigDecimal incInformeRend) {
+		this.incInformeRend = incInformeRend;
 	}
 
 }

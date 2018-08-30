@@ -13,16 +13,16 @@
     	<ui:param name="activeMenu" value="inicio"/>
 			
     	<ui:define name="pageTitle"><i class="fa fa-home fa-1x cor-padrao"></i> Portal JCR</ui:define>
-    	<ui:define name="pageDescription">Pagina Inicial</ui:define>
+    	<ui:define name="pageDescription">Seja bem-vindo #{usuario.nome}.</ui:define>
 		<ui:define name="body">
 			<div class="row">
         		<div class="col-md-12">
-					<div class="box box-danger">
-						<div class="box-body">
-							<div class="welcomePrincipal">
-								<div class="box-header with-border">
+        			<div class="welcomePrincipal" style="display: none;">
+						<div id="painelPrincipal" class="box box-danger">
+							<div class="box-body">
+								<div class="box-header">
 									<h3 class="box-title">
-										<p:link href="#" style="color: black;">Acesso Rápido</p:link>
+										<i class="fa fa-th"></i> Acesso Rápido
 									</h3>
 								</div>
 								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="true">
@@ -31,11 +31,11 @@
 											<span class="info-box-icon bg-red"><i
 												class="fa fa-shopping-cart"></i></span>
 		
-											<div class="info-box-content">
 												<p:link href="#" onclick="abrirSolicitacaoCompra()" ajax="false">
-													<span class="info-box-text acessoRapidoBox">Solicitação de Compra</span> 
+													<div class="info-box-content">
+														<span class="info-box-text acessoRapidoBox">Solicitação de Compra</span> 
+													</div>
 												</p:link>
-											</div>
 										</div>
 									</p:link>
 								</div>
@@ -44,54 +44,53 @@
 										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-aqua"><i
 												class="fa fa-users"></i></span>
-		
-											<div class="info-box-content">
-												<p:link href="#" onclick="abrirRecursosHumanos()">
+											<p:link href="#" onclick="abrirRecursosHumanos()">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Recursos Humanos</span> 
-												</p:link>
-											</div>
+												</div>
+											</p:link>
 										</div>
 									</p:link>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
-									<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
-										<div class="info-box" style="background-color: #f8f8f8;">
-											<span class="info-box-icon bg-purple"><i
-												class="fa fa-sliders"></i></span>
-		
-											<div class="info-box-content">
-												<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
-													<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
-												</p:link>
-											</div>
-										</div>
-									</p:link>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
-									<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
+								</div> 
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO', 'ADMINISTRATIVO'])}">
+									<p:link href="#" onclick="abrirCotacao()">
 										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-yellow"><i
 												class="fa fa-pencil-square-o"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml" ajax="false">
-													<span class="info-box-text acessoRapidoBox">Cotações</span> 
-												</p:link>
-											</div>
+											<p:link href="#" onclick="abrirCotacao()">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Cotação</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GESTOR DE ORCAMENTO', 'RESPONSAVEL ORCAMENTO'])}">
+									<p:link href="#" onclick="abrirOrcamento()">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-purple"><i
+												class="fa fa-dollar"></i></span>
+		
+											<p:link href="#" onclick="abrirOrcamento()">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Orçamento</span> 
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
 								<div class="col-md-4 col-sm-6 col-xs-12">
-									<p:link href="/pages/suporte/novo_chamado.xhtml">
+									<p:link href="#" onclick="abrirSuporte()">
 										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-green"><i
 												class="fa fa-wrench"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
-													<span class="info-box-text acessoRapidoBox">Abrir Chamado</span> 
-												</p:link>
-											</div>
+											<p:link href="#" onclick="abrirSuporte()">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Suporte</span> 
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
@@ -101,87 +100,93 @@
 											<span class="info-box-icon bg-light-blue"><i
 												class="fa fa-dollar"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="#" ajax="false">
+											<p:link href="#" ajax="false">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Solicitar Reembolso</span> 
-												</p:link>
-											</div>
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
 							</div>
-							<div class="welcomeRecursosHumanos" style="display: none;">
-								<div class="box-header with-border">
-									<h3 class="box-title">
-										<p:link href="#" onclick="voltarPaginaInicial()">Acesso Rápido</p:link>
-									</h3> > 
-									<h3 class="box-title">
-										<p:link href="#" style="color: black;">Recursos Humanos</p:link>
-									</h3>
-								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+						</div>
+					</div>
+					<div class="welcomeRecursosHumanos" style="display: none;">
+						<div id="painelRecursosHumanos" class="box box-solid">
+							<div class="box-header with-border bg-aqua">
+								<h3 class="box-title pull-left">
+									<i class="fa fa-arrow-circle-left" onclick="voltarPaginaInicial()" style="cursor: pointer;border-right: 1px dotted;padding-right: 15px;"></i>
+								</h3>
+								<h3 class="box-title" style="padding-left: 15px;"> Recursos Humanos</h3>
+								<h3 class="box-title pull-right"><i class="fa fa-users pull-right"></i></h3>
+							</div>
+							<div class="box-body">
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI']) or usuario.usuario eq 'LacerdaT' or usuario.usuario eq 'EsbonikA' or usuario.usuario eq 'JacomassiK'}">
 									<p:link href="/pages/recursosHumanos/welcome.xhtml">
 										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-aqua"><i
 												class="fa fa-envelope"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="/pages/recursosHumanos/holerite/autenticar_holerite.xhtml">
+											<p:link href="/pages/recursosHumanos/holerite/autenticar_holerite.xhtml">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Holerite</span> 
-												</p:link>
-											</div>
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI']) or usuario.usuario eq 'LacerdaT' or usuario.usuario eq 'EsbonikA' or usuario.usuario eq 'JacomassiK'}">
 									<p:link href="#" disabled="true">
 										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
 											<span class="info-box-icon bg-aqua"><i
 												class="fa fa-pencil-square-o"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="#">
+											<p:link href="#">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Ajuste de Ponto</span> 
-												</p:link>
-											</div>
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
-								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI'])}">
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'GERENTE DE TI']) or usuario.usuario eq 'LacerdaT' or usuario.usuario eq 'EsbonikA' or usuario.usuario eq 'JacomassiK'}">
 									<p:link href="#" disabled="true">
 										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
 											<span class="info-box-icon bg-aqua"><i
 												class="fa fa-headphones"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="#">
+											<p:link href="#">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Service Desk</span> 
-												</p:link>
-											</div>
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
 							</div>
-							<div class="welcomeSolicitacaoCompra" style="display: none;">
-								<div class="box-header with-border">
-									<h3 class="box-title">
-										<p:link href="#" onclick="voltarPaginaInicial()">Acesso Rápido</p:link>
-									</h3> > 
-									<h3 class="box-title">
-										<p:link href="#" style="color: black;">Solicitação de Compra</p:link>
-									</h3>
-								</div>
+						</div>
+					</div>
+					<div class="welcomeSolicitacaoCompra" style="display: none;">
+						<div id="painelSolicitacaoCompra" class="box box-solid">
+							<div class="box-header with-border bg-red">
+								<h3 class="box-title pull-left">
+									<i class="fa fa-arrow-circle-left" onclick="voltarPaginaInicial()" style="cursor: pointer;border-right: 1px dotted;padding-right: 15px;"></i>
+								</h3>
+								<h3 class="box-title" style="padding-left: 15px;"> Solicitação de Compra</h3>
+								<h3 class="box-title pull-right"><i class="fa fa-shopping-cart pull-right"></i></h3>
+							</div>
+							<div class="box-body">
 								<div class="col-md-4 col-sm-6 col-xs-12">
 									<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
 										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-red"><i
 												class="fa fa-cart-plus"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
+											<p:link href="/pages/solicitacaoCompra/solicitacao/nova_solicitacao_pre.xhtml">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Nova Solicitação</span> 
-												</p:link>
-											</div>
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
@@ -191,11 +196,134 @@
 											<span class="info-box-icon bg-red"><i
 												class="fa fa-list-alt"></i></span>
 		
-											<div class="info-box-content">
-												<p:link href="/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml">
+											<p:link href="/pages/solicitacaoCompra/solicitacao/listar_minhasSolicitacoes.xhtml">
+												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Minhas Solicitações</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="welcomeCotacao" style="display: none;">
+						<div id="painelCotacao" class="box box-solid">
+							<div class="box-header with-border bg-yellow">
+								<h3 class="box-title pull-left">
+									<i class="fa fa-arrow-circle-left" onclick="voltarPaginaInicial()" style="cursor: pointer;border-right: 1px dotted;padding-right: 15px;"></i>
+								</h3>
+								<h3 class="box-title" style="padding-left: 15px;"> Cotação</h3>
+								<h3 class="box-title pull-right"><i class="fa fa-pencil-square-o pull-right"></i></h3>
+							</div>
+							<div class="box-body">
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
+									<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-yellow"><i
+												class="fa fa-paste"></i></span>
+		
+											<p:link href="/pages/solicitacaoCompra/cotacao/listar_cotacaoPendente.xhtml">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Solicitações Pendentes</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO'])}">
+									<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-yellow"><i
+												class="fa fa-calculator"></i></span>
+		
+											<p:link href="/pages/solicitacaoCompra/cotacao/listar_minhasCotacoes.xhtml">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Minhas Cotações</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'COTACAO', 'ADMINISTRATIVO'])}">
+									<p:link href="/pages/solicitacaoCompra/cotacao/listar_ordemCompra.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-yellow"><i
+												class="fa fa-dollar"></i></span>
+		
+											<p:link href="/pages/solicitacaoCompra/cotacao/listar_ordemCompra.xhtml">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Gerar Ordem de Compra</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="welcomeOrcamento" style="display: none;">
+						<div id="painelOrcamento" class="box box-solid">
+							<div class="box-header with-border bg-purple">
+								<h3 class="box-title pull-left">
+									<i class="fa fa-arrow-circle-left" onclick="voltarPaginaInicial()" style="cursor: pointer;border-right: 1px dotted;padding-right: 15px;"></i>
+								</h3>
+								<h3 class="box-title" style="padding-left: 15px;"> Orçamento</h3>
+								<h3 class="box-title pull-right"><i class="fa fa-dollar pull-right"></i></h3>
+							</div>
+							<div class="box-body">
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-purple"><i
+												class="fa fa-sliders"></i></span>
+		
+											<p:link href="/pages/orcamento/ajusteOrcamentario/listar_ajusteOrcamentario.xhtml">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Ajuste Orçamentário</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="welcomeSuporte" style="display: none;">
+						<div id="painelSuporte" class="box box-solid">
+							<div class="box-header with-border bg-green">
+								<h3 class="box-title pull-left">
+									<i class="fa fa-arrow-circle-left" onclick="voltarPaginaInicial()" style="cursor: pointer;border-right: 1px dotted;padding-right: 15px;"></i>
+								</h3>
+								<h3 class="box-title" style="padding-left: 15px;"> Suporte</h3>
+								<h3 class="box-title pull-right"><i class="fa fa-wrench pull-right"></i></h3>
+							</div>
+							<div class="box-body">
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/suporte/novo_chamado.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-green"><i
+												class="fa fa-plus-square"></i></span>
+		
+												<p:link href="/pages/suporte/novo_chamado.xhtml" ajax="false">
+													<div class="info-box-content">
+														<span class="info-box-text acessoRapidoBox">Abrir Chamado</span> 
+													</div>
 												</p:link>
-											</div>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/suporte/listar_chamado.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-green"><i
+												class="fa fa-newspaper-o"></i></span>
+		
+											<p:link href="/pages/suporte/listar_chamado.xhtml" ajax="false">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Meus Chamados</span> 
+												</div>
+											</p:link>
 										</div>
 									</p:link>
 								</div>
@@ -205,19 +333,57 @@
 				</div>
 			</div>
 			<script>
+				$(document).ready(function(){
+					$(".welcomePrincipal").fadeIn("slow");
+				});
+				
 
 				function voltarPaginaInicial() {
-					$(".welcomePrincipal").css("display", "");
-					$(".welcomeRecursosHumanos").css("display", "none");
+					$(".welcomePrincipal").fadeIn("slow");
 					$(".welcomeSolicitacaoCompra").css("display", "none");
+					$(".welcomeRecursosHumanos").css("display", "none");
+					$(".welcomeCotacao").css("display", "none");
+					$(".welcomeOrcamento").css("display", "none");
+					$(".welcomeSuporte").css("display", "none");
+
 				}
 				function abrirRecursosHumanos() {
 					$(".welcomePrincipal").css("display", "none");
-					$(".welcomeRecursosHumanos").css("display", "");
+					$(".welcomeCotacao").css("display", "none");
+					$(".welcomeOrcamento").css("display", "none");
+					$(".welcomeSuporte").css("display", "none");
+					$(".welcomeRecursosHumanos").fadeIn("slow");
 				}
 				function abrirSolicitacaoCompra() {
 					$(".welcomePrincipal").css("display", "none");
-					$(".welcomeSolicitacaoCompra").css("display", "");
+					$(".welcomeCotacao").css("display", "none");
+					$(".welcomeOrcamento").css("display", "none");
+					$(".welcomeSuporte").css("display", "none");
+					$(".welcomeSolicitacaoCompra").fadeIn("slow");
+				}
+
+				function abrirCotacao() {
+					$(".welcomePrincipal").css("display", "none");
+					$(".welcomeSolicitacaoCompra").css("display", "none");
+					$(".welcomeOrcamento").css("display", "none");
+					$(".welcomeSuporte").css("display", "none");
+					$(".welcomeCotacao").fadeIn("slow");
+				}
+
+				function abrirOrcamento() {
+					$(".welcomePrincipal").css("display", "none");
+					$(".welcomeSolicitacaoCompra").css("display", "none");
+					$(".welcomeCotacao").css("display", "none");
+					$(".welcomeSuporte").css("display", "none");
+					$(".welcomeOrcamento").fadeIn("slow");
+				}
+
+				function abrirSuporte() {
+					$(".welcomePrincipal").css("display", "none");
+					$(".welcomeSolicitacaoCompra").css("display", "none");
+					$(".welcomeCotacao").css("display", "none");
+					$(".welcomeOrcamento").css("display", "none");
+					$(".welcomeSuporte").fadeIn("slow");
 				}
 			</script>
 		</ui:define>
