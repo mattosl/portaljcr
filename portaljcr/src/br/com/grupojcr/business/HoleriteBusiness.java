@@ -12,10 +12,8 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.ColigadaDAO;
 import br.com.grupojcr.dao.RMDAO;
-import br.com.grupojcr.dto.ChapaDTO;
 import br.com.grupojcr.dto.HoleriteDTO;
 import br.com.grupojcr.util.TreatString;
-import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
 @Stateless
@@ -62,23 +60,34 @@ public class HoleriteBusiness {
 			}
 			
 			List<HoleriteDTO> listaHolerite = new ArrayList<HoleriteDTO>();
-			Integer codPessoa = daoRM.obterCodigoPessoa(idColigada, chapaOriginal);
-			if(Util.isNotNull(codPessoa)) {
-				List<ChapaDTO> listaChapas = daoRM.listarChapaFuncionario(codPessoa);
-				for(ChapaDTO dto : listaChapas) {
-					List<HoleriteDTO> holeritesChapa = daoRM.listarHoleriteFuncionario(dto.getIdColigada(), dto.getChapa());
-					Calendar dataAtual = Calendar.getInstance();
-					for(HoleriteDTO h : holeritesChapa) {
-						if(h.getMes().getId().equals(dataAtual.get(Calendar.MONTH) + 1) && h.getAno().equals(dataAtual.get(Calendar.YEAR)) ) {
-							continue;
-						} else {
-							h.setColigada(daoColigada.obter(h.getColigada().getId()));
-							listaHolerite.add(h);
-						}
-					}
-					
+			List<HoleriteDTO> holeritesChapa = daoRM.listarHoleriteFuncionario(idColigada, chapaOriginal);
+			Calendar dataAtual = Calendar.getInstance();
+			for(HoleriteDTO h : holeritesChapa) {
+				if(h.getMes().getId().equals(dataAtual.get(Calendar.MONTH) + 1) && h.getAno().equals(dataAtual.get(Calendar.YEAR)) ) {
+					continue;
+				} else {
+					h.setColigada(daoColigada.obter(h.getColigada().getId()));
+					listaHolerite.add(h);
 				}
 			}
+//			List<HoleriteDTO> listaHolerite = new ArrayList<HoleriteDTO>();
+//			Integer codPessoa = daoRM.obterCodigoPessoa(idColigada, chapaOriginal);
+//			if(Util.isNotNull(codPessoa)) {
+//				List<ChapaDTO> listaChapas = daoRM.listarChapaFuncionario(codPessoa);
+//				for(ChapaDTO dto : listaChapas) {
+//					List<HoleriteDTO> holeritesChapa = daoRM.listarHoleriteFuncionario(dto.getIdColigada(), dto.getChapa());
+//					Calendar dataAtual = Calendar.getInstance();
+//					for(HoleriteDTO h : holeritesChapa) {
+//						if(h.getMes().getId().equals(dataAtual.get(Calendar.MONTH) + 1) && h.getAno().equals(dataAtual.get(Calendar.YEAR)) ) {
+//							continue;
+//						} else {
+//							h.setColigada(daoColigada.obter(h.getColigada().getId()));
+//							listaHolerite.add(h);
+//						}
+//					}
+//					
+//				}
+//			}
 			
 			return listaHolerite;
 		} catch (ApplicationException e) {
