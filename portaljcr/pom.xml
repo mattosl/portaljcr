@@ -247,6 +247,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>portaljcr</finalName>
 	</build>
 	<repositories>
 		<repository>
