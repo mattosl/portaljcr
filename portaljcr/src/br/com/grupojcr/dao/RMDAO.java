@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ import br.com.grupojcr.enumerator.Mes;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.enumerator.PeriodoHolerite;
 import br.com.grupojcr.rm.AprovadorRM;
+import br.com.grupojcr.rm.BatidaRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
 import br.com.grupojcr.rm.FornecedorRM;
@@ -2246,6 +2248,60 @@ public class RMDAO {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDependenteSalFamilia" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<BatidaRM> obterBatidasUsuarioPeriodo(Integer idColigada, String chapa, Date periodoInicial, Date periodoFinal) throws ApplicationException {
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<BatidaRM> batidas = new ArrayList<BatidaRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT [DATA], BATIDA FROM ABATFUN ")
+			.append("WHERE CODCOLIGADA = 7 ")
+			.append("AND CHAPA LIKE '000040' ")
+			.append("AND [DATA] BETWEEN '2018-08-15' AND '2018-09-14' ")
+			.append("ORDER BY [DATA] DESC, BATIDA ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				BatidaRM batida = new BatidaRM();
+				batida.setData(set.getDate("DATA"));
+				batida.setBatida(set.getInt("BATIDA"));
+				
+				batidas.add(batida);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterBatidasUsuarioPeriodo" }, e);
 		} finally {
 			if (ps != null) {
 				try {
