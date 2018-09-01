@@ -14,6 +14,9 @@ import com.totvs.technology.ecm.dm.ws.ECMCardServiceServiceSoapBindingStub;
 import com.totvs.technology.ecm.dm.ws.ECMDashBoardServiceServiceLocator;
 import com.totvs.technology.ecm.dm.ws.ECMDashBoardServiceServiceSoapBindingStub;
 import com.totvs.technology.ecm.dm.ws.WorkflowProcessDto;
+import com.totvs.technology.ecm.foundation.ws.ColleagueDto;
+import com.totvs.technology.ecm.foundation.ws.ECMColleagueServiceServiceLocator;
+import com.totvs.technology.ecm.foundation.ws.ECMColleagueServiceServiceSoapBindingStub;
 import com.totvs.technology.ecm.workflow.ws.ECMWorkflowEngineServiceServiceLocator;
 import com.totvs.technology.ecm.workflow.ws.ECMWorkflowEngineServiceServiceSoapBindingStub;
 
@@ -49,6 +52,18 @@ public class FluigBusiness {
 			ECMWorkflowEngineServiceServiceLocator locator = new ECMWorkflowEngineServiceServiceLocator();
 			ECMWorkflowEngineServiceServiceSoapBindingStub cliente = (ECMWorkflowEngineServiceServiceSoapBindingStub) locator
 					.getWorkflowEngineServicePort();
+			return cliente;
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw e;
+		}
+	}
+	
+	private ECMColleagueServiceServiceSoapBindingStub obterProxyECMColleagueService() throws ServiceException {
+		try {
+			ECMColleagueServiceServiceLocator locator = new ECMColleagueServiceServiceLocator();
+			ECMColleagueServiceServiceSoapBindingStub cliente = (ECMColleagueServiceServiceSoapBindingStub) locator
+					.getColleagueServicePort();
 			return cliente;
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);
@@ -214,6 +229,17 @@ public class FluigBusiness {
 		try {
 			ECMCardServiceServiceSoapBindingStub cliente = obterProxyECMCardService();
 			cliente.updateCardData(1, Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), numeroFormulario, cardData);
+			
+		} catch (Exception e) {
+			LOG.error(e.getStackTrace(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "getInstanceCardData" }, e);
+		}
+	}
+	
+	public ColleagueDto[] getColleague(String colleague) throws ApplicationException {
+		try {
+			ECMColleagueServiceServiceSoapBindingStub cliente = obterProxyECMColleagueService();
+			return cliente.getColleague(Preferencias.get(Propriedades.USUARIO_FLUIG), Preferencias.get(Propriedades.CHAVE_FLUIG), 1, colleague);
 			
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace(), e);

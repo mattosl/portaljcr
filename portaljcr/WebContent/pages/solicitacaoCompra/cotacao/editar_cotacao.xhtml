@@ -92,11 +92,21 @@
 														<label for="situacao">Situação: </label>
 													</div>
 				
-													<div class="col-sm-3 col-md-3">
+													<div class="col-sm-9 col-md-9">
 														<p:outputLabel id="situacao" value="#{cotacaoController.solicitacaoCompra.situacao.descricao.toUpperCase()}" styleClass="control-label font-normal" />
 													</div>
-													
-													<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.dtAprovacao != null}">
+												</div>
+												<div class="form-group">
+													<div class="col-sm-3 col-md-3 control-label">
+														<label for="aprovador">Aprovador: </label>
+													</div>
+				
+													<div class="col-sm-9 col-md-9">
+														<p:outputLabel id="aprovador" value="#{minhaSolicitacaoCompraController.obterNomeAprovador(cotacaoController.solicitacaoCompra.usuarioAprovacaoFluig).toUpperCase()}" styleClass="control-label font-normal" />
+													</div>
+												</div>
+												<p:outputPanel rendered="#{cotacaoController.solicitacaoCompra.dtAprovacao != null}">
+													<div class="form-group">
 														<div class="col-sm-3 col-md-3 control-label">
 															<label for="dtAprovacao">Data de Aprovação: </label>
 														</div>
@@ -106,8 +116,8 @@
 																<f:convertDateTime pattern="dd/MM/yyyy"/>
 															</p:outputLabel>
 														</div>
-													</p:outputPanel>
-												</div>
+													</div>
+												</p:outputPanel>
 												<div class="form-group">
 													<div class="col-sm-3 col-md-3 control-label">
 														<label for="centroCusto">Centro de Custo: </label>

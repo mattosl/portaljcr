@@ -17,6 +17,9 @@ import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
+import com.totvs.technology.ecm.foundation.ws.ColleagueDto;
+
+import br.com.grupojcr.business.FluigBusiness;
 import br.com.grupojcr.business.SolicitacaoCompraBusiness;
 import br.com.grupojcr.dto.FiltroSolicitacaoCompra;
 import br.com.grupojcr.entity.Coligada;
@@ -57,6 +60,9 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 	
 	@EJB
 	private SolicitacaoCompraBusiness solicitacaoCompraBusiness;
+	
+	@EJB
+	private FluigBusiness fluigBusiness;
 	
 	@Inject
 	private SolicitacaoCompraDataModel dataModel;
@@ -208,6 +214,36 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "voltar" }, e);
+		}
+	}
+	
+	public String obterNomeAprovador(String aprovador) throws ApplicationException {
+		try {
+			ColleagueDto[] dto = fluigBusiness.getColleague(aprovador);
+			
+			if(dto.length > 0) {
+				return dto[0].getColleagueName();
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterNomeAprovador" }, e);
+		}
+	}
+	
+	public String obterSituacaoAguardando(String aprovador) throws ApplicationException {
+		try {
+			ColleagueDto[] dto = fluigBusiness.getColleague(aprovador);
+			
+			if(dto.length > 0) {
+				return "Aguardando Aprovação (" + dto[0].getColleagueName() + ")";
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterNomeAprovador" }, e);
 		}
 	}
 

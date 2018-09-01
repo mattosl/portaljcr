@@ -136,7 +136,7 @@
 					    </p:column>
 
 						<p:column headerText="Situação" style="text-align:center;font-size:12px;">
-							<h:outputText value="#{solicitacao.situacao.descricao}" />
+							<h:outputText value="#{solicitacao.situacao eq 'AGUARDANDO_APRV' ? minhaSolicitacaoCompraController.obterSituacaoAguardando(solicitacao.usuarioAprovacaoFluig) : solicitacao.situacao.descricao}" />
 						</p:column>
 
 						<p:column headerText="Cancelar" style="text-align: center;font-size:12px;" width="5%">
