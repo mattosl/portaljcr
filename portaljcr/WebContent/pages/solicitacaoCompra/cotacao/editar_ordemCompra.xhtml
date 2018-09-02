@@ -21,6 +21,14 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="ordemCompraForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
+						<div class="tabbable">
+  							<ul class="nav nav-tabs wizard">
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(gerarOrdemCompraController.ordemCompra.solicitacaoCompra.situacao, 1)}"><a aria-expanded="false"><span class="nmbr"><i class="fa fa-gavel"></i></span> Aguardando Aprovação</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(gerarOrdemCompraController.ordemCompra.solicitacaoCompra.situacao, 2)}"><a aria-expanded="false"><span class="nmbr"><i class="fa fa-pencil"></i></span> Em Cotação</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(gerarOrdemCompraController.ordemCompra.solicitacaoCompra.situacao, 3)}"><a aria-expanded="false"><span class="nmbr"><i class="fa fa-thumbs-up"></i></span> Aguardando Liberação</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(gerarOrdemCompraController.ordemCompra.solicitacaoCompra.situacao, 4)}"><a aria-expanded="true"><span class="nmbr"><i class="fa fa-check"></i></span> Gerar Ordem de Compra</a></li>
+  							</ul>
+  						</div>
 						<p:panel toggleable="false" id="painelGerarOrdemCompra" styleClass="box box-danger">
 							<div class="alert alert-info alert-dismissible">
 								<i class="icon fa fa-info"></i> 
@@ -106,7 +114,7 @@
 										</div>
 	
 										<div class="col-sm-9 col-md-9 col-xs-12">
-											<p:outputLabel id="tipoMovimento" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.modalidade eq 'MATERIAL' ? '1.1.04 - Aprovação de Compras' : '1.1.17 - Aprovação de Serviços'}" styleClass="control-label font-normal" />
+											<p:outputLabel id="tipoMovimento" value="#{gerarOrdemCompraController.ordemCompra.solicitacaoCompra.modalidade eq 'MATERIAL' ? '1.1.04 - APROVAÇÃO DE COMPRAS' : '1.1.17 - APROVAÇÃO DE SERVIÇOS'}" styleClass="control-label font-normal" />
 										</div>
 									</div>
 									<div class="form-group">
@@ -213,6 +221,9 @@
 									    </p:column>
 									    
 									    <p:columnGroup type="footer">
+									    	<p:row >
+										    	<p:column colspan="4" style="font-weight: bold;" footerText="Desconto: #{gerarOrdemCompraController.ordemCompra.cotacao.descontoFormatado}" />
+										    </p:row>
 									    	<p:row >
 										    	<p:column colspan="4" style="font-weight: bold;" footerText="Frete: #{gerarOrdemCompraController.ordemCompra.cotacao.freteFormatado}" />
 										    </p:row>

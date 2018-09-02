@@ -134,13 +134,6 @@
 															<p:outputLabel id="qtdCotacao" value="#{item.quantidade}" styleClass="control-label font-normal" />
 														</div>
 														
-														<div class="col-sm-2 col-md-2 control-label">
-															<label for="unidadeCotacao">Unidade:</label>
-														</div>
-					
-														<div class="col-sm-4 col-md-4">
-															<p:outputLabel id="unidadeCotacao" value="#{item.codigoUnidade}" styleClass="control-label font-normal" />
-														</div>
 													</div>
 													<div class="form-group">
 														<div class="col-sm-2 col-md-2 control-label">
@@ -181,6 +174,17 @@
 								 	</ui:repeat>
 								 	<p:outputPanel id="totalizador">
 								 		<p:separator  />
+								 		<div class="form-group">
+											<div class="col-sm-6 col-md-6 control-label">
+												<label for="desconto"> DESCONTO: </label>
+											</div>
+											
+											<div class="col-sm-3 col-md-3">
+	           									<p:outputLabel id="desconto" value="#{cotacaoController.cotacao.desconto}" styleClass="control-label font-normal">
+	           										<f:convertNumber type="currency" currencySymbol="R$"/>
+	           									</p:outputLabel>
+											</div>
+										</div>
 								 		<div class="form-group">
 											<div class="col-sm-6 col-md-6 control-label">
 												<label for="frete"> FRETE: </label>

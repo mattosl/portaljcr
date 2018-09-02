@@ -226,6 +226,9 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			} else {
 				return null;
 			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterNomeAprovador" }, e);
@@ -241,9 +244,69 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			} else {
 				return null;
 			}
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterNomeAprovador" }, e);
+		}
+	}
+	
+	public String obterClassStep(SituacaoSolicitacaoCompra situacao, Integer aba) throws ApplicationException {
+		try {
+			if(situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_APRV)) {
+				if(aba.equals(1)) {
+					return "active";
+				} else {
+					return "";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.EM_COTACAO) 
+					|| situacao.equals(SituacaoSolicitacaoCompra.APROVADA_COTACAO)) {
+				if(aba.equals(1)) {
+					return "completed";
+				} else if(aba.equals(2)) {
+					return "active";
+				} else {
+					return "";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_APRV_COTACAO)
+					|| situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_NV_APRV)) {
+				if(aba.equals(1)) {
+					return "completed";
+				} else if(aba.equals(2)) {
+					return "completed";
+				} else if(aba.equals(3)) {
+					return "active";
+				} else {
+					return "";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA)) {
+				if(aba.equals(1)) {
+					return "completed";
+				} else if(aba.equals(2)) {
+					return "completed";
+				} else if(aba.equals(3)) {
+					return "completed";
+				} else if(aba.equals(4)) {
+					return "active";
+				} else {
+					return "";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.FINALIZADA)) {
+				return "completed";
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.CANCELADA)) {
+				return "cancel";
+			}
+			return "";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterClassStep" }, e);
 		}
 	}
 

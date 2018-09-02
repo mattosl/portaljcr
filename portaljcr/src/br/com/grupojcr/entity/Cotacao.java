@@ -59,8 +59,11 @@ public class Cotacao implements BaseEntity, Serializable {
 	@Column(name = "OBSERVACAO", length = 300)
 	private String observacao;
 	
-	@Column(name = "FRETE", precision = 10, scale = 2, nullable = false)
+	@Column(name = "FRETE", precision = 10, scale = 2)
 	private BigDecimal frete;
+	
+	@Column(name = "DESCONTO", precision = 38, scale = 2)
+	private BigDecimal desconto;
 	
 	@Column(name = "COTACAO_PRINCIPAL", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
@@ -192,6 +195,15 @@ public class Cotacao implements BaseEntity, Serializable {
 	public void setNomeContato(String nomeContato) {
 		this.nomeContato = nomeContato;
 	}
+	
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -240,6 +252,14 @@ public class Cotacao implements BaseEntity, Serializable {
 	}
 	
 	@Transient
+	public String getDescontoFormatado() {
+		if(desconto != null) {
+			return TreatNumber.formatMoney(desconto);
+		}
+		return null;
+	}
+	
+	@Transient
 	public String getDataCotacaoFormatado() {
 		if(dtCotacao != null) {
 			return TreatDate.format("dd/MM/yyyy", dtCotacao);
@@ -247,4 +267,5 @@ public class Cotacao implements BaseEntity, Serializable {
 		return null;
 	}
 
+	
 }

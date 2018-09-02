@@ -49,6 +49,9 @@ public class CotacaoBusiness {
 			if(TreatNumber.isNullOrZero(cotacao.getFrete())) {
 				cotacao.setFrete(new BigDecimal(0));
 			}
+			if(TreatNumber.isNullOrZero(cotacao.getDesconto())) {
+				cotacao.setDesconto(new BigDecimal(0));
+			}
 			
 			if(Util.isNotNull(cotacao.getId())) {
 				daoCotacao.alterar(cotacao);

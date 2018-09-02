@@ -39,7 +39,7 @@ public class TMOVXML {
 		this.PERCENTUALSEGURO = "0,00";
 		this.VALORSEGURO = "0,00";
 		this.PERCENTUALDESC = "0,00";
-		this.VALORDESC = "0,00";
+//		this.VALORDESC = "0,00";
 		this.PERCENTUALDESP = "0,00";
 		this.VALORDESP = "0,00";
 		this.PERCCOMISSAO = "0,00";

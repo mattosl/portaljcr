@@ -133,20 +133,20 @@
 					
 														<div class="col-sm-4 col-md-4">
 													        <h:inputText id="qtdCotacao" maxlength="9" styleClass="form-control" value="#{item.quantidade}" onkeyup="filterNumberOnly(this);" readonly="#{item.naoPossui}">
-													        	<p:ajax global="false" process="@this, painelItem, unidadeCotacao" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
+													        	<p:ajax global="false" process="@this, painelItem" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
 													        </h:inputText>
 														</div>
 														
-														<div class="col-sm-2 col-md-2 control-label">
-															<label for="unidadeCotacao">Unidade: *</label>
-														</div>
+<!-- 														<div class="col-sm-2 col-md-2 control-label"> -->
+<!-- 															<label for="unidadeCotacao">Unidade: *</label> -->
+<!-- 														</div> -->
 					
-														<div class="col-sm-4 col-md-4">
-															<p:selectOneMenu id="unidadeCotacao" value="#{item.codigoUnidade}" disabled="#{item.naoPossui}">
-													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-													        	<f:selectItems value="#{cotacaoController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade.codigoUnidade}" />
-													        </p:selectOneMenu>
-														</div>
+<!-- 														<div class="col-sm-4 col-md-4"> -->
+<!-- 															<p:selectOneMenu id="unidadeCotacao" value="#{item.codigoUnidade}" disabled="#{item.naoPossui}"> -->
+<!-- 													        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" /> -->
+<!-- 													        	<f:selectItems value="#{cotacaoController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade.codigoUnidade}" /> -->
+<!-- 													        </p:selectOneMenu> -->
+<!-- 														</div> -->
 													</div>
 													<div class="form-group">
 														<div class="col-sm-2 col-md-2 control-label">
@@ -157,7 +157,7 @@
 															<div class="input-group">
 													            <span class="input-group-addon">R$</span>
 					           									<p:inputNumber id="vlrUnitario" value="#{item.valor}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator=","  disabled="#{item.naoPossui}">
-					           										<p:ajax global="false" process="@this, painelItem, unidadeCotacao" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
+					           										<p:ajax global="false" process="@this, painelItem" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
 					           									</p:inputNumber>
 					           									<p:watermark value="0,00" for="vlrUnitario"></p:watermark>
 													        </div>
@@ -191,6 +191,21 @@
 								 	</ui:repeat>
 								 	<p:outputPanel id="totalizador">
 								 		<p:separator  />
+								 		<div class="form-group">
+											<div class="col-sm-6 col-md-6 control-label">
+												<label for="desconto"> DESCONTO: </label>
+											</div>
+											
+											<div class="col-sm-3 col-md-3">
+												<div class="input-group">
+										            <span class="input-group-addon">R$</span>
+		           									<p:inputNumber id="desconto" value="#{cotacaoController.cotacao.desconto}" decimalPlaces="2" maxValue="9999" thousandSeparator="." decimalSeparator=",">
+		           										<p:ajax global="false" update="totalCotacao, @form:btn_salvar" />
+		           									</p:inputNumber>
+		           									<p:watermark value="0,00" for="desconto"></p:watermark>
+										        </div>
+											</div>
+										</div>
 								 		<div class="form-group">
 											<div class="col-sm-6 col-md-6 control-label">
 												<label for="frete"> FRETE: </label>

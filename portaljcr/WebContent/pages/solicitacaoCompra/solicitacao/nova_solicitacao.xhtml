@@ -204,13 +204,22 @@
 										<div class="col-sm-9 col-md-9">
 											<h:inputText id="produtoDescricao" maxlength="100" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.descricaoProduto}" rendered="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}" />
 									        <p:autoComplete id="produto" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto}" var="prd" itemLabel="#{prd.produtoFormatado}" itemValue="#{prd}" forceSelection="true" completeMethod="#{solicitacaoCompraController.autocompleteProduto}" converter="#{simpleIntegerEntityConverter}" minQueryLength="3" effect="fade" rendered="#{!solicitacaoCompraController.solicitacaoCompraDTO.produto.naoEncontrei}">
-									        	<p:ajax event="query" global="false" process="@this" />
-												<p:ajax event="itemSelect" global="false" process="@this" />
+									        	<p:ajax event="query" global="false" process="@this"  />
+												<p:ajax event="itemSelect" global="false" process="@this" update="unidade" />
 									        </p:autoComplete>
 	<!-- 								        <p:watermark value="01.001.0005 - SERVIÇO DE TELEFONIA" for="produto" /> -->
 									        <p:watermark value="Escreva o nome do produto (Minímo 3 caracteres)." for="produto" />
 										</div>
 									</p:outputPanel>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="unidade">Unidade:</label>
+									</div>
+
+									<div class="col-sm-3 col-md-3">
+										<h:inputText id="unidade" styleClass="form-control" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.produto.codigoUnidadeCompra}" disabled="true" style="background-color: #fff !important;" />
+									</div>
 								</div>
 								<div class="form-group">
 									<div class="col-sm-3 col-md-3 control-label">
@@ -226,18 +235,6 @@
 												<p:ajax event="change" process="@this" global="false" update="@form:descricaoProdutoPanel" />
 											</p:selectBooleanCheckbox>									
 										</span>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-3 col-md-3 control-label">
-										<label for="unidade">Unidade: *</label>
-									</div>
-
-									<div class="col-sm-3 col-md-3">
-										<p:selectOneMenu id="unidade" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.unidade}">
-								        	<f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="false" />
-								        	<f:selectItems value="#{solicitacaoCompraController.listaUnidade}" var="unidade" itemLabel="#{unidade.codigoUnidade} - (#{unidade.unidade})" itemValue="#{unidade}" />
-								        </p:selectOneMenu>
 									</div>
 								</div>
 								<div class="form-group">

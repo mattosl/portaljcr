@@ -45,6 +45,7 @@ import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -595,13 +596,14 @@ public class RMDAO {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<ProdutoRM> listarProdutosPorNome(Long idColigada, String nome, Modalidade modalidade) throws ApplicationException {
 		/**
-		 * SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO
-		 * WHERE CODCOLPRD = ?
-		 * AND INATIVO = 0
-		 * AND LEN(CODIGOPRD) > 6
-		 * AND NOMEFANTASIA LIKE ?
-		 * AND (CODIGOPRD LIKE '02.%' OR CODIGOPRD LIKE '90.001%')
-		 * ORDER BY CODIGOPRD ASC
+		 * SELECT TPRODUTO.IDPRD, TPRODUTO.CODIGOPRD, TPRODUTO.NOMEFANTASIA, TPRDDEF.CODUNDCOMPRA FROM TPRODUTO AS TPRODUTO
+		 * LEFT JOIN TPRODUTODEF AS TPRDDEF ON (TPRODUTO.IDPRD = TPRDDEF.IDPRD AND TPRODUTO.CODCOLPRD = TPRDDEF.CODCOLIGADA)
+ 		 * WHERE TPRODUTO.CODCOLPRD = ?
+		 * AND TPRODUTO.INATIVO = 0
+		 * AND LEN(TPRODUTO.CODIGOPRD) > 6
+		 * AND TPRODUTO.NOMEFANTASIA LIKE ?
+		 * AND (TPRODUTO.CODIGOPRD LIKE '02.%' OR TPRODUTO.CODIGOPRD LIKE '90.001%')
+		 * ORDER BY TPRODUTO.CODIGOPRD ASC
 		 * OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY
 		 */
 		
@@ -613,21 +615,22 @@ public class RMDAO {
 			conn = datasource.getConnection();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT IDPRD, CODIGOPRD, NOMEFANTASIA FROM TPRODUTO ")
-			.append("WHERE CODCOLPRD = ? ")
-			.append("AND INATIVO = 0 ")
-			.append("AND LEN(CODIGOPRD) > 6 ")
-			.append("AND NOMEFANTASIA LIKE ? ");
+			sb.append("SELECT TPRODUTO.IDPRD, TPRODUTO.CODIGOPRD, TPRODUTO.NOMEFANTASIA, TPRDDEF.CODUNDCOMPRA FROM TPRODUTO AS TPRODUTO ")
+			.append("LEFT JOIN TPRODUTODEF AS TPRDDEF ON (TPRODUTO.IDPRD = TPRDDEF.IDPRD AND TPRODUTO.CODCOLPRD = TPRDDEF.CODCOLIGADA) ")
+			.append("WHERE TPRODUTO.CODCOLPRD = ? ")
+			.append("AND TPRODUTO.INATIVO = 0 ")
+			.append("AND LEN(TPRODUTO.CODIGOPRD) > 6 ")
+			.append("AND TPRODUTO.NOMEFANTASIA LIKE ? ");
 			
 			if(Util.isNotNull(modalidade)) {
 				if(modalidade.equals(Modalidade.MATERIAL)) {
-					sb.append("AND (CODIGOPRD LIKE '02.%' OR CODIGOPRD LIKE '90.001%') ");
+					sb.append("AND (TPRODUTO.CODIGOPRD LIKE '02.%' OR TPRODUTO.CODIGOPRD LIKE '90.001%') ");
 				} else if (modalidade.equals(Modalidade.SERVICO)) {
-					sb.append("AND (CODIGOPRD LIKE '01.%' OR CODIGOPRD LIKE '90.002%') ");
+					sb.append("AND (TPRODUTO.CODIGOPRD LIKE '01.%' OR TPRODUTO.CODIGOPRD LIKE '90.002%') ");
 				}
 			}
 			
-			sb.append("ORDER BY CODIGOPRD ASC ")
+			sb.append("ORDER BY TPRODUTO.CODIGOPRD ASC ")
 			.append("OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY ");
 
 			ps = conn.prepareStatement(sb.toString());
@@ -642,6 +645,7 @@ public class RMDAO {
 				produto.setIdProduto(set.getInt("IDPRD"));
 				produto.setCodigoProduto(set.getString("CODIGOPRD"));
 				produto.setProduto(set.getString("NOMEFANTASIA"));
+				produto.setCodigoUnidadeCompra(set.getString("CODUNDCOMPRA"));
 				
 				listaProduto.add(produto);
 			}

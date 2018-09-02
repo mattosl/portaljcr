@@ -974,6 +974,7 @@ public class SolicitacaoCompraBusiness {
 			tmov.setCODCFOAUX(ordemCompra.getFornecedor().getCodigoFornecedor());
 			tmov.setCODCCUSTO(ordemCompra.getSolicitacaoCompra().getCodigoCentroCusto());
 			tmov.setVALORFRETE(ordemCompra.getCotacao().getFrete() != null ? ordemCompra.getCotacao().getFreteFormatado() : "0,00");
+			tmov.setVALORDESC(ordemCompra.getCotacao().getDesconto() != null ? ordemCompra.getCotacao().getDescontoFormatado() : "0,00");
 			tmov.preencherValores(TreatNumber.formatMoney(valorReal));
 			tmov.preencherUsuario(usuario);
 			tmov.setCODCOLIGADA1(ordemCompra.getSolicitacaoCompra().getColigada().getId().toString());

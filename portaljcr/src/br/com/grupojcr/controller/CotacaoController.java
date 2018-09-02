@@ -594,6 +594,10 @@ public class CotacaoController implements Serializable {
 					}
 				}
 				
+				if(Util.isNotNull(getCotacao().getDesconto())) {
+					total = total.subtract(getCotacao().getDesconto());
+				}
+				
 				if(Util.isNotNull(getCotacao().getFrete())) {
 					total = total.add(getCotacao().getFrete());
 				}

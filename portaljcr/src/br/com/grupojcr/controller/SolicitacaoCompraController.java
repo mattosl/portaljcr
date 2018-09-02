@@ -240,9 +240,9 @@ public class SolicitacaoCompraController implements Serializable {
 				camposObrigatorios = Boolean.TRUE;
 			}
 
-			if (Util.isNull(getSolicitacaoCompraDTO().getProduto().getUnidade())) {
-				camposObrigatorios = Boolean.TRUE;
-			}
+//			if (Util.isNull(getSolicitacaoCompraDTO().getProduto().getUnidade())) {
+//				camposObrigatorios = Boolean.TRUE;
+//			}
 			
 			if(Util.isNullOrZero(getSolicitacaoCompraDTO().getProduto().getValorAproximado())) {
 				camposObrigatorios = Boolean.TRUE;
@@ -275,7 +275,7 @@ public class SolicitacaoCompraController implements Serializable {
 			item.setProdutoNaoEncontrado(getSolicitacaoCompraDTO().getProduto().getNaoEncontrei());
 			item.setQuantidade(getSolicitacaoCompraDTO().getProduto().getQuantidade());
 			item.setCodigoUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getCodigoUnidade());
-			item.setUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getUnidade());
+			item.setUnidade(getSolicitacaoCompraDTO().getProduto().getProduto().getCodigoUnidadeCompra());
 			item.setValorAproximado(getSolicitacaoCompraDTO().getProduto().getValorAproximado());
 			item.setObservacao(getSolicitacaoCompraDTO().getProduto().getObservacao());
 			item.setDtInclusao(Calendar.getInstance().getTime());
