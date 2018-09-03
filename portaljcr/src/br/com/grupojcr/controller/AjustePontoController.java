@@ -2,7 +2,6 @@ package br.com.grupojcr.controller;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -126,8 +125,16 @@ public class AjustePontoController implements Serializable {
 		this.chave = chave;
 	}
 
+	public Calendar getPeriodoInicial() {
+		return periodoInicial;
+	}
+
 	public void setPeriodoInicial(Calendar periodoInicial) {
 		this.periodoInicial = periodoInicial;
+	}
+
+	public Calendar getPeriodoFinal() {
+		return periodoFinal;
 	}
 
 	public void setPeriodoFinal(Calendar periodoFinal) {

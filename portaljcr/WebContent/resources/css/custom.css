@@ -400,8 +400,8 @@ ol.progress-meter li.todo:before {
   position: relative;
   padding: 1em .8em .8em 2.5em;
   color: #999999;
-  background-color: #dedede;
-  border-color: #dedede;
+  background-color: #fff;
+  border-color: #fff;
 }
 
 .nav-tabs.wizard li.completed>* {
@@ -437,6 +437,17 @@ ol.progress-meter li.todo:before {
   color: #9f262d !important;
 }
 
+.nav-tabs.wizard li.neutro>* {
+  color: #fff !important;
+  background-color: #9e9d9d !important; /* #9f262d */
+  border-color: #9e9d9d !important;
+  border-bottom: none !important;
+}
+
+.nav-tabs.wizard li.neutro i	 {
+  color: #9e9d9d !important;
+}
+
 .nav-tabs.wizard li::after:last-child {
   border: none;
 }
@@ -448,14 +459,14 @@ ol.progress-meter li.todo:before {
 
 .nav-tabs.wizard a:hover {
 	color: #999999;
-  	background-color: #dedede;
-  	border-color: #dedede;
+  	background-color: #fff;
+  	border-color: #fff;
 }
 
 span.nmbr {
   display: inline-block;
   padding: 10px 0 0 0;
-  background: #ffffff;
+  background: #fff;
   width: 35px;
   line-height: 100%;
   height: 35px;
@@ -525,4 +536,28 @@ span.nmbr {
   span.nmbr {
     display: block;
   }
+  
 }
+
+.checkVerde {
+	color: #94d06e !important;
+}
+
+.checkVerde span.nmbr {
+  background: #94d06e;
+  color: #fff;
+}
+
+.checkVermelho {
+	color: #a80000 !important;
+}
+
+.checkVermelho span.nmbr {
+  background: #a80000;
+  color: #fff;
+}
+
+.nav-tabs.wizard li.checkVerde i {
+  color: #fff !important;
+}
+

@@ -159,11 +159,7 @@ public class SolicitacaoCompraController implements Serializable {
 	public void novoItem() throws ApplicationException {
 		try {
 			setEdicaoProduto(Boolean.FALSE);
-			setListaUnidade(rmBusiness.listarUnidade());
 			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
-		} catch (ApplicationException e) {
-			LOG.info(e.getMessage(), e);
-			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "novoItem" }, e);
@@ -372,7 +368,6 @@ public class SolicitacaoCompraController implements Serializable {
 	public void iniciarEdicaoItem() throws ApplicationException {
 		try {
 			setEdicaoProduto(Boolean.TRUE);
-			setListaUnidade(rmBusiness.listarUnidade());
 			getSolicitacaoCompraDTO().setProduto(new ProdutoDTO());
 			getSolicitacaoCompraDTO().getProduto().setNaoEncontrei(getSolicitacaoItem().getProdutoNaoEncontrado());
 			if (getSolicitacaoCompraDTO().getProduto().getNaoEncontrei()) {

@@ -258,50 +258,115 @@ public class MinhaSolicitacaoCompraController implements Serializable {
 			if(situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_APRV)) {
 				if(aba.equals(1)) {
 					return "active";
-				} else {
+				} else if(aba.equals(2)) {
+					return "";
+				} else if(aba.equals(3)) {
+					return "";
+				} else if(aba.equals(4)) {
 					return "";
 				}
 			}
 			if (situacao.equals(SituacaoSolicitacaoCompra.EM_COTACAO) 
 					|| situacao.equals(SituacaoSolicitacaoCompra.APROVADA_COTACAO)) {
 				if(aba.equals(1)) {
-					return "completed";
+					return "checkVerde";
 				} else if(aba.equals(2)) {
 					return "active";
-				} else {
+				} else if(aba.equals(3)) {
+					return "";
+				} else if(aba.equals(4)) {
 					return "";
 				}
 			}
 			if (situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_APRV_COTACAO)
 					|| situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_NV_APRV)) {
 				if(aba.equals(1)) {
-					return "completed";
+					return "checkVerde";
 				} else if(aba.equals(2)) {
-					return "completed";
+					return "checkVerde";
 				} else if(aba.equals(3)) {
 					return "active";
-				} else {
+				} else if(aba.equals(4)) {
 					return "";
 				}
 			}
 			if (situacao.equals(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA)) {
 				if(aba.equals(1)) {
-					return "completed";
+					return "checkVerde";
 				} else if(aba.equals(2)) {
-					return "completed";
+					return "checkVerde";
 				} else if(aba.equals(3)) {
-					return "completed";
+					return "checkVerde";
 				} else if(aba.equals(4)) {
 					return "active";
-				} else {
-					return "";
 				}
 			}
 			if (situacao.equals(SituacaoSolicitacaoCompra.FINALIZADA)) {
-				return "completed";
+				return "checkVerde";
 			}
 			if (situacao.equals(SituacaoSolicitacaoCompra.CANCELADA)) {
-				return "cancel";
+				return "checkVermelho";
+			}
+			return "";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterClassStep" }, e);
+		}
+	}
+	
+	public String obterIconeStep(SituacaoSolicitacaoCompra situacao, Integer aba) throws ApplicationException {
+		try {
+			if(situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_APRV)) {
+				if(aba.equals(1)) {
+					return "fa fa-gavel";
+				} else if(aba.equals(2)) {
+					return "fa fa-pencil";
+				} else if(aba.equals(3)) {
+					return "fa fa-thumbs-up";
+				} else if(aba.equals(4)) {
+					return "fa fa-dollar";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.EM_COTACAO) 
+					|| situacao.equals(SituacaoSolicitacaoCompra.APROVADA_COTACAO)) {
+				if(aba.equals(1)) {
+					return "fa fa-check";
+				} else if(aba.equals(2)) {
+					return "fa fa-pencil";
+				} else if(aba.equals(3)) {
+					return "fa fa-thumbs-up";
+				} else if(aba.equals(4)) {
+					return "fa fa-dollar";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_APRV_COTACAO)
+					|| situacao.equals(SituacaoSolicitacaoCompra.AGUARDANDO_NV_APRV)) {
+				if(aba.equals(1)) {
+					return "fa fa-check";
+				} else if(aba.equals(2)) {
+					return "fa fa-check";
+				} else if(aba.equals(3)) {
+					return "fa fa-thumbs-up";
+				} else if(aba.equals(4)) {
+					return "fa fa-dollar";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.LIBERADO_ORDEM_COMPRA)) {
+				if(aba.equals(1)) {
+					return "fa fa-check";
+				} else if(aba.equals(2)) {
+					return "fa fa-check";
+				} else if(aba.equals(3)) {
+					return "fa fa-check";
+				} else if(aba.equals(4)) {
+					return "fa fa-dollar";
+				}
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.FINALIZADA)) {
+				return "fa fa-check";
+			}
+			if (situacao.equals(SituacaoSolicitacaoCompra.CANCELADA)) {
+				return "fa fa-times";
 			}
 			return "";
 		} catch (Exception e) {

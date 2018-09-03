@@ -446,7 +446,6 @@ public class CotacaoController implements Serializable {
 	
 	public String novaCotacao() throws ApplicationException {
 		try {
-			setListaUnidade(rmBusiness.listarUnidade());
 			setCotacao(new Cotacao());
 			getCotacao().setItens(new HashSet<CotacaoItem>());
 			for(SolicitacaoCompraItem item : getSolicitacaoCompra().getItens()) {
@@ -467,7 +466,6 @@ public class CotacaoController implements Serializable {
 
 	public String editarCotacao() throws ApplicationException {
 		try {
-			setListaUnidade(rmBusiness.listarUnidade());
 			if(Util.isNotNull(getCotacao())) {
 				getCotacao().setItens(new HashSet<CotacaoItem>(cotacaoBusiness.listarItensCotacao(getCotacao().getId())));
 			}

@@ -21,12 +21,12 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="cotacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<div class="tabbable">
+						<div class="tabbable" jsf:rendered="#{cotacaoController.solicitacaoCompra.situacao ne 'CANCELADA'}">
   							<ul class="nav nav-tabs wizard">
-							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 1)}"><a aria-expanded="false"><span class="nmbr"><i class="fa fa-gavel"></i></span> Aguardando Aprovação</a></li>
-							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 2)}"><a aria-expanded="false"><span class="nmbr"><i class="fa fa-pencil"></i></span> Em Cotação</a></li>
-							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 3)}"><a aria-expanded="false"><span class="nmbr"><i class="fa fa-thumbs-up"></i></span> Aguardando Liberação</a></li>
-							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 4)}"><a aria-expanded="true"><span class="nmbr"><i class="fa fa-check"></i></span> Gerar Ordem de Compra</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 1)}"><a aria-expanded="false"><span class="nmbr"><i class="#{minhaSolicitacaoCompraController.obterIconeStep(cotacaoController.solicitacaoCompra.situacao, 1)}"></i></span> Aguardando Aprovação</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 2)}"><a aria-expanded="false"><span class="nmbr"><i class="#{minhaSolicitacaoCompraController.obterIconeStep(cotacaoController.solicitacaoCompra.situacao, 2)}"></i></span> Em Cotação</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 3)}"><a aria-expanded="false"><span class="nmbr"><i class="#{minhaSolicitacaoCompraController.obterIconeStep(cotacaoController.solicitacaoCompra.situacao, 3)}"></i></span> Aguardando Liberação</a></li>
+							    <li class="#{minhaSolicitacaoCompraController.obterClassStep(cotacaoController.solicitacaoCompra.situacao, 4)}"><a aria-expanded="true"><span class="nmbr"><i class="#{minhaSolicitacaoCompraController.obterIconeStep(cotacaoController.solicitacaoCompra.situacao, 4)}"></i></span> Gerar Ordem de Compra</a></li>
   							</ul>
   						</div>
 						<div class="nav-tabs-custom">

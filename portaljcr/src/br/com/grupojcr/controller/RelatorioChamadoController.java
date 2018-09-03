@@ -137,10 +137,10 @@ public class RelatorioChamadoController implements Serializable {
 	
 	private void calcular() throws ApplicationException {
 		try {
-			setTotalAberto(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.ABERTO));
-			setTotalEmAndamento(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.EM_ANDAMENTO));
-			setTotalResolvidos(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.RESOLVIDO));
-			setTotalFechados(chamadoBusiness.obterQtdChamadoPorTipo(getFiltro(), SituacaoChamado.FECHADO));
+			setTotalAberto(chamadoBusiness.obterQtdChamadoPorTipo(SituacaoChamado.ABERTO));
+			setTotalEmAndamento(chamadoBusiness.obterQtdChamadoPorTipo(SituacaoChamado.EM_ANDAMENTO));
+			setTotalResolvidos(chamadoBusiness.obterQtdChamadoPorTipo(SituacaoChamado.RESOLVIDO));
+			setTotalFechados(chamadoBusiness.obterQtdChamadoPorTipo(SituacaoChamado.FECHADO));
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 		} catch (Exception e) {
