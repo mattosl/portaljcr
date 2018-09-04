@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -29,6 +27,7 @@ import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
+import br.com.grupojcr.dto.PeriodoFeriasDTO;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.BatidaRM;
@@ -445,6 +444,23 @@ public class RMBusiness {
 			
 			List<FeriasRM> listaFerias = daoRM.obterFeriasFuncionario(idColigada, chapa);
 			
+			List<PeriodoFeriasDTO> periodos = new ArrayList<PeriodoFeriasDTO>();
+			for(int i = 0; i < listaFerias.size(); i++) {
+				PeriodoFeriasDTO periodo = new PeriodoFeriasDTO();
+				if(listaFerias.get(i).getMotivo().equals("16")) {
+					periodo.setPeriodoInicial(listaFerias.get(i).getData());
+					
+					if(listaFerias.get(i + 1) != null) {
+						Calendar dtFinal = Calendar.getInstance();
+						dtFinal.setTime(listaFerias.get(i + 1).getData());
+						dtFinal.add(Calendar.DAY_OF_MONTH, -1);
+						periodo.setPeriodoFinal(dtFinal.getTime());
+					}
+					periodos.add(periodo);
+				}
+				i++;
+			}
+			
 			for(LocalDate localDate : datas) {
 				AjustePontoDTO dto = new AjustePontoDTO();
 				Date dataAtual = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -455,13 +471,19 @@ public class RMBusiness {
 					dto.setFinalSemana(Boolean.TRUE);
 				}
 				
-				/* Validar ferias */
-				Map<Date, Date> periodos = new HashMap<Date, Date>();
-				for(FeriasRM f : listaFerias) {
-					if(f.getMotivo().equals(16)) {
+				/* Validar Ferias */
+				for(PeriodoFeriasDTO periodo : periodos) {
+					if(Util.isNull(periodo.getPeriodoFinal())) {
+						if(dataAtual.after(periodo.getPeriodoInicial())) {
+							dto.setFerias(Boolean.TRUE);
+						}
+					} else {
+						if(TreatDate.pertenceAoPeriodo(dataAtual, periodo.getPeriodoInicial(), periodo.getPeriodoFinal())) {
+							dto.setFerias(Boolean.TRUE);
+						}
 					}
-					
 				}
+				
 				
 					
 				dto.setData(dataAtual);
@@ -489,11 +511,32 @@ public class RMBusiness {
 				for(Calendar ponto : pontos) {
 					dto.getBatidas().put(idx++, ponto);
 				}
+				
+				if(dto.getBatidas().size() < 4) {
+					if(!dto.getFinalSemana()
+							&& !dto.getFerias()
+							&& !dto.getFeriado()) {
+						dto.setFaltaBatida(Boolean.TRUE);
+					}
+				}
+				
+				
 				StringBuilder sb = new StringBuilder();
 				sb.append(TreatDate.format("dd/MM/yyyy", dto.getData()) + " - " + dto.getNomeDia() + " ");
 
 //				dto.getBatidas().forEach((k,v) -> System.out.println("key: " + k + " Value: " + TreatDate.format("dd/MM/yyyy", v.getTime())));
 				dto.getBatidas().forEach((k,v) -> sb.append(TreatDate.format("HH:mm", v.getTime()) + " "));
+				
+				
+				if(dto.getFerias()) {
+					sb.append(" FERIAS");
+				}
+				
+				if(dto.getFaltaBatida()) {
+					sb.append(" * ");
+				}
+				
+				listaAjuste.add(dto);
 				
 				System.out.println(sb.toString());
 			}
