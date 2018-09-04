@@ -62,13 +62,13 @@
 		            		</div>
 							<div class="form-horizontal">
 								<div class="box-body table-responsive no-padding">
-									<p:dataTable var="chamado" id="tableChamados"
+									<p:dataTable var="chamado" id="tableChamados" widgetVar="tableChamados"
 										value="#{painelChamadoController.listaChamado}" 
 										tableStyle="table-layout: auto; word-break: keep-all;"
 										emptyMessage="Nenhum chamado aberto no momento."
 										rendered="#{painelChamadoController.listaChamado.size() > 0}" >
 										
-										<p:column headerText="ID" style="text-align:center;font-size:12px;">
+										<p:column headerText="ID" style="text-align:center;font-size:12px;" filterBy="#{chamado.id}" filterMatchMode="exact" filterStyleClass="form-control">
 									        <p:commandLink ajax="true" process="@this" action="#{chamadoController.editar()}">
 										        <h:outputText styleClass="chamadoLink" value="#{chamado.id}" />
 										        <f:setPropertyActionListener value="#{chamado}" target="#{chamadoController.chamado}" />

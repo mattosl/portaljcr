@@ -2,6 +2,7 @@ package br.com.grupojcr.controller;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -11,6 +12,7 @@ import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 
 import br.com.grupojcr.business.RMBusiness;
+import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
@@ -36,20 +38,6 @@ public class AjustePontoController implements Serializable {
 	
 	public String autenticarUsuario() throws ApplicationException {
 		try {
-			if(Util.isBlank(getChapa())) {
-				throw new ApplicationException("message.empty", new String[] {"Chapa ou Senha inválidas."}, FacesMessage.SEVERITY_WARN);
-			}
-			
-			if(Util.isBlank(getChave())) {
-				throw new ApplicationException("message.empty", new String[] {"Chapa ou Senha inválidas."}, FacesMessage.SEVERITY_WARN);
-			}
-			
-			try {
-				rmBusiness.autenticarUsuario(getChapa(), getChave());
-			} catch (ApplicationException e) {
-				throw new ApplicationException("message.empty", new String[] {"Chapa ou Senha inválidas."}, FacesMessage.SEVERITY_WARN);
-			}
-			
 			iniciarAjustePonto();
 				
 			return "/pages/recursosHumanos/ajustePonto/editar_ajustePonto.xhtml?faces-redirect=true";
@@ -67,6 +55,7 @@ public class AjustePontoController implements Serializable {
 	private void iniciarAjustePonto() throws ApplicationException {
 		try {
 			carregarPeriodo();
+			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(7, "000040", getPeriodoInicial(), getPeriodoFinal());
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -86,10 +75,11 @@ public class AjustePontoController implements Serializable {
 			
 			if(diaMes <= 14) {
 				periodoInicial.set(Calendar.DAY_OF_MONTH, 15);
-				periodoInicial.add(Calendar.MONTH, -1);
+				periodoInicial.add(Calendar.MONTH, -2);
 				System.out.println("Período Inicial: " + TreatDate.format("dd/MM/yyyy", periodoInicial.getTime()));
 				
 				periodoFinal.set(Calendar.DAY_OF_MONTH, 14);
+				periodoFinal.add(Calendar.MONTH, -1);
 				System.out.println("Período Final: " + TreatDate.format("dd/MM/yyyy", periodoFinal.getTime()));
 			} else {
 				periodoInicial.set(Calendar.DAY_OF_MONTH, 15);
@@ -99,6 +89,7 @@ public class AjustePontoController implements Serializable {
 				periodoInicial.add(Calendar.MONTH, +1);
 				System.out.println("Período Final: " + TreatDate.format("dd/MM/yyyy", periodoFinal.getTime()));
 			}
+			
 			
 			setPeriodoInicial(periodoInicial);
 			setPeriodoFinal(periodoFinal);

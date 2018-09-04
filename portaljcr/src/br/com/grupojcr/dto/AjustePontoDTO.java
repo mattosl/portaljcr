@@ -1,9 +1,13 @@
 package br.com.grupojcr.dto;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 public class AjustePontoDTO {
+	
+	private Date data;
+	private String nomeDia;
 	
 	private Map<Integer, Calendar> batidas;
 	
@@ -18,6 +22,13 @@ public class AjustePontoDTO {
 	private Boolean feriado;
 	private Boolean finalSemana;
 	private Boolean faltaBatida;
+	
+	public AjustePontoDTO() {
+		this.finalSemana = Boolean.FALSE;
+		this.ferias = Boolean.FALSE;
+		this.feriado = Boolean.FALSE;
+		this.faltaBatida = Boolean.FALSE;
+	}
 
 	public Boolean getFerias() {
 		return ferias;
@@ -105,6 +116,22 @@ public class AjustePontoDTO {
 
 	public void setHorasAbono(Integer horasAbono) {
 		this.horasAbono = horasAbono;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public String getNomeDia() {
+		return nomeDia;
+	}
+
+	public void setNomeDia(String nomeDia) {
+		this.nomeDia = nomeDia;
 	}
 
 }

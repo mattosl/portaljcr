@@ -36,6 +36,7 @@ import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.BatidaRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
+import br.com.grupojcr.rm.FeriasRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.FuncionarioHoleriteRM;
 import br.com.grupojcr.rm.FuncionarioRM;
@@ -45,7 +46,6 @@ import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
-import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -2287,12 +2287,17 @@ public class RMDAO {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT [DATA], BATIDA FROM ABATFUN ")
-			.append("WHERE CODCOLIGADA = 7 ")
-			.append("AND CHAPA LIKE '000040' ")
-			.append("AND [DATA] BETWEEN '2018-08-15' AND '2018-09-14' ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA LIKE ? ")
+			.append("AND [DATA] BETWEEN ? AND ? ")
 			.append("ORDER BY [DATA] DESC, BATIDA ASC ");
 			
 			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setDate(3, new java.sql.Date(periodoInicial.getTime()));
+			ps.setDate(4, new java.sql.Date(periodoFinal.getTime()));
+			
 			
 			ResultSet set = ps.executeQuery();
 			
@@ -2326,7 +2331,72 @@ public class RMDAO {
 				}
 			}
 		}
-		return null;
+		return batidas;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<FeriasRM> obterFeriasFuncionario(Integer idColigada, String chapa) throws ApplicationException {
+		
+		/** 
+		 * SELECT DATAMUDANCA, MOTIVO FROM PFHSTSIT
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA = ?
+		 * AND (MOTIVO LIKE '16' OR MOTIVO LIKE '17')
+		 * ORDER BY DATAMUDANCA ASC
+		*/
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<FeriasRM> ferias = new ArrayList<FeriasRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT DATAMUDANCA, MOTIVO FROM PFHSTSIT ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA LIKE ? ")
+			.append("AND (MOTIVO LIKE '16' OR MOTIVO LIKE '17') ")
+			.append("ORDER BY DATAMUDANCA ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				FeriasRM f = new FeriasRM();
+				f.setData(set.getDate("DATAMUDANCA"));
+				f.setMotivo(set.getString("MOTIVO"));
+				
+				ferias.add(f);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterFeriasFuncionario" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return ferias;
 	}
 	
 }

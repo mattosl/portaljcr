@@ -81,6 +81,12 @@
 							<span>Holerite</span>
 						</p:link>
 					</li>
+					<li class="#{activeSubmenu eq 'ajustePonto' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+						<p:link href="/pages/recursosHumanos/ajustarPonto/autenticar_ajustarPonto.xhtml" ajax="false">
+							<i class="fa fa-pencil-square-o"></i>
+							<span>Ajuste de Ponto</span>
+						</p:link>
+					</li>
 				</ul>
 			</li>
 			

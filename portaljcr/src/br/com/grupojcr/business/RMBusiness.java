@@ -1,8 +1,20 @@
 package br.com.grupojcr.business;
 
 import java.io.StringReader;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -15,11 +27,14 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
+import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
 import br.com.grupojcr.enumerator.Modalidade;
+import br.com.grupojcr.rm.BatidaRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
+import br.com.grupojcr.rm.FeriasRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.rm.HoleriteItensRM;
@@ -411,15 +426,85 @@ public class RMBusiness {
 		}
 	}
 	
-	public Integer obterQtdDepSalFamilia(Integer idColigada, String chapa) throws ApplicationException {
+	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
 		try {
-			return daoRM.obterQtdDependenteSalFamilia(idColigada, chapa);
+//			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(idColigada, chapa, periodoInicial, periodoFinal);
+			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
+			
+			List<AjustePontoDTO> listaAjuste = new ArrayList<AjustePontoDTO>();
+			
+			LocalDate dataInicio = periodoInicial.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate dataFinal = periodoFinal.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			
+			long numOfDaysBetween = ChronoUnit.DAYS.between(dataInicio, dataFinal);
+			
+			List<LocalDate> datas = IntStream.iterate(0, i -> i + 1)
+				      .limit(numOfDaysBetween + 1)
+				      .mapToObj(i -> dataInicio.plusDays(i))
+				      .collect(Collectors.toList()); 
+			
+			List<FeriasRM> listaFerias = daoRM.obterFeriasFuncionario(idColigada, chapa);
+			
+			for(LocalDate localDate : datas) {
+				AjustePontoDTO dto = new AjustePontoDTO();
+				Date dataAtual = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				
+				/* Validar final de semana */
+				if(localDate.getDayOfWeek().getValue() == 6 
+						|| localDate.getDayOfWeek().getValue() == 7) {
+					dto.setFinalSemana(Boolean.TRUE);
+				}
+				
+				/* Validar ferias */
+				Map<Date, Date> periodos = new HashMap<Date, Date>();
+				for(FeriasRM f : listaFerias) {
+					if(f.getMotivo().equals(16)) {
+					}
+					
+				}
+				
+					
+				dto.setData(dataAtual);
+				List<Calendar> pontos = new ArrayList<Calendar>();
+				for(BatidaRM batida : batidas) {
+					if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
+						Integer hora = batida.getBatida() / 60;
+						Integer minuto = batida.getBatida() % 60;
+						
+						Calendar databatida = Calendar.getInstance();
+						databatida.setTime(dto.getData());
+						databatida.set(Calendar.HOUR_OF_DAY, hora);
+						databatida.set(Calendar.MINUTE, minuto);
+						databatida.set(Calendar.SECOND, 0);
+						databatida.set(Calendar.MILLISECOND, 0);
+						
+						pontos.add(databatida);
+					}
+				}
+				
+				String nomeDia = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+				dto.setNomeDia(nomeDia.toUpperCase().substring(0, 3));
+				dto.setBatidas(new HashMap<Integer, Calendar>());
+				Integer idx = 1;
+				for(Calendar ponto : pontos) {
+					dto.getBatidas().put(idx++, ponto);
+				}
+				StringBuilder sb = new StringBuilder();
+				sb.append(TreatDate.format("dd/MM/yyyy", dto.getData()) + " - " + dto.getNomeDia() + " ");
+
+//				dto.getBatidas().forEach((k,v) -> System.out.println("key: " + k + " Value: " + TreatDate.format("dd/MM/yyyy", v.getTime())));
+				dto.getBatidas().forEach((k,v) -> sb.append(TreatDate.format("HH:mm", v.getTime()) + " "));
+				
+				System.out.println(sb.toString());
+			}
+			
+			return listaAjuste;
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDepSalFamilia" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterBatidasUsuarioPeriodo" }, e);
 		}
 	}
 
