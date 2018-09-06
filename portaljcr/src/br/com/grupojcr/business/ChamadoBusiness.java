@@ -159,6 +159,7 @@ public class ChamadoBusiness {
 			List<String> destinatarios = new ArrayList<String>();
 			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
 				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
+				destinatarios.add(chamado.getUsuarioResponsavel().getEmail().trim());
 			}
 	
 			if(CollectionUtils.isNotEmpty(destinatarios)) {
@@ -178,6 +179,7 @@ public class ChamadoBusiness {
 			List<String> destinatarios = new ArrayList<String>();
 			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
 				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
+				destinatarios.add(chamado.getUsuarioResponsavel().getEmail().trim());
 			}
 	
 			if(CollectionUtils.isNotEmpty(destinatarios)) {

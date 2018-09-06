@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +23,10 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.dto.AprovacaoContratoDTO;
 import br.com.grupojcr.dto.AprovacaoOrdemCompraDTO;
+import br.com.grupojcr.dto.AprovadorDTO;
+import br.com.grupojcr.dto.CentroCustoDTO;
 import br.com.grupojcr.dto.ChapaDTO;
+import br.com.grupojcr.dto.ColigadaDTO;
 import br.com.grupojcr.dto.HoleriteDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
@@ -36,6 +40,7 @@ import br.com.grupojcr.rm.AprovadorRM;
 import br.com.grupojcr.rm.BatidaRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
+import br.com.grupojcr.rm.FeriadoRM;
 import br.com.grupojcr.rm.FeriasRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.FuncionarioHoleriteRM;
@@ -46,6 +51,7 @@ import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -324,6 +330,85 @@ public class RMDAO {
 			}
 		} catch (Exception e) {
 			LOG.error("Erro ao obter itens do movimento");
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaDTO;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<ItemDTO> listarItensContrato(Integer codContrato, Integer codColigada) {
+		List<ItemDTO> listaDTO = new ArrayList<ItemDTO>();
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = datasource.getConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT ")
+			.append("PRODUTO.CODIGOPRD AS CODIGO_PRODUTO, ")
+			.append("PRODUTO.NOMEFANTASIA AS NOME, ")
+			.append("ITEM.QUANTIDADE AS QUANTIDADE, ")
+			.append("ITEM.CODUND AS UNIDADE, ")
+			.append("ITEM.VALORTOTAL AS VALOR, ")
+			.append("CC.CODCCUSTO AS CODIGO_CCUSTO, ")
+			.append("CC.NOME AS CENTRO_CUSTO, ")
+			.append("ORCAMENTO.CODTBORCAMENTO AS CODIGO_NATUREZA, ")
+			.append("ORCAMENTO.DESCRICAO AS NATUREZA, ")
+			.append("HISTORICO.HISTORICOLONGO AS OBSERVACAO ")
+			.append("FROM ")
+			.append("TITMCNT AS ITEM (NOLOCK) ")
+			.append("LEFT JOIN TPRODUTO(NOLOCK) AS PRODUTO ON (PRODUTO.IDPRD = ITEM.IDPRD) ")
+			.append("LEFT JOIN GCCUSTO(NOLOCK) AS CC ON (CC.CODCCUSTO = ITEM.CODCCUSTO AND CC.CODCOLIGADA = ITEM.CODCOLIGADA) ")
+			.append("LEFT JOIN TPRODUTODEF AS PRODUTODEF ON (PRODUTODEF.IDPRD = PRODUTO.IDPRD) ")
+			.append("LEFT JOIN TTBORCAMENTO(NOLOCK) AS ORCAMENTO ON (ORCAMENTO.CODTBORCAMENTO = PRODUTODEF.CODTBORCAMENTO) ")
+			.append("LEFT JOIN TITMCNTHISTORICO(NOLOCK) AS HISTORICO ON (HISTORICO.IDCNT = ITEM.IDCNT AND HISTORICO.CODCOLIGADA = ITEM.CODCOLIGADA AND HISTORICO.NSEQITMCNT = ITEM.NSEQITMCNT) ")
+			.append("WHERE ITEM.CODCOLIGADA = ? ")
+			.append("AND ITEM.IDCNT = ? ");
+
+			ps = conn.prepareStatement(sb.toString());
+
+			ps.setInt(1, codColigada.intValue());
+			ps.setInt(2, codContrato.intValue());
+
+			ResultSet set = ps.executeQuery();
+
+			while (set.next()) {
+				ItemDTO dto = new ItemDTO();
+				dto.setIdProduto(set.getString("CODIGO_PRODUTO"));
+				dto.setProduto(set.getString("NOME"));
+				dto.setQuantidade(Integer.valueOf(set.getInt("QUANTIDADE")));
+
+				BigDecimal valor = set.getBigDecimal("VALOR");
+				dto.setPrecoUnitario(TreatNumber.formatMoney(valor).toString());
+				dto.setIdCentroCusto(set.getString("CODIGO_CCUSTO"));
+				dto.setCentroCusto(set.getString("CENTRO_CUSTO"));
+				dto.setIdNaturezaOrcamentaria(set.getString("CODIGO_NATUREZA"));
+				dto.setNaturezaOrcamentaria(set.getString("NATUREZA"));
+				dto.setObservacao(set.getString("OBSERVACAO"));
+
+				listaDTO.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error("Erro ao obter itens do contrato");
 		} finally {
 			if (ps != null) {
 				try {
@@ -2397,6 +2482,465 @@ public class RMDAO {
 			}
 		}
 		return ferias;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<ColigadaDTO> listarColigadas() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<ColigadaDTO> coligadas = new ArrayList<ColigadaDTO>();
+
+		try {
+			conn = datasource.getConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(
+					"SELECT CODCOLIGADA, NOMEFANTASIA FROM GFILIAL GROUP BY CODCOLIGADA, NOMEFANTASIA ORDER BY CODCOLIGADA");
+
+			ps = conn.prepareStatement(sb.toString());
+
+			ResultSet set = ps.executeQuery();
+
+			while (set.next()) {
+				ColigadaDTO dto = new ColigadaDTO();
+				dto.setId(Integer.valueOf(set.getInt("CODCOLIGADA")));
+				dto.setNome(set.getString("NOMEFANTASIA"));
+
+				coligadas.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error("Erro ao listar coligadas");
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return coligadas;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<CentroCustoDTO> listarCentroCusto() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<CentroCustoDTO> centrosCusto = new ArrayList<CentroCustoDTO>();
+
+		try {
+			conn = datasource.getConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(
+					"SELECT CODCCUSTO, NOME FROM GCCUSTO WHERE CODCOLIGADA = 7 ORDER BY CODCCUSTO");
+
+			ps = conn.prepareStatement(sb.toString());
+
+			ResultSet set = ps.executeQuery();
+
+			while (set.next()) {
+				CentroCustoDTO dto = new CentroCustoDTO();
+				dto.setCodigoCentroCusto(set.getString("CODCCUSTO"));
+				dto.setNome(set.getString("NOME"));
+
+				centrosCusto.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error("Erro ao listar centro de custos");
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return centrosCusto;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<OrcamentoDTO> listarOrcamento() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<OrcamentoDTO> orcamentos = new ArrayList<OrcamentoDTO>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append(
+					"SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO WHERE INATIVO = 0 ORDER BY DESCRICAO");
+			
+			ps = conn.prepareStatement(sb.toString());
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				OrcamentoDTO dto = new OrcamentoDTO();
+				dto.setCodigo(set.getString("CODTBORCAMENTO"));
+				dto.setDescricao(set.getString("DESCRICAO"));
+				
+				orcamentos.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error("Erro ao listar orçamento");
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return orcamentos;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<MovimentoDTO> listarAprovacaoPorPeriodo(Integer idColigada, String centroCusto, Date dtInicio, Date dtFim) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<MovimentoDTO> movimentos = new ArrayList<MovimentoDTO>();
+
+		try {
+			conn = datasource.getConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT DISTINCT ")
+			.append("FILIAL.CODCOLIGADA AS CODIGO_EMPRESA, ")
+			.append("FILIAL.NOME AS EMPRESA, ")
+			.append("USUARIO.NOME AS SOLICITANTE, ")
+			.append("TMOV.CODUSUARIO AS USRSOLICITANTE, ")
+			.append("TMOV.IDMOV AS IDENTIFICADOR_RM, ")
+			.append("TMOV.DATAEMISSAO AS DT_EMISSAO, ")
+			.append("FORNECEDOR.CODCFO AS CODIGO_FORNECEDOR, ")
+			.append("FORNECEDOR.NOME AS FORNECEDOR, ")
+			.append("COND_PAGAMENTO.CODCPG AS CODIGO_COND_PAGAMENTO, ")
+			.append("COND_PAGAMENTO.NOME AS CONDICAO_PAGAMENTO, ")
+			.append("TMOV.VALORBRUTOORIG AS VALOR_TOTAL, ")
+			.append("CCUSTO.CODCCUSTO AS CODIGO_CCUSTO, ")
+			.append("CCUSTO.NOME AS CCUSTO, ")
+			.append("CAST(HISTORICO.HISTORICOLONGO AS VARCHAR(8000)) AS OBSERVACAO, ")
+			.append("TMOV.CODMOEVALORLIQUIDO AS MOEDA, ")
+			.append("TIPO_MOV.CODTMV AS CODIGO_MOVIMENTO, ")
+			.append("'ORDEM DE COMPRA' AS TIPO_MOVIMENTO, ")
+			.append("TMOV.STATUS AS STATUS, ")
+			.append("MONITOR.SITUACAO AS SITUACAO_APROVACAO, ")
+			.append("MONITOR.DATAAPROV AS DATA_ULTIMA_APROVACAO, ")
+			.append("CCUSTOCOMPL.LOTACAO AS LOTACAO ")
+			.append("FROM ")
+			.append("TMOV AS TMOV (NOLOCK) ")
+			.append("JOIN GFILIAL  (NOLOCK) AS FILIAL ON (FILIAL.CODCOLIGADA = TMOV.CODCOLIGADA AND FILIAL.CODFILIAL = TMOV.CODFILIAL) ")
+			.append("JOIN GCCUSTO (NOLOCK) AS CCUSTO ON (CCUSTO.CODCCUSTO = TMOV.CODCCUSTO) ")
+			.append("JOIN FCFO (NOLOCK) AS FORNECEDOR ON (FORNECEDOR.CODCFO = TMOV.CODCFO) ")
+			.append("JOIN GUSUARIO (NOLOCK) AS USUARIO ON (USUARIO.CODUSUARIO LIKE TMOV.CODUSUARIO) ")
+			.append("JOIN TCPG (NOLOCK) AS COND_PAGAMENTO ON (COND_PAGAMENTO.CODCPG = TMOV.CODCPG AND COND_PAGAMENTO.CODCOLIGADA = TMOV.CODCOLIGADA) ")
+			.append("JOIN TMOVHISTORICO (NOLOCK) AS HISTORICO ON (HISTORICO.CODCOLIGADA = TMOV.CODCOLIGADA AND HISTORICO.IDMOV = TMOV.IDMOV) ")
+			.append("JOIN TTMV (NOLOCK) AS TIPO_MOV ON (TIPO_MOV.CODTMV = TMOV.CODTMV) ")
+			.append("JOIN CCUSTOCOMPL (NOLOCK) AS CCUSTOCOMPL ON (CCUSTOCOMPL.CODCOLIGADA = TMOV.CODCOLIGADA AND CCUSTOCOMPL.CODCCUSTO LIKE TMOV.CODCCUSTO) ")
+			.append("JOIN ZMDMONITORAPROVACAO (NOLOCK) AS MONITOR ON (MONITOR.IDMOV = TMOV.IDMOV AND MONITOR.CODCOLIGADA = TMOV.CODCOLIGADA AND MONITOR.IDMOV = TMOV.IDMOV AND MONITOR.CODTMV = TMOV.CODTMV AND MONITOR.DATAAPROV = (SELECT MAX(AUXMON.DATAAPROV) FROM ZMDMONITORAPROVACAO AUXMON WHERE AUXMON.CODTMV = TMOV.CODTMV AND AUXMON.CODCOLIGADA = TMOV.CODCOLIGADA AND AUXMON.IDMOV = TMOV.IDMOV)) ")
+			.append("WHERE TMOV.DATAEMISSAO BETWEEN ? AND ? ");
+			if (Util.isNotNull(idColigada)) {
+				sb.append("AND TMOV.CODCOLIGADA = ? ");
+			}
+			if(TreatString.isNotBlank(centroCusto)) {
+				sb.append("AND CCUSTO.CODCCUSTO LIKE ? ");
+			}
+
+			sb.append("UNION ALL ")
+			.append("SELECT DISTINCT ")
+			.append("FILIAL.CODCOLIGADA AS CODIGO_EMPRESA, ")
+			.append("FILIAL.NOME AS EMPRESA, ")
+			.append("USUARIO.NOME AS SOLICITANTE, ")
+			.append("CNT.CODUSUARIO AS USRSOLICITANTE, ")
+			.append("CNT.IDCNT AS IDENTIFICADOR_RM, ")
+			.append("CNT.DATACONTRATO AS DT_EMISSAO, ")
+			.append("FORNECEDOR.CODCFO AS CODIGO_FORNECEDOR, ")
+			.append("FORNECEDOR.NOME AS FORNECEDOR, ")
+			.append("COND_PAGAMENTO.CODCPG AS CODIGO_COND_PAGAMENTO, ")
+			.append("COND_PAGAMENTO.NOME AS CONDICAO_PAGAMENTO, ")
+			.append("CNT.VALORCONTRATO AS VALOR_TOTAL, ")
+			.append("CCUSTO.CODCCUSTO AS CODIGO_CCUSTO, ")
+			.append("CCUSTO.NOME AS CCUSTO, ")
+			.append("CAST(HISTORICO.HISTORICOLONGO AS VARCHAR(8000)) AS OBSERVACAO, ")
+			.append("CNT.CODMOEVALORCONTRATO AS MOEDA, ")
+			.append("'CONTRATO' AS CODIGO_MOVIMENTO, ")
+			.append("'CONTRATO' AS TIPO_MOVIMENTO, ")
+			.append("SIT_CONTRATO.DESCRICAO AS STATUS, ")
+			.append("MONITOR.SITUACAO AS SITUACAO_APROVACAO, ")
+			.append("MONITOR.DATAAPROV AS DATA_ULTIMA_APROVACAO, ")
+			.append("CCUSTOCOMPL.LOTACAO AS LOTACAO ")
+			.append("FROM ")
+			.append("TCNT AS CNT (NOLOCK) ")
+			.append("JOIN GFILIAL  (NOLOCK) AS FILIAL ON (FILIAL.CODCOLIGADA = CNT.CODCOLIGADA AND FILIAL.CODFILIAL = CNT.CODFILIAL) ")
+			.append("JOIN GCCUSTO (NOLOCK) AS CCUSTO ON (CCUSTO.CODCCUSTO = CNT.CODCCUSTO) ")
+			.append("JOIN FCFO (NOLOCK) AS FORNECEDOR ON (FORNECEDOR.CODCFO = CNT.CODCFO) ")
+			.append("JOIN GUSUARIO (NOLOCK) AS USUARIO ON (USUARIO.CODUSUARIO LIKE CNT.CODUSUARIO) ")
+			.append("JOIN TCPG (NOLOCK) AS COND_PAGAMENTO ON (COND_PAGAMENTO.CODCPG = CNT.CODCPG AND COND_PAGAMENTO.CODCOLIGADA = CNT.CODCOLIGADA) ")
+			.append("JOIN TCNTHISTORICO (NOLOCK) AS HISTORICO ON (HISTORICO.CODCOLIGADA = CNT.CODCOLIGADA AND HISTORICO.IDCNT = CNT.IDCNT) ")
+			.append("JOIN ZMDMONITORAPROVACAO (NOLOCK) AS MONITOR ON (MONITOR.IDMOV = CNT.IDCNT AND MONITOR.CODTMV LIKE 'CONTRATO' AND MONITOR.CODCOLIGADA = CNT.CODCOLIGADA AND MONITOR.DATAAPROV = (SELECT MAX(AUXMON.DATAAPROV) FROM ZMDMONITORAPROVACAO AUXMON WHERE AUXMON.CODCOLIGADA = CNT.CODCOLIGADA AND AUXMON.IDMOV = CNT.IDCNT)) ")
+			.append("JOIN TSTACNT (NOLOCK) AS SIT_CONTRATO ON (SIT_CONTRATO.CODCOLIGADA = CNT.CODCOLIGADA AND SIT_CONTRATO.CODSTACNT LIKE CNT.CODSTACNT) ")
+			.append("JOIN CCUSTOCOMPL (NOLOCK) AS CCUSTOCOMPL ON (CCUSTOCOMPL.CODCOLIGADA = CNT.CODCOLIGADA AND CCUSTOCOMPL.CODCCUSTO LIKE CNT.CODCCUSTO) ")
+			.append("WHERE CNT.DATACONTRATO BETWEEN ? AND ? ");
+			if (Util.isNotNull(idColigada)) {
+				sb.append("AND CNT.CODCOLIGADA = ? ");
+			}
+			if(TreatString.isNotBlank(centroCusto)) {
+				sb.append("AND CCUSTO.CODCCUSTO LIKE ? ");
+			}
+			sb.append("ORDER BY DT_EMISSAO DESC ");
+
+			ps = conn.prepareStatement(sb.toString());
+
+			int idx = 1;
+			ps.setDate(idx++, new java.sql.Date(dtInicio.getTime()));
+			ps.setDate(idx++, new java.sql.Date(dtFim.getTime()));
+			if (Util.isNotNull(idColigada)) {
+				ps.setInt(idx++, idColigada.intValue());
+			}
+			if(TreatString.isNotBlank(centroCusto)) {
+				ps.setString(idx++, centroCusto);
+			}
+			ps.setDate(idx++, new java.sql.Date(dtInicio.getTime()));
+			ps.setDate(idx++, new java.sql.Date(dtFim.getTime()));
+			if (Util.isNotNull(idColigada)) {
+				ps.setInt(idx++, idColigada.intValue());
+			}
+			if(TreatString.isNotBlank(centroCusto)) {
+				ps.setString(idx++, centroCusto);
+			}
+
+			ResultSet set = ps.executeQuery();
+
+			while (set.next()) {
+				MovimentoDTO dto = new MovimentoDTO();
+				dto.setIdColigada(Integer.valueOf(set.getInt("CODIGO_EMPRESA")));
+				dto.setNomeEmpresa(set.getString("EMPRESA"));
+				dto.setSolicitante(set.getString("SOLICITANTE"));
+				dto.setIdMov(Integer.valueOf(set.getInt("IDENTIFICADOR_RM")));
+				dto.setDataEmissao(TreatDate.format("dd/MM/yyyy", set.getDate("DT_EMISSAO")));
+				dto.setIdFornecedor(set.getString("CODIGO_FORNECEDOR"));
+				dto.setFornecedor(set.getString("FORNECEDOR"));
+				dto.setIdCondicaoPagamento(set.getString("CODIGO_COND_PAGAMENTO"));
+				dto.setCondicaoPagamento(set.getString("CONDICAO_PAGAMENTO"));
+				BigDecimal valor = set.getBigDecimal("VALOR_TOTAL");
+				dto.setValorTotal(TreatNumber.formatMoney(valor).toString());
+				dto.setIdCentroCusto(set.getString("CODIGO_CCUSTO"));
+				dto.setCentroCusto(set.getString("CCUSTO"));
+				dto.setObservacao(set.getString("OBSERVACAO"));
+				dto.setMoeda(set.getString("MOEDA"));
+				dto.setIdTipoMovimento(set.getString("CODIGO_MOVIMENTO"));
+				dto.setTipoMovimento(set.getString("TIPO_MOVIMENTO"));
+				dto.setUsrSolicitante(set.getString("USRSOLICITANTE"));
+				dto.setStatus(set.getString("STATUS"));
+				dto.setSituacaoMonitor(set.getString("SITUACAO_APROVACAO"));
+				dto.setLotacao(set.getString("LOTACAO"));
+				Date dtUltimaAprovacao = set.getDate("DATA_ULTIMA_APROVACAO");
+				if (Util.isNotNull(dtUltimaAprovacao)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					dto.setDtUltimaAprovacao(sdf.format(dtUltimaAprovacao));
+				}
+				movimentos.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error("Erro ao listar movimento");
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return movimentos;
+	}	
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<AprovadorDTO> listarAprovadores(String lotacao) {
+		List<AprovadorDTO> listaDTO = new ArrayList<AprovadorDTO>();
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = datasource.getConnection();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT ")
+			.append("CODCOLIGADA, CODCCUSTO, USRAPROV, VALORDEMOV, VALORATEMOV, VALORDECNT, VALORATECNT ")
+			.append("FROM ")
+			.append("ZMDAPROVADOR ")
+			.append("WHERE CODCCUSTO = ? ")
+			.append("UNION ALL ")
+			.append("SELECT ")
+			.append("CODCOLIGADA, CODCCUSTO, USRAPROV, VALORDEMOV, VALORATEMOV, VALORDECNT, VALORATECNT ")
+			.append("FROM ")
+			.append("ZMDSEGUNDOAPROV ")
+			.append("WHERE CODCCUSTO = ?");
+
+			ps = conn.prepareStatement(sb.toString());
+
+			ps.setString(1, lotacao);
+			ps.setString(2, lotacao);
+
+			ResultSet set = ps.executeQuery();
+
+			while (set.next()) {
+				AprovadorDTO dto = new AprovadorDTO();
+				dto.setIdColigada(Integer.valueOf(set.getInt("CODCOLIGADA")));
+				dto.setLotacao(set.getString("CODCCUSTO"));
+				dto.setUsuarioAprovacao(set.getString("USRAPROV"));
+				dto.setValorInicialMovimento(set.getBigDecimal("VALORDEMOV"));
+				dto.setValorFinalMovimento(set.getBigDecimal("VALORATEMOV"));
+				dto.setValorInicialContrato(set.getBigDecimal("VALORDECNT"));
+				dto.setValorFinalContrato(set.getBigDecimal("VALORATECNT"));
+
+				listaDTO.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error("Erro ao obter aprovadores");
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return listaDTO;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<FeriadoRM> obterFeriadosFuncionario(Integer idColigada, String chapa, Date periodoInicial, Date periodoFinal) throws ApplicationException {
+		
+		/** 
+		 * SELECT DIAFERIADO, NOME FROM GFERIADO AS GFERIADO 
+		 * WHERE GFERIADO.CODCALENDARIO = 
+		 * 	(SELECT PSECAO.CODCALENDARIO FROM PFUNC AS PFUNC
+		 * 	LEFT JOIN PSECAO AS PSECAO ON (PSECAO.CODIGO = PFUNC.CODSECAO AND PSECAO.CODCOLIGADA = PFUNC.CODCOLIGADA)
+		 * 	WHERE PFUNC.CODCOLIGADA = ?
+		 * 	AND PFUNC.CHAPA LIKE ?)
+		 * AND GFERIADO.FERIADO LIKE 'T'
+		 * AND GFERIADO.DIAFERIADO BETWEEN ? AND ?
+		 * ORDER BY GFERIADO.DIAFERIADO ASC
+		*/
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<FeriadoRM> feriados = new ArrayList<FeriadoRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT GFERIADO.DIAFERIADO, GFERIADO.NOME FROM GFERIADO AS GFERIADO ")
+			.append("WHERE GFERIADO.CODCALENDARIO = ")
+				.append("(SELECT PSECAO.CODCALENDARIO FROM PFUNC AS PFUNC ")
+				.append("LEFT JOIN PSECAO AS PSECAO ON (PSECAO.CODIGO = PFUNC.CODSECAO AND PSECAO.CODCOLIGADA = PFUNC.CODCOLIGADA) ")
+				.append("WHERE PFUNC.CODCOLIGADA = ? ")
+				.append("AND PFUNC.CHAPA LIKE ?) ")
+			.append("AND GFERIADO.FERIADO LIKE 'T' ")
+			.append("AND GFERIADO.DIAFERIADO BETWEEN ? AND ? ")
+			.append("ORDER BY GFERIADO.DIAFERIADO ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setDate(3, new java.sql.Date(periodoInicial.getTime()));
+			ps.setDate(4, new java.sql.Date(periodoFinal.getTime()));
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				FeriadoRM f = new FeriadoRM();
+				f.setData(set.getDate("DIAFERIADO"));
+				f.setNome(set.getString("NOME"));
+				
+				feriados.add(f);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterFeriadosFuncionario" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return feriados;
 	}
 	
 }

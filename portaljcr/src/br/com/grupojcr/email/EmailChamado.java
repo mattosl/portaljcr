@@ -128,6 +128,8 @@ public class EmailChamado {
 
 			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
 				Transport.send(message);
+				LOG.info("EMAIL ENVIADO PARA: " + chamado.getUsuarioSolicitante().getEmail());
+				LOG.info("EMAIL ENVIADO PARA: " + chamado.getUsuarioResponsavel().getEmail());
 			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
@@ -177,6 +179,8 @@ public class EmailChamado {
 
 			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
 				Transport.send(message);
+				LOG.info("EMAIL ENVIADO PARA: " + chamado.getUsuarioSolicitante().getEmail());
+				LOG.info("EMAIL ENVIADO PARA: " + chamado.getUsuarioResponsavel().getEmail());
 			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);
@@ -226,6 +230,8 @@ public class EmailChamado {
 
 			if(Preferencias.get(Propriedades.AMBIENTE).equals("PRODUCAO")) {
 				Transport.send(message);
+				LOG.info("EMAIL ENVIADO PARA: " + chamado.getUsuarioSolicitante().getEmail());
+				LOG.info("EMAIL ENVIADO PARA: " + usuarioLogado.getEmail());
 			}
 		} catch (MessagingException e) {
 			LOG.error("ERRO NO ENVIO DE E-MAIL: " + e.getMessage(), e);

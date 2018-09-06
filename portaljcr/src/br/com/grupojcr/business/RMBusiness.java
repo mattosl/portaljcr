@@ -1,6 +1,7 @@
 package br.com.grupojcr.business;
 
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
@@ -26,6 +27,9 @@ import org.apache.log4j.Logger;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.AjustePontoDTO;
+import br.com.grupojcr.dto.AprovadorDTO;
+import br.com.grupojcr.dto.ItemDTO;
+import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.dto.PeriodoFeriasDTO;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
@@ -33,6 +37,7 @@ import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.BatidaRM;
 import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.CondicaoPagamentoRM;
+import br.com.grupojcr.rm.FeriadoRM;
 import br.com.grupojcr.rm.FeriasRM;
 import br.com.grupojcr.rm.FornecedorRM;
 import br.com.grupojcr.rm.FuncionarioRM;
@@ -443,6 +448,7 @@ public class RMBusiness {
 				      .collect(Collectors.toList()); 
 			
 			List<FeriasRM> listaFerias = daoRM.obterFeriasFuncionario(idColigada, chapa);
+			List<FeriadoRM> listaFeriado = daoRM.obterFeriadosFuncionario(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());
 			
 			List<PeriodoFeriasDTO> periodos = new ArrayList<PeriodoFeriasDTO>();
 			for(int i = 0; i < listaFerias.size(); i++) {
@@ -481,6 +487,13 @@ public class RMBusiness {
 						if(TreatDate.pertenceAoPeriodo(dataAtual, periodo.getPeriodoInicial(), periodo.getPeriodoFinal())) {
 							dto.setFerias(Boolean.TRUE);
 						}
+					}
+				}
+				
+				/* Validar Feriado */
+				for(FeriadoRM feriado : listaFeriado) {
+					if(TreatDate.isMesmaData(dataAtual, feriado.getData())) {
+						dto.setFeriado(Boolean.TRUE);
 					}
 				}
 				
@@ -532,6 +545,10 @@ public class RMBusiness {
 					sb.append(" FERIAS");
 				}
 				
+				if(dto.getFerias()) {
+					sb.append(" FERIADO");
+				}
+				
 				if(dto.getFaltaBatida()) {
 					sb.append(" * ");
 				}
@@ -548,6 +565,75 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterBatidasUsuarioPeriodo" }, e);
+		}
+	}
+	
+	public List<MovimentoDTO> listarMovimentos(String usuario, Date dtInicio, Date dtFim, Integer idColigada, String centroCusto, String naturezaOrcamentaria) {
+		try {
+			LOG.info("[listarMovimentos] Listando aprovações do período...");
+			List<MovimentoDTO> movimentos = daoRM.listarAprovacaoPorPeriodo(idColigada, centroCusto, dtInicio, dtFim);
+			List<MovimentoDTO> retorno = new ArrayList<MovimentoDTO>();
+	
+			LOG.info("[listarMovimentos] Verificando movimentos que o usuário tem ligação...");
+			for (MovimentoDTO dto : movimentos) {
+				Boolean possuiVinculo = Boolean.FALSE;
+				List<AprovadorDTO> aprovadores = daoRM.listarAprovadores(dto.getLotacao());
+	
+				Double valorCompra = Util.removerFomatacaoMoeda(dto.getValorTotal());
+				
+				for (AprovadorDTO aprv : aprovadores) {
+					if(aprv.getUsuarioAprovacao().equals(usuario)) {
+						if(dto.getIdTipoMovimento().equals("CONTRATO")) {
+							if(aprv.getValorInicialContrato().compareTo(new BigDecimal(valorCompra)) == 0 || aprv.getValorInicialContrato().compareTo(new BigDecimal(valorCompra)) == -1) {
+								if(aprv.getValorFinalContrato().compareTo(new BigDecimal(valorCompra)) == 0 || aprv.getValorFinalContrato().compareTo(new BigDecimal(valorCompra)) == 1) {
+									possuiVinculo = Boolean.TRUE;
+								}
+							}
+						} else {
+							if(aprv.getValorInicialMovimento().compareTo(new BigDecimal(valorCompra)) == 0 || aprv.getValorInicialMovimento().compareTo(new BigDecimal(valorCompra)) == -1) {
+								if(aprv.getValorFinalMovimento().compareTo(new BigDecimal(valorCompra)) == 0 || aprv.getValorFinalMovimento().compareTo(new BigDecimal(valorCompra)) == 1) {
+									possuiVinculo = Boolean.TRUE;
+								}
+							}
+						}
+						
+					}
+				}
+				
+				if (possuiVinculo) {
+					if(dto.getIdTipoMovimento().equals("CONTRATO")) {
+						dto.setListaItem(daoRM.listarItensContrato(dto.getIdMov(), dto.getIdColigada()));
+					} else {
+						dto.setListaItem(daoRM.listarItensMovimento(dto.getIdMov(), dto.getIdColigada()));
+					}
+					
+					if(TreatString.isNotBlank(naturezaOrcamentaria)) {
+						Boolean possuiNatureza = Boolean.FALSE;
+						if(Util.isNotNull(dto.getListaItem())) {
+							for(ItemDTO item : dto.getListaItem()) {
+								if(Util.isNotNull(item.getIdNaturezaOrcamentaria())) {
+									if(item.getIdNaturezaOrcamentaria().equals(naturezaOrcamentaria)) {
+										possuiNatureza = Boolean.TRUE;
+									}
+								}
+							}
+						}
+						
+						if(possuiNatureza) {
+							retorno.add(dto);
+						}
+						
+					} else {
+						retorno.add(dto);
+					}
+				}
+			}
+			
+			LOG.info("[listarMovimentos] Movimentos filtrados.");
+			return retorno;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw e;
 		}
 	}
 

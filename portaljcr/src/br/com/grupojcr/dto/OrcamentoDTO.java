@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public class OrcamentoDTO {
 	
+	private String codigo;
+	private String descricao;
 	private BigDecimal valorOrcado;
 	private BigDecimal valorEmpenhado;
 	private BigDecimal valorRealizado;
@@ -46,6 +48,18 @@ public class OrcamentoDTO {
 	}
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getDescricao() {
+		return descricao;
+	}
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 	
 }
