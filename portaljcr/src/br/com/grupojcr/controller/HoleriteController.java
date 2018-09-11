@@ -24,6 +24,7 @@ import br.com.grupojcr.business.HoleriteBusiness;
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.HoleriteDTO;
 import br.com.grupojcr.dto.RelatorioHoleriteDTO;
+import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
 import br.com.grupojcr.enumerator.PeriodoHolerite;
 import br.com.grupojcr.rm.FuncionarioRM;
@@ -34,6 +35,7 @@ import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewAccessScoped
@@ -44,10 +46,9 @@ public class HoleriteController implements Serializable {
 	protected static Logger LOG = Logger.getLogger(HoleriteController.class);
 	private final static String KEY_MENSAGEM_PADRAO = "message.default.erro";
 	
-	private String chapa;
-	private String chave;
-	
 	private List<HoleriteDTO> listaHolerite;
+	
+	private String chapa;
 	
 	private StreamedContent stream;
 	private HoleriteDTO holerite;
@@ -58,28 +59,19 @@ public class HoleriteController implements Serializable {
 	@EJB
 	private HoleriteBusiness holeriteBusiness;
 
-	public String autenticarUsuario() throws ApplicationException {
+	public void autenticarUsuario() throws ApplicationException {
 		try {
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			setChapa(usuario.getChapa());
+			
 			if(Util.isBlank(getChapa())) {
-				throw new ApplicationException("message.empty", new String[] {"Chapa ou Senha inválidas."}, FacesMessage.SEVERITY_WARN);
+				setListaHolerite(new ArrayList<HoleriteDTO>());
+				Message.setMessage("message.empty", new String[] {"Seu usuário não possui chapa vinculada."}, FacesMessage.SEVERITY_WARN);
+			} else {
+				setListaHolerite(holeriteBusiness.listarHolerite(getChapa()));
 			}
 			
-			if(Util.isBlank(getChave())) {
-				throw new ApplicationException("message.empty", new String[] {"Chapa ou Senha inválidas."}, FacesMessage.SEVERITY_WARN);
-			}
-			
-			try {
-				rmBusiness.autenticarUsuario(getChapa(), getChave());
-			} catch (ApplicationException e) {
-				throw new ApplicationException("message.empty", new String[] {"Chapa ou Senha inválidas."}, FacesMessage.SEVERITY_WARN);
-			}
-				
-			setListaHolerite(holeriteBusiness.listarHolerite(getChapa(), getChave()));
-			
-			return "/pages/recursosHumanos/holerite/listar_holerite.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
-			setChapa(null);
-			setChave(null);
 			LOG.info(e.getMessage(), e);
 			throw e;
 		} catch (Exception e) {
@@ -179,25 +171,6 @@ public class HoleriteController implements Serializable {
 	}
 
 
-	public String getChapa() {
-		return chapa;
-	}
-
-
-	public void setChapa(String chapa) {
-		this.chapa = chapa;
-	}
-
-
-	public String getChave() {
-		return chave;
-	}
-
-
-	public void setChave(String chave) {
-		this.chave = chave;
-	}
-
 
 	public List<HoleriteDTO> getListaHolerite() {
 		return listaHolerite;
@@ -224,6 +197,14 @@ public class HoleriteController implements Serializable {
 
 	public void setHolerite(HoleriteDTO holerite) {
 		this.holerite = holerite;
+	}
+
+	public String getChapa() {
+		return chapa;
+	}
+
+	public void setChapa(String chapa) {
+		this.chapa = chapa;
 	}
 	
 

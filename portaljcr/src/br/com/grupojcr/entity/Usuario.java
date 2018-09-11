@@ -39,6 +39,9 @@ public class Usuario implements BaseEntity, Serializable {
 	
 	@Column(name = "EMAIL", length = 100, nullable = false)
 	private String email;
+
+	@Column(name = "CHAPA", length = 10)
+	private String chapa;
 	
 	@Column(name = "SITUACAO", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
@@ -123,6 +126,14 @@ public class Usuario implements BaseEntity, Serializable {
 	public void setColigadas(Set<Coligada> coligadas) {
 		this.coligadas = coligadas;
 	}
+	
+	public String getChapa() {
+		return chapa;
+	}
+
+	public void setChapa(String chapa) {
+		this.chapa = chapa;
+	}
 
 	@Override
 	public int hashCode() {
@@ -148,5 +159,6 @@ public class Usuario implements BaseEntity, Serializable {
 			return false;
 		return true;
 	}
+
 	
 }

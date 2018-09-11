@@ -180,6 +180,7 @@ public class ChamadoBusiness {
 			if(TreatString.isNotBlank(chamado.getUsuarioSolicitante().getEmail())) {
 				destinatarios.add(chamado.getUsuarioSolicitante().getEmail().trim());
 				destinatarios.add(chamado.getUsuarioResponsavel().getEmail().trim());
+				destinatarios.add("helpdesk@grupojcr.com.br");
 			}
 	
 			if(CollectionUtils.isNotEmpty(destinatarios)) {

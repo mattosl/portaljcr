@@ -31,7 +31,7 @@ public class HoleriteBusiness {
 	@EJB
 	private RMBusiness rmBusiness;
 
-	public List<HoleriteDTO> listarHolerite(String chapa, String chave) throws ApplicationException {
+	public List<HoleriteDTO> listarHolerite(String chapa) throws ApplicationException {
 		try {
 			String chapaCompleta = TreatString.filterOnlyNumber(chapa);
 			try {

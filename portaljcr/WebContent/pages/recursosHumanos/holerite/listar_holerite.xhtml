@@ -12,6 +12,10 @@
 		<ui:param name="activeSubmenu" value="holerite"/>
     	<ui:param name="activeMenu" value="rh"/>
     	
+    	<f:metadata>
+			<f:viewAction action="#{holeriteController.autenticarUsuario()}" />
+		</f:metadata>
+    	
     	<ui:define name="pageTitle"><i class="fa fa-envelope fa-1x cor-padrao"></i> Holerite</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-users"></i> Recursos Humanos</li>
@@ -21,38 +25,33 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<p:panel toggleable="false" id="painelAutenticacao" styleClass="box box-danger">
-							<div class="form-horizontal">
-								<div class="box-body">
-									<p:dataTable var="holerite" id="tableHolerite" widgetVar="widgetTabelaHolerite"
-										value="#{holeriteController.listaHolerite}" 
-										tableStyle="table-layout: auto; word-break: keep-all;"
-										emptyMessage="Nenhum holerite disponível para o seu usuário.">
-										
-									    <p:column headerText="Ano" style="text-align:center;font-size:12px;">
-									        <h:outputText value="#{holerite.ano}" />
-									    </p:column>
-									    
-									    <p:column headerText="Mês" style="text-align:center;font-size:12px;">
-									        <h:outputText value="#{holerite.mes.descricao.toUpperCase()}" />
-									    </p:column>
-				
-									    <p:column headerText="Tipo" style="text-align:center;font-size:12px;" >
-									        <h:outputText value="#{holerite.periodo.descricao.toUpperCase()}" />
-									    </p:column>
-									    
-										
-										<p:column headerText="Visualizar" style="text-align: center;" width="8%">
-											<p:commandLink ajax="false" process="@this" update="@form" action="#{holeriteController.download()}" target="_blank" >
-												<h:outputText value="" title="Visualizar" styleClass="fa fa-file-pdf-o" /> 
-												<f:setPropertyActionListener value="#{holerite}" target="#{holeriteController.holerite}" />
-											</p:commandLink>
-										</p:column>
-									    
-									</p:dataTable>
-								</div>
-							</div>
-						</p:panel>
+						<p:dataTable var="holerite" id="tableHolerite" widgetVar="widgetTabelaHolerite"
+							value="#{holeriteController.listaHolerite}" 
+							tableStyle="table-layout: auto; word-break: keep-all;"
+							emptyMessage="Nenhum holerite disponível para o seu usuário."
+							rendered="#{not empty usuario.chapa}">
+							
+						    <p:column headerText="Ano" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{holerite.ano}" />
+						    </p:column>
+						    
+						    <p:column headerText="Mês" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{holerite.mes.descricao.toUpperCase()}" />
+						    </p:column>
+	
+						    <p:column headerText="Tipo" style="text-align:center;font-size:12px;" >
+						        <h:outputText value="#{holerite.periodo.descricao.toUpperCase()}" />
+						    </p:column>
+						    
+							
+							<p:column headerText="Visualizar" style="text-align: center;" width="8%">
+								<p:commandLink ajax="false" process="@this" update="@form" action="#{holeriteController.download()}" target="_blank" >
+									<h:outputText value="" title="Visualizar" styleClass="fa fa-file-pdf-o" /> 
+									<f:setPropertyActionListener value="#{holerite}" target="#{holeriteController.holerite}" />
+								</p:commandLink>
+							</p:column>
+						    
+						</p:dataTable>
 					</f:validateBean>
 				</h:form>
 				<script type="text/javascript">
