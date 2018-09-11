@@ -45,8 +45,8 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean produtoNaoEncontrado;
 	
-	@Column(name = "QTD", nullable = false)
-	private Integer quantidade;
+	@Column(name = "QTD", precision = 10, scale = 2, nullable = false)
+	private BigDecimal quantidade;
 	
 	@Column(name = "CODUNIDADE", length = 5)
 	private String codigoUnidade;
@@ -104,11 +104,11 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 		this.produtoNaoEncontrado = produtoNaoEncontrado;
 	}
 
-	public Integer getQuantidade() {
+	public BigDecimal getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(Integer quantidade) {
+	public void setQuantidade(BigDecimal quantidade) {
 		this.quantidade = quantidade;
 	}
 

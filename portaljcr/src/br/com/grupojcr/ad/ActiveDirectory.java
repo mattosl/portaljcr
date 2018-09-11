@@ -91,8 +91,11 @@ public class ActiveDirectory {
 	                try {
 		                UsuarioLDAP usuarioLdap = new UsuarioLDAP();
 		                usuarioLdap.setNomeCompleto((String) attrs.get("displayName").get());
+		                System.out.println((String) attrs.get("displayName").get());
 		                usuarioLdap.setUsuario((String) attrs.get("sAMAccountName").get());
-	                	usuarioLdap.setEmail((String) attrs.get("mail").get());
+		                if(attrs.get("mail") != null && attrs.get("mail").get(0) != null) {
+		                	usuarioLdap.setEmail((String) attrs.get("mail").get());
+		                }
 	                
 	                	usuarios.add(usuarioLdap);
 	                } catch (NullPointerException e) {

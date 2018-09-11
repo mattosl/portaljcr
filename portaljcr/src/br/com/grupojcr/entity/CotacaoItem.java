@@ -35,8 +35,8 @@ public class CotacaoItem implements BaseEntity, Serializable {
 	@Column(name = "OBSERVACAO", length = 300)
 	private String observacao;
 	
-	@Column(name = "QTD")
-	private Integer quantidade;
+	@Column(name = "QTD", precision = 10, scale = 2)
+	private BigDecimal quantidade;
 
 	@Column(name = "CODUNIDADE", length = 5)
 	private String codigoUnidade;
@@ -113,11 +113,11 @@ public class CotacaoItem implements BaseEntity, Serializable {
 		this.valorTotal = valorTotal;
 	}
 
-	public Integer getQuantidade() {
+	public BigDecimal getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(Integer quantidade) {
+	public void setQuantidade(BigDecimal quantidade) {
 		this.quantidade = quantidade;
 	}
 

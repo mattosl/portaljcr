@@ -191,7 +191,7 @@ public class SolicitacaoCompraBusiness {
 					itens.append(",");
 				}
 				itens.append("{\"produto\": \"" + sci.getDescricaoProduto().toUpperCase() + 
-						"\", \"quantidade\": \"" + sci.getQuantidade() + 
+						"\", \"quantidade\": \"" + TreatNumber.formatMoney(sci.getQuantidade()) + 
 						"\", \"unidade\": \"" + sci.getUnidade() +
 						"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(sci.getValorAproximado()) + 
 						"\", \"observacao\": \"" + sci.getObservacao().toUpperCase().replaceAll("(\r\n|\n)", "&#010;") +

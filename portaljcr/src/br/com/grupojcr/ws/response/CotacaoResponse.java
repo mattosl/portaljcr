@@ -12,7 +12,7 @@ public class CotacaoResponse {
 	private List<CotacaoResponse> listaItens;
 	
 	private String produtoServico;
-	private Integer quantidade;
+	private String quantidade;
 	private String unidade;
 	private String valorUnitario;
 	private String valorTotalItem;
@@ -24,10 +24,10 @@ public class CotacaoResponse {
 	public void setProdutoServico(String produtoServico) {
 		this.produtoServico = produtoServico;
 	}
-	public Integer getQuantidade() {
+	public String getQuantidade() {
 		return quantidade;
 	}
-	public void setQuantidade(Integer quantidade) {
+	public void setQuantidade(String quantidade) {
 		this.quantidade = quantidade;
 	}
 	public String getValorUnitario() {

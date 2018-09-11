@@ -72,7 +72,7 @@ public class CotacaoWS {
 							CotacaoResponse item = new CotacaoResponse();
 							item.setProdutoServico(it.getSolicitacaoCompraItem().getDescricaoProduto());
 							item.setUnidade(it.getCodigoUnidade());
-							item.setQuantidade(it.getQuantidade());
+							item.setQuantidade(TreatNumber.formatMoney(it.getQuantidade()));
 							item.setValorUnitario(TreatNumber.formatMoneyCurrency(it.getValor()));
 							item.setValorTotalItem(TreatNumber.formatMoneyCurrency(it.getValorTotal()));
 							

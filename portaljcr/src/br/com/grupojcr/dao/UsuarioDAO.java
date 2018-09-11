@@ -129,7 +129,6 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			sb.append("LEFT JOIN FETCH usuario.grupos ");
 			sb.append("LEFT JOIN FETCH usuario.coligadas ");
 			sb.append("WHERE usuario.nome != null ");
-			sb.append("ORDER BY usuario.nome ");
 			
 			if(Util.isNotNull(filtro.getNome())) {
 				sb.append("AND usuario.nome like :nome ");
@@ -142,6 +141,8 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			if(Util.isNotNull(filtro.getSituacao())) {
 				sb.append("AND usuario.situacao = :situacao ");
 			}
+			
+			sb.append("ORDER BY usuario.nome ");
 			
 			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
 			

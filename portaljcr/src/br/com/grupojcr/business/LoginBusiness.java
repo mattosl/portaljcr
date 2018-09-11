@@ -15,6 +15,7 @@ import br.com.grupojcr.ad.ActiveDirectory;
 import br.com.grupojcr.ad.UsuarioLDAP;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.util.TreatString;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 
@@ -91,13 +92,15 @@ public class LoginBusiness {
 						
 						daoUsuario.alterar(usuarioSistema);
 					} else {
-						usuarioSistema = new Usuario();
-						usuarioSistema.setEmail(user.getEmail());
-						usuarioSistema.setUsuario(user.getUsuario());
-						usuarioSistema.setNome(user.getNomeCompleto());
-						usuarioSistema.setSituacao(Boolean.TRUE);
-						
-						daoUsuario.incluir(usuarioSistema);
+						if(TreatString.isNotBlank(user.getEmail())) {
+							usuarioSistema = new Usuario();
+							usuarioSistema.setEmail(user.getEmail());
+							usuarioSistema.setUsuario(user.getUsuario());
+							usuarioSistema.setNome(user.getNomeCompleto());
+							usuarioSistema.setSituacao(Boolean.TRUE);
+							
+							daoUsuario.incluir(usuarioSistema);
+						}
 					}
 				}
 			}

@@ -132,9 +132,9 @@
 														</div>
 					
 														<div class="col-sm-4 col-md-4">
-													        <h:inputText id="qtdCotacao" maxlength="9" styleClass="form-control" value="#{item.quantidade}" onkeyup="filterNumberOnly(this);" readonly="#{item.naoPossui}">
+													        <p:inputNumber id="qtdCotacao" value="#{item.quantidade}" decimalPlaces="2" maxValue="999999" thousandSeparator="." decimalSeparator="," maxlength="9" readonly="#{item.naoPossui}">
 													        	<p:ajax global="false" process="@this, painelItem" update="campoTotal, @form:btn_salvar, @form:totalizador" listener="#{cotacaoController.calcular(item)}" />
-													        </h:inputText>
+													        </p:inputNumber>
 														</div>
 														
 <!-- 														<div class="col-sm-2 col-md-2 control-label"> -->

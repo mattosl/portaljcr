@@ -10,7 +10,7 @@ public class ProdutoDTO {
 	
 	private ProdutoRM produto;
 	private String descricaoProduto;
-	private Integer quantidade;
+	private BigDecimal quantidade;
 	private UnidadeRM unidade;
 	private String observacao;
 	private BigDecimal valorAproximado;
@@ -23,10 +23,10 @@ public class ProdutoDTO {
 	public void setProduto(ProdutoRM produto) {
 		this.produto = produto;
 	}
-	public Integer getQuantidade() {
+	public BigDecimal getQuantidade() {
 		return quantidade;
 	}
-	public void setQuantidade(Integer quantidade) {
+	public void setQuantidade(BigDecimal quantidade) {
 		this.quantidade = quantidade;
 	}
 	public UnidadeRM getUnidade() {

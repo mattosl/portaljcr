@@ -568,9 +568,9 @@ public class CotacaoController implements Serializable {
 		try {
 			if(Util.isNotNull(item.getValor())) {
 				BigDecimal valor = item.getValor();
-				Integer quantidade = item.getQuantidade();
+				BigDecimal quantidade = item.getQuantidade();
 				if(Util.isNotNull(quantidade)) {
-					BigDecimal valorTotal = valor.multiply(new BigDecimal(quantidade));
+					BigDecimal valorTotal = valor.multiply(quantidade);
 					item.setValorTotal(valorTotal);
 				} else {
 					item.setValorTotal(new BigDecimal(0));
@@ -614,7 +614,7 @@ public class CotacaoController implements Serializable {
 	public String limparValores(CotacaoItem item) throws ApplicationException {
 		try {
 			item.setValor(null);
-			item.setQuantidade(1);
+			item.setQuantidade(new BigDecimal(1));
 			item.setCodigoUnidade(null);
 			item.setValorTotal(new BigDecimal(0));
 			item.setObservacao("");

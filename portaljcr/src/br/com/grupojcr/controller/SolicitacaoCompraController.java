@@ -378,8 +378,7 @@ public class SolicitacaoCompraController implements Serializable {
 			}
 
 			getSolicitacaoCompraDTO().getProduto().setQuantidade(getSolicitacaoItem().getQuantidade());
-			getSolicitacaoCompraDTO().getProduto().setUnidade(
-					new UnidadeRM(getSolicitacaoItem().getCodigoUnidade(), getSolicitacaoItem().getUnidade()));
+			getSolicitacaoCompraDTO().getProduto().getProduto().setCodigoUnidadeCompra(getSolicitacaoItem().getCodigoUnidade());
 			getSolicitacaoCompraDTO().getProduto().setValorAproximado(getSolicitacaoItem().getValorAproximado());
 			getSolicitacaoCompraDTO().getProduto().setObservacao(getSolicitacaoItem().getObservacao());
 		} catch (Exception e) {

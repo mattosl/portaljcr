@@ -777,7 +777,7 @@ public class RMDAO {
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT CODTBORCAMENTO, DESCRICAO FROM TTBORCAMENTO ")
 			.append("WHERE INATIVO = 0 ")
-			.append("ORDER BY CODTBORCAMENTO ASC ");
+			.append("ORDER BY DESCRICAO ASC ");
 			
 			ps = conn.prepareStatement(sb.toString());
 			

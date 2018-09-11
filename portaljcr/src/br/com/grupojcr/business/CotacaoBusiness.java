@@ -61,7 +61,7 @@ public class CotacaoBusiness {
 			
 			for(CotacaoItem item : cotacao.getItens()) {
 				if(item.getNaoPossui()) {
-					item.setQuantidade(0);
+					item.setQuantidade(new BigDecimal(0));
 					item.setCodigoUnidade(null);
 					item.setValor(new BigDecimal(0));
 					item.setValorTotal(new BigDecimal(0));
