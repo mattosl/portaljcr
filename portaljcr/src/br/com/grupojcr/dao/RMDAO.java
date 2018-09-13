@@ -28,6 +28,7 @@ import br.com.grupojcr.dto.CentroCustoDTO;
 import br.com.grupojcr.dto.ChapaDTO;
 import br.com.grupojcr.dto.ColigadaDTO;
 import br.com.grupojcr.dto.HoleriteDTO;
+import br.com.grupojcr.dto.HorasPontoDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
@@ -2371,7 +2372,7 @@ public class RMDAO {
 			conn = datasource.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT [DATA], BATIDA FROM ABATFUN ")
+			sb.append("SELECT [DATA], BATIDA, STATUS, NATUREZA FROM ABATFUN ")
 			.append("WHERE CODCOLIGADA = ? ")
 			.append("AND CHAPA LIKE ? ")
 			.append("AND [DATA] BETWEEN ? AND ? ")
@@ -2390,6 +2391,8 @@ public class RMDAO {
 				BatidaRM batida = new BatidaRM();
 				batida.setData(set.getDate("DATA"));
 				batida.setBatida(set.getInt("BATIDA"));
+				batida.setStatus(set.getString("STATUS"));
+				batida.setNatureza(set.getInt("NATUREZA"));
 				
 				batidas.add(batida);
 			}
@@ -2941,6 +2944,78 @@ public class RMDAO {
 			}
 		}
 		return feriados;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<HorasPontoDTO> obterHorasPonto(Integer idColigada, String chapa, Date periodoInicial, Date periodoFinal) throws ApplicationException {
+		
+		/** 
+		 * 	SELECT [DATA], HTRAB, EXTRAEXECUTADO, ATRASO, FALTA, ADICIONAL, ABONO FROM AAFHTFUN
+		 *  WHERE CODCOLIGADA = ?
+		 *  AND CHAPA = ?
+		 * 	AND [DATA] BETWEEN ? AND ?
+		 * 	ORDER BY [DATA] ASC
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<HorasPontoDTO> horasPonto = new ArrayList<HorasPontoDTO>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT [DATA], HTRAB, EXTRAEXECUTADO, ATRASO, FALTA, ADICIONAL, ABONO FROM AAFHTFUN ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND [DATA] BETWEEN ? AND ? ")
+			.append("ORDER BY [DATA] ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setDate(3, new java.sql.Date(periodoInicial.getTime()));
+			ps.setDate(4, new java.sql.Date(periodoFinal.getTime()));
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				HorasPontoDTO dto = new HorasPontoDTO();
+				dto.setData(set.getDate("DATA"));
+				dto.setHorasTrabalhada(set.getInt("HTRAB"));
+				dto.setHorasExtra(set.getInt("EXTRAEXECUTADO"));
+				dto.setHorasAtraso(set.getInt("ATRASO"));
+				dto.setHorasFalta(set.getInt("FALTA"));
+				dto.setHorasAdicional(set.getInt("ADICIONAL"));
+				dto.setHorasAbono(set.getInt("ABONO"));
+				
+				horasPonto.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterHorasPonto" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return horasPonto;
 	}
 	
 }

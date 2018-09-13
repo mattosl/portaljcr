@@ -12,63 +12,97 @@
 		<ui:param name="activeSubmenu" value="holerite"/>
     	<ui:param name="activeMenu" value="rh"/>
     	
-    	<ui:define name="pageTitle"><i class="fa fa-envelope fa-1x cor-padrao"></i> Holerite</ui:define>
+    	<ui:define name="pageTitle"><i class="fa fa-pencil-square-o fa-1x cor-padrao"></i> Ajustar Ponto</ui:define>
     	<ui:define name="breadcrumb">
 			<li><i class="fa fa-users"></i> Recursos Humanos</li>
-	    	<li class="active"><i class="fa fa-envelope"></i> Holerite</li>
+	    	<li class="active"><i class="fa fa-pencil-square-o"></i> Ajustar Ponto</li>
 		</ui:define>
 		<ui:define name="body">
 			<div class="page-content-central ui-fluid">
-				<h:form id="solicitacaoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+				<h:form id="ajustarPontoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<p:panel toggleable="false" id="painelAutenticacao" styleClass="box box-danger">
-							<div class="form-horizontal">
-								<div class="box-body">
-									<p:dataTable var="holerite" id="tableHolerite" widgetVar="widgetTabelaHolerite"
-										value="#{holeriteController.listaHolerite}" 
-										tableStyle="table-layout: auto; word-break: keep-all;"
-										emptyMessage="Nenhum holerite disponível para o seu usuário.">
-										
-									  	<p:column headerText="Empresa" style="text-align:center;font-size:12px;">
-									        <h:outputText value="#{holerite.coligada.razaoSocial.toUpperCase()}" />
-									    </p:column>
-									    
-									    <p:column headerText="Ano" style="text-align:center;font-size:12px;">
-									        <h:outputText value="#{holerite.ano}" />
-									    </p:column>
-									    
-									    <p:column headerText="Mês" style="text-align:center;font-size:12px;">
-									        <h:outputText value="#{holerite.mes.descricao.toUpperCase()}" />
-									    </p:column>
-				
-									    <p:column headerText="Tipo" style="text-align:center;font-size:12px;" >
-									        <h:outputText value="#{holerite.periodo.descricao.toUpperCase()}" />
-									    </p:column>
-									    
-										
-										<p:column headerText="Visualizar" style="text-align: center;" width="8%">
-											<p:commandLink ajax="false" process="@this" update="@form" action="#{holeriteController.download()}" target="_blank" >
-												<h:outputText value="" title="Visualizar" styleClass="fa fa-file-pdf-o" /> 
-												<f:setPropertyActionListener value="#{holerite}" target="#{holeriteController.holerite}" />
-											</p:commandLink>
-										</p:column>
-									    
-									</p:dataTable>
-								</div>
-							</div>
-						</p:panel>
+						<p:dataTable var="ponto" id="tableAjustarPonto" widgetVar="widgetTabelaAjustarPonto"
+							value="#{ajustePontoController.pontos}"
+							tableStyle="table-layout: auto; word-break: keep-all;"
+							rowStyleClass="#{ponto.ferias ? 'linhaAmarela' : ponto.feriado ? 'linhaAzul' : ponto.finalSemana ? 'linhaCinza' : 'linhaBranca'}">
+							
+						  	<p:column headerText="Data" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ponto.data}">
+						        	<f:convertDateTime pattern="dd/MM/yyyy" />
+						        </h:outputText>
+						    </p:column>
+						    
+						    <p:column headerText="Dia" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ponto.nomeDia}" />
+						    </p:column>
+						    
+						    <p:column headerText="Ent1" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Sai1" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Ent2" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Sai2" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Ent3" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Sai3" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Ent4" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Sai4" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Ent5" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Sai5" style="text-align:center;font-size:12px;">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10).batida)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Trab" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasTrabalhadas)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Extra" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasExtra)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Atraso" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasAtraso)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Falta" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasFalta)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Ad. Not" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasAdicionalNoturno)}" />
+						    </p:column>
+						    
+						    <p:column headerText="Abono" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasAbono)}" />	
+						    </p:column>
+	
+						</p:dataTable>
 					</f:validateBean>
 				</h:form>
-				<script type="text/javascript">
-
-					function start() {
-					    PF('statusDialog').show();
-					}
-					 
-					function stop() {
-					    PF('statusDialog').hide();
-					}
-				</script>
 			</div>
 		</ui:define>
 	</ui:composition>

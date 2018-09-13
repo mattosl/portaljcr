@@ -1,18 +1,17 @@
 package br.com.grupojcr.dto;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
+import java.util.HashMap;
 
 public class AjustePontoDTO {
 	
 	private Date data;
 	private String nomeDia;
 	
-	private Map<Integer, Calendar> batidas;
+	private HashMap<Integer, BatidaDTO> batidas;
 	
 	private Integer horasTrabalhadas;
-	private Integer horasExcedente;
+	private Integer horasExtra;
 	private Integer horasAtraso;
 	private Integer horasFalta;
 	private Integer horasAdicionalNoturno;
@@ -62,12 +61,28 @@ public class AjustePontoDTO {
 		this.faltaBatida = faltaBatida;
 	}
 
-	public Map<Integer, Calendar> getBatidas() {
+	public HashMap<Integer, BatidaDTO> getBatidas() {
 		return batidas;
 	}
 
-	public void setBatidas(Map<Integer, Calendar> batidas) {
+	public void setBatidas(HashMap<Integer, BatidaDTO> batidas) {
 		this.batidas = batidas;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public String getNomeDia() {
+		return nomeDia;
+	}
+
+	public void setNomeDia(String nomeDia) {
+		this.nomeDia = nomeDia;
 	}
 
 	public Integer getHorasTrabalhadas() {
@@ -78,12 +93,12 @@ public class AjustePontoDTO {
 		this.horasTrabalhadas = horasTrabalhadas;
 	}
 
-	public Integer getHorasExcedente() {
-		return horasExcedente;
+	public Integer getHorasExtra() {
+		return horasExtra;
 	}
 
-	public void setHorasExcedente(Integer horasExcedente) {
-		this.horasExcedente = horasExcedente;
+	public void setHorasExtra(Integer horasExtra) {
+		this.horasExtra = horasExtra;
 	}
 
 	public Integer getHorasAtraso() {
@@ -118,20 +133,6 @@ public class AjustePontoDTO {
 		this.horasAbono = horasAbono;
 	}
 
-	public Date getData() {
-		return data;
-	}
 
-	public void setData(Date data) {
-		this.data = data;
-	}
-
-	public String getNomeDia() {
-		return nomeDia;
-	}
-
-	public void setNomeDia(String nomeDia) {
-		this.nomeDia = nomeDia;
-	}
 
 }

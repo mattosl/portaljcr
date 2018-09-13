@@ -28,6 +28,8 @@ import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.AprovadorDTO;
+import br.com.grupojcr.dto.BatidaDTO;
+import br.com.grupojcr.dto.HorasPontoDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
@@ -432,8 +434,10 @@ public class RMBusiness {
 	
 	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
 		try {
-//			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(idColigada, chapa, periodoInicial, periodoFinal);
 			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
+			List<HorasPontoDTO> horasPonto = daoRM.obterHorasPonto(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
+			List<FeriasRM> listaFerias = daoRM.obterFeriasFuncionario(idColigada, chapa);
+			List<FeriadoRM> listaFeriado = daoRM.obterFeriadosFuncionario(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());
 			
 			List<AjustePontoDTO> listaAjuste = new ArrayList<AjustePontoDTO>();
 			
@@ -447,8 +451,6 @@ public class RMBusiness {
 				      .mapToObj(i -> dataInicio.plusDays(i))
 				      .collect(Collectors.toList()); 
 			
-			List<FeriasRM> listaFerias = daoRM.obterFeriasFuncionario(idColigada, chapa);
-			List<FeriadoRM> listaFeriado = daoRM.obterFeriadosFuncionario(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());
 			
 			List<PeriodoFeriasDTO> periodos = new ArrayList<PeriodoFeriasDTO>();
 			for(int i = 0; i < listaFerias.size(); i++) {
@@ -497,31 +499,37 @@ public class RMBusiness {
 					}
 				}
 				
+				for(HorasPontoDTO hp : horasPonto) {
+					if(TreatDate.isMesmaData(dataAtual, hp.getData())) {
+						dto.setHorasTrabalhadas(hp.getHorasTrabalhada());
+						dto.setHorasExtra(hp.getHorasExtra());
+						dto.setHorasAtraso(hp.getHorasAtraso());
+						dto.setHorasFalta(hp.getHorasFalta());
+						dto.setHorasAdicionalNoturno(hp.getHorasAdicional());
+						dto.setHorasAbono(hp.getHorasAbono());
+					}
+				}
+				
 				
 					
 				dto.setData(dataAtual);
-				List<Calendar> pontos = new ArrayList<Calendar>();
+				List<BatidaDTO> pontos = new ArrayList<BatidaDTO>();
 				for(BatidaRM batida : batidas) {
 					if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
-						Integer hora = batida.getBatida() / 60;
-						Integer minuto = batida.getBatida() % 60;
+						BatidaDTO batidaDTO = new BatidaDTO();
+						batidaDTO.setBatida(batida.getBatida());
+						batidaDTO.setStatus(batida.getStatus());
+						batidaDTO.setNatureza(batida.getNatureza());
 						
-						Calendar databatida = Calendar.getInstance();
-						databatida.setTime(dto.getData());
-						databatida.set(Calendar.HOUR_OF_DAY, hora);
-						databatida.set(Calendar.MINUTE, minuto);
-						databatida.set(Calendar.SECOND, 0);
-						databatida.set(Calendar.MILLISECOND, 0);
-						
-						pontos.add(databatida);
+						pontos.add(batidaDTO);
 					}
 				}
 				
 				String nomeDia = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
 				dto.setNomeDia(nomeDia.toUpperCase().substring(0, 3));
-				dto.setBatidas(new HashMap<Integer, Calendar>());
+				dto.setBatidas(new HashMap<Integer, BatidaDTO>());
 				Integer idx = 1;
-				for(Calendar ponto : pontos) {
+				for(BatidaDTO ponto : pontos) {
 					dto.getBatidas().put(idx++, ponto);
 				}
 				
@@ -538,7 +546,7 @@ public class RMBusiness {
 				sb.append(TreatDate.format("dd/MM/yyyy", dto.getData()) + " - " + dto.getNomeDia() + " ");
 
 //				dto.getBatidas().forEach((k,v) -> System.out.println("key: " + k + " Value: " + TreatDate.format("dd/MM/yyyy", v.getTime())));
-				dto.getBatidas().forEach((k,v) -> sb.append(TreatDate.format("HH:mm", v.getTime()) + " "));
+//				dto.getBatidas().forEach((k,v) -> sb.append(TreatDate.format("HH:mm", v.getBatida().getTime()) + " "));
 				
 				
 				if(dto.getFerias()) {
@@ -552,6 +560,13 @@ public class RMBusiness {
 				if(dto.getFaltaBatida()) {
 					sb.append(" * ");
 				}
+				
+				sb.append(dto.getHorasTrabalhadas()
+						+ "  " + dto.getHorasExtra()
+						+ "  " + dto.getHorasAtraso()
+						+ "  " + dto.getHorasFalta()
+						+ "  " + dto.getHorasAdicionalNoturno()
+						+ "  " + dto.getHorasAbono());
 				
 				listaAjuste.add(dto);
 				

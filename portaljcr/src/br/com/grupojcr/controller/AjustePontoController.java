@@ -2,10 +2,10 @@ package br.com.grupojcr.controller;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.inject.Named;
 
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
@@ -13,7 +13,9 @@ import org.apache.log4j.Logger;
 
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.AjustePontoDTO;
+import br.com.grupojcr.dto.BatidaDTO;
 import br.com.grupojcr.util.TreatDate;
+import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -33,6 +35,8 @@ public class AjustePontoController implements Serializable {
 	private Calendar periodoInicial;
 	private Calendar periodoFinal;
 	
+	private List<AjustePontoDTO> pontos;
+	
 	@EJB
 	private RMBusiness rmBusiness;
 	
@@ -40,7 +44,7 @@ public class AjustePontoController implements Serializable {
 		try {
 			iniciarAjustePonto();
 				
-			return "/pages/recursosHumanos/ajustePonto/editar_ajustePonto.xhtml?faces-redirect=true";
+			return "/pages/recursosHumanos/ajustarPonto/editar_ajustarPonto.xhtml?faces-redirect=true";
 		} catch (ApplicationException e) {
 			setChapa(null);
 			setChave(null);
@@ -56,6 +60,8 @@ public class AjustePontoController implements Serializable {
 		try {
 			carregarPeriodo();
 			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(7, "000040", getPeriodoInicial(), getPeriodoFinal());
+			
+			setPontos(ponto);
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -99,6 +105,41 @@ public class AjustePontoController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "carregarPeriodo" }, e);
 		}
 	}
+	
+	public BatidaDTO obterObjetoMap(HashMap<Integer, BatidaDTO> hash, Integer key) throws ApplicationException {
+		try {
+			BatidaDTO batida = hash.get(key);
+			if(Util.isNotNull(batida)) {
+				return batida;
+			}
+			return new BatidaDTO();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterObjetoMap" }, e);
+		}
+	}
+	
+	public String obterHoras(Integer valor) throws ApplicationException {
+		try {
+			if(TreatNumber.isNotNullOrZero(valor)) {
+				Integer hora = valor / 60;
+				Integer minuto = valor % 60;
+				
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.HOUR_OF_DAY, hora);
+				calendar.set(Calendar.MINUTE, minuto);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				
+				
+				return TreatDate.format("HH:mm", calendar.getTime());
+			}
+			return "";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterHoras" }, e);
+		}
+	}
 
 	public String getChapa() {
 		return chapa;
@@ -130,6 +171,14 @@ public class AjustePontoController implements Serializable {
 
 	public void setPeriodoFinal(Calendar periodoFinal) {
 		this.periodoFinal = periodoFinal;
+	}
+
+	public List<AjustePontoDTO> getPontos() {
+		return pontos;
+	}
+
+	public void setPontos(List<AjustePontoDTO> pontos) {
+		this.pontos = pontos;
 	}
 
 }

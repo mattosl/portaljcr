@@ -1,20 +1,11 @@
-package br.com.grupojcr.rm;
+package br.com.grupojcr.dto;
 
-import java.util.Date;
-
-public class BatidaRM {
+public class BatidaDTO {
 	
-	private Date data;
 	private Integer batida;
 	private String status;
 	private Integer natureza;
 	
-	public Date getData() {
-		return data;
-	}
-	public void setData(Date data) {
-		this.data = data;
-	}
 	public Integer getBatida() {
 		return batida;
 	}
@@ -33,5 +24,6 @@ public class BatidaRM {
 	public void setNatureza(Integer natureza) {
 		this.natureza = natureza;
 	}
+	
 
 }
