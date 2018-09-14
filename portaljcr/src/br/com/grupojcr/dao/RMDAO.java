@@ -32,6 +32,7 @@ import br.com.grupojcr.dto.HorasPontoDTO;
 import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
+import br.com.grupojcr.dto.PeriodoPontoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
 import br.com.grupojcr.entity.Coligada;
 import br.com.grupojcr.enumerator.Mes;
@@ -3016,6 +3017,68 @@ public class RMDAO {
 			}
 		}
 		return horasPonto;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public PeriodoPontoDTO obterPeriodoAtualPonto(Integer idColigada, String chapa) throws ApplicationException {
+		
+		/**
+		 * SELECT TOP 1 INICIOPER, FIMPER FROM APERFUN
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA = ?
+		 * ORDER BY ANOCOMP DESC, MESCOMP DESC 
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT TOP 1 INICIOPER, FIMPER FROM APERFUN ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("ORDER BY ANOCOMP DESC, MESCOMP DESC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				PeriodoPontoDTO dto = new PeriodoPontoDTO();
+				dto.setPeriodoInicial(set.getDate("INICIOPER"));
+				dto.setPeriodoFinal(set.getDate("FIMPER"));
+				
+				return dto;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterPeriodoAtualPonto" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
 	}
 	
 }

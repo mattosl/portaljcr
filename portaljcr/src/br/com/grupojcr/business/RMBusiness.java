@@ -34,6 +34,7 @@ import br.com.grupojcr.dto.ItemDTO;
 import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.dto.PeriodoFeriasDTO;
+import br.com.grupojcr.dto.PeriodoPontoDTO;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.BatidaRM;
@@ -432,6 +433,18 @@ public class RMBusiness {
 		}
 	}
 	
+	public PeriodoPontoDTO obterPeriodoAtualFuncionario(Integer idColigada, String chapa) throws ApplicationException {
+		try {
+			return daoRM.obterPeriodoAtualPonto(idColigada, chapa);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterQtdDepIRRF" }, e);
+		}
+	}
+	
 	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
 		try {
 			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
@@ -499,48 +512,64 @@ public class RMBusiness {
 					}
 				}
 				
-				for(HorasPontoDTO hp : horasPonto) {
-					if(TreatDate.isMesmaData(dataAtual, hp.getData())) {
-						dto.setHorasTrabalhadas(hp.getHorasTrabalhada());
-						dto.setHorasExtra(hp.getHorasExtra());
-						dto.setHorasAtraso(hp.getHorasAtraso());
-						dto.setHorasFalta(hp.getHorasFalta());
-						dto.setHorasAdicionalNoturno(hp.getHorasAdicional());
-						dto.setHorasAbono(hp.getHorasAbono());
-					}
+				/* Validar se é hoje */
+				if(TreatDate.isMesmaData(dataAtual, Calendar.getInstance().getTime())) {
+					dto.setHoje(Boolean.TRUE);
 				}
 				
-				
-					
 				dto.setData(dataAtual);
+				BatidaDTO ultimaBatida = null;
 				List<BatidaDTO> pontos = new ArrayList<BatidaDTO>();
+				if(Util.dataMenor(dataAtual, Calendar.getInstance().getTime()) 
+						&& !TreatDate.isMesmaData(dataAtual, Calendar.getInstance().getTime())) {
+					
+					for(HorasPontoDTO hp : horasPonto) {
+						if(TreatDate.isMesmaData(dataAtual, hp.getData())) {
+							dto.setHorasTrabalhadas(hp.getHorasTrabalhada());
+							dto.setHorasExtra(hp.getHorasExtra());
+							dto.setHorasAtraso(hp.getHorasAtraso());
+							dto.setHorasFalta(hp.getHorasFalta());
+							dto.setHorasAdicionalNoturno(hp.getHorasAdicional());
+							dto.setHorasAbono(hp.getHorasAbono());
+						}
+					}
+					
+				}
 				for(BatidaRM batida : batidas) {
 					if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
 						BatidaDTO batidaDTO = new BatidaDTO();
 						batidaDTO.setBatida(batida.getBatida());
 						batidaDTO.setStatus(batida.getStatus());
 						batidaDTO.setNatureza(batida.getNatureza());
+						ultimaBatida = batidaDTO;
 						
 						pontos.add(batidaDTO);
 					}
 				}
-				
 				String nomeDia = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
 				dto.setNomeDia(nomeDia.toUpperCase().substring(0, 3));
 				dto.setBatidas(new HashMap<Integer, BatidaDTO>());
 				Integer idx = 1;
 				for(BatidaDTO ponto : pontos) {
-					dto.getBatidas().put(idx++, ponto);
+					dto.getBatidas().put(idx, ponto);
+					if(Util.isNotNull(ultimaBatida)) {
+						if(ultimaBatida.getNatureza().equals(0)) {
+							if(ultimaBatida.getBatida().equals(ponto.getBatida())) {
+								dto.setUltimoPontoFalta(idx + 1);
+							}
+						}
+					}
+					idx++;
 				}
 				
 				if(dto.getBatidas().size() < 4) {
 					if(!dto.getFinalSemana()
 							&& !dto.getFerias()
-							&& !dto.getFeriado()) {
+							&& !dto.getFeriado()
+							&& !dto.getHoje()) {
 						dto.setFaltaBatida(Boolean.TRUE);
 					}
 				}
-				
 				
 				StringBuilder sb = new StringBuilder();
 				sb.append(TreatDate.format("dd/MM/yyyy", dto.getData()) + " - " + dto.getNomeDia() + " ");

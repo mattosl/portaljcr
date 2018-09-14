@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.BatidaDTO;
+import br.com.grupojcr.dto.PeriodoPontoDTO;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.Util;
@@ -74,28 +75,11 @@ public class AjustePontoController implements Serializable {
 	
 	private void carregarPeriodo() throws ApplicationException {
 		try {
-			Calendar calendarioAtual = Calendar.getInstance();
+			PeriodoPontoDTO dto = rmBusiness.obterPeriodoAtualFuncionario(7, "000040");
 			Calendar periodoInicial = Calendar.getInstance();
+			periodoInicial.setTime(dto.getPeriodoInicial());
 			Calendar periodoFinal = Calendar.getInstance();
-			Integer diaMes = calendarioAtual.get(Calendar.DAY_OF_MONTH);
-			
-			if(diaMes <= 14) {
-				periodoInicial.set(Calendar.DAY_OF_MONTH, 15);
-				periodoInicial.add(Calendar.MONTH, -2);
-				System.out.println("Período Inicial: " + TreatDate.format("dd/MM/yyyy", periodoInicial.getTime()));
-				
-				periodoFinal.set(Calendar.DAY_OF_MONTH, 14);
-				periodoFinal.add(Calendar.MONTH, -1);
-				System.out.println("Período Final: " + TreatDate.format("dd/MM/yyyy", periodoFinal.getTime()));
-			} else {
-				periodoInicial.set(Calendar.DAY_OF_MONTH, 15);
-				System.out.println("Período Inicial: " + TreatDate.format("dd/MM/yyyy", periodoInicial.getTime()));
-				
-				periodoFinal.set(Calendar.DAY_OF_MONTH, 14);
-				periodoInicial.add(Calendar.MONTH, +1);
-				System.out.println("Período Final: " + TreatDate.format("dd/MM/yyyy", periodoFinal.getTime()));
-			}
-			
+			periodoFinal.setTime(dto.getPeriodoFinal());
 			
 			setPeriodoInicial(periodoInicial);
 			setPeriodoFinal(periodoFinal);
@@ -119,11 +103,52 @@ public class AjustePontoController implements Serializable {
 		}
 	}
 	
-	public String obterHoras(Integer valor) throws ApplicationException {
+	public Boolean podeEditar(BatidaDTO batida, Integer seq, AjustePontoDTO ponto) throws ApplicationException {
 		try {
-			if(TreatNumber.isNotNullOrZero(valor)) {
-				Integer hora = valor / 60;
-				Integer minuto = valor % 60;
+			if(TreatNumber.isNullOrZero(batida.getBatida())) {
+				if(!ponto.getFerias()) {
+					if(!ponto.getFeriado()) {
+						if(!TreatDate.isMesmaData(ponto.getData(), Calendar.getInstance().getTime())) {
+							return Boolean.TRUE;
+						}
+					}
+				}
+			}
+			return Boolean.FALSE;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "podeEditar" }, e);
+		}
+	}
+	
+	public String obterHoras(BatidaDTO batida) throws ApplicationException {
+		try {
+			if(Util.isNotNull(batida)) {
+				if(TreatNumber.isNotNullOrZero(batida.getBatida())) {
+					Integer hora = batida.getBatida() / 60;
+					Integer minuto = batida.getBatida() % 60;
+					
+					Calendar calendar = Calendar.getInstance();
+					calendar.set(Calendar.HOUR_OF_DAY, hora);
+					calendar.set(Calendar.MINUTE, minuto);
+					calendar.set(Calendar.SECOND, 0);
+					calendar.set(Calendar.MILLISECOND, 0);
+					
+					return TreatDate.format("HH:mm", calendar.getTime());
+				}
+			}
+			return "";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterHoras" }, e);
+		}
+	}
+	
+	public String obterHorasBatida(Integer batida) throws ApplicationException {
+		try {
+			if(TreatNumber.isNotNullOrZero(batida)) {
+				Integer hora = batida / 60;
+				Integer minuto = batida % 60;
 				
 				Calendar calendar = Calendar.getInstance();
 				calendar.set(Calendar.HOUR_OF_DAY, hora);
@@ -131,13 +156,12 @@ public class AjustePontoController implements Serializable {
 				calendar.set(Calendar.SECOND, 0);
 				calendar.set(Calendar.MILLISECOND, 0);
 				
-				
 				return TreatDate.format("HH:mm", calendar.getTime());
 			}
 			return "";
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterHoras" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterHorasBatida" }, e);
 		}
 	}
 

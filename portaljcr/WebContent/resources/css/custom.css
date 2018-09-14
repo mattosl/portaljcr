@@ -591,3 +591,16 @@ span.nmbr {
     color: #fff !important;
     text-shadow: 0 1px 0 #9F262D !important;
 }
+
+.borda-esquerda-ponto {
+	border-left: 3px solid green;
+    font-weight: bold;
+}
+
+.borda-esquerda-ponto-faltante {
+	border-left: 3px solid red;
+}
+
+.borda-esquerda-ponto-alerta {
+	border-left: 3px solid #f39c12;
+}

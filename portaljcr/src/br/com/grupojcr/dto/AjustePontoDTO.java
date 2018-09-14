@@ -21,12 +21,16 @@ public class AjustePontoDTO {
 	private Boolean feriado;
 	private Boolean finalSemana;
 	private Boolean faltaBatida;
+	private Boolean hoje;
+	
+	private Integer ultimoPontoFalta;
 	
 	public AjustePontoDTO() {
 		this.finalSemana = Boolean.FALSE;
 		this.ferias = Boolean.FALSE;
 		this.feriado = Boolean.FALSE;
 		this.faltaBatida = Boolean.FALSE;
+		this.hoje = Boolean.FALSE;
 	}
 
 	public Boolean getFerias() {
@@ -131,6 +135,22 @@ public class AjustePontoDTO {
 
 	public void setHorasAbono(Integer horasAbono) {
 		this.horasAbono = horasAbono;
+	}
+
+	public Boolean getHoje() {
+		return hoje;
+	}
+
+	public void setHoje(Boolean hoje) {
+		this.hoje = hoje;
+	}
+
+	public Integer getUltimoPontoFalta() {
+		return ultimoPontoFalta;
+	}
+
+	public void setUltimoPontoFalta(Integer ultimoPontoFalta) {
+		this.ultimoPontoFalta = ultimoPontoFalta;
 	}
 
 

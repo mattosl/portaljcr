@@ -24,7 +24,7 @@
 						<p:dataTable var="ponto" id="tableAjustarPonto" widgetVar="widgetTabelaAjustarPonto"
 							value="#{ajustePontoController.pontos}"
 							tableStyle="table-layout: auto; word-break: keep-all;"
-							rowStyleClass="#{ponto.ferias ? 'linhaAmarela' : ponto.feriado ? 'linhaAzul' : ponto.finalSemana ? 'linhaCinza' : 'linhaBranca'}">
+							rowStyleClass="#{ponto.ferias ? 'linhaAmarela' : ponto.feriado ? 'linhaAzul' : ponto.finalSemana ? 'linhaCinza' : 'linhaBranca'} #{ponto.hoje ? 'borda-esquerda-ponto':''} #{ponto.ultimoPontoFalta ne null ? 'borda-esquerda-ponto-faltante': ponto.faltaBatida ? 'borda-esquerda-ponto-alerta' : ''}">
 							
 						  	<p:column headerText="Data" style="text-align:center;font-size:12px;">
 						        <h:outputText value="#{ponto.data}">
@@ -36,68 +36,118 @@
 						        <h:outputText value="#{ponto.nomeDia}" />
 						    </p:column>
 						    
-						    <p:column headerText="Ent1" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1).batida)}" />
+						    <p:column headerText="Ent1" style="text-align:center;font-size:12px; #{ponto.ultimoPontoFalta eq 1 ? 'background-color: #ffd9d9; border: 2px solid red;':''}">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1))}" 
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Sai1" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2).batida)}" />
+						    <p:column headerText="Sai1" style="text-align:center;font-size:12px; #{ponto.ultimoPontoFalta eq 2 ? 'background-color: #ffd9d9; border: 2px solid red;':''}">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Ent2" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3).batida)}" />
+						    <p:column headerText="Ent2" style="text-align:center;font-size:12px; #{ponto.ultimoPontoFalta eq 3 ? 'background-color: #ffd9d9; border: 2px solid red;':''}">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Sai2" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4).batida)}" />
+						    <p:column headerText="Sai2" style="text-align:center;font-size:12px; #{ponto.ultimoPontoFalta eq 4 ? 'background-color: #ffd9d9; border: 2px solid red;':''}">
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Ent3" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5).batida)}" />
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Sai3" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6).batida)}" />
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Ent4" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7).batida)}" />
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Sai4" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8).batida)}" />
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Ent5" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9).batida)}" />
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Sai5" style="text-align:center;font-size:12px;">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10).batida)}" />
+						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10))}"
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}" />
+						        	
+						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}">
+									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.5;" />
+								</p:commandLink>
 						    </p:column>
 						    
 						    <p:column headerText="Trab" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasTrabalhadas)}" />
+						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasTrabalhadas)}" />
 						    </p:column>
 						    
 						    <p:column headerText="Extra" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasExtra)}" />
+						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasExtra)}" />
 						    </p:column>
 						    
 						    <p:column headerText="Atraso" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasAtraso)}" />
+						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasAtraso)}" />
 						    </p:column>
 						    
 						    <p:column headerText="Falta" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasFalta)}" />
+						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasFalta)}" />
 						    </p:column>
 						    
 						    <p:column headerText="Ad. Not" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasAdicionalNoturno)}" />
+						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasAdicionalNoturno)}" />
 						    </p:column>
 						    
 						    <p:column headerText="Abono" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
-						        <h:outputText value="#{ajustePontoController.obterHoras(ponto.horasAbono)}" />	
+						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasAbono)}" />	
 						    </p:column>
 	
 						</p:dataTable>
