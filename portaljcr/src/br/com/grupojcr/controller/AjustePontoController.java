@@ -108,7 +108,7 @@ public class AjustePontoController implements Serializable {
 			if(TreatNumber.isNullOrZero(batida.getBatida())) {
 				if(!ponto.getFerias()) {
 					if(!ponto.getFeriado()) {
-						if(!TreatDate.isMesmaData(ponto.getData(), Calendar.getInstance().getTime())) {
+						if(Util.dataMenor(ponto.getData(), Calendar.getInstance().getTime())) {
 							return Boolean.TRUE;
 						}
 					}
