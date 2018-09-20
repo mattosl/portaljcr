@@ -5,6 +5,7 @@ public class BatidaDTO {
 	private Integer batida;
 	private String status;
 	private Integer natureza;
+	private Boolean falta;
 	
 	public Integer getBatida() {
 		return batida;
@@ -23,6 +24,12 @@ public class BatidaDTO {
 	}
 	public void setNatureza(Integer natureza) {
 		this.natureza = natureza;
+	}
+	public Boolean getFalta() {
+		return falta;
+	}
+	public void setFalta(Boolean falta) {
+		this.falta = falta;
 	}
 	
 

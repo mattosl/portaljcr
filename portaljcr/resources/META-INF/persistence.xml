@@ -17,4 +17,12 @@
 		</properties>
 	</persistence-unit>
 	
+<!-- 	<persistence-unit name="dimep"> -->
+<!-- 		<provider>org.hibernate.ejb.HibernatePersistence</provider> -->
+<!-- 		<jta-data-source>java:jboss/datasources/dimepDS</jta-data-source> -->
+<!-- 		<properties> -->
+<!-- 			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" /> -->
+<!-- 		</properties> -->
+<!-- 	</persistence-unit> -->
+	
 </persistence>

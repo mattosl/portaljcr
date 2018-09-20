@@ -3080,5 +3080,58 @@ public class RMDAO {
 		}
 		return null;
 	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Date obterUltimaColetaColigada() throws ApplicationException {
+		
+		/**
+		 * SELECT TOP(1) RECMODIFIEDON FROM GJOBX
+		 * WHERE CLASSEPROCESSO = 'PtoProcImportacaoBatidas'
+		 * ORDER BY RECMODIFIEDON DESC
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT TOP(1) RECMODIFIEDON FROM GJOBX ")
+			.append("WHERE CLASSEPROCESSO = 'PtoProcImportacaoBatidas' ")
+			.append("ORDER BY RECMODIFIEDON DESC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getTimestamp("RECMODIFIEDON");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterUltimaColetaColigada" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
 	
 }

@@ -518,10 +518,11 @@ public class RMBusiness {
 				}
 				
 				dto.setData(dataAtual);
-				BatidaDTO ultimaBatida = null;
 				List<BatidaDTO> pontos = new ArrayList<BatidaDTO>();
-				if(Util.dataMenor(dataAtual, Calendar.getInstance().getTime()) 
-						&& !TreatDate.isMesmaData(dataAtual, Calendar.getInstance().getTime())) {
+				Date ultimaColeta = daoRM.obterUltimaColetaColigada();
+				
+				if(Util.dataMenor(dataAtual, ultimaColeta) 
+						&& !TreatDate.isMesmaData(dataAtual, ultimaColeta)) {
 					
 					for(HorasPontoDTO hp : horasPonto) {
 						if(TreatDate.isMesmaData(dataAtual, hp.getData())) {
@@ -535,71 +536,57 @@ public class RMBusiness {
 					}
 					
 				}
-				for(BatidaRM batida : batidas) {
-					if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
-						BatidaDTO batidaDTO = new BatidaDTO();
-						batidaDTO.setBatida(batida.getBatida());
-						batidaDTO.setStatus(batida.getStatus());
-						batidaDTO.setNatureza(batida.getNatureza());
-						ultimaBatida = batidaDTO;
-						
-						pontos.add(batidaDTO);
-					}
-				}
-				String nomeDia = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
-				dto.setNomeDia(nomeDia.toUpperCase().substring(0, 3));
+				
 				dto.setBatidas(new HashMap<Integer, BatidaDTO>());
 				Integer idx = 1;
-				for(BatidaDTO ponto : pontos) {
-					dto.getBatidas().put(idx, ponto);
-					if(Util.isNotNull(ultimaBatida)) {
-						if(ultimaBatida.getNatureza().equals(0)) {
-							if(ultimaBatida.getBatida().equals(ponto.getBatida())) {
-								dto.setUltimoPontoFalta(idx + 1);
-							}
+				BatidaDTO ultimaBatida = null;
+				for(BatidaRM batida : batidas) {
+					if(Util.dataMenor(batida.getData(), ultimaColeta)) {
+						
+						if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
+							BatidaDTO batidaDTO = new BatidaDTO();
+							batidaDTO.setBatida(batida.getBatida());
+							batidaDTO.setStatus(batida.getStatus());
+							batidaDTO.setNatureza(batida.getNatureza());
+							
+							dto.getBatidas().put(idx, batidaDTO);
+							
+							ultimaBatida = batidaDTO;
+							pontos.add(batidaDTO);
+							idx++;
 						}
 					}
-					idx++;
+				}
+				
+				if(Util.isNotNull(ultimaBatida)) {
+					idx--;
+					if(ultimaBatida.getNatureza().equals(0)) {
+						if(idx.equals(1) || idx.equals(3) || idx.equals(5) || idx.equals(7)) {
+							BatidaDTO b = new BatidaDTO();
+							b.setFalta(Boolean.TRUE);
+							dto.setFaltaBatida(Boolean.TRUE);
+							dto.getBatidas().put(++idx, b);
+						}
+					}
 				}
 				
 				if(dto.getBatidas().size() < 4) {
-					if(!dto.getFinalSemana()
-							&& !dto.getFerias()
+					if(!dto.getFerias() 
 							&& !dto.getFeriado()
-							&& !dto.getHoje()) {
-						dto.setFaltaBatida(Boolean.TRUE);
+							&& !dto.getFinalSemana()
+							&& !dto.getHoje()
+							&& Util.dataMenor(dataAtual, ultimaColeta)) {
+						dto.setAtencao(Boolean.TRUE);
 					}
 				}
+				
+				String nomeDia = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+				dto.setNomeDia(nomeDia.toUpperCase().substring(0, 3));
 				
 				StringBuilder sb = new StringBuilder();
 				sb.append(TreatDate.format("dd/MM/yyyy", dto.getData()) + " - " + dto.getNomeDia() + " ");
 
-//				dto.getBatidas().forEach((k,v) -> System.out.println("key: " + k + " Value: " + TreatDate.format("dd/MM/yyyy", v.getTime())));
-//				dto.getBatidas().forEach((k,v) -> sb.append(TreatDate.format("HH:mm", v.getBatida().getTime()) + " "));
-				
-				
-				if(dto.getFerias()) {
-					sb.append(" FERIAS");
-				}
-				
-				if(dto.getFerias()) {
-					sb.append(" FERIADO");
-				}
-				
-				if(dto.getFaltaBatida()) {
-					sb.append(" * ");
-				}
-				
-				sb.append(dto.getHorasTrabalhadas()
-						+ "  " + dto.getHorasExtra()
-						+ "  " + dto.getHorasAtraso()
-						+ "  " + dto.getHorasFalta()
-						+ "  " + dto.getHorasAdicionalNoturno()
-						+ "  " + dto.getHorasAbono());
-				
 				listaAjuste.add(dto);
-				
-				System.out.println(sb.toString());
 			}
 			
 			return listaAjuste;
@@ -680,5 +667,16 @@ public class RMBusiness {
 			throw e;
 		}
 	}
-
+	
+	public Date obterUltimaColetaColigada(Integer codColigada) throws ApplicationException {
+		try {
+			return daoRM.obterUltimaColetaColigada();
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterUltimaColetaColigada" }, e);
+		}
+	}
 }
