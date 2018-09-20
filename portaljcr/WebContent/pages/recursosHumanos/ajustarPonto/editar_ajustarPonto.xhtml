@@ -6,7 +6,8 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:pe="http://primefaces.org/ui/extensions" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
 		<ui:param name="activeSubmenu" value="ajustePonto"/>
@@ -95,7 +96,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1))}" 
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -214,6 +215,43 @@
 								<i class="fa fa-square" style="color: #828080;"></i>&nbsp;Final de Semana
 							</label>
 						</div>
+						<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+							id="modalBatida"
+							widgetVar="modalBatida" 
+							header="Ajustar Batida"
+							resizable="false" 
+							responsive="true"
+							closable="true"
+							width="30%"
+							draggable="true"
+							modal="false">
+							<p:messages id="mensagemModal" showDetail="true" closable="true" />
+							<div class="form-horizontal">
+								<div class="box-body">
+									<div class="bootstrap-timepicker">
+										<div class="form-group">
+											<div class="col-sm-4 col-md-4">
+												<div class="input-group">
+													<p:inputMask id="horario" maxlength="4" mask="99:99" onkeyup="filterHorario(this)" />
+		
+													<div class="input-group-addon">
+														<i class="fa fa-clock-o"></i>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12 col-md-12">
+											<label>Justificativa:</label>
+										</div>
+										<div class="col-sm-12 col-md-12">
+											<h:inputTextarea id="justificativa" value="#{ajustePontoController.justificativa}" styleClass="form-control" rows="5" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</p:dialog>
 					</f:validateBean>
 				</h:form>
 			</div>

@@ -34,12 +34,17 @@ public class AjustePontoController implements Serializable {
 	
 	private String chapa;
 	private String chave;
+	private String justificativa;
 	
 	private Calendar periodoInicial;
 	private Calendar periodoFinal;
 	private Date ultimaColeta;
+	private Date dtEdicao;
 	
 	private FuncionarioRM funcionario;
+	private BatidaDTO batidaEdicao;
+	private Integer sequenciaEdicao;
+	private AjustePontoDTO pontoEdicao;
 	
 	private List<AjustePontoDTO> pontos;
 	
@@ -183,6 +188,17 @@ public class AjustePontoController implements Serializable {
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
 		return TreatDate.format("dd/MM/yyyy HH:mm", calendar.getTime()); 
 	}
+	
+	public void iniciarModalAjuste(BatidaDTO batida, Integer seq, AjustePontoDTO ponto) throws ApplicationException {
+		try {
+			setBatidaEdicao(batida);
+			setSequenciaEdicao(seq);
+			setPontoEdicao(ponto);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarModalAjuste" }, e);
+		}
+	}
 
 	public String getChapa() {
 		return chapa;
@@ -238,6 +254,46 @@ public class AjustePontoController implements Serializable {
 
 	public void setFuncionario(FuncionarioRM funcionario) {
 		this.funcionario = funcionario;
+	}
+
+	public BatidaDTO getBatidaEdicao() {
+		return batidaEdicao;
+	}
+
+	public void setBatidaEdicao(BatidaDTO batidaEdicao) {
+		this.batidaEdicao = batidaEdicao;
+	}
+
+	public Integer getSequenciaEdicao() {
+		return sequenciaEdicao;
+	}
+
+	public void setSequenciaEdicao(Integer sequenciaEdicao) {
+		this.sequenciaEdicao = sequenciaEdicao;
+	}
+
+	public AjustePontoDTO getPontoEdicao() {
+		return pontoEdicao;
+	}
+
+	public void setPontoEdicao(AjustePontoDTO pontoEdicao) {
+		this.pontoEdicao = pontoEdicao;
+	}
+
+	public Date getDtEdicao() {
+		return dtEdicao;
+	}
+
+	public void setDtEdicao(Date dtEdicao) {
+		this.dtEdicao = dtEdicao;
+	}
+
+	public String getJustificativa() {
+		return justificativa;
+	}
+
+	public void setJustificativa(String justificativa) {
+		this.justificativa = justificativa;
 	}
 
 }
