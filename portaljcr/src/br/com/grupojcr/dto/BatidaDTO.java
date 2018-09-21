@@ -6,6 +6,7 @@ public class BatidaDTO {
 	private String status;
 	private Integer natureza;
 	private Boolean falta;
+	private Boolean editado;
 	
 	public Integer getBatida() {
 		return batida;
@@ -30,6 +31,12 @@ public class BatidaDTO {
 	}
 	public void setFalta(Boolean falta) {
 		this.falta = falta;
+	}
+	public Boolean getEditado() {
+		return editado;
+	}
+	public void setEditado(Boolean editado) {
+		this.editado = editado;
 	}
 	
 

@@ -105,7 +105,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -114,7 +114,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -123,7 +123,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -132,7 +132,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -141,7 +141,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -150,7 +150,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -159,7 +159,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -168,7 +168,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -177,7 +177,7 @@
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10))}"
 						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}" />
 						        	
-						        <p:commandLink ajax="true" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}">
+						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 						    </p:column>
@@ -218,7 +218,7 @@
 						<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
 							id="modalBatida"
 							widgetVar="modalBatida" 
-							header="Ajustar Batida"
+							header="#{ajustePontoController.obterBatidaFormatada()}"
 							resizable="false" 
 							responsive="true"
 							closable="true"
@@ -232,7 +232,7 @@
 										<div class="form-group">
 											<div class="col-sm-4 col-md-4">
 												<div class="input-group">
-													<p:inputMask id="horario" maxlength="4" mask="99:99" onkeyup="filterHorario(this)" />
+													<p:inputMask id="horario" value="#{ajustePontoController.horario}" maxlength="4" mask="99:99" />
 		
 													<div class="input-group-addon">
 														<i class="fa fa-clock-o"></i>
@@ -248,6 +248,20 @@
 										<div class="col-sm-12 col-md-12">
 											<h:inputTextarea id="justificativa" value="#{ajustePontoController.justificativa}" styleClass="form-control" rows="5" />
 										</div>
+									</div>
+								</div>
+								<div class="box-footer center-block" >
+									<div class="col-sm-12 col-md-12">
+										<p:commandButton
+											styleClass="btn-azul"
+											icon="fa fa-save"
+											value="Salvar"
+											id="btn_salvar"
+											process="@this, @form:modalBatida"
+											global="false"
+											action="#{ajustePontoController.salvarBatida()}"
+											update="@form:mensagemModal"
+											ajax="true" />
 									</div>
 								</div>
 							</div>

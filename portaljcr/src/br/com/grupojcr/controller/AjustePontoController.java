@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.inject.Named;
 
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.AjustePontoDTO;
@@ -35,6 +37,7 @@ public class AjustePontoController implements Serializable {
 	private String chapa;
 	private String chave;
 	private String justificativa;
+	private String horario;
 	
 	private Calendar periodoInicial;
 	private Calendar periodoFinal;
@@ -191,12 +194,73 @@ public class AjustePontoController implements Serializable {
 	
 	public void iniciarModalAjuste(BatidaDTO batida, Integer seq, AjustePontoDTO ponto) throws ApplicationException {
 		try {
-			setBatidaEdicao(batida);
+			if(Util.isNotNull(batida)) {
+				setBatidaEdicao(batida);
+			}
+			if(Util.isNotNull(ponto)) {
+				setPontoEdicao(ponto);
+			}
 			setSequenciaEdicao(seq);
-			setPontoEdicao(ponto);
+			setHorario(null);
+			setJustificativa(null);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarModalAjuste" }, e);
+		}
+	}
+	
+	public String obterBatidaFormatada() throws ApplicationException {
+		try {
+			if(Util.isNotNull(getPontoEdicao())) {
+				return TreatDate.format("dd/MM/yyyy", getPontoEdicao().getData());
+			}
+			return "";
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarModalAjuste" }, e);
+		}
+	}
+	
+	public void salvarBatida() throws ApplicationException {
+		try {
+			if(Util.isNull(getHorario())) {
+				if(Util.isBlank(getHorario())) {
+					throw new ApplicationException("ajuste.ponto.campos", FacesMessage.SEVERITY_WARN);
+				}
+			} else {
+				String horasString = getHorario().substring(0, 2);
+				String minutosString = getHorario().substring(3, 5);
+				
+				Integer horas = Integer.valueOf(horasString);
+				Integer minutos = Integer.valueOf(minutosString);
+				
+				if(horas > new Integer(23)) {
+					throw new ApplicationException("ajuste.ponto.horario.invalido", FacesMessage.SEVERITY_WARN);
+				}
+				if(minutos > new Integer(59)) {
+					throw new ApplicationException("ajuste.ponto.horario.invalido", FacesMessage.SEVERITY_WARN);
+				}
+				
+			}
+			
+			if(Util.isNull(getJustificativa())) {
+				if(Util.isBlank(getJustificativa())) {
+					throw new ApplicationException("ajuste.ponto.campos", FacesMessage.SEVERITY_WARN);
+				}
+			} else {
+				if(getJustificativa().length() > 1000) {
+					throw new ApplicationException("message.empty", new String[] {"Máximo 1000 caracteres para a Justificativa."}, FacesMessage.SEVERITY_WARN);
+				}
+			}
+			
+			
+			PrimeFaces.current().executeScript("PF('modalBatida').hide();");
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvarBatida" }, e);
 		}
 	}
 
@@ -294,6 +358,14 @@ public class AjustePontoController implements Serializable {
 
 	public void setJustificativa(String justificativa) {
 		this.justificativa = justificativa;
+	}
+
+	public String getHorario() {
+		return horario;
+	}
+
+	public void setHorario(String horario) {
+		this.horario = horario;
 	}
 
 }
