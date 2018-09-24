@@ -92,93 +92,135 @@
 						        <h:outputText value="#{ponto.nomeDia}" />
 						    </p:column>
 						    
-						    <p:column headerText="Ent1" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 1).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Ent1" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 1).falta ? 'border: 2px solid red;':''} #{ajustePontoController.obterObjetoMap(ponto.batidas, 1).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1))}" 
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 1).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 1).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1))}"  />
+								</p:commandLink>
+								
 						    </p:column>
 						    
-						    <p:column headerText="Sai1" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 2).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Sai1" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 2).falta ? 'border: 2px solid red;':''} #{ajustePontoController.obterObjetoMap(ponto.batidas, 2).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}" />
-						        	
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 2).editado}" />
+						        
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 2).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Ent2" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 3).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Ent2" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 3).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 3).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 3).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 3).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3))}"  />
+								</p:commandLink>
+
 						    </p:column>
 						    
-						    <p:column headerText="Sai2" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 4).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Sai2" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 4).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 4).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 4).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 4).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Ent3" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 5).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Ent3" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 5).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 5).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 5).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 5).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Sai3" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 6).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Sai3" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 6).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 6).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 6).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 6).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Ent4" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 7).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Ent4" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 7).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 7).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 7).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 7).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Sai4" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 8).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Sai4" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 8).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 8).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 8).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 8).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Ent5" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 9).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Ent5" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 9).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 9).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 9).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 9).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9))}"  />
+								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Sai5" style="text-align:center;font-size:12px; #{ajustePontoController.obterObjetoMap(ponto.batidas, 10).falta ? 'border: 2px solid red;':''}">
+						    <p:column headerText="Sai5" style="text-align:center;font-size:12px;#{ajustePontoController.obterObjetoMap(ponto.batidas, 10).falta ? 'border: 2px solid red;':''}#{ajustePontoController.obterObjetoMap(ponto.batidas, 10).editado ? 'background-color: #d2ffd3;':''}">
 						        <h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10))}"
-						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}" />
+						        	rendered="#{!ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto) and !ajustePontoController.obterObjetoMap(ponto.batidas, 10).editado}" />
 						        	
 						        <p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.podeEditar(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto)}" actionListener="#{ajustePontoController.iniciarModalAjuste(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
+								</p:commandLink>
+								
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 10).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10))}"  />
 								</p:commandLink>
 						    </p:column>
 						    
@@ -260,6 +302,17 @@
 											process="@this, @form:modalBatida"
 											global="false"
 											action="#{ajustePontoController.salvarBatida()}"
+											update="@form:mensagemModal"
+											ajax="true" />
+											
+										<p:commandButton
+											styleClass="btn-vermelho"
+											icon="fa fa-times"
+											value="Excluir"
+											id="btn_excluir"
+											process="@this, @form:modalBatida"
+											global="false"
+											action="#{ajustePontoController.excluirBatida()}"
 											update="@form:mensagemModal"
 											ajax="true" />
 									</div>

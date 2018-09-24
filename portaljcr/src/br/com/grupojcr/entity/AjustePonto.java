@@ -2,6 +2,7 @@ package br.com.grupojcr.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,11 +39,11 @@ public class AjustePonto implements BaseEntity, Serializable {
 	@Column(name = "CHAPA", length = 10, nullable = false)
 	private String chapa;
 
-	@Column(name = "CODCCUSTO", length = 50)
-	private String codigoCentroCusto;
+	@Column(name = "CODSECAO", length = 35)
+	private String codigoSecao;
 
-	@Column(name = "CENTRO_CUSTO", length = 100)
-	private String centroCusto;
+	@Column(name = "SECAO", length = 60)
+	private String secao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_AJUSTE", nullable = false)
@@ -65,6 +67,9 @@ public class AjustePonto implements BaseEntity, Serializable {
 	@Column(name = "SITUACAO", nullable = false)
 	private SituacaoAjustePonto situacao;
 	
+	@OneToMany(mappedBy = "ajuste", fetch = FetchType.LAZY)
+	private Set<BatidaPonto> batidas;
+	
 	@Override
 	public Long getId() {
 		return id;
@@ -84,22 +89,6 @@ public class AjustePonto implements BaseEntity, Serializable {
 
 	public void setChapa(String chapa) {
 		this.chapa = chapa;
-	}
-
-	public String getCodigoCentroCusto() {
-		return codigoCentroCusto;
-	}
-
-	public void setCodigoCentroCusto(String codigoCentroCusto) {
-		this.codigoCentroCusto = codigoCentroCusto;
-	}
-
-	public String getCentroCusto() {
-		return centroCusto;
-	}
-
-	public void setCentroCusto(String centroCusto) {
-		this.centroCusto = centroCusto;
 	}
 
 	public Date getDtAjuste() {
@@ -177,5 +166,29 @@ public class AjustePonto implements BaseEntity, Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Set<BatidaPonto> getBatidas() {
+		return batidas;
+	}
+
+	public void setBatidas(Set<BatidaPonto> batidas) {
+		this.batidas = batidas;
+	}
+
+	public String getCodigoSecao() {
+		return codigoSecao;
+	}
+
+	public void setCodigoSecao(String codigoSecao) {
+		this.codigoSecao = codigoSecao;
+	}
+
+	public String getSecao() {
+		return secao;
+	}
+
+	public void setSecao(String secao) {
+		this.secao = secao;
 	}
 }

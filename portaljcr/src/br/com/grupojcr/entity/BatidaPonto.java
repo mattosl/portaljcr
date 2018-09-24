@@ -34,6 +34,9 @@ public class BatidaPonto implements BaseEntity, Serializable {
 	@Column(name = "DT_BATIDA", nullable = false)
 	private Date dtBatida;
 	
+	@Column(name = "JUSTIFICATIVA", length = 1000, nullable = false)
+	private String justificativa;
+	
 	@Column(name = "BATIDA", nullable = false)
 	private Integer batida;
 
@@ -116,5 +119,13 @@ public class BatidaPonto implements BaseEntity, Serializable {
 
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
+	}
+
+	public String getJustificativa() {
+		return justificativa;
+	}
+
+	public void setJustificativa(String justificativa) {
+		this.justificativa = justificativa;
 	}
 }

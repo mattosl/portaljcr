@@ -8,16 +8,20 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
+import br.com.grupojcr.business.PontoBusiness;
 import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.BatidaDTO;
 import br.com.grupojcr.dto.PeriodoPontoDTO;
+import br.com.grupojcr.entity.BatidaPonto;
+import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
@@ -54,6 +58,9 @@ public class AjustePontoController implements Serializable {
 	@EJB
 	private RMBusiness rmBusiness;
 	
+	@EJB
+	private PontoBusiness pontoBusiness;
+	
 	
 	public String autenticarUsuario() throws ApplicationException {
 		try {
@@ -73,10 +80,11 @@ public class AjustePontoController implements Serializable {
 	
 	private void iniciarAjustePonto() throws ApplicationException {
 		try {
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			setFuncionario(rmBusiness.obterDadosFuncionario("7-000040"));
 			carregarPeriodo();
 			setUltimaColeta(rmBusiness.obterUltimaColetaColigada(7));
-			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(7, "000040", getPeriodoInicial(), getPeriodoFinal());
+			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(usuario, 7, "000040", getPeriodoInicial(), getPeriodoFinal());
 			
 			setPontos(ponto);
 			
@@ -208,6 +216,23 @@ public class AjustePontoController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarModalAjuste" }, e);
 		}
 	}
+
+	public void iniciarModalAjusteEdicao(BatidaDTO batida, Integer seq, AjustePontoDTO ponto) throws ApplicationException {
+		try {
+			if(Util.isNotNull(batida)) {
+				setBatidaEdicao(batida);
+			}
+			if(Util.isNotNull(ponto)) {
+				setPontoEdicao(ponto);
+			}
+			setSequenciaEdicao(seq);
+			setHorario(obterHorasBatida(batida.getBatidaPonto().getBatida()));
+			setJustificativa(batida.getBatidaPonto().getJustificativa());
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarModalAjuste" }, e);
+		}
+	}
 	
 	public String obterBatidaFormatada() throws ApplicationException {
 		try {
@@ -253,8 +278,40 @@ public class AjustePontoController implements Serializable {
 				}
 			}
 			
+			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			BatidaPonto batida = null;
+			if(Util.isNotNull(getBatidaEdicao().getBatidaPonto())) {
+				batida = getBatidaEdicao().getBatidaPonto();
+			} else {
+				batida = new BatidaPonto();
+			}
+			batida.setDtBatida(getPontoEdicao().getData());
+			batida.setSequencia(getSequenciaEdicao());
+			batida.setJustificativa(getJustificativa());
+			if(getSequenciaEdicao().equals(1) || getSequenciaEdicao().equals(3) || getSequenciaEdicao().equals(5) || getSequenciaEdicao().equals(7)) {
+				batida.setTipo(0);
+			} else {
+				batida.setTipo(1);
+			}
+			
+			String horasString = getHorario().substring(0, 2);
+			String minutosString = getHorario().substring(3, 5);
+			
+			Integer horas = Integer.valueOf(horasString);
+			Integer minutos = Integer.valueOf(minutosString);
+			
+			Integer inteiroHora = horas * 60;
+			Double minutoDec = minutos / new Double(60);
+			Integer inteiroMinuto = (int) (minutoDec * 60);
+			
+			batida.setBatida(inteiroHora + inteiroMinuto);
+			
+			pontoBusiness.salvar(usuario, getPeriodoInicial().getTime(), getPeriodoFinal().getTime(), getFuncionario().getCodSecao(), getFuncionario().getSecao(), batida,  getPontoEdicao());
 			
 			PrimeFaces.current().executeScript("PF('modalBatida').hide();");
+			PrimeFaces.current().ajax().update("ajustarPontoForm");
+			
+			iniciarAjustePonto();
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;
@@ -263,6 +320,7 @@ public class AjustePontoController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvarBatida" }, e);
 		}
 	}
+
 
 	public String getChapa() {
 		return chapa;

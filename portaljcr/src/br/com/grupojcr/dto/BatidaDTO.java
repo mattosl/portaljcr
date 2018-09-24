@@ -1,5 +1,7 @@
 package br.com.grupojcr.dto;
 
+import br.com.grupojcr.entity.BatidaPonto;
+
 public class BatidaDTO {
 	
 	private Integer batida;
@@ -7,6 +9,7 @@ public class BatidaDTO {
 	private Integer natureza;
 	private Boolean falta;
 	private Boolean editado;
+	private BatidaPonto batidaPonto;
 	
 	public Integer getBatida() {
 		return batida;
@@ -37,6 +40,12 @@ public class BatidaDTO {
 	}
 	public void setEditado(Boolean editado) {
 		this.editado = editado;
+	}
+	public BatidaPonto getBatidaPonto() {
+		return batidaPonto;
+	}
+	public void setBatidaPonto(BatidaPonto batidaPonto) {
+		this.batidaPonto = batidaPonto;
 	}
 	
 

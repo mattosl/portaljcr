@@ -8,6 +8,7 @@ import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
 
+import br.com.grupojcr.dao.AjustePontoDAO;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dto.AjusteOrcamentarioDTO;
 import br.com.grupojcr.dto.AjustePontoDTO;
@@ -35,6 +37,9 @@ import br.com.grupojcr.dto.MovimentoDTO;
 import br.com.grupojcr.dto.OrcamentoDTO;
 import br.com.grupojcr.dto.PeriodoFeriasDTO;
 import br.com.grupojcr.dto.PeriodoPontoDTO;
+import br.com.grupojcr.entity.AjustePonto;
+import br.com.grupojcr.entity.BatidaPonto;
+import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.entity.xml.FopEnvelopeXML;
 import br.com.grupojcr.enumerator.Modalidade;
 import br.com.grupojcr.rm.BatidaRM;
@@ -65,6 +70,8 @@ public class RMBusiness {
 	@EJB
 	private RMDAO daoRM;
 	
+	@EJB
+	private AjustePontoDAO daoAjustePonto;
 	
 	public List<CentroCustoRM> listarCentroCustoPorColigada(Long idColigada) throws ApplicationException {
 		try {
@@ -445,7 +452,7 @@ public class RMBusiness {
 		}
 	}
 	
-	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
+	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Usuario usuarioLogado, Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
 		try {
 			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
 			List<HorasPontoDTO> horasPonto = daoRM.obterHorasPonto(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
@@ -481,10 +488,40 @@ public class RMBusiness {
 				}
 				i++;
 			}
+			AjustePonto ajustePontoBanco = daoAjustePonto.obterAjustePonto(usuarioLogado.getId(), periodoInicial.getTime(), periodoFinal.getTime());
+			if(Util.isNotNull(ajustePontoBanco)) {
+				for(BatidaPonto batida : ajustePontoBanco.getBatidas()) {
+					batidas.add(new BatidaRM(batida.getDtBatida(), batida.getBatida(), "D", batida.getTipo(), Boolean.TRUE, batida));
+				}
+			}
+			
+			batidas.sort(new Comparator<BatidaRM>() {
+
+				@Override
+				public int compare(BatidaRM o1, BatidaRM o2) {
+					if(TreatDate.isMesmaData(o1.getData(), o2.getData())) {
+						if(o1.getBatida() > o2.getBatida()) {
+							return 1;
+						} else if(o1.getBatida().equals(o2.getBatida())) {
+							return 0;
+						} else {
+							return -1;
+						}
+					}
+					if(o1.getData().after(o2.getData())) {
+						return 1;
+					} else {
+						return -1;
+					}
+				}
+				
+			});
+			
 			
 			for(LocalDate localDate : datas) {
 				AjustePontoDTO dto = new AjustePontoDTO();
 				Date dataAtual = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				
 				
 				/* Validar final de semana */
 				if(localDate.getDayOfWeek().getValue() == 6 
@@ -547,7 +584,13 @@ public class RMBusiness {
 							BatidaDTO batidaDTO = new BatidaDTO();
 							batidaDTO.setBatida(batida.getBatida());
 							batidaDTO.setStatus(batida.getStatus());
-							batidaDTO.setNatureza(batida.getNatureza());
+							batidaDTO.setEditado(batida.getEditado());
+							batidaDTO.setBatidaPonto(batida.getBatidaPonto());
+							if(idx.equals(1) || idx.equals(3) || idx.equals(5) || idx.equals(7)) {
+								batidaDTO.setNatureza(0);
+							} else {
+								batidaDTO.setNatureza(1);
+							}
 							
 							dto.getBatidas().put(idx, batidaDTO);
 							

@@ -2,8 +2,9 @@ package br.com.grupojcr.enumerator;
 
 public enum SituacaoAjustePonto {
 
-	AGUARDANDO_APROVACAO(0, "Aguardando Aprovação"),
-	APROVADO(1, "Aprovado");
+	RASCUNHO(0, "Rascunho"),
+	AGUARDANDO_APROVACAO(1, "Aguardando Aprovação"),
+	APROVADO(2, "Aprovado");
 	
 	private Integer id;
 	private String descricao;

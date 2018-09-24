@@ -27,6 +27,8 @@ public class FuncionarioRM implements Serializable {
 	private String agencia;
 	private String numeroAgencia;
 	private String numeroConta;
+	private String secao;
+	private String codSecao;
 	
 	public String getChapa() {
 		return chapa;
@@ -147,6 +149,18 @@ public class FuncionarioRM implements Serializable {
 	}
 	public void setCodColigada(Integer codColigada) {
 		this.codColigada = codColigada;
+	}
+	public String getSecao() {
+		return secao;
+	}
+	public void setSecao(String secao) {
+		this.secao = secao;
+	}
+	public String getCodSecao() {
+		return codSecao;
+	}
+	public void setCodSecao(String codSecao) {
+		this.codSecao = codSecao;
 	}
 
 }
