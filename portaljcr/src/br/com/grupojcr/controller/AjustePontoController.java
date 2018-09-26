@@ -20,14 +20,18 @@ import br.com.grupojcr.business.RMBusiness;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.BatidaDTO;
 import br.com.grupojcr.dto.PeriodoPontoDTO;
+import br.com.grupojcr.entity.AjustePonto;
 import br.com.grupojcr.entity.BatidaPonto;
 import br.com.grupojcr.entity.Usuario;
+import br.com.grupojcr.enumerator.SituacaoAjustePonto;
+import br.com.grupojcr.rm.FeriadoRM;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
+import br.com.grupojcr.util.exception.Message;
 
 @Named
 @ViewAccessScoped
@@ -48,10 +52,16 @@ public class AjustePontoController implements Serializable {
 	private Date ultimaColeta;
 	private Date dtEdicao;
 	
+	private Integer sequenciaEdicao;
+	
+	private Boolean bloqueado;
+	
 	private FuncionarioRM funcionario;
 	private BatidaDTO batidaEdicao;
-	private Integer sequenciaEdicao;
 	private AjustePontoDTO pontoEdicao;
+	private Usuario usuario;
+	private AjustePonto ajustePonto;
+
 	
 	private List<AjustePontoDTO> pontos;
 	
@@ -80,9 +90,19 @@ public class AjustePontoController implements Serializable {
 	
 	private void iniciarAjustePonto() throws ApplicationException {
 		try {
-			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
 			setFuncionario(rmBusiness.obterDadosFuncionario("7-000040"));
 			carregarPeriodo();
+			setAjustePonto(pontoBusiness.obterAjustePonto(getUsuario().getId(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime()));
+			if(Util.isNotNull(getAjustePonto())) {
+				if(getAjustePonto().getSituacao().equals(SituacaoAjustePonto.AGUARDANDO_APROVACAO) 
+						|| getAjustePonto().getSituacao().equals(SituacaoAjustePonto.APROVADO)) {
+					setBloqueado(Boolean.TRUE);
+				}
+			} else {
+				setBloqueado(Boolean.FALSE);
+			}
+		
 			setUltimaColeta(rmBusiness.obterUltimaColetaColigada(7));
 			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(usuario, 7, "000040", getPeriodoInicial(), getPeriodoFinal());
 			
@@ -131,6 +151,9 @@ public class AjustePontoController implements Serializable {
 	
 	public Boolean podeEditar(BatidaDTO batida, Integer seq, AjustePontoDTO ponto) throws ApplicationException {
 		try {
+			if(getBloqueado()) {
+				return Boolean.FALSE;
+			}
 			if(TreatNumber.isNullOrZero(batida.getBatida())) {
 				if(!ponto.getFerias()) {
 					if(Util.dataMenor(ponto.getData(), getUltimaColeta())) {
@@ -278,7 +301,6 @@ public class AjustePontoController implements Serializable {
 				}
 			}
 			
-			Usuario usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
 			BatidaPonto batida = null;
 			if(Util.isNotNull(getBatidaEdicao().getBatidaPonto())) {
 				batida = getBatidaEdicao().getBatidaPonto();
@@ -306,9 +328,10 @@ public class AjustePontoController implements Serializable {
 			
 			batida.setBatida(inteiroHora + inteiroMinuto);
 			
-			pontoBusiness.salvar(usuario, getPeriodoInicial().getTime(), getPeriodoFinal().getTime(), getFuncionario().getCodSecao(), getFuncionario().getSecao(), batida,  getPontoEdicao());
+			pontoBusiness.salvar(getUsuario(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime(), getFuncionario().getCodSecao(), getFuncionario().getSecao(), batida,  getPontoEdicao());
 			
 			PrimeFaces.current().executeScript("PF('modalBatida').hide();");
+			PrimeFaces.current().executeScript("PF('modalBatidaEdicao').hide();");
 			PrimeFaces.current().ajax().update("ajustarPontoForm");
 			
 			iniciarAjustePonto();
@@ -320,6 +343,137 @@ public class AjustePontoController implements Serializable {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "salvarBatida" }, e);
 		}
 	}
+
+	public void excluirBatida() throws ApplicationException {
+		try {
+			pontoBusiness.excluir(getBatidaEdicao().getBatidaPonto());
+			
+			PrimeFaces.current().executeScript("PF('modalBatidaEdicao').hide();");
+			PrimeFaces.current().ajax().update("ajustarPontoForm");
+			
+			iniciarAjustePonto();
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "excluirBatida" }, e);
+		}
+	}
+	
+	public void enviarCorrecaoAprovacao() throws ApplicationException {
+		try {
+			pontoBusiness.enviarPontoAprovacao(getPontos(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime(), getUsuario(), getFuncionario());
+			
+			Message.setMessage("ajuste.ponto.enviada.aprovacao");
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "enviarCorrecaoAprovacao" }, e);
+		}
+	}
+	
+	public String obterPeriodoCorrecao() throws ApplicationException {
+		try {
+			
+			List<FeriadoRM> feriados = rmBusiness.obterFeriados(7, "000040", getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
+			Calendar inicio = Calendar.getInstance();
+			Calendar fim = Calendar.getInstance();
+			inicio.set(Calendar.DAY_OF_MONTH, 15);
+			fim.set(Calendar.DAY_OF_MONTH, 15);
+			
+			while(isFinalDeSemanaFeriado(feriados, fim)) {
+				fim.add(Calendar.DAY_OF_MONTH, 1);
+				inicio.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			fim.add(Calendar.DAY_OF_MONTH, 1);
+			
+			while(isFinalDeSemanaFeriado(feriados, fim)) {
+				fim.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			fim.add(Calendar.DAY_OF_MONTH, 1);
+			
+			while(isFinalDeSemanaFeriado(feriados, fim)) {
+				fim.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			return TreatDate.format("dd/MM/yyyy", inicio.getTime()) + " à " + TreatDate.format("dd/MM/yyyy", fim.getTime());
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterPeriodoCorrecao" }, e);
+		}
+	}
+
+	public Boolean verificarEnvioAprovacao() throws ApplicationException {
+		try {
+			
+			List<FeriadoRM> feriados = rmBusiness.obterFeriados(7, "000040", getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
+			Calendar atual = Calendar.getInstance();
+			Calendar inicio = Calendar.getInstance();
+			Calendar fim = Calendar.getInstance();
+			inicio.set(Calendar.DAY_OF_MONTH, 15);
+			fim.set(Calendar.DAY_OF_MONTH, 15);
+			
+			while(isFinalDeSemanaFeriado(feriados, fim)) {
+				fim.add(Calendar.DAY_OF_MONTH, 1);
+				inicio.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			fim.add(Calendar.DAY_OF_MONTH, 1);
+			
+			while(isFinalDeSemanaFeriado(feriados, fim)) {
+				fim.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			
+			fim.add(Calendar.DAY_OF_MONTH, 1);
+			
+			while(isFinalDeSemanaFeriado(feriados, fim)) {
+				fim.add(Calendar.DAY_OF_MONTH, 1);
+			}
+
+			if(TreatDate.pertenceAoPeriodo(atual.getTime(), inicio.getTime(), fim.getTime())) {
+				return Boolean.TRUE;
+			} 
+			
+			return Boolean.FALSE;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "verificarEnvioAprovacao" }, e);
+		}
+	}
+	
+	private Boolean isFinalDeSemanaFeriado(List<FeriadoRM> feriados, Calendar data) throws ApplicationException {
+		try {
+			
+			if(data.get(Calendar.DAY_OF_WEEK) == 1 || data.get(Calendar.DAY_OF_WEEK) == 7) {
+				return Boolean.TRUE;
+			}
+			
+			for(FeriadoRM feriado : feriados) {
+				if(TreatDate.isMesmaData(feriado.getData(), data.getTime())) {
+					return Boolean.TRUE;
+				}
+			}
+
+			return Boolean.FALSE;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "isFinalDeSemanaFeriado" }, e);
+		}
+	}
+	
+	
 
 
 	public String getChapa() {
@@ -424,6 +578,30 @@ public class AjustePontoController implements Serializable {
 
 	public void setHorario(String horario) {
 		this.horario = horario;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public AjustePonto getAjustePonto() {
+		return ajustePonto;
+	}
+
+	public void setAjustePonto(AjustePonto ajustePonto) {
+		this.ajustePonto = ajustePonto;
+	}
+
+	public Boolean getBloqueado() {
+		return bloqueado;
+	}
+
+	public void setBloqueado(Boolean bloqueado) {
+		this.bloqueado = bloqueado;
 	}
 
 }

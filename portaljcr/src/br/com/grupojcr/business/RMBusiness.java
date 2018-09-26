@@ -722,4 +722,16 @@ public class RMBusiness {
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterUltimaColetaColigada" }, e);
 		}
 	}
+
+	public List<FeriadoRM> obterFeriados(Integer codColigada, String chapa, Date periodoInicial, Date periodoFinal) throws ApplicationException {
+		try {
+			return daoRM.obterFeriadosFuncionario(codColigada, chapa, periodoInicial, periodoFinal);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterFeriados" }, e);
+		}
+	}
 }

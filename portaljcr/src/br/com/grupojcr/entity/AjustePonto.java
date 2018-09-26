@@ -67,6 +67,9 @@ public class AjustePonto implements BaseEntity, Serializable {
 	@Column(name = "SITUACAO", nullable = false)
 	private SituacaoAjustePonto situacao;
 	
+	@Column(name = "MOTIVO_RECUSA", length = 500)
+	private String motivoRecusa;
+	
 	@OneToMany(mappedBy = "ajuste", fetch = FetchType.LAZY)
 	private Set<BatidaPonto> batidas;
 	
@@ -190,5 +193,13 @@ public class AjustePonto implements BaseEntity, Serializable {
 
 	public void setSecao(String secao) {
 		this.secao = secao;
+	}
+
+	public String getMotivoRecusa() {
+		return motivoRecusa;
+	}
+
+	public void setMotivoRecusa(String motivoRecusa) {
+		this.motivoRecusa = motivoRecusa;
 	}
 }

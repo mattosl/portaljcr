@@ -138,7 +138,7 @@ public class SolicitacaoCompraBusiness {
 			
 			BigDecimal valorAproximado = new BigDecimal(0);
 			for(SolicitacaoCompraItem sci : dto.getItens()) {
-				valorAproximado	= valorAproximado.add(sci.getValorAproximado());
+				valorAproximado	= valorAproximado.add(sci.getValorAproximado().multiply(sci.getQuantidade()));
 			}
 			solicitacao.setValorTotalAproximado(valorAproximado);
 			

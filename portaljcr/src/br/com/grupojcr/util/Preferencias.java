@@ -18,7 +18,8 @@ public class Preferencias implements Serializable {
 		AMBIENTE_RM					("ambiente.rm"),
 		USUARIO_FLUIG				("usuario.fluig"),
 		CHAVE_FLUIG					("chave.fluig"),
-		FLUIG_SOLICITACAO_COMPRA	("processo.fluig.solicitacao.compra");
+		FLUIG_SOLICITACAO_COMPRA	("processo.fluig.solicitacao.compra"),
+		FLUIG_APROVACAO_PONTO		("processo.fluig.aprovacao.ponto");
 
 		private String key;
 

@@ -77,6 +77,13 @@
 								</div>
 							</div>
 		            	</p:panel>
+		            	<div class="box-header">
+							<label style="font-size:12px; background-color: #FFF;padding: 5px;border: 1px solid #CCC;" class="pull-right colunaCinza">
+								<i class="fa fa-square" style="color: yellow;"></i>&nbsp;Férias
+								<i class="fa fa-square" style="color: #d9f3ff;"></i>&nbsp;Feriado
+								<i class="fa fa-square" style="color: #828080;"></i>&nbsp;Final de Semana
+							</label>
+						</div>
 						<p:dataTable var="ponto" id="tableAjustarPonto" widgetVar="widgetTabelaAjustarPonto"
 							value="#{ajustePontoController.pontos}"
 							tableStyle="table-layout: auto; word-break: keep-all;"
@@ -100,7 +107,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 1).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 1).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 1), 1, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 1))}"  />
 								</p:commandLink>
 								
@@ -114,7 +121,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 2).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 2).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 2), 2, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 2))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -127,7 +134,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 3).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 3).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 3), 3, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 3))}"  />
 								</p:commandLink>
 
@@ -141,7 +148,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 4).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 4).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 4), 4, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 4))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -154,7 +161,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 5).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 5).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 5), 5, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 5))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -167,7 +174,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 6).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 6).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 6), 6, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 6))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -180,7 +187,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 7).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 7).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 7), 7, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 7))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -193,7 +200,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 8).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 8).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 8), 8, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 8))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -206,7 +213,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 9).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 9).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 9), 9, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 9))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -219,7 +226,7 @@
 									<h:outputText value="" title="Corrigir" styleClass="fa fa-pencil-square-o" style="opacity: 0.3;" />
 								</p:commandLink>
 								
-								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 10).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto )}" oncomplete="PF('modalBatida').show()" update="@form:modalBatida">
+								<p:commandLink ajax="true" global="false" process="@this" rendered="#{ajustePontoController.obterObjetoMap(ponto.batidas, 10).editado}" actionListener="#{ajustePontoController.iniciarModalAjusteEdicao(ajustePontoController.obterObjetoMap(ponto.batidas, 10), 10, ponto )}" oncomplete="PF('modalBatidaEdicao').show()" update="@form:modalBatidaEdicao" disabled="#{ajustePontoController.bloqueado}">
 									<h:outputText value="#{ajustePontoController.obterHoras(ajustePontoController.obterObjetoMap(ponto.batidas, 10))}"  />
 								</p:commandLink>
 						    </p:column>
@@ -249,14 +256,26 @@
 						    </p:column>
 	
 						</p:dataTable>
-						<div class="box-header">
-							<label style="font-size:12px; background-color: #FFF;padding: 5px;border: 1px solid #CCC;" class="pull-right colunaCinza">
-								<i class="fa fa-square" style="color: red;"></i>&nbsp;Sem Ponto 
-								<i class="fa fa-square" style="color: yellow;"></i>&nbsp;Férias
-								<i class="fa fa-square" style="color: #d9f3ff;"></i>&nbsp;Feriado
-								<i class="fa fa-square" style="color: #828080;"></i>&nbsp;Final de Semana
-							</label>
-						</div>
+						<p:panel toggleable="false" styleClass="box">
+							<div class="box-footer">
+								<div class="col-sm-4 col-md-4 center-block">
+									<p:commandButton
+										styleClass="btn-verde"
+										icon="fa fa-pencil-square-o"
+										value="Enviar para Aprovação"
+										id="btn_enviar_aprovacao"
+										process="@form"
+										action="#{ajustePontoController.enviarCorrecaoAprovacao()}"
+										update="@this, @form"
+										disabled="#{!ajustePontoController.verificarEnvioAprovacao()}"
+										ajax="true">
+									</p:commandButton>
+									<p:outputPanel rendered="#{!ajustePontoController.verificarEnvioAprovacao()}">
+										<span class="users-list-date pull-right">Período de Aprovação: <p:outputLabel value="#{ajustePontoController.obterPeriodoCorrecao()}" /></span>
+									</p:outputPanel>
+								</div>
+							</div>
+						</p:panel>
 						<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
 							id="modalBatida"
 							widgetVar="modalBatida" 
@@ -305,6 +324,60 @@
 											update="@form:mensagemModal"
 											ajax="true" />
 											
+									</div>
+								</div>
+							</div>
+						</p:dialog>
+						<p:dialog styleClass="modal-dialog modal-content" style="width: auto !important;"
+							id="modalBatidaEdicao"
+							widgetVar="modalBatidaEdicao" 
+							header="#{ajustePontoController.obterBatidaFormatada()}"
+							resizable="false" 
+							responsive="true"
+							closable="true"
+							width="30%"
+							draggable="true"
+							modal="false">
+							<p:messages id="mensagemModalEdicao" showDetail="true" closable="true" />
+							<div class="form-horizontal">
+								<div class="box-body">
+									<div class="bootstrap-timepicker">
+										<div class="form-group">
+											<div class="col-sm-4 col-md-4">
+												<div class="input-group">
+													<p:inputMask id="horarioEdicao" value="#{ajustePontoController.horario}" maxlength="4" mask="99:99" />
+		
+													<div class="input-group-addon">
+														<i class="fa fa-clock-o"></i>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12 col-md-12">
+											<label>Justificativa:</label>
+										</div>
+										<div class="col-sm-12 col-md-12">
+											<h:inputTextarea id="justificativaEdicao" value="#{ajustePontoController.justificativa}" styleClass="form-control" rows="5" />
+										</div>
+									</div>
+								</div>
+								<div class="box-footer center-block" >
+									<div class="col-sm-6 col-md-6">
+										<p:commandButton
+											styleClass="btn-azul"
+											icon="fa fa-save"
+											value="Salvar"
+											id="btn_salvar_edicao"
+											process="@this, @form:modalBatida"
+											global="false"
+											action="#{ajustePontoController.salvarBatida()}"
+											update="@form:mensagemModalEdicao"
+											ajax="true" />
+											
+									</div>
+									<div class="col-sm-6 col-md-6">
 										<p:commandButton
 											styleClass="btn-vermelho"
 											icon="fa fa-times"
@@ -313,7 +386,7 @@
 											process="@this, @form:modalBatida"
 											global="false"
 											action="#{ajustePontoController.excluirBatida()}"
-											update="@form:mensagemModal"
+											update="@form:mensagemModalEdicao"
 											ajax="true" />
 									</div>
 								</div>
