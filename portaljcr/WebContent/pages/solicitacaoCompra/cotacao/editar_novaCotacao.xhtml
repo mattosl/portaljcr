@@ -6,7 +6,8 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:pe="http://primefaces.org/ui/extensions" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
 		<ui:param name="activeSubmenu" value="minhasCotacoes"/>
@@ -104,11 +105,21 @@
 													</div>
 													<div class="form-group">
 														<div class="col-sm-2 col-md-2 control-label">
-															<label for="vlrAproximado"> Valor Aproximado: </label>
+															<label for="vlrAproximado"> Valor Unitário Aprox.: </label>
 														</div>
 														
-														<div class="col-sm-10 col-md-10">
+														<div class="col-sm-4 col-md-4">
 															<p:outputLabel id="vlrAproximado" value="#{item.solicitacaoCompraItem.valorAproximado ne null ? item.solicitacaoCompraItem.valorAproximado : 'NÃO INFORMADO'}" styleClass="control-label font-normal">
+																<f:convertNumber type="currency" currencySymbol="R$" />
+															</p:outputLabel>
+														</div>
+														
+														<div class="col-sm-2 col-md-2 control-label">
+															<label for="vlrAproximado"> Valor Total Aprox.: </label>
+														</div>
+														
+														<div class="col-sm-4 col-md-4">
+															<p:outputLabel id="vlrTotalAproximado" value="#{item.solicitacaoCompraItem.valorAproximado ne null ? item.solicitacaoCompraItem.valorTotalAproxFormatado : 'NÃO INFORMADO'}" styleClass="control-label font-normal">
 																<f:convertNumber type="currency" currencySymbol="R$" />
 															</p:outputLabel>
 														</div>
@@ -119,7 +130,7 @@
 														</div>
 														
 														<div class="col-sm-10 col-md-10">
-															<h:inputTextarea value="#{item.solicitacaoCompraItem.observacao}" styleClass="form-control" readonly="true" style="background-color: #fff !important;" rows="3" />
+															<h:inputTextarea id="obs" value="#{item.solicitacaoCompraItem.observacao}" styleClass="form-control" readonly="true" style="background-color: #fff !important;" rows="3" />
 														</div>
 													</div>
 													<div class="box-header with-border">
@@ -199,13 +210,16 @@
 											<div class="col-sm-3 col-md-3">
 												<div class="input-group">
 										            <span class="input-group-addon">R$</span>
-		           									<p:inputNumber id="desconto" value="#{cotacaoController.cotacao.desconto}" decimalPlaces="2" maxValue="9999" thousandSeparator="." decimalSeparator=",">
+		           									<p:inputNumber id="desconto" value="#{cotacaoController.cotacao.desconto}" decimalPlaces="2" maxValue="9999" thousandSeparator="." decimalSeparator="," >
 		           										<p:ajax global="false" update="totalCotacao, @form:btn_salvar" />
 		           									</p:inputNumber>
 		           									<p:watermark value="0,00" for="desconto"></p:watermark>
 										        </div>
 											</div>
 										</div>
+       									<pe:tooltip for="desconto" styleClass="qtip-default" myPosition="bottom center" atPosition="top center">
+       										<strong style="color: red;">IMPORTANTE</strong>: O valor do desconto deve ser informado na nota fiscal do fornecedor.
+       									</pe:tooltip>
 								 		<div class="form-group">
 											<div class="col-sm-6 col-md-6 control-label">
 												<label for="frete"> FRETE: </label>
@@ -221,6 +235,9 @@
 										        </div>
 											</div>
 										</div>
+										<pe:tooltip for="frete" styleClass="qtip-default" myPosition="bottom center" atPosition="top center">
+       										<strong style="color: red;">IMPORTANTE</strong>: O valor do frete deve ser informado na nota fiscal do fornecedor.
+       									</pe:tooltip>
 										<div class="form-group">
 											<div class="col-sm-6 col-md-6 control-label">
 												<label for="totalCotacao"> VALOR TOTAL DA COTAÇÃO: </label>
@@ -274,7 +291,18 @@
 				<script>
 				$(document).ready(function(){
 					var obj = PrimeFaces.escapeClientId("cotacaoForm:contatoFornecedor");
-					$(obj).mask("(99) 99999999?9");
+					$(obj).mask("(99) 99999999?9").focusout(function (event) {  
+			            var target, phone, element;  
+			            target = (event.currentTarget) ? event.currentTarget : event.srcElement;  
+			            phone = target.value.replace(/\D/g, '');
+			            element = $(target);  
+			            element.unmask();  
+			            if(phone.length > 10) {  
+			                element.mask("(99) 99999-999?9");  
+			            } else {  
+			                element.mask("(99) 9999-9999?9");  
+			            }  
+			        });;
 				});
 
 

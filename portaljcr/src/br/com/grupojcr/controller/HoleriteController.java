@@ -66,7 +66,7 @@ public class HoleriteController implements Serializable {
 			
 			if(Util.isBlank(getChapa())) {
 				setListaHolerite(new ArrayList<HoleriteDTO>());
-				Message.setMessage("message.empty", new String[] {"Seu usuário não possui chapa vinculada."}, FacesMessage.SEVERITY_WARN);
+				Message.setMessage("message.empty", new String[] {"Seu usuário não possui holerites."}, FacesMessage.SEVERITY_FATAL);
 			} else {
 				setListaHolerite(holeriteBusiness.listarHolerite(getChapa()));
 			}

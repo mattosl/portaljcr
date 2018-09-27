@@ -1,6 +1,7 @@
 package br.com.grupojcr.controller;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,6 +32,7 @@ import br.com.grupojcr.rm.CentroCustoRM;
 import br.com.grupojcr.rm.NaturezaOrcamentariaRM;
 import br.com.grupojcr.rm.ProdutoRM;
 import br.com.grupojcr.rm.UnidadeRM;
+import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.Util;
 import br.com.grupojcr.util.exception.ApplicationException;
 import br.com.grupojcr.util.exception.ControllerExceptionHandler;
@@ -406,6 +408,27 @@ public class SolicitacaoCompraController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "autocompleteProduto" }, e);
 		}
+	}
+	
+	public String calcularTotal() throws ApplicationException {
+		try {
+			if(Util.isNotNull(getSolicitacaoCompraDTO().getProduto())) {
+				if(Util.isNotNull(getSolicitacaoCompraDTO().getProduto().getQuantidade())) {
+					if(Util.isNotNull(getSolicitacaoCompraDTO().getProduto().getValorAproximado())) {
+						BigDecimal valor = getSolicitacaoCompraDTO().getProduto().getValorAproximado().multiply(getSolicitacaoCompraDTO().getProduto().getQuantidade());
+						return TreatNumber.formatMoney(valor);
+					}
+				} else {
+					if(Util.isNotNull(getSolicitacaoCompraDTO().getProduto().getValorAproximado())) {
+						return TreatNumber.formatMoney(getSolicitacaoCompraDTO().getProduto().getValorAproximado());
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "calcularTotal" }, e);
+		}
+		return "0,00";
 	}
 
 	public String voltar() throws ApplicationException {

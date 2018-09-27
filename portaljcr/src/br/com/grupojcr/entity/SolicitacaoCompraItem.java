@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Type;
 
 import br.com.grupojcr.util.TreatString;
+import br.com.grupojcr.util.Util;
 
 @Entity
 @Table(name = "TB_SOLICITACAO_COMPRA_ITEM")
@@ -185,4 +186,11 @@ public class SolicitacaoCompraItem implements BaseEntity, Serializable {
 		}
 	}
 	
+	@Transient
+	public BigDecimal getValorTotalAproxFormatado() {
+		if(Util.isNotNull(valorAproximado) && Util.isNotNull(quantidade)) {
+			return getValorAproximado().multiply(getQuantidade());
+		}
+		return new BigDecimal(0);
+	}
 }

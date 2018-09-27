@@ -49,12 +49,12 @@ public class AjustePontoController implements Serializable {
 	
 	private Calendar periodoInicial;
 	private Calendar periodoFinal;
-	private Date ultimaColeta;
 	private Date dtEdicao;
 	
 	private Integer sequenciaEdicao;
 	
 	private Boolean bloqueado;
+	private Boolean periodoAtivo;
 	
 	private FuncionarioRM funcionario;
 	private BatidaDTO batidaEdicao;
@@ -90,21 +90,36 @@ public class AjustePontoController implements Serializable {
 	
 	private void iniciarAjustePonto() throws ApplicationException {
 		try {
+			
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
-			setFuncionario(rmBusiness.obterDadosFuncionario("7-000040"));
+			if(Util.isBlank(getUsuario().getChapa())) {
+				throw new ApplicationException("ajuste.ponto.nao.utiliza", FacesMessage.SEVERITY_FATAL);
+			}
+			setFuncionario(rmBusiness.obterDadosFuncionario(getUsuario().getChapa()));
+			
 			carregarPeriodo();
+			
+			Boolean utilizaPonto = rmBusiness.verificarUtilizaPonto(getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoFinal().getTime());
+			
+			if(!utilizaPonto) {
+				throw new ApplicationException("ajuste.ponto.nao.utiliza", FacesMessage.SEVERITY_FATAL);
+			}
+			
+//			Boolean periodoAtivo = verificarEnvioAprovacao();
+//			if(!periodoAtivo) {
+//				throw new ApplicationException("ajuste.ponto.periodo.inativo", new String[] {obterPeriodoFormatado(), obterPeriodoCorrecao()}, FacesMessage.SEVERITY_FATAL);
+//			}
+			
 			setAjustePonto(pontoBusiness.obterAjustePonto(getUsuario().getId(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime()));
+			setBloqueado(Boolean.FALSE);
 			if(Util.isNotNull(getAjustePonto())) {
 				if(getAjustePonto().getSituacao().equals(SituacaoAjustePonto.AGUARDANDO_APROVACAO) 
 						|| getAjustePonto().getSituacao().equals(SituacaoAjustePonto.APROVADO)) {
 					setBloqueado(Boolean.TRUE);
 				}
-			} else {
-				setBloqueado(Boolean.FALSE);
 			}
 		
-			setUltimaColeta(rmBusiness.obterUltimaColetaColigada(7));
-			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(usuario, 7, "000040", getPeriodoInicial(), getPeriodoFinal());
+			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(getUsuario(), getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial(), getPeriodoFinal());
 			
 			setPontos(ponto);
 			
@@ -119,7 +134,7 @@ public class AjustePontoController implements Serializable {
 	
 	private void carregarPeriodo() throws ApplicationException {
 		try {
-			PeriodoPontoDTO dto = rmBusiness.obterPeriodoAtualFuncionario(7, "000040");
+			PeriodoPontoDTO dto = rmBusiness.obterPeriodoAtualFuncionario(getFuncionario().getCodColigada(), getFuncionario().getChapa());
 			Calendar periodoInicial = Calendar.getInstance();
 			periodoInicial.setTime(dto.getPeriodoInicial());
 			Calendar periodoFinal = Calendar.getInstance();
@@ -156,9 +171,7 @@ public class AjustePontoController implements Serializable {
 			}
 			if(TreatNumber.isNullOrZero(batida.getBatida())) {
 				if(!ponto.getFerias()) {
-					if(Util.dataMenor(ponto.getData(), getUltimaColeta())) {
-						return Boolean.TRUE;
-					}
+					return Boolean.TRUE;
 				}
 			}
 			return Boolean.FALSE;
@@ -214,13 +227,6 @@ public class AjustePontoController implements Serializable {
 	
 	public String obterPeriodoFormatado() {
 		return TreatDate.format("dd/MM/yyyy", getPeriodoInicial().getTime()) + " à " + TreatDate.format("dd/MM/yyyy", getPeriodoFinal().getTime()); 
-	}
-	
-	public String obterUltimaColeta() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(getUltimaColeta());
-		calendar.add(Calendar.DAY_OF_MONTH, -1);
-		return TreatDate.format("dd/MM/yyyy HH:mm", calendar.getTime()); 
 	}
 	
 	public void iniciarModalAjuste(BatidaDTO batida, Integer seq, AjustePontoDTO ponto) throws ApplicationException {
@@ -379,7 +385,7 @@ public class AjustePontoController implements Serializable {
 	public String obterPeriodoCorrecao() throws ApplicationException {
 		try {
 			
-			List<FeriadoRM> feriados = rmBusiness.obterFeriados(7, "000040", getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
+			List<FeriadoRM> feriados = rmBusiness.obterFeriados(getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
 			Calendar inicio = Calendar.getInstance();
 			Calendar fim = Calendar.getInstance();
 			inicio.set(Calendar.DAY_OF_MONTH, 15);
@@ -415,7 +421,7 @@ public class AjustePontoController implements Serializable {
 	public Boolean verificarEnvioAprovacao() throws ApplicationException {
 		try {
 			
-			List<FeriadoRM> feriados = rmBusiness.obterFeriados(7, "000040", getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
+			List<FeriadoRM> feriados = rmBusiness.obterFeriados(getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
 			Calendar atual = Calendar.getInstance();
 			Calendar inicio = Calendar.getInstance();
 			Calendar fim = Calendar.getInstance();
@@ -516,14 +522,6 @@ public class AjustePontoController implements Serializable {
 		this.pontos = pontos;
 	}
 
-	public Date getUltimaColeta() {
-		return ultimaColeta;
-	}
-
-	public void setUltimaColeta(Date ultimaColeta) {
-		this.ultimaColeta = ultimaColeta;
-	}
-
 	public FuncionarioRM getFuncionario() {
 		return funcionario;
 	}
@@ -602,6 +600,14 @@ public class AjustePontoController implements Serializable {
 
 	public void setBloqueado(Boolean bloqueado) {
 		this.bloqueado = bloqueado;
+	}
+
+	public Boolean getPeriodoAtivo() {
+		return periodoAtivo;
+	}
+
+	public void setPeriodoAtivo(Boolean periodoAtivo) {
+		this.periodoAtivo = periodoAtivo;
 	}
 
 }

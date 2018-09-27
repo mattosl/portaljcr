@@ -194,6 +194,7 @@ public class SolicitacaoCompraBusiness {
 						"\", \"quantidade\": \"" + TreatNumber.formatMoney(sci.getQuantidade()) + 
 						"\", \"unidade\": \"" + sci.getUnidade() +
 						"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(sci.getValorAproximado()) + 
+						"\", \"valorTotalAproximado\": \"" + TreatNumber.formatMoneyCurrency(sci.getValorAproximado().multiply(sci.getQuantidade())) +
 						"\", \"observacao\": \"" + sci.getObservacao().toUpperCase().replaceAll("(\r\n|\n)", "&#010;") +
 						"\"}");
 			}
@@ -208,6 +209,7 @@ public class SolicitacaoCompraBusiness {
 				{ "centroCusto", solicitacao.getCodigoCentroCusto() + " - " + solicitacao.getCentroCusto().toUpperCase()},
 				{ "modalidade", solicitacao.getModalidade().getDescricao().toUpperCase()},
 				{ "motivoCompra", solicitacao.getMotivoCompra()},
+				{ "vlrTotalAprox", TreatNumber.formatMoney(solicitacao.getValorTotalAproximado())},
 				{ "itens", itens.toString()} 
 			};
 			
@@ -762,10 +764,6 @@ public class SolicitacaoCompraBusiness {
 		try {
 			Boolean reenviar = Boolean.FALSE;
 			SolicitacaoCompra scBanco = daoSolicitacaoCompra.obterSolicitacao(solicitacao.getId());
-			BigDecimal totalCotacao = new BigDecimal(0);
-			for(CotacaoItem itemCotacao : cotacao.getItens()) {
-				totalCotacao = totalCotacao.add(itemCotacao.getValorTotal());
-			}
 			
 			String lotacao = daoRM.obterLotacaoCentroCusto(scBanco.getCodigoCentroCusto(), scBanco.getColigada().getId());
 			if(TreatString.isBlank(lotacao)) {
@@ -778,15 +776,15 @@ public class SolicitacaoCompraBusiness {
 			List<AprovadorRM> listaSegundoAprovador = daoRM.listarSegundoAprovador(lotacao);
 			
 			for(AprovadorRM aprov : listaPrimeiroAprovador) {
-				if(totalCotacao.compareTo(aprov.getValorMovimentoDe()) == 1 
-						&& totalCotacao.compareTo(aprov.getValorMovimentoAte()) != 1) {
+				if(cotacao.getValorTotal().compareTo(aprov.getValorMovimentoDe()) == 1 
+						&& cotacao.getValorTotal().compareTo(aprov.getValorMovimentoAte()) != 1) {
 					primeiroAprovador = aprov;
 				}
 			}
 			
 			for(AprovadorRM aprov : listaSegundoAprovador) {
-				if(totalCotacao.compareTo(aprov.getValorMovimentoDe()) == 1 
-						&& totalCotacao.compareTo(aprov.getValorMovimentoAte()) != 1) {
+				if(cotacao.getValorTotal().compareTo(aprov.getValorMovimentoDe()) == 1 
+						&& cotacao.getValorTotal().compareTo(aprov.getValorMovimentoAte()) != 1) {
 					segundoAprovador = aprov;
 				}
 			}
@@ -796,9 +794,9 @@ public class SolicitacaoCompraBusiness {
 			}
 			
 			if(scBanco.getUsuarioSolicitante().getUsuario().equalsIgnoreCase(segundoAprovador.getAprovador())) {
-				solicitacao.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
+				scBanco.setUsuarioAprovacaoFluig(primeiroAprovador.getAprovador());
 			} else {
-				solicitacao.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
+				scBanco.setUsuarioAprovacaoFluig(segundoAprovador.getAprovador());
 			}
 			
 			if(!scBanco.getUsuarioAprovacaoFluig().equalsIgnoreCase(solicitacao.getUsuarioAprovacaoFluig())) {
@@ -816,7 +814,8 @@ public class SolicitacaoCompraBusiness {
 					itens.append("{\"produto\": \"" + cotacaoItem.getSolicitacaoCompraItem().getDescricaoProduto().toUpperCase() + 
 							"\", \"quantidade\": \"" + cotacaoItem.getQuantidade() + 
 							"\", \"unidade\": \"" + cotacaoItem.getCodigoUnidade() +
-							"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(cotacaoItem.getValorTotal()) + 
+							"\", \"valorAproximado\": \"" + TreatNumber.formatMoneyCurrency(cotacaoItem.getValor()) +
+							"\", \"valorTotalAproximado\": \"" + TreatNumber.formatMoneyCurrency(cotacaoItem.getValorTotal()) +
 							"\", \"observacao\": \"" + cotacaoItem.getObservacao().toUpperCase().replaceAll("(\r\n|\n)", "&#010;") +
 							"\"}");
 				}
@@ -831,6 +830,7 @@ public class SolicitacaoCompraBusiness {
 					{ "centroCusto", scBanco.getCodigoCentroCusto() + " - " + scBanco.getCentroCusto().toUpperCase()},
 					{ "modalidade", scBanco.getModalidade().getDescricao().toUpperCase()},
 					{ "motivoCompra", scBanco.getMotivoCompra()},
+					{ "vlrTotalAprox", TreatNumber.formatMoney(cotacao.getValorTotal())},
 					{ "itens", itens.toString()} 
 				};
 				

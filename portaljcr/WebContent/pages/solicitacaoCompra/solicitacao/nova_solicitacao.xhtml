@@ -140,8 +140,14 @@
 												        <h:outputText value="#{item.unidade}" />
 												    </p:column>
 												    
-												    <p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
+												    <p:column headerText="Valor Unitário Aprox." style="text-align:center; font-size:12px;">
 												        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
+												        	<f:convertNumber type="currency" currencySymbol="R$"/>
+												        </h:outputText>
+												    </p:column>
+												    
+												    <p:column headerText="Valor Total Aprox." style="text-align:center; font-size:12px;">
+												        <h:outputText value="#{item.valorTotalAproxFormatado}">
 												        	<f:convertNumber type="currency" currencySymbol="R$"/>
 												        </h:outputText>
 												    </p:column>
@@ -227,7 +233,9 @@
 									</div>
 
 									<div class="col-sm-2 col-md-2">
-								        <p:inputNumber id="qtd" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" decimalPlaces="2" maxValue="999999" thousandSeparator="." decimalSeparator="," maxlength="9" />
+								        <p:inputNumber id="qtd" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.quantidade}" decimalPlaces="2" maxValue="999999" thousandSeparator="." decimalSeparator="," maxlength="9">
+								        	<p:ajax event="change" process="@this, @form:valorAproximado" global="false" update="@form:valorTotalAproximado" />
+								        </p:inputNumber>
 									</div>
 									<div class="col-sm-7 col-md-7" style="display:none;">
 										<span class="users-list-date pull-right">
@@ -248,14 +256,27 @@
 								</div>
 								<div class="form-group">
 									<div class="col-sm-3 col-md-3 control-label">
-										<label for="valorAproximado">Valor Aproximado:  *</label>
+										<label for="valorAproximado">Valor Unitário Aprox.: *</label>
 									</div>
 
 									<div class="col-sm-3 col-md-3">
 										<div class="input-group">
 								            <span class="input-group-addon">R$</span>
-           									<p:inputNumber id="valorAproximado" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.valorAproximado}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator="," />
+           									<p:inputNumber id="valorAproximado" value="#{solicitacaoCompraController.solicitacaoCompraDTO.produto.valorAproximado}" decimalPlaces="2" maxValue="999999999999" thousandSeparator="." decimalSeparator=",">
+           										<p:ajax event="change" process="@this, @form:qtd" global="false" update="@form:valorTotalAproximado" />
+           									</p:inputNumber>
            									<p:watermark value="0,00" for="valorAproximado"></p:watermark>
+								        </div>
+									</div>
+									<div class="col-sm-3 col-md-3 control-label">
+										<label for="valorTotalAproximado">Valor Total Aprox.: </label>
+									</div>
+
+									<div class="col-sm-3 col-md-3">
+										<div class="input-group">
+								            <span class="input-group-addon">R$</span>
+           									<p:inputText id="valorTotalAproximado" value="#{solicitacaoCompraController.calcularTotal()}" styleClass="pull-left font-normal" readonly="true" />
+           									<p:watermark value="0,00" for="valorTotalAproximado"></p:watermark>
 								        </div>
 									</div>
 								</div>

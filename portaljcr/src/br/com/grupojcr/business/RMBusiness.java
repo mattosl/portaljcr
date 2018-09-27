@@ -454,8 +454,8 @@ public class RMBusiness {
 	
 	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Usuario usuarioLogado, Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
 		try {
-			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
-			List<HorasPontoDTO> horasPonto = daoRM.obterHorasPonto(7, "000040", periodoInicial.getTime(), periodoFinal.getTime());
+			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());
+			List<HorasPontoDTO> horasPonto = daoRM.obterHorasPonto(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());
 			List<FeriasRM> listaFerias = daoRM.obterFeriasFuncionario(idColigada, chapa);
 			List<FeriadoRM> listaFeriado = daoRM.obterFeriadosFuncionario(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());
 			
@@ -556,48 +556,41 @@ public class RMBusiness {
 				
 				dto.setData(dataAtual);
 				List<BatidaDTO> pontos = new ArrayList<BatidaDTO>();
-				Date ultimaColeta = daoRM.obterUltimaColetaColigada();
 				
-				if(Util.dataMenor(dataAtual, ultimaColeta) 
-						&& !TreatDate.isMesmaData(dataAtual, ultimaColeta)) {
-					
-					for(HorasPontoDTO hp : horasPonto) {
-						if(TreatDate.isMesmaData(dataAtual, hp.getData())) {
-							dto.setHorasTrabalhadas(hp.getHorasTrabalhada());
-							dto.setHorasExtra(hp.getHorasExtra());
-							dto.setHorasAtraso(hp.getHorasAtraso());
-							dto.setHorasFalta(hp.getHorasFalta());
-							dto.setHorasAdicionalNoturno(hp.getHorasAdicional());
-							dto.setHorasAbono(hp.getHorasAbono());
-						}
+				for(HorasPontoDTO hp : horasPonto) {
+					if(TreatDate.isMesmaData(dataAtual, hp.getData())) {
+						dto.setHorasTrabalhadas(hp.getHorasTrabalhada());
+						dto.setHorasExtra(hp.getHorasExtra());
+						dto.setHorasAtraso(hp.getHorasAtraso());
+						dto.setHorasFalta(hp.getHorasFalta());
+						dto.setHorasAdicionalNoturno(hp.getHorasAdicional());
+						dto.setHorasAbono(hp.getHorasAbono());
 					}
-					
 				}
+					
 				
 				dto.setBatidas(new HashMap<Integer, BatidaDTO>());
 				Integer idx = 1;
 				BatidaDTO ultimaBatida = null;
 				for(BatidaRM batida : batidas) {
-					if(Util.dataMenor(batida.getData(), ultimaColeta)) {
 						
-						if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
-							BatidaDTO batidaDTO = new BatidaDTO();
-							batidaDTO.setBatida(batida.getBatida());
-							batidaDTO.setStatus(batida.getStatus());
-							batidaDTO.setEditado(batida.getEditado());
-							batidaDTO.setBatidaPonto(batida.getBatidaPonto());
-							if(idx.equals(1) || idx.equals(3) || idx.equals(5) || idx.equals(7)) {
-								batidaDTO.setNatureza(0);
-							} else {
-								batidaDTO.setNatureza(1);
-							}
-							
-							dto.getBatidas().put(idx, batidaDTO);
-							
-							ultimaBatida = batidaDTO;
-							pontos.add(batidaDTO);
-							idx++;
+					if(TreatDate.isMesmaData(batida.getData(), dto.getData())) {
+						BatidaDTO batidaDTO = new BatidaDTO();
+						batidaDTO.setBatida(batida.getBatida());
+						batidaDTO.setStatus(batida.getStatus());
+						batidaDTO.setEditado(batida.getEditado());
+						batidaDTO.setBatidaPonto(batida.getBatidaPonto());
+						if(idx.equals(1) || idx.equals(3) || idx.equals(5) || idx.equals(7)) {
+							batidaDTO.setNatureza(0);
+						} else {
+							batidaDTO.setNatureza(1);
 						}
+						
+						dto.getBatidas().put(idx, batidaDTO);
+						
+						ultimaBatida = batidaDTO;
+						pontos.add(batidaDTO);
+						idx++;
 					}
 				}
 				
@@ -617,8 +610,7 @@ public class RMBusiness {
 					if(!dto.getFerias() 
 							&& !dto.getFeriado()
 							&& !dto.getFinalSemana()
-							&& !dto.getHoje()
-							&& Util.dataMenor(dataAtual, ultimaColeta)) {
+							&& !dto.getHoje()) {
 						dto.setAtencao(Boolean.TRUE);
 					}
 				}
@@ -732,6 +724,18 @@ public class RMBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterFeriados" }, e);
+		}
+	}
+	
+	public Boolean verificarUtilizaPonto(Integer codColigada, String chapa, Date periodoFinal) throws ApplicationException {
+		try {
+			return daoRM.verificarUtilizaPonto(codColigada, chapa, periodoFinal);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "verificarUtilizaPonto" }, e);
 		}
 	}
 }

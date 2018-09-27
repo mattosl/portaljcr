@@ -3141,5 +3141,73 @@ public class RMDAO {
 		}
 		return null;
 	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public Boolean verificarUtilizaPonto(Integer codColigada, String chapa, Date periodoFinal) throws ApplicationException {
+		
+		/**
+		 * SELECT UTILIZA FROM AHSTUTILIZAPONTO(NOLOCK) 
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA = ?
+		 * AND DATAINICIO = (SELECT MAX(DATAINICIO) FROM AHSTUTILIZAPONTO(NOLOCK)
+		 * 						WHERE CODCOLIGADA = ?
+		 * 						AND CHAPA = ?
+		 * 						AND DATAINICIO <= ?)
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT UTILIZA FROM AHSTUTILIZAPONTO(NOLOCK) ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND DATAINICIO = (SELECT MAX(DATAINICIO) FROM AHSTUTILIZAPONTO(NOLOCK) ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND DATAINICIO <= ?) ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, codColigada);
+			ps.setString(2, chapa);
+			ps.setInt(3, codColigada);
+			ps.setString(4, chapa);
+			ps.setDate(5, new java.sql.Date(periodoFinal.getTime()));
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				if(set.getInt("UTILIZA") == 1) {
+					return Boolean.TRUE;
+				}
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "verificarUtilizaPonto" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
 	
 }

@@ -202,8 +202,14 @@
 															        <h:outputText value="#{item.unidade}" />
 															    </p:column>
 															    
-															    <p:column headerText="Valor Aproximado" style="text-align:center; font-size:12px;">
+															    <p:column headerText="Valor Unitário Aprox." style="text-align:center; font-size:12px;">
 															        <h:outputText value="#{item.valorAproximado != null ? item.valorAproximado : 'Não Informado'}">
+															        	<f:convertNumber type="currency" currencySymbol="R$"/>
+															        </h:outputText>
+															    </p:column>
+															    
+															    <p:column headerText="Valor Total Aprox." style="text-align:center; font-size:12px;">
+															        <h:outputText value="#{item.valorTotalAproxFormatado}">
 															        	<f:convertNumber type="currency" currencySymbol="R$"/>
 															        </h:outputText>
 															    </p:column>
