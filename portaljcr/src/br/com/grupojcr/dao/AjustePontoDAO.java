@@ -43,5 +43,26 @@ public class AjustePontoDAO extends GenericDAO<AjustePonto> {
 			throw new ApplicationException("message.default.erro", new String[] { "obterAjustePonto" }, e);
 		}
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public AjustePonto obterAjustePontoPorId(Long idAjuste) throws ApplicationException {
+		try{
+			StringBuilder sb = new StringBuilder("SELECT DISTINCT ajustePonto FROM AjustePonto ajustePonto ");
+			sb.append("LEFT JOIN ajustePonto.usuario usuario ");
+			sb.append("LEFT JOIN ajustePonto.batidas batida ");
+			sb.append("WHERE ajustePonto..id = :idAjuste ");
+			
+			TypedQuery<AjustePonto> query = manager.createQuery(sb.toString(), AjustePonto.class);
+			
+			query.setParameter("idAjuste", idAjuste);
+			
+			return query.getSingleResult();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(KEY_ERRO, e);
+			throw new ApplicationException("message.default.erro", new String[] { "obterAjustePonto" }, e);
+		}
+	}
 
 }

@@ -3210,4 +3210,58 @@ public class RMDAO {
 		return Boolean.FALSE;
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public void incluirBatida(Integer idColigada, String chapa, Date data, Integer batida, Integer tipo, Integer mes) throws ApplicationException {
+		/**
+		 *	INSERT INTO TITMORCAMENTO
+		 *	(CODCOLIGADA, IDORCAMENTO, IDPERIODO, IDITMPERIODO, VALORORCADO, VALORREAL, VALOROPCIONAL1, VALOROPCIONAL2, VALORRECEBIDO, VALORCEDIDO, VALOREXCEDENTE, RECCREATEDBY, RECCREATEDON, RECMODIFIEDBY, RECMODIFIEDON)
+		 *	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'mestre', ?, 'mestre', ?)
+		 *
+		 */
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("INSERT INTO TITMORCAMENTO ")
+			.append("(CODCOLIGADA, IDORCAMENTO, IDPERIODO, IDITMPERIODO, VALORORCADO, VALORREAL, VALOROPCIONAL1, VALOROPCIONAL2, VALORRECEBIDO, VALORCEDIDO, VALOREXCEDENTE, RECCREATEDBY, RECCREATEDON, RECMODIFIEDBY, RECMODIFIEDON) ")
+			.append("VALUES(?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 'mestre', ?, 'mestre', ?) ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+//			ps.setLong(1, codColigada);
+//			ps.setInt(2, idOrcamento);
+//			ps.setInt(3, periodo);
+//			ps.setInt(4, mes);
+//			ps.setTimestamp(5, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+//			ps.setTimestamp(6, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+			
+			ps.executeUpdate();
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "incluirItemOrcamento" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+	}
+	
 }

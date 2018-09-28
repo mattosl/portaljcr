@@ -1,5 +1,6 @@
 package br.com.grupojcr.business;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,12 +8,14 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.ibm.icu.util.Calendar;
 
 import br.com.grupojcr.dao.AjustePontoDAO;
 import br.com.grupojcr.dao.BatidaPontoDAO;
+import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.BatidaDTO;
@@ -20,6 +23,7 @@ import br.com.grupojcr.entity.AjustePonto;
 import br.com.grupojcr.entity.BatidaPonto;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.SituacaoAjustePonto;
+import br.com.grupojcr.rm.BatidaRM;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.util.Preferencias;
 import br.com.grupojcr.util.Preferencias.Propriedades;
@@ -46,6 +50,12 @@ public class PontoBusiness {
 	
 	@EJB
 	private FluigBusiness fluigBusiness;
+	
+	@EJB
+	private RMBusiness rmBusiness;
+	
+	@EJB
+	private RMDAO daoRM;
 	
 	public BatidaPonto salvar(Usuario usuario, Date periodoInicial, Date periodoFinal, String codsecao, String secao, BatidaPonto batida, AjustePontoDTO ajustePontoDTO) throws ApplicationException {
 		try {
@@ -254,7 +264,30 @@ public class PontoBusiness {
 	
 	public void aprovar(Long idAjustePonto) throws ApplicationException {
 		try {
-			AjustePonto ajuste = daoAjustePonto.obter(idAjustePonto);
+			AjustePonto ajuste = daoAjustePonto.obterAjustePontoPorId(idAjustePonto);
+			
+			if(CollectionUtils.isNotEmpty(ajuste.getBatidas())) {
+				FuncionarioRM funcionario = rmBusiness.obterDadosFuncionario(ajuste.getChapa());
+				List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(funcionario.getCodColigada(), funcionario.getChapa(), ajuste.getDtPeriodoInicial(), ajuste.getDtPeriodoFinal());
+				
+				for(BatidaRM batrm : batidas) {
+					for(BatidaPonto batida : ajuste.getBatidas()) {
+						if(TreatDate.isMesmaData(batida.getDtBatida(), batrm.getData())) {
+							
+						}
+					}
+				}
+				
+				
+				for(BatidaPonto batida : ajuste.getBatidas()) {
+					for(BatidaRM batrm : batidas) {
+						if(TreatDate.isMesmaData(batida.getDtBatida(), batrm.getData())) {
+//							batidasData.add(batrm);
+						}
+					}
+					
+				}
+			}
 			ajuste.setSituacao(SituacaoAjustePonto.APROVADO);
 			
 			daoAjustePonto.alterar(ajuste);
