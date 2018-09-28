@@ -50,7 +50,7 @@ public class AjustePontoDAO extends GenericDAO<AjustePonto> {
 			StringBuilder sb = new StringBuilder("SELECT DISTINCT ajustePonto FROM AjustePonto ajustePonto ");
 			sb.append("LEFT JOIN ajustePonto.usuario usuario ");
 			sb.append("LEFT JOIN ajustePonto.batidas batida ");
-			sb.append("WHERE ajustePonto..id = :idAjuste ");
+			sb.append("WHERE ajustePonto.id = :idAjuste ");
 			
 			TypedQuery<AjustePonto> query = manager.createQuery(sb.toString(), AjustePonto.class);
 			

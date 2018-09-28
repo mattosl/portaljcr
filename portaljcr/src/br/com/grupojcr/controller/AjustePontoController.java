@@ -373,6 +373,8 @@ public class AjustePontoController implements Serializable {
 			
 			Message.setMessage("ajuste.ponto.enviada.aprovacao");
 			
+			iniciarAjustePonto();
+			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
 			throw e;

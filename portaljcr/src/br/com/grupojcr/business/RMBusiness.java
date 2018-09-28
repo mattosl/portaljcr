@@ -491,7 +491,10 @@ public class RMBusiness {
 			AjustePonto ajustePontoBanco = daoAjustePonto.obterAjustePonto(usuarioLogado.getId(), periodoInicial.getTime(), periodoFinal.getTime());
 			if(Util.isNotNull(ajustePontoBanco)) {
 				for(BatidaPonto batida : ajustePontoBanco.getBatidas()) {
-					batidas.add(new BatidaRM(batida.getDtBatida(), batida.getBatida(), "D", batida.getTipo(), Boolean.TRUE, batida));
+					BatidaRM batidaExiste = daoRM.obterBatida(idColigada, chapa, batida.getDtBatida(), batida.getBatida());
+					if(Util.isNull(batidaExiste)) {
+						batidas.add(new BatidaRM(batida.getDtBatida(), batida.getBatida(), "D", batida.getTipo(), Boolean.TRUE, batida));
+					}
 				}
 			}
 			

@@ -2432,6 +2432,126 @@ public class RMDAO {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<BatidaRM> obterBatidasUsuarioDia(Integer idColigada, String chapa, Date data) throws ApplicationException {
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<BatidaRM> batidas = new ArrayList<BatidaRM>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT [DATA], BATIDA, STATUS, NATUREZA FROM ABATFUN ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA LIKE ? ")
+			.append("AND [DATA] = ? ")
+			.append("ORDER BY BATIDA ASC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setDate(3, new java.sql.Date(data.getTime()));
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				BatidaRM batida = new BatidaRM();
+				batida.setData(set.getDate("DATA"));
+				batida.setBatida(set.getInt("BATIDA"));
+				batida.setStatus(set.getString("STATUS"));
+				batida.setNatureza(set.getInt("NATUREZA"));
+				
+				batidas.add(batida);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterBatidasUsuarioDia" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return batidas;
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public BatidaRM obterBatida(Integer idColigada, String chapa, Date data, Integer batida) throws ApplicationException {
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT [DATA], BATIDA, STATUS, NATUREZA FROM ABATFUN ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA LIKE ? ")
+			.append("AND [DATA] = ? ")
+			.append("AND BATIDA = ? ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setDate(3, new java.sql.Date(data.getTime()));
+			ps.setInt(4, batida);
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				BatidaRM b = new BatidaRM();
+				b.setData(set.getDate("DATA"));
+				b.setBatida(set.getInt("BATIDA"));
+				b.setStatus(set.getString("STATUS"));
+				b.setNatureza(set.getInt("NATUREZA"));
+				
+				return b;
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterBatida" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<FeriasRM> obterFeriasFuncionario(Integer idColigada, String chapa) throws ApplicationException {
 		
 		/** 
@@ -3211,11 +3331,11 @@ public class RMDAO {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public void incluirBatida(Integer idColigada, String chapa, Date data, Integer batida, Integer tipo, Integer mes) throws ApplicationException {
+	public void incluirBatida(Integer idColigada, String chapa, Date data, Integer batida, Integer tipo) throws ApplicationException {
 		/**
-		 *	INSERT INTO TITMORCAMENTO
-		 *	(CODCOLIGADA, IDORCAMENTO, IDPERIODO, IDITMPERIODO, VALORORCADO, VALORREAL, VALOROPCIONAL1, VALOROPCIONAL2, VALORRECEBIDO, VALORCEDIDO, VALOREXCEDENTE, RECCREATEDBY, RECCREATEDON, RECMODIFIEDBY, RECMODIFIEDON)
-		 *	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'mestre', ?, 'mestre', ?)
+		 *	INSERT INTO ABATFUN
+		 *	(CODCOLIGADA, CHAPA, [DATA], BATIDA, STATUS, NATUREZA, DATAINSERCAO, IDJORNADA,  RECCREATEDBY, RECCREATEDON)
+		 *	VALUES(?, ?, ?, ?, 'D', ?, ?, 1, ?, ?);
 		 *
 		 */
 		Connection conn = null;
@@ -3225,23 +3345,86 @@ public class RMDAO {
 			conn = datasource.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("INSERT INTO TITMORCAMENTO ")
-			.append("(CODCOLIGADA, IDORCAMENTO, IDPERIODO, IDITMPERIODO, VALORORCADO, VALORREAL, VALOROPCIONAL1, VALOROPCIONAL2, VALORRECEBIDO, VALORCEDIDO, VALOREXCEDENTE, RECCREATEDBY, RECCREATEDON, RECMODIFIEDBY, RECMODIFIEDON) ")
-			.append("VALUES(?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 'mestre', ?, 'mestre', ?) ");
+			sb.append("INSERT INTO ABATFUN ")
+			.append("(CODCOLIGADA, CHAPA, [DATA], BATIDA, STATUS, NATUREZA, DATAINSERCAO, IDJORNADA,  RECCREATEDBY, RECCREATEDON) ")
+			.append("VALUES(?, ?, ?, ?, 'D', ?, ?, 1, ?, ?); ");
 			
 			
 			ps = conn.prepareStatement(sb.toString());
-//			ps.setLong(1, codColigada);
-//			ps.setInt(2, idOrcamento);
-//			ps.setInt(3, periodo);
-//			ps.setInt(4, mes);
-//			ps.setTimestamp(5, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
-//			ps.setTimestamp(6, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			ps.setDate(3, new java.sql.Date(data.getTime()));
+			ps.setInt(4, batida);
+			ps.setInt(5, tipo);
+			ps.setTimestamp(6, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+			ps.setString(7, "portaljcr");
+			ps.setTimestamp(8, new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
 			
 			ps.executeUpdate();
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "incluirItemOrcamento" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "incluirBatida" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void atualizarTipoBatida(Integer codColigada, String chapa, Date data, Integer batida, Integer tipo) throws ApplicationException {
+		/**
+		 * UPDATE ABATFUN
+		 * SET NATUREZA = ?
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA = ?
+		 * AND [DATA] = ?
+		 * AND BATIDA = 749
+		 * 
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("UPDATE ABATFUN ")
+			.append("SET NATUREZA = ? ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("AND [DATA] = ? ")
+			.append("AND BATIDA = ? ");
+			
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, tipo);
+			ps.setInt(2, codColigada);
+			ps.setString(3, chapa);
+			ps.setDate(4, new java.sql.Date(data.getTime()));
+			ps.setInt(5, batida);
+			
+			ps.execute();
+			
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "atualizarTipoBatida" }, e);
 		} finally {
 			if (ps != null) {
 				try {

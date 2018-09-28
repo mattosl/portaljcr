@@ -43,6 +43,9 @@ public class Usuario implements BaseEntity, Serializable {
 	@Column(name = "CHAPA", length = 10)
 	private String chapa;
 	
+	@Column(name = "USR_FLUIG_GESTOR", length = 100)
+	private String usuarioFluigGestor;
+	
 	@Column(name = "SITUACAO", nullable = false, columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private Boolean situacao;
@@ -158,6 +161,14 @@ public class Usuario implements BaseEntity, Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public String getUsuarioFluigGestor() {
+		return usuarioFluigGestor;
+	}
+
+	public void setUsuarioFluigGestor(String usuarioFluigGestor) {
+		this.usuarioFluigGestor = usuarioFluigGestor;
 	}
 
 	

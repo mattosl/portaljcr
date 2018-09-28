@@ -1,6 +1,5 @@
 package br.com.grupojcr.business;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -137,6 +136,9 @@ public class PontoBusiness {
 	
 	public void enviarPontoAprovacao(List<AjustePontoDTO> ajustes, Date periodoInicial, Date periodoFinal, Usuario usuario, FuncionarioRM funcionario) throws ApplicationException {
 		try {
+			if(Util.isBlank(usuario.getUsuarioFluigGestor())) {
+				throw new ApplicationException("message.empty", new String[] {"Usuário não possui gestor responsável cadastrado."}, FacesMessage.SEVERITY_WARN);
+			}
 			AjustePonto ajustePonto = obterAjustePonto(usuario.getId(), periodoInicial, periodoFinal);
 			
 			if(Util.isNull(ajustePonto)) {
@@ -151,6 +153,10 @@ public class PontoBusiness {
 				ajustePonto.setSecao(funcionario.getSecao());
 				
 				daoAjustePonto.incluir(ajustePonto);
+			}
+			
+			if(!ajustePonto.getSituacao().equals(SituacaoAjustePonto.RASCUNHO)) {
+				throw new ApplicationException("message.empty", new String[] {"Cartão Ponto não pode ser enviado novamente para aprovação."}, FacesMessage.SEVERITY_WARN);
 			}
 			
 			StringBuilder itens = new StringBuilder("{\"pontos\": [");
@@ -175,7 +181,8 @@ public class PontoBusiness {
 				for(Integer key : dto.getBatidas().keySet()) {
 					itens.append("\"batida" + key + "\": {" + 
 									"\"horario\": \"" + obterHorasBatida(dto.getBatidas().get(key).getBatida()) + "\"," +
-									"\"editado\": \"" + dto.getBatidas().get(key).getEditado() +
+									"\"editado\": \"" + dto.getBatidas().get(key).getEditado() + "\"," +
+									"\"justificativa\": \"" + (dto.getBatidas().get(key).getEditado() ? dto.getBatidas().get(key).getBatidaPonto().getJustificativa().toUpperCase().replaceAll("(\r\n|\n)", "&#010;") : "")  +
 								"\"},");
 				}
 				
@@ -212,7 +219,7 @@ public class PontoBusiness {
 			};
 			
 			// Inicia processo do Fluig
-			String[][] resultado = fluigBusiness.iniciarProcessoFluig(PROCESSO_APROVACAO_PONTO, "leonan", 5, parametros);
+			String[][] resultado = fluigBusiness.iniciarProcessoFluig(PROCESSO_APROVACAO_PONTO, usuario.getUsuarioFluigGestor(), 5, parametros);
 
 			for(int i = 0; i < resultado.length; i++) {
 				for(int j = 0; j < resultado[i].length; j++) {
@@ -220,7 +227,7 @@ public class PontoBusiness {
 						try {
 							Long idFluig = Long.parseLong((resultado[i][j + 1]).toString());
 							ajustePonto.setIdentificadorFluig(idFluig);
-							ajustePonto.setUsrFluig("leonan");
+							ajustePonto.setUsrFluig(usuario.getUsuarioFluigGestor());
 							ajustePonto.setSituacao(SituacaoAjustePonto.AGUARDANDO_APROVACAO);
 							
 							daoAjustePonto.alterar(ajustePonto);
@@ -268,21 +275,24 @@ public class PontoBusiness {
 			
 			if(CollectionUtils.isNotEmpty(ajuste.getBatidas())) {
 				FuncionarioRM funcionario = rmBusiness.obterDadosFuncionario(ajuste.getChapa());
-				List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(funcionario.getCodColigada(), funcionario.getChapa(), ajuste.getDtPeriodoInicial(), ajuste.getDtPeriodoFinal());
 				
-				for(BatidaRM batrm : batidas) {
-					for(BatidaPonto batida : ajuste.getBatidas()) {
-						if(TreatDate.isMesmaData(batida.getDtBatida(), batrm.getData())) {
-							
-						}
+				for(BatidaPonto batida : ajuste.getBatidas()) {
+					BatidaRM batidaExiste = daoRM.obterBatida(funcionario.getCodColigada(), funcionario.getChapa(), batida.getDtBatida(), batida.getBatida());
+					if(Util.isNull(batidaExiste)) {
+						daoRM.incluirBatida(funcionario.getCodColigada(), funcionario.getChapa(), batida.getDtBatida(), batida.getBatida(), batida.getTipo());
 					}
 				}
 				
-				
 				for(BatidaPonto batida : ajuste.getBatidas()) {
-					for(BatidaRM batrm : batidas) {
-						if(TreatDate.isMesmaData(batida.getDtBatida(), batrm.getData())) {
-//							batidasData.add(batrm);
+					List<BatidaRM> batidasDia = daoRM.obterBatidasUsuarioDia(funcionario.getCodColigada(), funcionario.getChapa(), batida.getDtBatida());
+					
+					Integer tipo = 0;
+					for(BatidaRM brm : batidasDia) {
+						daoRM.atualizarTipoBatida(funcionario.getCodColigada(), funcionario.getChapa(), brm.getData(), brm.getBatida(), tipo);
+						if(tipo.equals(0)) {
+							tipo = 1;
+						} else if (tipo.equals(1)) {
+							tipo = 0;
 						}
 					}
 					
