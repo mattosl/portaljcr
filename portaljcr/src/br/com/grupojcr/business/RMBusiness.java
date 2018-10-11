@@ -452,6 +452,18 @@ public class RMBusiness {
 		}
 	}
 	
+	public List<PeriodoPontoDTO> listarPeriodoPonto(Integer idColigada, String chapa) throws ApplicationException {
+		try {
+			return daoRM.listarPeriodosPonto(idColigada, chapa);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarPeriodoPonto" }, e);
+		}
+	}
+	
 	public List<AjustePontoDTO> obterBatidasUsuarioPeriodo(Usuario usuarioLogado, Integer idColigada, String chapa, Calendar periodoInicial, Calendar periodoFinal) throws ApplicationException {
 		try {
 			List<BatidaRM> batidas = daoRM.obterBatidasUsuarioPeriodo(idColigada, chapa, periodoInicial.getTime(), periodoFinal.getTime());

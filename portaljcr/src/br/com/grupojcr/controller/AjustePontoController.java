@@ -24,7 +24,6 @@ import br.com.grupojcr.entity.AjustePonto;
 import br.com.grupojcr.entity.BatidaPonto;
 import br.com.grupojcr.entity.Usuario;
 import br.com.grupojcr.enumerator.SituacaoAjustePonto;
-import br.com.grupojcr.rm.FeriadoRM;
 import br.com.grupojcr.rm.FuncionarioRM;
 import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.TreatNumber;
@@ -55,6 +54,7 @@ public class AjustePontoController implements Serializable {
 	
 	private Boolean bloqueado;
 	private Boolean periodoAtivo;
+	private Boolean mostrarCalculo;
 	
 	private FuncionarioRM funcionario;
 	private BatidaDTO batidaEdicao;
@@ -122,6 +122,8 @@ public class AjustePontoController implements Serializable {
 			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(getUsuario(), getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial(), getPeriodoFinal());
 			
 			setPontos(ponto);
+			
+			mostrarCalculos();
 			
 		} catch (ApplicationException e) {
 			LOG.info(e.getMessage(), e);
@@ -387,33 +389,26 @@ public class AjustePontoController implements Serializable {
 	public String obterPeriodoCorrecao() throws ApplicationException {
 		try {
 			
-			List<FeriadoRM> feriados = rmBusiness.obterFeriados(getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
 			Calendar inicio = Calendar.getInstance();
 			Calendar fim = Calendar.getInstance();
 			inicio.set(Calendar.DAY_OF_MONTH, 15);
-			fim.set(Calendar.DAY_OF_MONTH, 15);
+			inicio.set(Calendar.HOUR_OF_DAY, 12);
+			inicio.set(Calendar.MINUTE, 0);
+			inicio.set(Calendar.SECOND, 0);
+			inicio.set(Calendar.MILLISECOND, 0);
 			
-			while(isFinalDeSemanaFeriado(feriados, fim)) {
-				fim.add(Calendar.DAY_OF_MONTH, 1);
-				inicio.add(Calendar.DAY_OF_MONTH, 1);
-			}
 			
-			fim.add(Calendar.DAY_OF_MONTH, 1);
+			fim.set(Calendar.DAY_OF_MONTH, 19);
+			fim.set(Calendar.HOUR_OF_DAY, 18);
+			fim.set(Calendar.MINUTE, 0);
+			fim.set(Calendar.SECOND, 0);
+			fim.set(Calendar.MILLISECOND, 0);
 			
-			while(isFinalDeSemanaFeriado(feriados, fim)) {
-				fim.add(Calendar.DAY_OF_MONTH, 1);
-			}
-			
-			fim.add(Calendar.DAY_OF_MONTH, 1);
-			
-			while(isFinalDeSemanaFeriado(feriados, fim)) {
-				fim.add(Calendar.DAY_OF_MONTH, 1);
-			}
 			
 			return TreatDate.format("dd/MM/yyyy", inicio.getTime()) + " à " + TreatDate.format("dd/MM/yyyy", fim.getTime());
-		} catch (ApplicationException e) {
-			LOG.info(e.getMessage(), e);
-			throw e;
+//		} catch (ApplicationException e) {
+//			LOG.info(e.getMessage(), e);
+//			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterPeriodoCorrecao" }, e);
@@ -423,67 +418,50 @@ public class AjustePontoController implements Serializable {
 	public Boolean verificarEnvioAprovacao() throws ApplicationException {
 		try {
 			
-			List<FeriadoRM> feriados = rmBusiness.obterFeriados(getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime());
 			Calendar atual = Calendar.getInstance();
 			Calendar inicio = Calendar.getInstance();
 			Calendar fim = Calendar.getInstance();
 			inicio.set(Calendar.DAY_OF_MONTH, 15);
-			fim.set(Calendar.DAY_OF_MONTH, 15);
+			inicio.set(Calendar.HOUR_OF_DAY, 12);
+			inicio.set(Calendar.MINUTE, 0);
+			inicio.set(Calendar.SECOND, 0);
+			inicio.set(Calendar.MILLISECOND, 0);
 			
-			while(isFinalDeSemanaFeriado(feriados, fim)) {
-				fim.add(Calendar.DAY_OF_MONTH, 1);
-				inicio.add(Calendar.DAY_OF_MONTH, 1);
-			}
 			
-			fim.add(Calendar.DAY_OF_MONTH, 1);
-			
-			while(isFinalDeSemanaFeriado(feriados, fim)) {
-				fim.add(Calendar.DAY_OF_MONTH, 1);
-			}
-			
-			fim.add(Calendar.DAY_OF_MONTH, 1);
-			
-			while(isFinalDeSemanaFeriado(feriados, fim)) {
-				fim.add(Calendar.DAY_OF_MONTH, 1);
-			}
+			fim.set(Calendar.DAY_OF_MONTH, 19);
+			fim.set(Calendar.HOUR_OF_DAY, 18);
+			fim.set(Calendar.MINUTE, 0);
+			fim.set(Calendar.SECOND, 0);
+			fim.set(Calendar.MILLISECOND, 0);
 
 			if(TreatDate.pertenceAoPeriodo(atual.getTime(), inicio.getTime(), fim.getTime())) {
 				return Boolean.TRUE;
 			} 
 			
 			return Boolean.FALSE;
-		} catch (ApplicationException e) {
-			LOG.info(e.getMessage(), e);
-			throw e;
+//		} catch (ApplicationException e) {
+//			LOG.info(e.getMessage(), e);
+//			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "verificarEnvioAprovacao" }, e);
 		}
 	}
 	
-	private Boolean isFinalDeSemanaFeriado(List<FeriadoRM> feriados, Calendar data) throws ApplicationException {
+	public void mostrarCalculos() throws ApplicationException {
 		try {
 			
-			if(data.get(Calendar.DAY_OF_WEEK) == 1 || data.get(Calendar.DAY_OF_WEEK) == 7) {
-				return Boolean.TRUE;
+			Calendar atual = Calendar.getInstance();
+			if(atual.get(Calendar.DAY_OF_MONTH) >= 20) {
+				setMostrarCalculo(Boolean.TRUE);
 			}
-			
-			for(FeriadoRM feriado : feriados) {
-				if(TreatDate.isMesmaData(feriado.getData(), data.getTime())) {
-					return Boolean.TRUE;
-				}
-			}
-
-			return Boolean.FALSE;
+			setMostrarCalculo(Boolean.FALSE);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "isFinalDeSemanaFeriado" }, e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "mostrarCalculos" }, e);
 		}
 	}
 	
-	
-
-
 	public String getChapa() {
 		return chapa;
 	}
@@ -610,6 +588,14 @@ public class AjustePontoController implements Serializable {
 
 	public void setPeriodoAtivo(Boolean periodoAtivo) {
 		this.periodoAtivo = periodoAtivo;
+	}
+
+	public Boolean getMostrarCalculo() {
+		return mostrarCalculo;
+	}
+
+	public void setMostrarCalculo(Boolean mostrarCalculo) {
+		this.mostrarCalculo = mostrarCalculo;
 	}
 
 }

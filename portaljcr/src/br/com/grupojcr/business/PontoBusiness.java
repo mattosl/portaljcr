@@ -74,7 +74,7 @@ public class PontoBusiness {
 				daoAjustePonto.incluir(ajustePonto);
 			}
 			
-			BatidaPonto batidaExiste = daoBatidaPonto.obterBatida(batida.getDtBatida(), batida.getBatida(), ajustePonto.getId());
+			BatidaPonto batidaExiste = daoBatidaPonto.obterBatida(batida.getDtBatida(), batida.getBatida(), ajustePonto.getId(), batida.getId());
 			if(Util.isNotNull(batidaExiste)) {
 				throw new ApplicationException("ajuste.ponto.batida.existe", FacesMessage.SEVERITY_WARN);
 			}
@@ -122,7 +122,9 @@ public class PontoBusiness {
 					BatidaDTO batidaDTO = ajustePontoDTO.getBatidas().get(key);
 					if(Util.isNotNull(batidaDTO.getBatida())) {
 						if(batidaDTO.getBatida().equals(batida)) {
-							return Boolean.TRUE;
+							if(Util.isNull(batidaDTO.getBatidaPonto())) {
+								return Boolean.TRUE;
+							}
 						}
 					}
 				}
@@ -335,6 +337,18 @@ public class PontoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterAjustePonto" }, e);
+		}
+	}
+	
+	public List<BatidaPonto> listarBatidaPorPeriodo(Long idUsuario, Date periodoInicial, Date periodoFinal) throws ApplicationException {
+		try {
+			return daoBatidaPonto.listarBatidaPorPeriodo(periodoInicial, periodoFinal, idUsuario);
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarBatidaPorPeriodo" }, e);
 		}
 	}
 	

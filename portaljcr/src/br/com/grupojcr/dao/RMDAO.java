@@ -3208,6 +3208,69 @@ public class RMDAO {
 		}
 		return null;
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<PeriodoPontoDTO> listarPeriodosPonto(Integer idColigada, String chapa) throws ApplicationException {
+		
+		/**
+		 * SELECT INICIOPER, FIMPER FROM APERFUN
+		 * WHERE CODCOLIGADA = ?
+		 * AND CHAPA = ?
+		 * ORDER BY ANOCOMP DESC, MESCOMP DESC 
+		 */
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		List<PeriodoPontoDTO> pontos = new ArrayList<PeriodoPontoDTO>();
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT INICIOPER, FIMPER FROM APERFUN ")
+			.append("WHERE CODCOLIGADA = ? ")
+			.append("AND CHAPA = ? ")
+			.append("ORDER BY ANOCOMP DESC, MESCOMP DESC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ps.setInt(1, idColigada);
+			ps.setString(2, chapa);
+			
+			
+			ResultSet set = ps.executeQuery();
+			
+			while (set.next()) {
+				PeriodoPontoDTO dto = new PeriodoPontoDTO();
+				dto.setPeriodoInicial(set.getDate("INICIOPER"));
+				dto.setPeriodoFinal(set.getDate("FIMPER"));
+				
+				pontos.add(dto);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarPeriodosPonto" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Date obterUltimaColetaColigada() throws ApplicationException {

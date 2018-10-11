@@ -93,7 +93,7 @@
 								</div>
 							</div>
 		            	</p:panel>
-		            	<div class="box-header">
+		            	<div class="box-header" style="padding: 0;">
 							<label style="font-size:12px; background-color: #FFF;padding: 5px;border: 1px solid #CCC;" class="pull-right colunaCinza">
 								<i class="fa fa-square" style="color: yellow;"></i>&nbsp;Férias
 								<i class="fa fa-square" style="color: #d9f3ff;"></i>&nbsp;Feriado
@@ -247,27 +247,27 @@
 								</p:commandLink>
 						    </p:column>
 						    
-						    <p:column headerText="Trab" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						    <p:column headerText="Trab" style="text-align:center;font-size:12px;" styleClass="colunaCinza" rendered="#{ajustePontoController.mostrarCalculo}">
 						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasTrabalhadas)}" />
 						    </p:column>
 						    
-						    <p:column headerText="Extra" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						    <p:column headerText="Extra" style="text-align:center;font-size:12px;" styleClass="colunaCinza" rendered="#{ajustePontoController.mostrarCalculo}">
 						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasExtra)}" />
 						    </p:column>
 						    
-						    <p:column headerText="Atraso" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						    <p:column headerText="Atraso" style="text-align:center;font-size:12px;" styleClass="colunaCinza" rendered="#{ajustePontoController.mostrarCalculo}">
 						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasAtraso)}" />
 						    </p:column>
 						    
-						    <p:column headerText="Falta" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						    <p:column headerText="Falta" style="text-align:center;font-size:12px;" styleClass="colunaCinza" rendered="#{ajustePontoController.mostrarCalculo}">
 						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasFalta)}" />
 						    </p:column>
 						    
-						    <p:column headerText="Ad. Not" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						    <p:column headerText="Ad. Not" style="text-align:center;font-size:12px;" styleClass="colunaCinza" rendered="#{ajustePontoController.mostrarCalculo}">
 						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasAdicionalNoturno)}" />
 						    </p:column>
 						    
-						    <p:column headerText="Abono" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+						    <p:column headerText="Abono" style="text-align:center;font-size:12px;" styleClass="colunaCinza" rendered="#{ajustePontoController.mostrarCalculo}">
 						        <h:outputText value="#{ajustePontoController.obterHorasBatida(ponto.horasAbono)}" />	
 						    </p:column>
 	
@@ -324,7 +324,7 @@
 											<label>Justificativa:</label>
 										</div>
 										<div class="col-sm-12 col-md-12">
-											<h:inputText id="justificativa" value="#{ajustePontoController.justificativa}" styleClass="form-control" maxlength="1000" />
+											<h:inputText id="justificativa" value="#{ajustePontoController.justificativa}" styleClass="form-control" maxlength="25" />
 										</div>
 									</div>
 								</div>
@@ -376,7 +376,7 @@
 											<label>Justificativa:</label>
 										</div>
 										<div class="col-sm-12 col-md-12">
-											<h:inputText id="justificativaEdicao" value="#{ajustePontoController.justificativa}" styleClass="form-control" maxlength="1000" />
+											<h:inputText id="justificativaEdicao" value="#{ajustePontoController.justificativa}" styleClass="form-control" maxlength="25" />
 										</div>
 									</div>
 								</div>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:pe="http://primefaces.org/ui/extensions" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="consultarPonto"/>
+    	<ui:param name="activeMenu" value="rh"/>
+    	
+    	<f:metadata>
+			<f:viewAction action="#{consultarPontoController.iniciarProcesso()}" />
+		</f:metadata>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-search fa-1x cor-padrao"></i> Consultar Ponto</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-users"></i> Recursos Humanos</li>
+	    	<li class="active"><i class="fa fa-search"></i> Consultar Ponto</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="consultarPontoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<f:validateBean disabled="true" for="@form">
+						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+							<div class="box-header with-border">
+		             			<h3 class="box-title">Cartão de Ponto</h3>
+		            		</div>
+		            		<div class="form-horizontal">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="empresaFuncionario"> Empresa: </label>
+										</div>
+										
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="empresaFuncionario" value="#{consultarPontoController.funcionario.empresa} (#{consultarPontoController.funcionario.cnpj})" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="nomeFuncionario"> Nome do Funcionário: </label>
+										</div>
+										
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="nomeFuncionario" value="#{consultarPontoController.funcionario.nomeFuncionario.toUpperCase()}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="chapaFuncionario"> Chapa: </label>
+										</div>
+										
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="chapaFuncionario" value="#{consultarPontoController.funcionario.chapa}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-2 col-md-2">
+											<label for="cargoFuncionario"> Cargo: </label>
+										</div>
+										
+										<div class="col-sm-10 col-md-10">
+											<p:outputLabel id="cargoFuncionario" value="#{consultarPontoController.funcionario.funcao}" styleClass="font-normal" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="dtInicio" class="col-sm-2">Período:</label>
+										<div class="row">
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtInicio" value="#{consultarPontoController.filtroInicio}" readonlyInput="true" locale="pt_BR" maxdate="#{consultarPontoController.obterDataMaxima()}"/>
+								                </div>
+							                </div>
+							                <label for="dtFim" class="col-sm-1 col-md-1 col-lg-1" style="text-align:center;">até</label>
+							                <div class="col-xs-12 col-md-2 col-lg-2">
+							                	<div class="input-group date">
+								                	<div class="input-group-addon">
+								                		<i class="fa fa-calendar"></i>
+								                	</div>
+								                	<p:calendar styleClass="pull-right" id="dtFim" value="#{consultarPontoController.filtroFim}" readonlyInput="true" locale="pt_BR" maxdate="#{consultarPontoController.obterDataMaxima()}"/>
+								                </div>
+							                </div>
+							            </div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="col-sm-4 col-md-4">
+										<p:commandButton
+											styleClass="btn-vermelho"
+											icon="fa fa-search"
+											value="Pesquisar"
+											id="btn_pesquisar"
+											process="@form"
+											action="#{consultarPontoController.pesquisar()}"
+											update="@this, @form:resultado"
+											ajax="true">
+										</p:commandButton>
+									</div>
+								</div>
+							</div>
+		            	</p:panel>
+		            	<p:outputPanel id="resultado">
+			            	<div class="box-header" style="padding: 0;" jsf:rendered="#{consultarPontoController.exibirResultado}">
+								<label style="font-size:12px; background-color: #FFF;padding: 5px;border: 1px solid #CCC;" class="pull-right colunaCinza">
+									<i class="fa fa-square" style="color: yellow;"></i>&nbsp;Férias
+									<i class="fa fa-square" style="color: #d9f3ff;"></i>&nbsp;Feriado
+									<i class="fa fa-square" style="color: #828080;"></i>&nbsp;Final de Semana
+								</label>
+							</div>
+							<p:dataTable var="ponto" id="tableConsultarPonto" widgetVar="widgetTabelaConsultarPonto"
+								value="#{consultarPontoController.pontos}"
+								tableStyle="table-layout: auto; word-break: keep-all;"
+								rowStyleClass="#{ponto.ferias ? 'linhaAmarela' : ponto.feriado ? 'linhaAzul' : ponto.finalSemana ? 'linhaCinza' : 'linhaBranca'} #{ponto.hoje ? 'borda-esquerda-ponto':''} #{ponto.faltaBatida ? 'borda-esquerda-ponto-faltante': ponto.atencao ? 'borda-esquerda-ponto-alerta' : ''}"
+								rendered="#{consultarPontoController.exibirResultado}">
+								
+							  	<p:column headerText="Data" style="text-align:center;font-size:12px;">
+							        <h:outputText value="#{ponto.data}">
+							        	<f:convertDateTime pattern="dd/MM/yyyy" />
+							        </h:outputText>
+							    </p:column>
+							    
+							    <p:column headerText="Dia" style="text-align:center;font-size:12px;">
+							        <h:outputText value="#{ponto.nomeDia}" />
+							    </p:column>
+							    
+							    <p:column headerText="Ent1" style="text-align:center;font-size:12px; #{consultarPontoController.obterObjetoMap(ponto.batidas, 1).falta ? 'border: 2px solid red;':''} #{consultarPontoController.obterObjetoMap(ponto.batidas, 1).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 1))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Sai1" style="text-align:center;font-size:12px; #{consultarPontoController.obterObjetoMap(ponto.batidas, 2).falta ? 'border: 2px solid red;':''} #{consultarPontoController.obterObjetoMap(ponto.batidas, 2).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 2))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Ent2" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 3).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 3).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 3))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Sai2" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 4).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 4).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 4))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Ent3" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 5).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 5).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 5))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Sai3" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 6).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 6).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 6))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Ent4" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 7).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 7).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 7))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Sai4" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 8).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 8).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 8))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Ent5" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 9).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 9).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 9))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Sai5" style="text-align:center;font-size:12px;#{consultarPontoController.obterObjetoMap(ponto.batidas, 10).falta ? 'border: 2px solid red;':''}#{consultarPontoController.obterObjetoMap(ponto.batidas, 10).editado ? 'background-color: #d2ffd3;':''}">
+							        <h:outputText value="#{consultarPontoController.obterHoras(consultarPontoController.obterObjetoMap(ponto.batidas, 10))}" />
+							    </p:column>
+							    
+							    <p:column headerText="Trab" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+							        <h:outputText value="#{consultarPontoController.obterHorasBatida(ponto.horasTrabalhadas)}" />
+							    </p:column>
+							    
+							    <p:column headerText="Extra" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+							        <h:outputText value="#{consultarPontoController.obterHorasBatida(ponto.horasExtra)}" />
+							    </p:column>
+							    
+							    <p:column headerText="Atraso" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+							        <h:outputText value="#{consultarPontoController.obterHorasBatida(ponto.horasAtraso)}" />
+							    </p:column>
+							    
+							    <p:column headerText="Falta" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+							        <h:outputText value="#{consultarPontoController.obterHorasBatida(ponto.horasFalta)}" />
+							    </p:column>
+							    
+							    <p:column headerText="Ad. Not" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+							        <h:outputText value="#{consultarPontoController.obterHorasBatida(ponto.horasAdicionalNoturno)}" />
+							    </p:column>
+							    
+							    <p:column headerText="Abono" style="text-align:center;font-size:12px;" styleClass="colunaCinza">
+							        <h:outputText value="#{consultarPontoController.obterHorasBatida(ponto.horasAbono)}" />	
+							    </p:column>
+		
+							</p:dataTable>
+							<br />
+							<p:panel toggleable="false" id="painelBatidas" styleClass="box" rendered="#{consultarPontoController.exibirResultado and consultarPontoController.batidas.size() > 0}">
+								<div class="box-header with-border">
+			             			<h3 class="box-title">Ajustes</h3>
+			            		</div>
+			            		<br />
+								<p:dataTable var="bat" id="tableBatidas" widgetVar="widgetTabelaBatidas"
+									value="#{consultarPontoController.batidas}"
+									tableStyle="table-layout: auto; word-break: keep-all;"
+									rendered="#{consultarPontoController.batidas.size() > 0}">
+									
+								  	<p:column headerText="Data" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{bat.dtBatida}">
+								        	<f:convertDateTime pattern="dd/MM/yyyy" />
+								        </h:outputText>
+								    </p:column>
+								    
+								    <p:column headerText="Batida" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{consultarPontoController.obterHorasBatida(bat.batida)}" />
+								    </p:column>
+
+								    <p:column headerText="Justificativa" style="text-align:center;font-size:12px;">
+								        <h:outputText value="#{bat.justificativa}" />
+								    </p:column>
+								   		
+								</p:dataTable>
+							</p:panel>
+						</p:outputPanel>
+					</f:validateBean>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>
