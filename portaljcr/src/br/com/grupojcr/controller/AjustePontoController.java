@@ -55,6 +55,7 @@ public class AjustePontoController implements Serializable {
 	private Boolean bloqueado;
 	private Boolean periodoAtivo;
 	private Boolean mostrarCalculo;
+	private Boolean exibirVoltar;
 	
 	private FuncionarioRM funcionario;
 	private BatidaDTO batidaEdicao;
@@ -90,6 +91,7 @@ public class AjustePontoController implements Serializable {
 	
 	private void iniciarAjustePonto() throws ApplicationException {
 		try {
+			setExibirVoltar(Boolean.FALSE);
 			
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
 			if(Util.isBlank(getUsuario().getChapa())) {
@@ -132,6 +134,48 @@ public class AjustePontoController implements Serializable {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarAjustePonto" }, e);
 		}
+	}
+	
+	public String iniciarAjustePontoRH(Usuario usuarioSelecionado) throws ApplicationException {
+		try {
+			setExibirVoltar(Boolean.TRUE);
+			setUsuario(usuarioSelecionado);
+			if(Util.isBlank(getUsuario().getChapa())) {
+				throw new ApplicationException("ajuste.ponto.nao.utiliza", FacesMessage.SEVERITY_FATAL);
+			}
+			setFuncionario(rmBusiness.obterDadosFuncionario(getUsuario().getChapa()));
+			
+			carregarPeriodo();
+			
+			Boolean utilizaPonto = rmBusiness.verificarUtilizaPonto(getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoFinal().getTime());
+			
+			if(!utilizaPonto) {
+				throw new ApplicationException("ajuste.ponto.nao.utiliza", FacesMessage.SEVERITY_FATAL);
+			}
+			
+			setAjustePonto(pontoBusiness.obterAjustePonto(getUsuario().getId(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime()));
+			setBloqueado(Boolean.FALSE);
+			if(Util.isNotNull(getAjustePonto())) {
+				if(getAjustePonto().getSituacao().equals(SituacaoAjustePonto.AGUARDANDO_APROVACAO) 
+						|| getAjustePonto().getSituacao().equals(SituacaoAjustePonto.APROVADO)) {
+					setBloqueado(Boolean.TRUE);
+				}
+			}
+		
+			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(getUsuario(), getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial(), getPeriodoFinal());
+			
+			setPontos(ponto);
+			
+			mostrarCalculos();
+			
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "iniciarAjustePonto" }, e);
+		}
+		return "/pages/recursosHumanos/ajustarPonto/editar_ajustarPonto.xhtml?faces-redirect=true";
 	}
 	
 	private void carregarPeriodo() throws ApplicationException {
@@ -418,6 +462,10 @@ public class AjustePontoController implements Serializable {
 	public Boolean verificarEnvioAprovacao() throws ApplicationException {
 		try {
 			
+			if(getBloqueado()) {
+				return Boolean.FALSE;
+			}
+			
 			Calendar atual = Calendar.getInstance();
 			Calendar inicio = Calendar.getInstance();
 			Calendar fim = Calendar.getInstance();
@@ -439,9 +487,6 @@ public class AjustePontoController implements Serializable {
 			} 
 			
 			return Boolean.FALSE;
-//		} catch (ApplicationException e) {
-//			LOG.info(e.getMessage(), e);
-//			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "verificarEnvioAprovacao" }, e);
@@ -596,6 +641,14 @@ public class AjustePontoController implements Serializable {
 
 	public void setMostrarCalculo(Boolean mostrarCalculo) {
 		this.mostrarCalculo = mostrarCalculo;
+	}
+
+	public Boolean getExibirVoltar() {
+		return exibirVoltar;
+	}
+
+	public void setExibirVoltar(Boolean exibirVoltar) {
+		this.exibirVoltar = exibirVoltar;
 	}
 
 }

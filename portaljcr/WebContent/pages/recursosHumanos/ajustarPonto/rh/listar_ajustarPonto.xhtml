@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">	
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf" >
+	
+	<ui:composition template="/pages/templates/layout.xhtml">
+		<ui:param name="activeSubmenu" value="ajustarPontoRH"/>
+    	<ui:param name="activeMenu" value="rh"/>
+    	
+    	<f:metadata>
+			<f:viewAction action="#{ajustePontoRHController.iniciarProcesso()}" />
+		</f:metadata>
+    	
+    	<ui:define name="pageTitle"><i class="fa fa-pencil-square-o fa-1x cor-padrao"></i> Ajustar Ponto (RH)</ui:define>
+    	<ui:define name="breadcrumb">
+			<li><i class="fa fa-users"></i> Recursos Humanos</li>
+	    	<li class="active"><i class="fa fa-pencil-square-o"></i> Ajustar Ponto (RH)</li>
+		</ui:define>
+		<ui:define name="body">
+			<div class="page-content-central ui-fluid">
+				<h:form id="funcionarioForm" acceptcharset="ISO-8859-1" lang="pt_BR">
+					<p:dataTable var="func" id="tableFuncionario" widgetVar="widgetTabelaFuncionario"
+						value="#{ajustePontoRHController.listaUsuarioChapa}" 
+						tableStyle="table-layout: auto; word-break: keep-all;">
+						
+					  	<p:column headerText="Nome" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{func.nome}" />
+					    </p:column>
+					    
+					    <p:column headerText="Chapa" style="text-align:center;font-size:12px;">
+					        <h:outputText value="#{func.chapa}" />
+					    </p:column>
+					    
+					    <p:column headerText="Ajustar Ponto" style="text-align: center;font-size:12px;" width="8%">
+							<p:commandLink ajax="true" process="@this" action="#{ajustePontoController.iniciarAjustePontoRH(func)}">
+								<h:outputText value="" title="Ajustar Ponto" styleClass="fa fa-pencil-square-o" />
+							</p:commandLink>
+						</p:column>
+					    
+					</p:dataTable>
+				</h:form>
+			</div>
+		</ui:define>
+	</ui:composition>
+</ui:component>

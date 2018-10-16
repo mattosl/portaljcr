@@ -197,5 +197,23 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 		}
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	public List<Usuario> listarUsuarioComChapa() throws ApplicationException {
+		try {
+			
+			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
+			sb.append("WHERE usuario.chapa IS NOT NULL ");
+			
+			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
+			
+			return query.getResultList();
+		} catch (NoResultException nR) {
+			return null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new ApplicationException("message.default.erro", new String[] { "listarUsuarioComChapa" }, e);
+		}
+	}
+	
 
 }

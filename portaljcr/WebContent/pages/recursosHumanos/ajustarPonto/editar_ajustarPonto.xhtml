@@ -276,6 +276,19 @@
 							<div class="box-footer">
 								<div class="col-sm-4 col-md-4 center-block">
 									<p:commandButton
+										styleClass="btn-vermelho"
+										icon="fa fa-arrow-left"
+										value="Voltar"
+										id="btn_voltar"
+										process="@this"
+										action="#{ajustePontoRHController.voltar()}"
+										immediate="true"
+										rendered="#{ajustePontoController.exibirVoltar}"
+										ajax="false">
+									</p:commandButton>
+								</div>
+								<div class="col-sm-4 col-md-4 center-block">
+									<p:commandButton
 										styleClass="btn-verde"
 										icon="fa fa-pencil-square-o"
 										value="Enviar para Aprovação"
@@ -285,6 +298,7 @@
 										action="#{ajustePontoController.enviarCorrecaoAprovacao()}"
 										update="@form"
 										oncomplete="javascript:window.scrollTo(0,0);"
+										disabled="#{!ajustePontoController.verificarEnvioAprovacao()}"
 										ajax="true">
 									</p:commandButton>
 									<p:outputPanel rendered="#{!ajustePontoController.verificarEnvioAprovacao()}">

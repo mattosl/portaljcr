@@ -1,5 +1,6 @@
 package br.com.grupojcr.business;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dao.UsuarioDAO;
 import br.com.grupojcr.dto.AjustePontoDTO;
 import br.com.grupojcr.dto.BatidaDTO;
+import br.com.grupojcr.dto.PeriodoPontoDTO;
 import br.com.grupojcr.entity.AjustePonto;
 import br.com.grupojcr.entity.BatidaPonto;
 import br.com.grupojcr.entity.Usuario;
@@ -349,6 +351,34 @@ public class PontoBusiness {
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarBatidaPorPeriodo" }, e);
+		}
+	}
+	
+	public List<Usuario> listarUsuariosUtilizamPonto() throws ApplicationException {
+		try {
+			List<Usuario> usuariosComChapa = daoUsuario.listarUsuarioComChapa();
+			List<Usuario> usuariosFiltrados = new ArrayList<Usuario>();
+			
+			for(Usuario usuario : usuariosComChapa) {
+				FuncionarioRM funcionario = rmBusiness.obterDadosFuncionario(usuario.getChapa());
+				if(Util.isNotNull(funcionario)) {
+					PeriodoPontoDTO periodo = rmBusiness.obterPeriodoAtualFuncionario(funcionario.getCodColigada(), funcionario.getChapa());
+					if(Util.isNotNull(periodo)) {
+						Boolean utiliza = rmBusiness.verificarUtilizaPonto(funcionario.getCodColigada(), funcionario.getChapa(), periodo.getPeriodoFinal());
+						if(utiliza) {
+							usuariosFiltrados.add(usuario);
+						}
+					}
+				}
+			}
+			
+			return usuariosFiltrados;
+		} catch (ApplicationException e) {
+			LOG.info(e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "listarUsuariosUtilizamPonto" }, e);
 		}
 	}
 	

@@ -33,7 +33,7 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			sb.append("LEFT JOIN FETCH chamado.usuarioSolicitante solicitante ");
 			sb.append("LEFT JOIN FETCH chamado.usuarioResponsavel responsavel ");
 			sb.append("WHERE chamado.situacao != :situacaoResolvido AND chamado.situacao != :situacaoFechado  ");
-			sb.append("ORDER BY chamado.dtAbertura DESC ");
+			sb.append("ORDER BY chamado.dtAbertura ASC ");
 			
 			TypedQuery<Chamado> query = manager.createQuery(sb.toString(), Chamado.class);
 			query.setParameter("situacaoResolvido", SituacaoChamado.RESOLVIDO);
