@@ -94,6 +94,13 @@
 					            		<div class="form-horizontal">
 											<div class="box-body">
 												<div class="form-group">
+													<label for="numeroChamado" class="col-sm-2 col-md-2 control-label">Nº da Solicitação:</label>
+				
+													<div class="col-sm-2 col-md-2">
+												       <h:inputText id="numeroChamado" value="#{relatorioChamadoController.filtro.numeroChamado}" styleClass="form-control" onkeyup="filterNumberOnly(this);" maxlength="10" />
+													</div>
+												</div>
+												<div class="form-group">
 													<label for="dtInicio" class="col-sm-2 control-label">Período:</label>
 													<div class="row">
 										                <div class="col-xs-12 col-md-2 col-lg-2">

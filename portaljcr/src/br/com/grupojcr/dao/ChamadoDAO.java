@@ -130,6 +130,10 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			StringBuilder sb = new StringBuilder("SELECT COUNT(chamado) FROM Chamado chamado ");
 			sb.append("WHERE chamado.id != null ");
 			
+			if(Util.isNotNull(filtro.getNumeroChamado())) {
+				sb.append("AND chamado.id = :numeroChamado ");
+			}
+			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
 				sb.append("AND chamado.dtAbertura BETWEEN :dtInicio AND :dtFinal ");
 			}
@@ -159,6 +163,10 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			}
 			
 			TypedQuery<Long> query = manager.createQuery(sb.toString(), Long.class);
+			
+			if(Util.isNotNull(filtro.getNumeroChamado())) {
+				query.setParameter("numeroChamado", filtro.getNumeroChamado());
+			}
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
 				Calendar inicio = Calendar.getInstance();
@@ -282,6 +290,10 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			sb.append("LEFT JOIN FETCH chamado.usuarioResponsavel responsavel ");
 			sb.append("WHERE chamado.id != null ");
 			
+			if(Util.isNotNull(filtro.getNumeroChamado())) {
+				sb.append("AND chamado.id = :numeroChamado ");
+			}
+			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
 				sb.append("AND chamado.dtAbertura BETWEEN :dtInicio AND :dtFinal ");
 			}
@@ -313,6 +325,10 @@ public class ChamadoDAO extends GenericDAO<Chamado> {
 			sb.append("ORDER BY chamado.dtAbertura DESC ");
 			
 			TypedQuery<Chamado> query = manager.createQuery(sb.toString(), Chamado.class);
+			
+			if(Util.isNotNull(filtro.getNumeroChamado())) {
+				query.setParameter("numeroChamado", filtro.getNumeroChamado());
+			}
 			
 			if(Util.isNotNull(filtro.getPeriodoInicial()) && Util.isNotNull(filtro.getPeriodoFinal())) {
 				Calendar inicio = Calendar.getInstance();

@@ -10,10 +10,12 @@ public class BatidaRM {
 	private Integer batida;
 	private String status;
 	private Integer natureza;
-	private Boolean editado = Boolean.FALSE;
+	private Boolean editado;
 	private BatidaPonto batidaPonto;
 	
-	public BatidaRM() {}
+	public BatidaRM() {
+		editado = Boolean.FALSE;
+	}
 	
 	public BatidaRM(Date data, Integer batida, String status, Integer natureza, Boolean editado, BatidaPonto batidaPonto) {
 		this.data = data;

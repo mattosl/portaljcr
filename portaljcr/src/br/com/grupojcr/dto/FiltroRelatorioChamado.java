@@ -11,6 +11,7 @@ import br.com.grupojcr.enumerator.SituacaoChamado;
 
 public class FiltroRelatorioChamado {
 	
+	private Long numeroChamado;
 	private SituacaoChamado[] situacao;
 	private CategoriaChamado categoria;
 	private SubCategoriaChamado subCategoria;
@@ -81,6 +82,12 @@ public class FiltroRelatorioChamado {
 	}
 	public void setSubCategoria(SubCategoriaChamado subCategoria) {
 		this.subCategoria = subCategoria;
+	}
+	public Long getNumeroChamado() {
+		return numeroChamado;
+	}
+	public void setNumeroChamado(Long numeroChamado) {
+		this.numeroChamado = numeroChamado;
 	}
 	
 	

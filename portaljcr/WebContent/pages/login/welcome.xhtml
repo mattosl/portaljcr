@@ -139,12 +139,12 @@
 									</p:link>
 								</div>
 								<div class="col-md-4 col-sm-6 col-xs-12">
-									<p:link href="#" disabled="true">
-										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
+									<p:link href="/pages/recursosHumanos/ajustarPonto/autenticar_ajustarPonto.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
 											<span class="info-box-icon bg-aqua"><i
 												class="fa fa-pencil-square-o"></i></span>
 		
-											<p:link href="#">
+											<p:link href="/pages/recursosHumanos/ajustarPonto/autenticar_ajustarPonto.xhtml">
 												<div class="info-box-content">
 													<span class="info-box-text acessoRapidoBox">Ajuste de Ponto</span> 
 												</div>
@@ -153,6 +153,34 @@
 									</p:link>
 								</div>
 								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p:link href="/pages/recursosHumanos/consultarPonto/listar_consultarPonto.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-aqua"><i
+												class="fa fa-search"></i></span>
+		
+											<p:link href="/pages/recursosHumanos/consultarPonto/listar_consultarPonto.xhtml">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Consultar Ponto</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'RH'])}">
+									<p:link href="/pages/recursosHumanos/ajustarPonto/rh/listar_ajustarPonto.xhtml">
+										<div class="info-box" style="background-color: #f8f8f8;">
+											<span class="info-box-icon bg-aqua"><i
+												class="fa fa-pencil-square"></i></span>
+		
+											<p:link href="/pages/recursosHumanos/ajustarPonto/rh/listar_ajustarPonto.xhtml">
+												<div class="info-box-content">
+													<span class="info-box-text acessoRapidoBox">Ponto Funcionário (RH)</span> 
+												</div>
+											</p:link>
+										</div>
+									</p:link>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12" jsf:rendered="false">
 									<p:link href="#" disabled="true">
 										<div class="info-box" style="background-color: #f8f8f8; opacity: 0.5">
 											<span class="info-box-icon bg-aqua"><i

@@ -26,7 +26,7 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="consultarPontoForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<f:validateBean disabled="true" for="@form">
-						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger">
+						<p:panel toggleable="false" id="painelConsulta" styleClass="box box-danger" rendered="#{consultarPontoController.exibirFiltro}">
 							<div class="box-header with-border">
 		             			<h3 class="box-title">Cartão de Ponto</h3>
 		            		</div>

@@ -183,6 +183,11 @@ public class PontoBusiness {
 							"\", \"ferias\": \"" + dto.getFerias() + "\",");
 					
 				for(Integer key : dto.getBatidas().keySet()) {
+					if(Util.isNotNull(dto.getBatidas().get(key).getFalta())) {
+						if(dto.getBatidas().get(key).getFalta()) {
+							throw new ApplicationException("message.empty", new String[] {"Cartão Ponto possui faltas."}, FacesMessage.SEVERITY_WARN);
+						}
+					}
 					itens.append("\"batida" + key + "\": {" + 
 									"\"horario\": \"" + obterHorasBatida(dto.getBatidas().get(key).getBatida()) + "\"," +
 									"\"editado\": \"" + dto.getBatidas().get(key).getEditado() + "\"," +

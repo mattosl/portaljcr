@@ -3510,4 +3510,52 @@ public class RMDAO {
 		}
 	}
 	
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public String obterUltimoCodigoProdutoColigada(Long idColigada) throws ApplicationException {
+		
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = datasource.getConnection();
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT TOP(1) CODIGOPRD FROM TPRODUTO(NOLOCK) ")
+			.append("WHERE CODIGOPRD LIKE '90.001%' ")
+			.append("AND LEN(CODIGOPRD) > 6 ")
+			.append("AND CODCOLPRD = 1 ")
+			.append("ORDER BY CODIGOPRD DESC ");
+			
+			ps = conn.prepareStatement(sb.toString());
+			ResultSet set = ps.executeQuery();
+			
+			if (set.next()) {
+				return set.getString("CODIGOPRD");
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			throw new ApplicationException(KEY_MENSAGEM_PADRAO, new String[] { "obterUltimoCodigoProdutoColigada" }, e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					ps = null;
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(), e);
+				} finally {
+					conn = null;
+				}
+			}
+		}
+		return null;
+	}
+	
 }

@@ -203,6 +203,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 			
 			StringBuilder sb = new StringBuilder("SELECT usuario FROM Usuario usuario ");
 			sb.append("WHERE usuario.chapa IS NOT NULL ");
+			sb.append("ORDER BY usuario.nome ASC ");
 			
 			TypedQuery<Usuario> query = manager.createQuery(sb.toString(), Usuario.class);
 			

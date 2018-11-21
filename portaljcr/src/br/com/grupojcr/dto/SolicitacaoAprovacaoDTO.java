@@ -7,14 +7,17 @@ public class SolicitacaoAprovacaoDTO {
 	private List<AprovacaoContratoDTO> contratos;
 	private List<AprovacaoOrdemCompraDTO> ordemCompras;
 	private List<AprovacaoSolicitacaoCompraDTO> solicitacoes;
+	private List<AprovacaoPontoDTO> pontos;
 	
 	private String classeCSSOrdemCompra;
 	private String classeCSSContratos;
 	private String classeCSSSolicitacaoCompra;
+	private String classeCSSPonto;
 	
 	private Integer qtdOrdemCompra;
 	private Integer qtdContratos;
 	private Integer qtdSolicitacaoCompra;
+	private Integer qtdPonto;
 	
 	public Integer getQtdOrdemCompra() {
 		return qtdOrdemCompra;
@@ -69,6 +72,24 @@ public class SolicitacaoAprovacaoDTO {
 	}
 	public void setQtdSolicitacaoCompra(Integer qtdSolicitacaoCompra) {
 		this.qtdSolicitacaoCompra = qtdSolicitacaoCompra;
+	}
+	public List<AprovacaoPontoDTO> getPontos() {
+		return pontos;
+	}
+	public void setPontos(List<AprovacaoPontoDTO> pontos) {
+		this.pontos = pontos;
+	}
+	public String getClasseCSSPonto() {
+		return classeCSSPonto;
+	}
+	public void setClasseCSSPonto(String classeCSSPonto) {
+		this.classeCSSPonto = classeCSSPonto;
+	}
+	public Integer getQtdPonto() {
+		return qtdPonto;
+	}
+	public void setQtdPonto(Integer qtdPonto) {
+		this.qtdPonto = qtdPonto;
 	}
 	
 

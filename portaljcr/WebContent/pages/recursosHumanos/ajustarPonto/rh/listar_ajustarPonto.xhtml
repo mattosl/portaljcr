@@ -9,7 +9,7 @@
 	xmlns:jsf="http://xmlns.jcp.org/jsf" >
 	
 	<ui:composition template="/pages/templates/layout.xhtml">
-		<ui:param name="activeSubmenu" value="ajustarPontoRH"/>
+		<ui:param name="activeSubmenu" value="ajustePontoRH"/>
     	<ui:param name="activeMenu" value="rh"/>
     	
     	<f:metadata>
@@ -25,10 +25,11 @@
 			<div class="page-content-central ui-fluid">
 				<h:form id="funcionarioForm" acceptcharset="ISO-8859-1" lang="pt_BR">
 					<p:dataTable var="func" id="tableFuncionario" widgetVar="widgetTabelaFuncionario"
-						value="#{ajustePontoRHController.listaUsuarioChapa}" 
+						value="#{ajustePontoRHController.listaUsuarioChapa}"
+						emptyMessage="Nenhum funcionário encontrado."
 						tableStyle="table-layout: auto; word-break: keep-all;">
 						
-					  	<p:column headerText="Nome" style="text-align:center;font-size:12px;">
+					  	<p:column headerText="Nome" style="font-size:12px;">
 					        <h:outputText value="#{func.nome}" />
 					    </p:column>
 					    

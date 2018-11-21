@@ -81,19 +81,19 @@
 							<span>Holerite</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'ajustePonto' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+					<li class="#{activeSubmenu eq 'ajustePonto' ? 'active' : ''}">
 						<p:link href="/pages/recursosHumanos/ajustarPonto/autenticar_ajustarPonto.xhtml" ajax="false">
 							<i class="fa fa-pencil-square-o"></i>
 							<span>Ajuste de Ponto</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'consultarPonto' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+					<li class="#{activeSubmenu eq 'consultarPonto' ? 'active' : ''}">
 						<p:link href="/pages/recursosHumanos/consultarPonto/listar_consultarPonto.xhtml" ajax="false">
 							<i class="fa fa-search"></i>
 							<span>Consultar Ponto</span>
 						</p:link>
 					</li>
-					<li class="#{activeSubmenu eq 'ajustePontoRH' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}" >
+					<li class="#{activeSubmenu eq 'ajustePontoRH' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR', 'RH'])}" >
 						<p:link href="/pages/recursosHumanos/ajustarPonto/rh/listar_ajustarPonto.xhtml" ajax="false">
 							<i class="fa fa-pencil-square"></i>
 							<span>Ajustar Ponto Funcionário</span>
@@ -124,6 +124,24 @@
 					</li>
 				</ul>
 			</li>
+			
+			<li class="treeview #{activeMenu eq 'orcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+				<p:link href="#">
+					<i class="fa fa-database"></i> <span>RM</span>
+					 <span class="pull-right-container">
+	                 	<i class="fa fa-angle-left pull-right"></i>
+	                 </span>
+				</p:link>
+				<ul class="treeview-menu">
+					<li class="#{activeSubmenu eq 'gestaoOrcamento' ? 'active' : ''}" jsf:rendered="#{loginController.hasGroup(['ADMINISTRADOR'])}">
+						<p:link href="/pages/rm/cargaProduto/editar_cargaProduto.xhtml" ajax="false">
+							<i class="fa fa-list-ol"></i>
+							<span>Carga de Produto</span>
+						</p:link>
+					</li>
+				</ul>
+			</li>
+			
 
 			<li class="treeview #{activeMenu eq 'suporte' ? 'active' : ''}">
 				<p:link href="#">

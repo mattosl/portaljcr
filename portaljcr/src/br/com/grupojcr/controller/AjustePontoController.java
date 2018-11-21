@@ -107,11 +107,6 @@ public class AjustePontoController implements Serializable {
 				throw new ApplicationException("ajuste.ponto.nao.utiliza", FacesMessage.SEVERITY_FATAL);
 			}
 			
-//			Boolean periodoAtivo = verificarEnvioAprovacao();
-//			if(!periodoAtivo) {
-//				throw new ApplicationException("ajuste.ponto.periodo.inativo", new String[] {obterPeriodoFormatado(), obterPeriodoCorrecao()}, FacesMessage.SEVERITY_FATAL);
-//			}
-			
 			setAjustePonto(pontoBusiness.obterAjustePonto(getUsuario().getId(), getPeriodoInicial().getTime(), getPeriodoFinal().getTime()));
 			setBloqueado(Boolean.FALSE);
 			if(Util.isNotNull(getAjustePonto())) {
@@ -119,6 +114,10 @@ public class AjustePontoController implements Serializable {
 						|| getAjustePonto().getSituacao().equals(SituacaoAjustePonto.APROVADO)) {
 					setBloqueado(Boolean.TRUE);
 				}
+			}
+			
+			if(!verificarEnvioAprovacao()) {
+				setBloqueado(Boolean.TRUE);
 			}
 		
 			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(getUsuario(), getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial(), getPeriodoFinal());
@@ -160,6 +159,10 @@ public class AjustePontoController implements Serializable {
 						|| getAjustePonto().getSituacao().equals(SituacaoAjustePonto.APROVADO)) {
 					setBloqueado(Boolean.TRUE);
 				}
+			}
+			
+			if(!verificarEnvioAprovacao()) {
+				setBloqueado(Boolean.TRUE);
 			}
 		
 			List<AjustePontoDTO> ponto = rmBusiness.obterBatidasUsuarioPeriodo(getUsuario(), getFuncionario().getCodColigada(), getFuncionario().getChapa(), getPeriodoInicial(), getPeriodoFinal());
@@ -442,8 +445,8 @@ public class AjustePontoController implements Serializable {
 			inicio.set(Calendar.MILLISECOND, 0);
 			
 			
-			fim.set(Calendar.DAY_OF_MONTH, 19);
-			fim.set(Calendar.HOUR_OF_DAY, 18);
+			fim.set(Calendar.DAY_OF_MONTH, 22);
+			fim.set(Calendar.HOUR_OF_DAY, 19);
 			fim.set(Calendar.MINUTE, 0);
 			fim.set(Calendar.SECOND, 0);
 			fim.set(Calendar.MILLISECOND, 0);
@@ -476,8 +479,8 @@ public class AjustePontoController implements Serializable {
 			inicio.set(Calendar.MILLISECOND, 0);
 			
 			
-			fim.set(Calendar.DAY_OF_MONTH, 19);
-			fim.set(Calendar.HOUR_OF_DAY, 18);
+			fim.set(Calendar.DAY_OF_MONTH, 22);
+			fim.set(Calendar.HOUR_OF_DAY, 19);
 			fim.set(Calendar.MINUTE, 0);
 			fim.set(Calendar.SECOND, 0);
 			fim.set(Calendar.MILLISECOND, 0);

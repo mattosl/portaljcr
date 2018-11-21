@@ -513,9 +513,6 @@ public class CotacaoController implements Serializable {
 					if(Util.isNullOrZero(item.getValor())) {
 						throw new ApplicationException("message.empty", new String[] {"Itens com valor zerado. Favor inserir o valor total dos itens."}, FacesMessage.SEVERITY_WARN);
 					}
-					if(TreatString.isBlank(item.getCodigoUnidade())) {
-						throw new ApplicationException("message.empty", new String[] {"Itens sem unidade. Favor inserir a unidade dos itens."}, FacesMessage.SEVERITY_WARN);
-					}
 					if(Util.isNullOrZero(item.getQuantidade())) {
 						throw new ApplicationException("message.empty", new String[] {"Itens sem quantidade. Favor inserir a quantidade dos itens."}, FacesMessage.SEVERITY_WARN);
 					}

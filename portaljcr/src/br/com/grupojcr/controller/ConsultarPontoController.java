@@ -51,6 +51,7 @@ public class ConsultarPontoController implements Serializable {
 	private Integer sequenciaEdicao;
 	
 	private Boolean exibirResultado;
+	private Boolean exibirFiltro;
 	
 	private FuncionarioRM funcionario;
 	private Usuario usuario;
@@ -94,6 +95,10 @@ public class ConsultarPontoController implements Serializable {
 				throw new ApplicationException("consultar.ponto.periodo.obrigatorio", FacesMessage.SEVERITY_WARN);
 			}
 			
+			if(Util.dataMaior(getFiltroInicio(), getFiltroFim())) {
+				throw new ApplicationException("consultar.ponto.periodo.invalido", FacesMessage.SEVERITY_WARN);
+			}
+			
 			Integer dias = TreatDate.contarDiferencaEmDias(getFiltroInicio(), getFiltroFim());
 			
 			if(dias > 180) {
@@ -129,8 +134,10 @@ public class ConsultarPontoController implements Serializable {
 			
 			setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario"));
 			if(Util.isBlank(getUsuario().getChapa())) {
+				setExibirFiltro(Boolean.FALSE);
 				throw new ApplicationException("ajuste.ponto.nao.utiliza", FacesMessage.SEVERITY_FATAL);
 			}
+			setExibirFiltro(Boolean.TRUE);
 			setFuncionario(rmBusiness.obterDadosFuncionario(getUsuario().getChapa()));
 			
 			carregarPeriodo();
@@ -379,6 +386,14 @@ public class ConsultarPontoController implements Serializable {
 
 	public void setBatidas(List<BatidaPonto> batidas) {
 		this.batidas = batidas;
+	}
+
+	public Boolean getExibirFiltro() {
+		return exibirFiltro;
+	}
+
+	public void setExibirFiltro(Boolean exibirFiltro) {
+		this.exibirFiltro = exibirFiltro;
 	}
 
 }

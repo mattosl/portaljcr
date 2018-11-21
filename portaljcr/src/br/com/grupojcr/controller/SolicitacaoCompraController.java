@@ -317,9 +317,9 @@ public class SolicitacaoCompraController implements Serializable {
 				camposObrigatorios = Boolean.TRUE;
 			}
 
-			if (Util.isNull(getSolicitacaoCompraDTO().getProduto().getUnidade())) {
-				camposObrigatorios = Boolean.TRUE;
-			}
+//			if (Util.isNull(getSolicitacaoCompraDTO().getProduto().getUnidade())) {
+//				camposObrigatorios = Boolean.TRUE;
+//			}
 
 			if (camposObrigatorios) {
 				throw new ApplicationException("message.campos.obrigatorios", FacesMessage.SEVERITY_WARN);
@@ -339,8 +339,8 @@ public class SolicitacaoCompraController implements Serializable {
 			getSolicitacaoItem().setProdutoNaoEncontrado(getSolicitacaoCompraDTO().getProduto().getNaoEncontrei());
 			getSolicitacaoItem().setQuantidade(getSolicitacaoCompraDTO().getProduto().getQuantidade());
 			getSolicitacaoItem()
-					.setCodigoUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getCodigoUnidade());
-			getSolicitacaoItem().setUnidade(getSolicitacaoCompraDTO().getProduto().getUnidade().getUnidade());
+					.setCodigoUnidade(getSolicitacaoCompraDTO().getProduto().getProduto().getCodigoUnidadeCompra());
+			getSolicitacaoItem().setUnidade(getSolicitacaoCompraDTO().getProduto().getProduto().getCodigoUnidadeCompra());
 			getSolicitacaoItem().setValorAproximado(getSolicitacaoCompraDTO().getProduto().getValorAproximado());
 			getSolicitacaoItem().setObservacao(getSolicitacaoCompraDTO().getProduto().getObservacao());
 			getSolicitacaoItem().setDtInclusao(Calendar.getInstance().getTime());

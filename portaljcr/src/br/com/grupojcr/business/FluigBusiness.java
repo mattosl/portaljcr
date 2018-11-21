@@ -20,15 +20,19 @@ import com.totvs.technology.ecm.foundation.ws.ECMColleagueServiceServiceSoapBind
 import com.totvs.technology.ecm.workflow.ws.ECMWorkflowEngineServiceServiceLocator;
 import com.totvs.technology.ecm.workflow.ws.ECMWorkflowEngineServiceServiceSoapBindingStub;
 
+import br.com.grupojcr.dao.AjustePontoDAO;
 import br.com.grupojcr.dao.RMDAO;
 import br.com.grupojcr.dao.SolicitacaoCompraDAO;
 import br.com.grupojcr.dto.AprovacaoContratoDTO;
 import br.com.grupojcr.dto.AprovacaoOrdemCompraDTO;
+import br.com.grupojcr.dto.AprovacaoPontoDTO;
 import br.com.grupojcr.dto.AprovacaoSolicitacaoCompraDTO;
 import br.com.grupojcr.dto.SolicitacaoAprovacaoDTO;
 import br.com.grupojcr.dto.ZMDRMFLUIGDTO;
+import br.com.grupojcr.entity.AjustePonto;
 import br.com.grupojcr.entity.SolicitacaoCompra;
 import br.com.grupojcr.util.Preferencias;
+import br.com.grupojcr.util.TreatDate;
 import br.com.grupojcr.util.Preferencias.Propriedades;
 import br.com.grupojcr.util.TreatNumber;
 import br.com.grupojcr.util.TreatString;
@@ -46,6 +50,9 @@ public class FluigBusiness {
 	
 	@EJB
 	private SolicitacaoCompraDAO daoSolicitacaoCompra;
+	
+	@EJB
+	private AjustePontoDAO daoAjustePonto;
 	
 	private ECMWorkflowEngineServiceServiceSoapBindingStub obterProxyECMWorkFlowEngineService() throws ServiceException {
 		try {
@@ -134,9 +141,11 @@ public class FluigBusiness {
 				solicitacao.setContratos(new ArrayList<AprovacaoContratoDTO>());
 				solicitacao.setOrdemCompras(new ArrayList<AprovacaoOrdemCompraDTO>());
 				solicitacao.setSolicitacoes(new ArrayList<AprovacaoSolicitacaoCompraDTO>());
+				solicitacao.setPontos(new ArrayList<AprovacaoPontoDTO>());
 				Integer qtdContrato = 0;
 				Integer qtdOrdemCompra = 0;
 				Integer qtdSolicitacaoCompra = 0;
+				Integer qtdPonto = 0;
 				
 				if(solicitacoes.length > 0) {
 					for(int i = 0; i < solicitacoes.length; i++) {
@@ -179,6 +188,18 @@ public class FluigBusiness {
 								solicitacaoCompraDTO.setSequenciaMovimento(solicitacoes[i].getMovementSequence());
 								solicitacao.getSolicitacoes().add(solicitacaoCompraDTO);
 								qtdSolicitacaoCompra++;
+							} else {
+								AjustePonto ajustePonto = daoAjustePonto.obterAjustePontoPorIdFluig(solicitacoes[i].getProcessInstanceId());
+								
+								if(ajustePonto != null) {
+									AprovacaoPontoDTO pontoDTO = new AprovacaoPontoDTO();
+									pontoDTO.setIdFluig(solicitacoes[i].getProcessInstanceId());
+									pontoDTO.setNomeFuncionario(ajustePonto.getUsuario().getNome().toUpperCase());
+									pontoDTO.setPeriodo(TreatDate.format("dd/MM/yyyy", ajustePonto.getDtPeriodoInicial()) + " - " + TreatDate.format("dd/MM/yyyy", ajustePonto.getDtPeriodoFinal()));
+									pontoDTO.setSequenciaMovimento(solicitacoes[i].getMovementSequence());
+									solicitacao.getPontos().add(pontoDTO);
+									qtdPonto++;
+								}
 							}
 						}
 					}
@@ -187,6 +208,7 @@ public class FluigBusiness {
 				solicitacao.setQtdContratos(qtdContrato);
 				solicitacao.setQtdOrdemCompra(qtdOrdemCompra);
 				solicitacao.setQtdSolicitacaoCompra(qtdSolicitacaoCompra);
+				solicitacao.setQtdPonto(qtdPonto);
 				
 				if(qtdContrato > 0) {
 					solicitacao.setClasseCSSContratos("badge-danger");
@@ -204,6 +226,12 @@ public class FluigBusiness {
 					solicitacao.setClasseCSSOrdemCompra("badge-danger");
 				} else {
 					solicitacao.setClasseCSSOrdemCompra("");
+				}
+				
+				if(qtdPonto > 0) {
+					solicitacao.setClasseCSSPonto("badge-danger");
+				} else {
+					solicitacao.setClasseCSSPonto("");
 				}
 				
 				return solicitacao;

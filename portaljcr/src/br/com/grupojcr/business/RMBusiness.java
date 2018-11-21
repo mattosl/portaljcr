@@ -615,6 +615,7 @@ public class RMBusiness {
 						if(idx.equals(1) || idx.equals(3) || idx.equals(5) || idx.equals(7)) {
 							BatidaDTO b = new BatidaDTO();
 							b.setFalta(Boolean.TRUE);
+							b.setEditado(Boolean.FALSE);
 							dto.setFaltaBatida(Boolean.TRUE);
 							dto.getBatidas().put(++idx, b);
 						}
